@@ -6,6 +6,7 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { AUDIT_ACTIONS, AUDIT_RESOURCES, auditService, type AuditEntry } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 /** Journal d'audit : lecture seule (aucune création ni suppression depuis l'interface). */
 export default function AuditPage() {
@@ -19,7 +20,7 @@ export default function AuditPage() {
 
   const columns: Column<AuditEntry>[] = [
     { id: 'at', header: t('columns.date'), cell: (e) => f.dateTime(e.at), sortable: true, primary: true },
-    { id: 'user', header: t('columns.user'), cell: (e) => e.user, sortable: true },
+    { id: 'user', header: t('columns.user'), cell: (e) => <PersonName name={e.user} size="sm" strong={false} />, sortable: true },
     { id: 'action', header: t('columns.action'), cell: (e) => t(`action.${e.action}`) },
     { id: 'resource', header: t('columns.resource'), cell: (e) => t(`resource.${e.resource}`) },
     { id: 'reference', header: t('columns.reference'), cell: (e) => <code className="text-xs">{e.reference}</code> },
@@ -41,13 +42,14 @@ export default function AuditPage() {
         { id: 'outcome', label: t('columns.outcome'), options: [{ value: 'success', label: t('outcome.success') }, { value: 'denied', label: t('outcome.denied') }] },
       ]}
       detailTitle={(e) => e.id}
+      detailPerson={(e) => e.user}
       renderDetail={(e) => (
         <>
           <DetailSection title={t('detail.summary')}>
             <DescriptionList
               items={[
                 { label: t('columns.date'), value: f.dateTime(e.at) },
-                { label: t('columns.user'), value: e.user },
+                { label: t('columns.user'), value: <PersonName name={e.user} size="sm" strong={false} /> },
                 { label: t('columns.action'), value: t(`action.${e.action}`) },
                 { label: t('columns.resource'), value: t(`resource.${e.resource}`) },
                 { label: t('columns.reference'), value: e.reference },

@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState, type ComponentProps } from
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/forms/controls';
 import { usePatients } from '../finance/use-finance';
+import { PersonName } from '@/components/ui/avatar';
 
 /** Minuscules sans accents : « Éloïse » se trouve en tapant « eloi ». */
 const fold = (s: string): string => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -76,8 +77,7 @@ export function PatientCombobox({ defaultValue = '', onValueChange, id, ...rest 
             <li key={p.id} id={`${listId}-${i}`} role="option" aria-selected={i === active}
               className={`cursor-pointer px-3 py-2 ${i === active ? 'bg-primary-soft' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); choose(p); }} onMouseEnter={() => setActive(i)}>
-              <span className="font-medium">{p.fullName}</span>
-              <span className="ms-2 text-xs text-muted-foreground">{p.fileNumber} · {p.id}</span>
+              <PersonName name={p.fullName} size="sm" sub={`${p.fileNumber} · ${p.id}`} />
             </li>
           ))}
         </ul>

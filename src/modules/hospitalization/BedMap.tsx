@@ -19,6 +19,7 @@ import { FormDialog } from '../_shared/form-dialog';
 import { createResourceService } from '../_shared/resource-service';
 import { useResourceList } from '../_shared/use-resource';
 import { bedService, WARDS, type Bed, type BedStatus } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 const STATUS: Record<BedStatus, { tone: StatusTone; icon: LucideIcon; ring: string }> = {
   free: { tone: 'success', icon: CircleCheck, ring: 'border-success' },
@@ -128,7 +129,7 @@ export function BedMap() {
                     </StatusBadge>
                   ),
                 },
-                { label: t('beds.patient'), value: selected.patientName },
+                { label: t('beds.patient'), value: <PersonName name={selected.patientName} size="sm" /> },
               ]}
             />
             <div className="flex flex-wrap gap-2 border-t border-border pt-4">

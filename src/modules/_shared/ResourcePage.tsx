@@ -13,6 +13,7 @@ import type { FieldDef } from './dynamic-form';
 import { FormDialog } from './form-dialog';
 import type { ListParams, ResourceService } from './resource-service';
 import { useResourceList } from './use-resource';
+import { Avatar } from '@/components/ui/avatar';
 
 export interface FilterDef {
   id: string;
@@ -44,6 +45,8 @@ interface ResourcePageProps<T extends { id: string }> {
   /** Contenu du volet de détail. Absent = pas de bouton « Consulter ». */
   renderDetail?: (item: T) => ReactNode;
   detailTitle?: (item: T) => string;
+  /** Nom de la personne concernée par la ligne ouverte : affiche son avatar dans l'en-tête du détail. */
+  detailPerson?: (item: T) => string | undefined;
   /** Remplace l'ouverture du volet (ex. navigation vers une page de fiche). */
   onOpen?: (item: T) => void;
   /** Bloc affiché entre l'en-tête et le tableau (indicateurs…). */
@@ -74,6 +77,7 @@ export function ResourcePage<T extends { id: string }>({
   create,
   renderDetail,
   detailTitle,
+  detailPerson,
   onOpen,
   summary,
   actions,
@@ -223,6 +227,7 @@ export function ResourcePage<T extends { id: string }>({
           onClose={() => setSelected(null)}
           variant="detail"
           title={selected && detailTitle ? detailTitle(selected) : title}
+          leading={selected && detailPerson && detailPerson(selected) ? <Avatar name={detailPerson(selected)!} size="lg" /> : undefined}
         >
           {selected && renderDetail(selected)}
         </Dialog>

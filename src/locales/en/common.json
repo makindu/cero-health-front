@@ -36,7 +36,8 @@
     "reports": "Reports",
     "administration": "Administration",
     "audit": "Audit",
-    "insurance": "Insurance and tariffs"
+    "insurance": "Insurance and tariffs",
+    "patientFlowBoard": "Patient tracking"
   },
   "actions": {
     "save": "Save",
@@ -81,7 +82,18 @@
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications",
-    "emptyHint": "Appointment, result and stock alerts will appear here."
+    "emptyHint": "Appointment, result and stock alerts will appear here.",
+    "titleUnread": "Notifications ({{count}} unread)",
+    "unread": "{{count}} unread",
+    "markAll": "Mark all as read",
+    "markRead": "Mark as read",
+    "openRx": "Open prescriptions",
+    "rxDeviation": {
+      "title": "The pharmacy deviated from prescription {{number}}",
+      "reduced": "Quantity lower than prescribed",
+      "substituted": "Product differs from the prescription",
+      "metaShort": "by {{by}} · {{at}}"
+    }
   },
   "user": {
     "menu": "User menu",

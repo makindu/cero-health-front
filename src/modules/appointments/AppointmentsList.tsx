@@ -37,6 +37,7 @@ export function AppointmentsList() {
         { id: 'service', label: t('filters.service'), options: serviceOptions },
       ]}
       detailTitle={(a) => `${a.patientName} · ${f.dateTime(a.startsAt)}`}
+      detailPerson={(a) => a.patientName}
       renderDetail={(a) => <AppointmentDetail appointment={a} />}
     />
   );

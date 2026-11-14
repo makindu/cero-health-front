@@ -17,7 +17,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
   const { t } = useTranslation();
   const { can } = usePermissions();
   return (
-    <nav aria-label={t('nav.main')} className="scroll-nav flex-1 overflow-y-auto px-2 py-3">
+    <nav aria-label={t('nav.main')} className="scroll-nav relative flex-1 overflow-y-auto px-2 py-3">
       {NAV_GROUPS.map((group) => {
         const items = group.items.filter((item) => can(item.permission));
         if (items.length === 0) return null;

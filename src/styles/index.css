@@ -71,6 +71,8 @@
   html.dark {
     color-scheme: dark;
   }
+  /* IMPORTANT : la coquille et le menu sont « relative » pour être le bloc conteneur des éléments en position absolue
+     (libellés .sr-only du menu réduit) ; sinon ils échappent au rognage et la PAGE entière se met à défiler. */
   /* Coquille d'application : seul le contenu défile ; le menu et l'entête restent en place, sans effet de rebond de la page. */
   html,
   body,
@@ -87,8 +89,14 @@
     scrollbar-color: var(--border-strong) transparent;
   }
   *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
+  }
+  /* Pas de flèches haut/bas aux extrémités (style par défaut de Windows). */
+  *::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
@@ -96,19 +104,37 @@
   *::-webkit-scrollbar-thumb {
     background-color: var(--border-strong);
     border-radius: 9999px;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     background-clip: content-box;
   }
   *::-webkit-scrollbar-thumb:hover {
     background-color: var(--muted-foreground);
     background-clip: content-box;
   }
+  /* Onglets : défilement horizontal possible (tactile, molette + Maj, clavier) mais sans barre visible. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Menu latéral : barre très fine, visible seulement quand la souris survole le menu. */
   .scroll-nav {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  .scroll-nav:hover {
     scrollbar-color: var(--nav-muted) transparent;
   }
+  .scroll-nav::-webkit-scrollbar {
+    width: 4px;
+  }
   .scroll-nav::-webkit-scrollbar-thumb {
-    background-color: var(--nav-muted);
+    background-color: transparent;
     background-clip: content-box;
+  }
+  .scroll-nav:hover::-webkit-scrollbar-thumb {
+    background-color: var(--nav-muted);
   }
   body {
     background-color: var(--background);

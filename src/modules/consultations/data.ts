@@ -1,7 +1,7 @@
 import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
 import { isoAt } from '@/utils/dates';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
-import { createResourceService, type LocalWriteContext } from '../_shared/resource-service';
+import { createResourceService, localRepositoryFor, type LocalWriteContext } from '../_shared/resource-service';
 import { staffRepo } from '../administration/data';
 import { finance } from '../finance/finance';
 import { patientRepo } from '../patients/data';
@@ -47,6 +47,9 @@ export const DEMO_CONSULTATIONS: readonly Consultation[] = Array.from({ length: 
     status: pick<ConsultationStatus>(['inProgress', 'draft', 'signed', 'closed', 'closed', 'signed'], i),
   };
 });
+
+/** Dépôt local des consultations (lecture par le suivi des patients). */
+export const consultationRepo = localRepositoryFor<Consultation>(HEALTH_ENDPOINTS.consultationsList.collection, DEMO_CONSULTATIONS);
 
 export const consultationService = createResourceService<Consultation>({
   source: 'health',

@@ -23,6 +23,8 @@ export interface Rx {
   patientName: string;
   consultationId?: string;
   prescriber: string;
+  /** Identifiant du prescripteur (absent des ordonnances anciennes) : sert à lui adresser les notifications. */
+  prescriberId?: string;
   prescribedAt: string;
   status: RxStatus;
   items: RxItem[];
@@ -65,10 +67,10 @@ export function nextRxNumber(existing: readonly Pick<Rx, 'number'>[], year: numb
   return `${prefix}${String(Math.max(0, ...last) + 1).padStart(5, '0')}`;
 }
 
-export function buildRx(input: { id: string; number: string; patientId: string; patientName: string; consultationId?: string; items: readonly RxItem[]; note: string; by: string; now: string }): Rx {
+export function buildRx(input: { id: string; number: string; patientId: string; patientName: string; consultationId?: string; items: readonly RxItem[]; note: string; by: string; byId?: string; now: string }): Rx {
   return {
     id: input.id, number: input.number, patientId: input.patientId, patientName: input.patientName, consultationId: input.consultationId,
-    prescriber: input.by, prescribedAt: input.now, status: 'toValidate', items: checkItems(input.items), note: input.note.trim(),
+    prescriber: input.by, ...(input.byId ? { prescriberId: input.byId } : {}), prescribedAt: input.now, status: 'toValidate', items: checkItems(input.items), note: input.note.trim(),
   };
 }
 

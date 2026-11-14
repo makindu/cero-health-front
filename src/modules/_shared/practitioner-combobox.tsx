@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type ComponentProps } from 'react';
 import { Input } from '@/components/forms/controls';
 import { useDoctors } from '../administration/use-doctors';
+import { PersonName } from '@/components/ui/avatar';
 
 const fold = (s: string): string => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
@@ -49,7 +50,7 @@ export function PractitionerCombobox({ defaultValue = '', onValueChange, id, ...
           {matches.map((s, i) => (
             <li key={s.id} role="option" aria-selected={i === active} className={`cursor-pointer px-3 py-2 ${i === active ? 'bg-primary-soft' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); choose(s.name); }} onMouseEnter={() => setActive(i)}>
-              <span className="font-medium">{s.name}</span><span className="ms-2 text-xs text-muted-foreground">{[s.specialty, s.registrationNumber].filter(Boolean).join(' · ')}</span>
+              <PersonName name={s.name} size="sm" sub={[s.specialty, s.registrationNumber].filter(Boolean).join(' · ') || undefined} />
             </li>
           ))}
         </ul>

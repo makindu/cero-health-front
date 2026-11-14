@@ -17,6 +17,7 @@ import type { LabFlag, LabOrder, LabResultValue } from './lab-rules';
 import type { LabOrderView } from './lab-service';
 import { LabStatusBadge } from './LabStatusBadge';
 import { useLabMutation } from './use-lab';
+import { Avatar } from '@/components/ui/avatar';
 
 type Action = 'exception' | 'collect' | 'cancel' | 'results' | 'amend' | null;
 const FLAGS: readonly LabFlag[] = ['unspecified', 'normal', 'abnormal'];
@@ -55,7 +56,7 @@ export function LabOrderDetail({ view, onClose }: { view: LabOrderView | undefin
   const when = (iso: string): string => f.dateTime(iso);
 
   return (
-    <Dialog open onClose={onClose} title={`${order.number} — ${order.patientName}`} description={t('detail.description')}>
+    <Dialog open onClose={onClose} title={`${order.number} — ${order.patientName}`} leading={<Avatar name={order.patientName} size="lg" />} description={t('detail.description')}>
       <div className="space-y-5">
         <DetailSection title={t('detail.summary')}>
           <DescriptionList items={[

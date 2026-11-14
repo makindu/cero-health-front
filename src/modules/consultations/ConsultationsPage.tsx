@@ -11,6 +11,7 @@ import { SERVICE_KEYS } from '../_shared/demo-people';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { consultationService, type Consultation, type ConsultationStatus } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 const STATUS: Record<ConsultationStatus, { tone: StatusTone; icon: typeof Lock }> = {
   draft: { tone: 'neutral', icon: FilePen },
@@ -34,8 +35,8 @@ export default function ConsultationsPage() {
 
   const columns: Column<Consultation>[] = [
     { id: 'date', header: t('columns.date'), cell: (c) => f.dateTime(c.date), sortable: true },
-    { id: 'patientName', header: t('columns.patient'), cell: (c) => <span className="font-medium">{c.patientName}</span>, sortable: true, primary: true },
-    { id: 'practitioner', header: t('columns.practitioner'), cell: (c) => c.practitioner },
+    { id: 'patientName', header: t('columns.patient'), cell: (c) => <PersonName name={c.patientName} />, sortable: true, primary: true },
+    { id: 'practitioner', header: t('columns.practitioner'), cell: (c) => <PersonName name={c.practitioner} size="sm" strong={false} /> },
     { id: 'service', header: t('columns.service'), cell: (c) => t(`services.${c.service}`) },
     { id: 'reason', header: t('columns.reason'), cell: (c) => t(`reason.${c.reason}`) },
     { id: 'status', header: t('columns.status'), cell: (c) => statusBadge(c.status) },
@@ -67,6 +68,7 @@ export default function ConsultationsPage() {
         ],
       }}
       detailTitle={(c) => `${c.patientName} · ${f.date(c.date)}`}
+      detailPerson={(c) => c.patientName}
       renderDetail={(c) => (
         <div className="space-y-5">
           <DetailSection title={t('detail.summary')}>

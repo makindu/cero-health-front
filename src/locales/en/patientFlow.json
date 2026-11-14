@@ -1,0 +1,83 @@
+{
+  "title": "Patient tracking",
+  "description": "Where each patient present today currently stands: last known position, with date and time.",
+  "note": "The position is derived from recorded operations (arrival, consultation, laboratory, pharmacy, cashier, hospitalization). It shows where the patient’s file stands in the pathway, not where the patient physically is. Local mode: only operations made on this device are visible.",
+  "empty": "No patient present today.",
+  "noMatch": "No matching patient.",
+  "search": "Search a patient",
+  "localOnly": "Patient tracking is only available in local mode for now.",
+  "inpatient": "Inpatient — {{ward}}",
+  "noHistory": "No step recorded for this patient.",
+  "current": "Last known position",
+  "history": "Position history",
+  "ago": "{{min}} min ago",
+  "filter": {
+    "label": "Filter by place",
+    "all": "All"
+  },
+  "columns": {
+    "patient": "Patient",
+    "position": "Current position",
+    "since": "Since",
+    "detail": "Reference",
+    "today": "Steps today"
+  },
+  "since": {
+    "now": "just now",
+    "hours": "{{h}} h {{m}}",
+    "minutes": "{{count}} min",
+    "days": "{{count}} d"
+  },
+  "place": {
+    "reception": "Reception",
+    "triage": "Triage",
+    "consultation": "Consultation",
+    "laboratory": "Laboratory",
+    "pharmacy": "Pharmacy",
+    "cashier": "Cashier",
+    "ward": "Hospitalization"
+  },
+  "step": {
+    "reception": {
+      "arrived": "Arrived at reception"
+    },
+    "triage": {
+      "waiting": "Waiting for triage",
+      "inTriage": "In triage",
+      "inCare": "In care",
+      "transferred": "Transferred",
+      "discharged": "Left triage"
+    },
+    "consultation": {
+      "draft": "Consultation opened",
+      "inProgress": "Consultation in progress",
+      "awaitingResults": "Consultation: awaiting results",
+      "toValidate": "Consultation to validate",
+      "signed": "Consultation signed",
+      "closed": "Consultation closed",
+      "prescribed": "Prescription written"
+    },
+    "laboratory": {
+      "requested": "Tests requested",
+      "collected": "Sample collected",
+      "inProgress": "Tests in progress",
+      "resultEntered": "Results entered",
+      "validated": "Results validated",
+      "cancelled": "Request cancelled"
+    },
+    "pharmacy": {
+      "rxValidated": "Prescription validated",
+      "prepared": "Dispensation prepared",
+      "dispensed": "Products handed over"
+    },
+    "cashier": {
+      "invoiced": "Invoice issued",
+      "paid": "Payment received"
+    },
+    "ward": {
+      "admitted": "Admitted",
+      "transferred": "Moved to another room",
+      "discharged": "Discharged from hospital"
+    }
+  }
+}

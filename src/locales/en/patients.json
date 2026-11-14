@@ -47,7 +47,8 @@
       "record": "Medical record (clinical)",
       "consultations": "Consultations",
       "prescriptions": "Prescriptions",
-      "hospitalizations": "Hospitalizations"
+      "hospitalizations": "Hospitalizations",
+      "position": "Position"
     },
     "section": {
       "civil": "Personal details",

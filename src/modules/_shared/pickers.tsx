@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Autocomplete } from '@/components/forms/autocomplete';
 import { usePatients } from '../finance/use-finance';
 import type { Patient } from '../patients/data';
+import { PersonName } from '@/components/ui/avatar';
 
 type InputProps = Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'defaultValue' | 'type'>;
 
@@ -11,10 +12,7 @@ const getKey = (p: Patient): string => p.id;
 const getLabel = (p: Patient): string => `${p.fullName} — ${p.fileNumber}`;
 const getSearch = (p: Patient): string => `${p.fullName} ${p.fileNumber} ${p.id} ${p.phone}`;
 const renderPatient = (p: Patient) => (
-  <>
-    <span className="font-medium">{p.fullName}</span>
-    <span className="ms-2 text-xs text-muted-foreground">{p.fileNumber}</span>
-  </>
+  <PersonName name={p.fullName} size="sm" sub={p.fileNumber} />
 );
 
 /** Patients actifs (ni inactifs ni fusionnés). */

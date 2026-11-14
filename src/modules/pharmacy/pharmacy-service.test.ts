@@ -3,6 +3,7 @@ import type { LocalContext } from '@/core/local/context';
 import { createMemoryDatabase } from '@/core/local/memory-database';
 import { runUnit } from '@/core/local/unit-of-work';
 import { createFinanceService, type FinanceDeps } from '../finance/finance-service';
+import { createNotificationService } from '../notifications/notification-service';
 import { createRxService } from '../prescriptions/rx-service';
 import type { RxItem } from '../prescriptions/rx-rules';
 import * as R from './pharmacy-rules';
@@ -11,8 +12,8 @@ import { createPharmacyService } from './pharmacy-service';
 const civil = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 function setup(denied: string[] = []) {
   const db = createMemoryDatabase();
-  const state = { now: new Date(2026, 10, 14, 10, 0, 0), facility: 'F1', denied: new Set(denied), n: 0 };
-  const ctx = (): LocalContext => ({ facilityId: state.facility, actor: { id: 'u1', name: 'Agent démo' } });
+  const state = { now: new Date(2026, 10, 14, 10, 0, 0), facility: 'F1', denied: new Set(denied), n: 0, actor: { id: 'u1', name: 'Agent démo' } };
+  const ctx = (): LocalContext => ({ facilityId: state.facility, actor: state.actor });
   const deps: FinanceDeps = {
     run: (fn) => runUnit(fn, { db: async () => db, context: ctx, now: () => state.now }),
     require: (p) => { if (state.denied.has(p)) throw new Error(`forbidden:${p}`); },
@@ -21,7 +22,7 @@ function setup(denied: string[] = []) {
     day: civil,
   };
   const finance = createFinanceService(deps);
-  return { ph: createPharmacyService(deps, finance), rx: createRxService(deps), finance, state };
+  return { ph: createPharmacyService(deps, finance), rx: createRxService(deps), finance, state, notif: createNotificationService({ run: deps.run }) };
 }
 const line = (over: Partial<RxItem> = {}): RxItem => ({ label: 'Antalgique (boîte) (démo)', dosage: '1', frequency: '3/j', duration: '', quantity: 10, instructions: '', ...over });
 async function validated(s: ReturnType<typeof setup>, items: RxItem[] = [line()], patientId = 'DEMO-P-007') {
@@ -50,6 +51,38 @@ describe('règles de stock', () => {
     // avec motif → enregistré sur la ligne
     const dev = await s.ph.prepare({ prescriptionId: r.id, lines: [{ rxLineIndex: 1, itemId: item, quantity: 2, reason: ' équivalent générique ' }] });
     expect(dev.dispensation.lines[0]!.deviation).toEqual({ kinds: ['substituted'], reason: 'équivalent générique' });
+  });
+
+  it('écart de la pharmacie : le prescripteur (et lui seul) est notifié, avec le motif ; pas d’écart → pas de notification', async () => {
+    const s = setup();
+    s.state.actor = { id: 'u-doc', name: 'Dr Démo' };
+    const r = await s.rx.create({ patientId: 'DEMO-P-007', items: [line({ quantity: 10 })], note: '' });
+    s.state.actor = { id: 'u-ph', name: 'Pharmacien démo' };
+    await s.rx.validate({ id: r.id });
+    const item = (await s.ph.stock()).items.find((i) => i.code === 'PHA-ANT')!.itemId;
+    await s.ph.prepare({ prescriptionId: r.id, lines: [{ rxLineIndex: 0, itemId: item, quantity: 10 }] }); // conforme
+    expect(await s.notif.list()).toHaveLength(0);
+    await s.ph.prepare({ prescriptionId: r.id, lines: [{ rxLineIndex: 0, itemId: item, quantity: 0.5 }] }).catch(() => undefined); // dépasse le reste : refus, rien notifié
+    expect(await s.notif.list()).toHaveLength(0);
+    const r2 = await s.rx.create({ patientId: 'DEMO-P-007', items: [line({ quantity: 10 })], note: '' }); // créée par le pharmacien ici
+    await s.rx.validate({ id: r2.id });
+    s.state.actor = { id: 'u-doc', name: 'Dr Démo' };
+    const r3 = await s.rx.create({ patientId: 'DEMO-P-007', items: [line({ quantity: 10 })], note: '' });
+    s.state.actor = { id: 'u-ph', name: 'Pharmacien démo' };
+    await s.rx.validate({ id: r3.id });
+    await s.ph.prepare({ prescriptionId: r3.id, lines: [{ rxLineIndex: 0, itemId: item, quantity: 4, reason: 'rupture partielle' }] });
+    expect(await s.notif.list()).toHaveLength(0); // le pharmacien n'est pas le destinataire
+    s.state.actor = { id: 'u-doc', name: 'Dr Démo' };
+    const mine = await s.notif.list();
+    expect(mine).toHaveLength(1);
+    expect(mine[0]!.payload).toMatchObject({ rxId: r3.id, by: 'Pharmacien démo', lines: [{ quantity: 4, kinds: ['reduced'], reason: 'rupture partielle' }] });
+    expect(mine[0]!.readAt).toBeUndefined();
+    s.state.actor = { id: 'u-other', name: 'Autre' };
+    await s.notif.markRead({ id: mine[0]!.id }); // pas la sienne : sans effet
+    s.state.actor = { id: 'u-doc', name: 'Dr Démo' };
+    expect((await s.notif.list())[0]!.readAt).toBeUndefined();
+    await s.notif.markAllRead();
+    expect((await s.notif.list())[0]!.readAt).toBeDefined();
   });
 
   it('accepte des quantités décimales (0,5 ; 2,5) sans dérive de calcul', () => {

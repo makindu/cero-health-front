@@ -18,6 +18,7 @@ import { LocalOnly } from '../finance/LocalOnly';
 import { NewInvoiceDialog } from '../finance/NewInvoiceDialog';
 import type { InvoiceView } from '../finance/finance-service';
 import { FINANCE_AVAILABLE, useFinanceSnapshot, useMoney } from '../finance/use-finance';
+import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
 
@@ -53,7 +54,7 @@ function BillingScreen() {
 
   const columns: Column<InvoiceView>[] = [
     { id: 'number', header: t('columns.number'), cell: (v) => <code className="text-xs">{v.invoice.number}</code> },
-    { id: 'patient', header: t('columns.patient'), cell: (v) => v.invoice.patientName, primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (v) => <PersonName name={v.invoice.patientName} strong={false} />, primary: true },
     { id: 'date', header: t('columns.date'), cell: (v) => f.date(v.invoice.createdAt) },
     { id: 'total', header: t('detail.total'), cell: (v) => money(v.invoice.totals.billable, v.invoice.currency), className: 'text-end tabular-nums' },
     { id: 'patientBalance', header: t('columns.patientBalance'), cell: (v) => money(v.balances.patientBalance, v.invoice.currency), className: 'text-end tabular-nums' },

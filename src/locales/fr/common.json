@@ -36,7 +36,8 @@
     "reports": "Rapports",
     "administration": "Administration",
     "audit": "Audit",
-    "insurance": "Assurances et tarifs"
+    "insurance": "Assurances et tarifs",
+    "patientFlowBoard": "Suivi des patients"
   },
   "actions": {
     "save": "Enregistrer",
@@ -81,7 +82,18 @@
   "notifications": {
     "title": "Notifications",
     "empty": "Aucune notification",
-    "emptyHint": "Les alertes de rendez-vous, de résultats et de stock apparaîtront ici."
+    "emptyHint": "Les alertes de rendez-vous, de résultats et de stock apparaîtront ici.",
+    "titleUnread": "Notifications ({{count}} non lues)",
+    "unread": "{{count}} non lue(s)",
+    "markAll": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "openRx": "Voir les prescriptions",
+    "rxDeviation": {
+      "title": "La pharmacie s’est écartée de l’ordonnance {{number}}",
+      "reduced": "Quantité inférieure à la prescription",
+      "substituted": "Produit différent de la prescription",
+      "metaShort": "par {{by}} · {{at}}"
+    }
   },
   "user": {
     "menu": "Menu utilisateur",

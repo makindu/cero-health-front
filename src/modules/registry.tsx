@@ -6,6 +6,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
  */
 export const MODULE_PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
   dashboard: lazy(() => import('@/modules/dashboard/DashboardPage')),
+  patientFlowBoard: lazy(() => import('@/modules/patientFlow/PatientFlowPage')),
   patients: lazy(() => import('@/modules/patients/PatientsPage')),
   appointments: lazy(() => import('@/modules/appointments/AppointmentsPage')),
   medicalRecords: lazy(() => import('@/modules/medicalRecords/MedicalRecordsPage')),

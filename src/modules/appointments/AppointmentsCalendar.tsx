@@ -14,6 +14,7 @@ import { useResourceList } from '../_shared/use-resource';
 import { AppointmentDetail } from './AppointmentDetail';
 import { APPOINTMENT_STATUSES } from './columns';
 import { appointmentService, type Appointment, type AppointmentStatus } from './data';
+import { Avatar } from '@/components/ui/avatar';
 import {
   addDays,
   addMonths,
@@ -56,8 +57,9 @@ function Chip({ appointment, onSelect, compact = false }: { appointment: Appoint
       onClick={() => onSelect(appointment)}
       className={cn('w-full overflow-hidden rounded border-s-4 px-1.5 py-0.5 text-start text-xs leading-tight', CHIP[appointment.status])}
     >
-      <span className="block truncate font-medium">
-        {f.time(appointment.startsAt)} · {appointment.patientName}
+      <span className="flex items-center gap-1 truncate font-medium">
+        <Avatar name={appointment.patientName} size="xs" />
+        <span className="truncate">{f.time(appointment.startsAt)} · {appointment.patientName}</span>
       </span>
       {!compact && <span className="block truncate opacity-80">{t(`status.${appointment.status}`)}</span>}
     </button>
@@ -307,6 +309,7 @@ export function AppointmentsCalendar() {
         open={selected !== null}
         onClose={() => setSelected(null)}
         variant="detail"
+        leading={selected ? <Avatar name={selected.patientName} size="lg" /> : undefined}
         title={selected ? `${selected.patientName} · ${f.dateTime(selected.startsAt)}` : undefined}
         ariaLabel={t('title')}
       >

@@ -47,7 +47,8 @@
       "record": "Dossier médical (clinique)",
       "consultations": "Consultations",
       "prescriptions": "Prescriptions",
-      "hospitalizations": "Hospitalisations"
+      "hospitalizations": "Hospitalisations",
+      "position": "Position"
     },
     "section": {
       "civil": "État civil",

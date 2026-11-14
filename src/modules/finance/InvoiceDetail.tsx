@@ -17,6 +17,7 @@ import { InvoiceStatusBadge } from './InvoiceStatusBadge';
 import { invoiceHtml, printDocument, receiptHtml, type PrintLabels } from './print';
 import { reasonText } from './reasons';
 import { useFinanceMutation, useMoney } from './use-finance';
+import { Avatar } from '@/components/ui/avatar';
 
 const METHODS: readonly PaymentMethod[] = ['cash', 'mobileMoney', 'card', 'transfer'];
 type Action =
@@ -47,7 +48,7 @@ export function InvoiceDetail({ view, orgNames, onClose }: { view: InvoiceView |
 
   return (
     <>
-      <Dialog open onClose={onClose} variant="detail" title={`${t('detail.title')} ${invoice.number}`} description={invoice.patientName}
+      <Dialog open onClose={onClose} variant="detail" title={`${t('detail.title')} ${invoice.number}`} description={invoice.patientName} leading={<Avatar name={invoice.patientName} size="lg" />}
         footer={<Button variant="outline" leftIcon={<Printer className="size-4" />} onClick={printInvoice}>{t('actions.printInvoice')}</Button>}>
         <div className="space-y-6">
           <DetailSection title={t('detail.summary')}>

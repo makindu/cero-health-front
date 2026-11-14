@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FlaskConical,
   FolderOpen,
+  Route,
   HeartPulse,
   LayoutDashboard,
   Pill,
@@ -58,6 +59,15 @@ export const NAV_GROUPS: NavGroup[] = [
     id: 'patientFlow',
     labelKey: 'nav.groups.patientFlow',
     items: [
+      {
+        id: 'patientFlowBoard',
+        path: '/patient-flow',
+        labelKey: 'nav.patientFlowBoard',
+        icon: Route,
+        // Noms, lieux et heures seulement (aucune donnée clinique) : visible de tous les rôles qui voient le tableau de bord.
+        permission: PERMISSIONS.dashboard.view,
+        phase: 4,
+      },
       {
         id: 'patients',
         path: '/patients',

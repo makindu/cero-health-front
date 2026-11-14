@@ -28,6 +28,7 @@ import { buildVitals, type VitalsRecord } from './local-rules';
 import { VitalsHistory, VITALS_COLLECTION } from './VitalsHistory';
 import { CommandButton } from '../_shared/command-button';
 import { PRIORITIES, triageService, type TriageEntry, type TriagePriority, type TriageStatus } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 /** Étapes proposées depuis chaque statut (le service local refuse de toute façon une étape invalide). */
 const TRIAGE_STEPS: Record<TriageStatus, readonly ('start-triage' | 'send-to-care' | 'transfer' | 'discharge')[]> = {
@@ -111,7 +112,7 @@ export default function NursingPage() {
         </StatusBadge>
       ),
     },
-    { id: 'patientName', header: t('columns.patient'), cell: (e) => <span className="font-medium">{e.patientName}</span>, sortable: true, primary: true },
+    { id: 'patientName', header: t('columns.patient'), cell: (e) => <PersonName name={e.patientName} />, sortable: true, primary: true },
     { id: 'category', header: t('columns.category'), cell: (e) => t(`category.${e.category}`) },
     { id: 'arrivedAt', header: t('columns.arrival'), cell: (e) => f.time(e.arrivedAt), sortable: true },
     { id: 'wait', header: t('columns.wait'), cell: (e) => t('minutes', { count: minutesSince(e.arrivedAt) }) },
@@ -145,6 +146,7 @@ export default function NursingPage() {
           ],
         }}
         detailTitle={(e) => e.patientName}
+        detailPerson={(e) => e.patientName}
         renderDetail={(e) => (
           <div className="space-y-5">
             <DetailSection title={t('detail.summary')}>

@@ -13,6 +13,7 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { ageFromBirthDate } from '@/utils/dates';
+import { PatientPosition } from '../patientFlow/PatientPosition';
 import { PatientAppointmentsTable } from '../appointments/AppointmentsTable';
 import { PatientFinance } from '../finance/PatientFinance';
 import { PatientConsultations } from '../consultations/PatientConsultations';
@@ -26,6 +27,7 @@ import { PatientEditDialog } from './PatientFormDialogs';
 import { PatientSheetExport } from './PatientSheetExport';
 import { patientService } from './data';
 import { usePatientDuplicates } from './use-duplicates';
+import { Avatar } from '@/components/ui/avatar';
 
 /** Onglet d'historique réservé à une permission : sans elle, un message explique pourquoi rien n'est affiché. */
 function GatedHistory({ permission, children }: { permission: string; children: ReactNode }) {
@@ -73,6 +75,7 @@ export default function PatientDetailPage() {
     <>
       <PageHeader
         title={patient.fullName}
+        leading={<Avatar name={patient.fullName} size="lg" />}
         description={`${patient.id} · ${t(`sex.${patient.sex}`)}${age === null ? '' : ` · ${t('age.years', { count: age })}`}`}
         breadcrumbs={[{ label: t('title'), to: '/patients' }, { label: patient.fullName }]}
         actions={
@@ -144,6 +147,11 @@ export default function PatientDetailPage() {
                 </div>
               </Card>
             ),
+          },
+          {
+            id: 'position',
+            label: t('detail.tabs.position'),
+            content: <PatientPosition patientId={patient.id} />,
           },
           {
             id: 'appointments',

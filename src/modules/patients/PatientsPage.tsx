@@ -15,6 +15,7 @@ import { ResourcePage } from '../_shared/ResourcePage';
 import { DuplicatesDialog } from './DuplicatesDialog';
 import { PatientCreateDialog } from './PatientFormDialogs';
 import { patientService, type Patient } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 /**
  * Lisibilité selon la largeur : le tableau garde l'essentiel (nom, âge, téléphone, statut, dernière visite) dès
@@ -33,7 +34,7 @@ export default function PatientsPage() {
   const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
 
   const columns: Column<Patient>[] = [
-    { id: 'fullName', header: t('columns.name'), cell: (p) => <span className="font-medium">{p.fullName}</span>, sortable: true, primary: true },
+    { id: 'fullName', header: t('columns.name'), cell: (p) => <PersonName name={p.fullName} />, sortable: true, primary: true },
     { id: 'fileNumber', header: t('columns.fileNumber'), cell: (p) => <code className="text-xs">{p.fileNumber}</code>, className: HIDE_BELOW_LG },
     { id: 'sex', header: t('columns.sex'), cell: (p) => t(`sex.${p.sex}`), className: HIDE_BELOW_XL },
     {

@@ -18,6 +18,7 @@ import { BedBoard } from './BedBoard';
 import { currentStay, type Admission, type AdmissionStatus } from './hospital-rules';
 import { ADMISSION_STATUSES, AdmissionStatusBadge } from './StatusBadges';
 import { HOSPITAL_AVAILABLE, useHospitalBoard } from './use-hospital';
+import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
 
@@ -43,7 +44,7 @@ function HospitalizationScreen() {
   }, [board.data, search, status]);
   const columns: Column<Admission>[] = [
     { id: 'number', header: t('columns.number'), cell: (a) => a.number },
-    { id: 'patient', header: t('columns.patient'), cell: (a) => <span className="font-medium">{a.patientName}</span>, primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (a) => <PersonName name={a.patientName} />, primary: true },
     { id: 'ward', header: t('columns.ward'), cell: (a) => t(`services.${a.ward}`) },
     { id: 'bed', header: t('columns.bed'), cell: (a) => { const s = currentStay(a); return s ? bedLabel(s.bedId) : '—'; } },
     { id: 'admittedAt', header: t('columns.admittedAt'), cell: (a) => f.date(a.admittedAt) },

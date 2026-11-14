@@ -28,6 +28,7 @@ import { productService, stockLevel } from '../inventory/data';
 import { triageService } from '../nursing/data';
 import { useResourceList } from '../_shared/use-resource';
 import { dashboardService, type DashboardSummary } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 interface Tile {
   key: keyof DashboardSummary | 'beds';
@@ -67,7 +68,7 @@ function UpcomingAppointments() {
       <ul className="divide-y divide-border text-sm">
         {rows.map((a) => (
           <li key={a.id} className="flex items-center justify-between gap-3 py-2">
-            <span className="font-medium">{a.patientName}</span>
+            <PersonName name={a.patientName} size="sm" />
             <span className="text-muted-foreground">{f.time(a.startsAt)}</span>
           </li>
         ))}
@@ -88,7 +89,7 @@ function WaitingQueue() {
       <ul className="divide-y divide-border text-sm">
         {rows.map((e) => (
           <li key={e.id} className="flex items-center justify-between gap-3 py-2">
-            <span className="font-medium">{e.patientName}</span>
+            <PersonName name={e.patientName} size="sm" />
             <span className="text-muted-foreground">{t('lists.minutes', { count: minutesSince(e.arrivedAt) })}</span>
           </li>
         ))}

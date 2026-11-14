@@ -19,6 +19,8 @@ import { AppointmentStatusBadge } from './columns';
 import { appointmentService, type Appointment } from './data';
 import { localDayKey } from './scheduling';
 import { WalkInDialog } from './WalkInDialog';
+import { PersonName } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 
 const P = PERMISSIONS.appointments;
 
@@ -71,7 +73,7 @@ export function ReceptionPanel() {
   );
   const base: Column<Appointment>[] = [
     { id: 'time', header: t('reception.scheduledAt'), cell: (a) => f.time(a.startsAt) },
-    { id: 'patient', header: t('columns.patient'), cell: (a) => <span className="font-medium">{a.patientName}</span>, primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (a) => <PersonName name={a.patientName} />, primary: true },
     { id: 'practitioner', header: t('columns.practitioner'), cell: (a) => a.practitioner },
   ];
   const sections: { key: string; title: string; rows: Appointment[]; columns: Column<Appointment>[] }[] = [
@@ -169,6 +171,7 @@ export function ReceptionPanel() {
         open={selected !== null}
         onClose={() => setSelected(null)}
         variant="detail"
+        leading={selected ? <Avatar name={selected.patientName} size="lg" /> : undefined}
         title={selected ? `${selected.patientName} · ${f.dateTime(selected.startsAt)}` : undefined}
         ariaLabel={t('title')}
       >

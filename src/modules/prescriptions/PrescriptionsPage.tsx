@@ -16,6 +16,7 @@ import { NewRxDialog } from './NewRxDialog';
 import { RxDetail } from './RxDetail';
 import { RX_STATUSES, RxStatusBadge } from './RxStatusBadge';
 import { RX_AVAILABLE, useRxList } from './use-rx';
+import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
 
@@ -41,8 +42,8 @@ function PrescriptionsScreen() {
   const columns: Column<Rx>[] = [
     { id: 'number', header: t('columns.number'), cell: (r) => r.number },
     { id: 'date', header: t('columns.date'), cell: (r) => f.dateTime(r.prescribedAt) },
-    { id: 'patientName', header: t('columns.patient'), cell: (r) => <span className="font-medium">{r.patientName}</span>, primary: true },
-    { id: 'practitioner', header: t('columns.practitioner'), cell: (r) => r.prescriber },
+    { id: 'patientName', header: t('columns.patient'), cell: (r) => <PersonName name={r.patientName} />, primary: true },
+    { id: 'practitioner', header: t('columns.practitioner'), cell: (r) => <PersonName name={r.prescriber} size="sm" strong={false} /> },
     { id: 'items', header: t('columns.items'), cell: (r) => t('itemsCount', { count: r.items.length }) },
     { id: 'status', header: t('columns.status'), cell: (r) => <RxStatusBadge status={r.status} /> },
     { id: 'open', header: '', cell: (r) => <Button size="sm" variant="outline" onClick={() => setOpenId(r.id)}>{t('actions.open')}</Button> },

@@ -33,7 +33,7 @@ export function createRxService(deps: FinanceDeps) {
       const existing = await u.list(rxRef);
       const rx = wrap(() => R.buildRx({
         id: deps.newId('rx'), number: R.nextRxNumber(existing, Number(deps.day(u.now).slice(0, 4))), patientId: input.patientId, patientName: patient!.fullName,
-        consultationId: input.consultationId?.trim() || undefined, items: input.items, note: input.note, by: u.ctx.actor.name, now: u.now.toISOString(),
+        consultationId: input.consultationId?.trim() || undefined, items: input.items, note: input.note, by: u.ctx.actor.name, byId: u.ctx.actor.id, now: u.now.toISOString(),
       }));
       await u.insert(rxRef, rx, { action: 'rx:create' });
       return rx;

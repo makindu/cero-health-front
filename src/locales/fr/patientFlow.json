@@ -1,0 +1,83 @@
+{
+  "title": "Suivi des patients",
+  "description": "Où en est chaque patient présent aujourd’hui : dernière position connue, avec la date et l’heure.",
+  "note": "La position est déduite des opérations enregistrées (arrivée, consultation, laboratoire, pharmacie, caisse, hospitalisation). Elle indique où en est le dossier du patient dans le circuit, pas où il se trouve physiquement. Mode local : seules les opérations faites sur cet appareil sont visibles.",
+  "empty": "Aucun patient présent aujourd’hui.",
+  "noMatch": "Aucun patient ne correspond.",
+  "search": "Rechercher un patient",
+  "localOnly": "Le suivi des patients est disponible en mode local uniquement pour l’instant.",
+  "inpatient": "Hospitalisé — {{ward}}",
+  "noHistory": "Aucune étape enregistrée pour ce patient.",
+  "current": "Dernière position connue",
+  "history": "Historique des positions",
+  "ago": "il y a {{min}} min",
+  "filter": {
+    "label": "Filtrer par lieu",
+    "all": "Tous"
+  },
+  "columns": {
+    "patient": "Patient",
+    "position": "Position actuelle",
+    "since": "Depuis",
+    "detail": "Référence",
+    "today": "Étapes du jour"
+  },
+  "since": {
+    "now": "à l’instant",
+    "hours": "{{h}} h {{m}}",
+    "minutes": "{{count}} min",
+    "days": "{{count}} j"
+  },
+  "place": {
+    "reception": "Accueil",
+    "triage": "Triage",
+    "consultation": "Consultation",
+    "laboratory": "Laboratoire",
+    "pharmacy": "Pharmacie",
+    "cashier": "Caisse",
+    "ward": "Hospitalisation"
+  },
+  "step": {
+    "reception": {
+      "arrived": "Arrivé à l’accueil"
+    },
+    "triage": {
+      "waiting": "En attente de triage",
+      "inTriage": "En cours de triage",
+      "inCare": "Pris en charge",
+      "transferred": "Transféré",
+      "discharged": "Sorti du triage"
+    },
+    "consultation": {
+      "draft": "Consultation ouverte",
+      "inProgress": "Consultation en cours",
+      "awaitingResults": "Consultation : en attente de résultats",
+      "toValidate": "Consultation à valider",
+      "signed": "Consultation signée",
+      "closed": "Consultation clôturée",
+      "prescribed": "Ordonnance rédigée"
+    },
+    "laboratory": {
+      "requested": "Analyses demandées",
+      "collected": "Prélèvement fait",
+      "inProgress": "Analyses en cours",
+      "resultEntered": "Résultats saisis",
+      "validated": "Résultats validés",
+      "cancelled": "Demande annulée"
+    },
+    "pharmacy": {
+      "rxValidated": "Ordonnance validée",
+      "prepared": "Dispensation préparée",
+      "dispensed": "Produits remis"
+    },
+    "cashier": {
+      "invoiced": "Facture émise",
+      "paid": "Paiement encaissé"
+    },
+    "ward": {
+      "admitted": "Admis",
+      "transferred": "Changé de chambre",
+      "discharged": "Sorti de l’hôpital"
+    }
+  }
+}

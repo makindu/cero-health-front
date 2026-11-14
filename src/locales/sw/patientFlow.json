@@ -1,0 +1,83 @@
+{
+  "title": "Ufuatiliaji wa wagonjwa",
+  "description": "Kila mgonjwa aliyepo leo yuko wapi: mahali pa mwisho panapojulikana, pamoja na tarehe na saa.",
+  "note": "Mahali panatokana na shughuli zilizorekodiwa (kuwasili, mashauriano, maabara, famasia, keshia, kulazwa). Linaonyesha faili ya mgonjwa iko hatua gani, si mahali alipo kimwili. Hali ya ndani: ni shughuli zilizofanywa kwenye kifaa hiki tu zinaonekana.",
+  "empty": "Hakuna mgonjwa aliyepo leo.",
+  "noMatch": "Hakuna mgonjwa anayelingana.",
+  "search": "Tafuta mgonjwa",
+  "localOnly": "Ufuatiliaji wa wagonjwa unapatikana kwa hali ya ndani tu kwa sasa.",
+  "inpatient": "Amelazwa — {{ward}}",
+  "noHistory": "Hakuna hatua iliyorekodiwa kwa mgonjwa huyu.",
+  "current": "Mahali pa mwisho panapojulikana",
+  "history": "Historia ya mahali",
+  "ago": "dakika {{min}} zilizopita",
+  "filter": {
+    "label": "Chuja kwa mahali",
+    "all": "Wote"
+  },
+  "columns": {
+    "patient": "Mgonjwa",
+    "position": "Mahali sasa",
+    "since": "Tangu",
+    "detail": "Rejea",
+    "today": "Hatua za leo"
+  },
+  "since": {
+    "now": "sasa hivi",
+    "hours": "saa {{h}} dakika {{m}}",
+    "minutes": "dakika {{count}}",
+    "days": "siku {{count}}"
+  },
+  "place": {
+    "reception": "Mapokezi",
+    "triage": "Uchunguzi wa awali",
+    "consultation": "Mashauriano",
+    "laboratory": "Maabara",
+    "pharmacy": "Famasia",
+    "cashier": "Keshia",
+    "ward": "Kulazwa"
+  },
+  "step": {
+    "reception": {
+      "arrived": "Amewasili mapokezi"
+    },
+    "triage": {
+      "waiting": "Anasubiri uchunguzi wa awali",
+      "inTriage": "Katika uchunguzi wa awali",
+      "inCare": "Anahudumiwa",
+      "transferred": "Amehamishwa",
+      "discharged": "Ametoka uchunguzi wa awali"
+    },
+    "consultation": {
+      "draft": "Mashauriano yamefunguliwa",
+      "inProgress": "Mashauriano yanaendelea",
+      "awaitingResults": "Mashauriano: yanasubiri matokeo",
+      "toValidate": "Mashauriano yanasubiri kuthibitishwa",
+      "signed": "Mashauriano yametiwa saini",
+      "closed": "Mashauriano yamefungwa",
+      "prescribed": "Agizo limeandikwa"
+    },
+    "laboratory": {
+      "requested": "Vipimo vimeombwa",
+      "collected": "Sampuli imechukuliwa",
+      "inProgress": "Vipimo vinaendelea",
+      "resultEntered": "Matokeo yameingizwa",
+      "validated": "Matokeo yamethibitishwa",
+      "cancelled": "Ombi limefutwa"
+    },
+    "pharmacy": {
+      "rxValidated": "Agizo limethibitishwa",
+      "prepared": "Utoaji umeandaliwa",
+      "dispensed": "Bidhaa zimekabidhiwa"
+    },
+    "cashier": {
+      "invoiced": "Ankara imetolewa",
+      "paid": "Malipo yamepokelewa"
+    },
+    "ward": {
+      "admitted": "Amelazwa",
+      "transferred": "Amehamishiwa chumba kingine",
+      "discharged": "Ameruhusiwa kutoka hospitali"
+    }
+  }
+}

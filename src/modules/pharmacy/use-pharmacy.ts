@@ -26,7 +26,7 @@ export function usePharmacyMutation<I, R>(run: (input: I) => Promise<R>, options
   return useMutation({
     mutationFn: run,
     onSuccess: (result) => {
-      for (const scope of ['pharmacy', 'prescriptions', 'finance']) void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, scope) });
+      for (const scope of ['pharmacy', 'prescriptions', 'finance', 'notifications']) void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, scope) });
       toast({ tone: 'success', title: options.successTitle });
       options.onDone?.(result);
     },

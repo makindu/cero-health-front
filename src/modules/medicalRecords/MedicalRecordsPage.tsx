@@ -10,6 +10,7 @@ import { SERVICE_KEYS } from '../_shared/demo-people';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { recordService, type Completeness, type MedicalRecord, type RecordStatus } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 const STATUS: Record<RecordStatus, { tone: StatusTone; icon: typeof Ban }> = {
   active: { tone: 'success', icon: CircleCheck },
@@ -29,7 +30,7 @@ export default function MedicalRecordsPage() {
   const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
 
   const columns: Column<MedicalRecord>[] = [
-    { id: 'patientName', header: t('columns.patient'), cell: (r) => <span className="font-medium">{r.patientName}</span>, sortable: true, primary: true },
+    { id: 'patientName', header: t('columns.patient'), cell: (r) => <PersonName name={r.patientName} />, sortable: true, primary: true },
     { id: 'id', header: t('columns.number'), cell: (r) => <code className="text-xs">{r.id}</code> },
     { id: 'service', header: t('columns.service'), cell: (r) => t(`services.${r.service}`) },
     { id: 'lastUpdate', header: t('columns.lastUpdate'), cell: (r) => f.date(r.lastUpdate), sortable: true },
@@ -69,6 +70,7 @@ export default function MedicalRecordsPage() {
         { id: 'service', label: t('filters.service'), options: serviceOptions },
       ]}
       detailTitle={(r) => r.patientName}
+      detailPerson={(r) => r.patientName}
       renderDetail={(r) => (
         <div className="space-y-5">
           <p role="note" className="flex items-start gap-2 rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink">

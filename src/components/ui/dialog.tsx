@@ -11,6 +11,8 @@ interface DialogProps {
   onClose: () => void;
   /** Titre visible (fenêtre centrée). Sans titre visible, fournir `ariaLabel`. */
   title?: string;
+  /** Élément placé avant le titre (ex. avatar de la personne concernée). */
+  leading?: ReactNode;
   ariaLabel?: string;
   description?: string;
   children?: ReactNode;
@@ -37,6 +39,7 @@ export function Dialog({
   open,
   onClose,
   title,
+  leading,
   ariaLabel,
   description,
   children,
@@ -88,17 +91,20 @@ export function Dialog({
       <div className={cn('flex max-h-[inherit] flex-col', variant !== 'center' && 'h-full')}>
         {variant !== 'drawer' && (title || showClose) && (
           <header className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
-            <div className="min-w-0">
-              {title && (
-                <h2 id={titleId} className="text-lg font-semibold">
-                  {title}
-                </h2>
-              )}
-              {description && (
-                <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">
-                  {description}
-                </p>
-              )}
+            <div className="flex min-w-0 items-center gap-3">
+              {leading}
+              <div className="min-w-0">
+                {title && (
+                  <h2 id={titleId} className="text-lg font-semibold">
+                    {title}
+                  </h2>
+                )}
+                {description && (
+                  <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">
+                    {description}
+                  </p>
+                )}
+              </div>
             </div>
             {showClose && (
               <Button

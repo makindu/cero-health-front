@@ -25,6 +25,7 @@ import { buildReportHtml, printHtml } from './print';
 import { AllergyAlert, AnamnesisSection, GeneralSection, HistorySection, newCtx } from './sections-a';
 import { AssessmentSection, ExamSection, PlanSection } from './sections-b';
 import { sanitizeDoc } from './richtext/doc';
+import { Avatar } from '@/components/ui/avatar';
 
 interface ClinicalRecord {
   id: string;
@@ -260,6 +261,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
     <>
       <PageHeader
         title={consultation.patientName}
+        leading={<Avatar name={consultation.patientName} size="lg" />}
         description={`${consultation.id} · ${t(`services.${consultation.service}`)} · ${f.dateTime(consultation.date)}`}
         breadcrumbs={[{ label: t('title'), to: '/consultations' }, { label: consultation.patientName }]}
         actions={

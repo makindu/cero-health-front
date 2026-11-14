@@ -4,6 +4,7 @@ import type { Column } from '@/components/tables/data-table';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import type { Appointment, AppointmentStatus } from './data';
+import { PersonName } from '@/components/ui/avatar';
 
 const STATUS_STYLE: Record<AppointmentStatus, { tone: StatusTone; icon: typeof Ban }> = {
   scheduled: { tone: 'neutral', icon: CalendarClock },
@@ -42,10 +43,10 @@ export function useAppointmentColumns(options: { withPatient?: boolean } = {}): 
       primary: !withPatient,
     },
     ...(withPatient
-      ? [{ id: 'patientName', header: t('columns.patient'), cell: (a: Appointment) => a.patientName, sortable: true, primary: true }]
+      ? [{ id: 'patientName', header: t('columns.patient'), cell: (a: Appointment) => <PersonName name={a.patientName} strong={false} />, sortable: true, primary: true }]
       : []),
     { id: 'service', header: t('columns.service'), cell: (a) => t(`services.${a.service}`) },
-    { id: 'practitioner', header: t('columns.practitioner'), cell: (a) => a.practitioner },
+    { id: 'practitioner', header: t('columns.practitioner'), cell: (a) => <PersonName name={a.practitioner} size="sm" strong={false} /> },
     { id: 'reason', header: t('columns.reason'), cell: (a) => t(`reason.${a.reason}`) },
     { id: 'status', header: t('columns.status'), cell: (a) => <AppointmentStatusBadge status={a.status} /> },
   ];

@@ -16,6 +16,7 @@ import { PrepareDialog } from './PrepareDialog';
 import { DispensationStatusBadge } from './StatusBadges';
 import { StockTab } from './StockTab';
 import { PHARMACY_AVAILABLE, useDispensations, usePharmacyQueue, usePharmacyStock } from './use-pharmacy';
+import { PersonName } from '@/components/ui/avatar';
 
 export default function PharmacyPage() {
   const { t } = useTranslation('pharmacy');
@@ -35,14 +36,14 @@ function PharmacyScreen() {
 
   const queueColumns: Column<QueueRow>[] = [
     { id: 'number', header: t('columns.prescription'), cell: (r) => r.prescription.number },
-    { id: 'patient', header: t('columns.patient'), cell: (r) => <span className="font-medium">{r.prescription.patientName}</span>, primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (r) => <PersonName name={r.prescription.patientName} />, primary: true },
     { id: 'items', header: t('columns.items'), cell: (r) => r.prescription.items.map((i, k) => `${i.label} (${r.remaining[k]}/${i.quantity})`).join(', ') },
     { id: 'date', header: t('columns.date'), cell: (r) => f.dateTime(r.prescription.prescribedAt) },
     { id: 'open', header: '', cell: (r) => <Can permission={P.pharmacy.dispense}><Button size="sm" onClick={() => setPreparing(r.prescription.id)}>{t('queue.prepare')}</Button></Can> },
   ];
   const dispColumns: Column<DispensationView>[] = [
     { id: 'number', header: t('columns.number'), cell: (v) => v.dispensation.number },
-    { id: 'patient', header: t('columns.patient'), cell: (v) => <span className="font-medium">{v.dispensation.patientName}</span>, primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (v) => <PersonName name={v.dispensation.patientName} />, primary: true },
     { id: 'rx', header: t('columns.prescription'), cell: (v) => v.dispensation.rxNumber },
     { id: 'payment', header: t('columns.payment'), cell: (v) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`)}</StatusBadge> },
     { id: 'status', header: t('columns.status'), cell: (v) => <DispensationStatusBadge status={v.dispensation.status} /> },

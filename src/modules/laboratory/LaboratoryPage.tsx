@@ -17,6 +17,7 @@ import { LabOrderDetail } from './LabOrderDetail';
 import { LAB_STATUSES, LabStatusBadge } from './LabStatusBadge';
 import { NewLabOrderDialog } from './NewLabOrderDialog';
 import { LAB_AVAILABLE, useLabOrders } from './use-lab';
+import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
 
@@ -44,7 +45,7 @@ function LaboratoryScreen() {
   const columns: Column<LabOrderView>[] = [
     { id: 'number', header: t('columns.number'), cell: (v) => v.order.number },
     { id: 'requestedAt', header: t('columns.requestedAt'), cell: (v) => f.dateTime(v.order.requestedAt) },
-    { id: 'patientName', header: t('columns.patient'), cell: (v) => <span className="font-medium">{v.order.patientName}</span>, primary: true },
+    { id: 'patientName', header: t('columns.patient'), cell: (v) => <PersonName name={v.order.patientName} />, primary: true },
     { id: 'tests', header: t('columns.tests'), cell: (v) => v.order.tests.map((x) => x.label).join(', ') },
     { id: 'priority', header: t('columns.priority'), cell: (v) => <StatusBadge tone={v.order.priority === 'urgent' ? 'danger' : 'neutral'}>{t(`priority.${v.order.priority}`)}</StatusBadge> },
     { id: 'payment', header: t('columns.payment'), cell: (v) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`)}</StatusBadge> },

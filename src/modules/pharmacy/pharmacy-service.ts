@@ -8,6 +8,8 @@ import { dispensationsRef, lotsRef, movementsRef } from './collections';
 import * as R from './pharmacy-rules';
 import { PharmacyError, type Dispensation, type StockLot, type StockMovement } from './pharmacy-rules';
 import { round2 } from '@/utils/numbers';
+import { notificationsRef } from '../notifications/collections';
+import { buildRxDeviationNotification } from '../notifications/notification-rules';
 
 function wrap<T>(fn: () => T): T {
   try {
@@ -112,6 +114,17 @@ export function createPharmacyService(deps: FinanceDeps, finance: FinanceService
         status: 'prepared', lines, invoiceId: invoice.invoice.id, preparedBy: u.ctx.actor.name, preparedAt: u.now.toISOString(),
       };
       await u.insert(dispensationsRef, d, { action: 'dispensation:prepare' });
+      // Le prescripteur est le premier responsable de son ordonnance : tout écart de la pharmacie lui est notifié (même transaction).
+      const deviating = d.lines.filter((l) => l.deviation);
+      if (deviating.length > 0) {
+        await u.insert(notificationsRef, buildRxDeviationNotification({
+          id: deps.newId('ntf'), now: d.preparedAt, prescriberId: rx.prescriberId, prescriberName: rx.prescriber,
+          payload: {
+            rxId: rx.id, rxNumber: rx.number, patientName: rx.patientName, dispensationNumber: d.number, by: u.ctx.actor.name,
+            lines: deviating.map((l) => ({ rxLabel: l.rxLabel, itemLabel: l.itemLabel, quantity: l.quantity, kinds: l.deviation!.kinds, reason: l.deviation!.reason })),
+          },
+        }), { action: 'notification:rxDeviation' });
+      }
       return toView(u, d);
     }),
 

@@ -36,7 +36,8 @@
     "reports": "Ripoti",
     "administration": "Utawala",
     "audit": "Ukaguzi",
-    "insurance": "Bima na bei"
+    "insurance": "Bima na bei",
+    "patientFlowBoard": "Ufuatiliaji wa wagonjwa"
   },
   "actions": {
     "save": "Hifadhi",
@@ -81,7 +82,18 @@
   "notifications": {
     "title": "Arifa",
     "empty": "Hakuna arifa",
-    "emptyHint": "Arifa za miadi, matokeo na hifadhi zitaonekana hapa."
+    "emptyHint": "Arifa za miadi, matokeo na hifadhi zitaonekana hapa.",
+    "titleUnread": "Arifa ({{count}} hazijasomwa)",
+    "unread": "{{count}} hazijasomwa",
+    "markAll": "Weka zote kuwa zimesomwa",
+    "markRead": "Weka kuwa imesomwa",
+    "openRx": "Fungua maagizo",
+    "rxDeviation": {
+      "title": "Famasia imetofautiana na agizo {{number}}",
+      "reduced": "Kiasi ni kidogo kuliko kilichoagizwa",
+      "substituted": "Bidhaa tofauti na agizo",
+      "metaShort": "na {{by}} · {{at}}"
+    }
   },
   "user": {
     "menu": "Menyu ya mtumiaji",

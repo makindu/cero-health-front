@@ -42,7 +42,7 @@ export function Tabs({ tabs, defaultTabId, ariaLabel, className }: TabsProps) {
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className="flex gap-1 overflow-x-auto border-b border-border"
+        className="no-scrollbar flex gap-1 overflow-x-auto overflow-y-hidden border-b border-border"
       >
         {tabs.map((tab, index) => {
           const selected = tab.id === activeId;

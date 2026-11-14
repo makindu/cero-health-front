@@ -17,6 +17,7 @@ import { hospital } from './hospital';
 import type { BedView } from './hospital-service';
 import { BED_STYLE, BedStatusBadge } from './StatusBadges';
 import { useHospitalBoard, useHospitalMutation } from './use-hospital';
+import { PersonName } from '@/components/ui/avatar';
 
 /** Plan des lits par service et chambre. Chaque lit : icône + libellé (jamais la couleur seule). */
 export function BedBoard({ onAdmit, onOpen }: { onAdmit: (bedId: string) => void; onOpen: (admissionId: string) => void }) {
@@ -54,7 +55,7 @@ export function BedBoard({ onAdmit, onOpen }: { onAdmit: (bedId: string) => void
                       {rb.map((b: BedView) => (
                         <li key={b.bed.id} className={cn('space-y-1 rounded-md border-2 p-2 text-sm', BED_STYLE[b.bed.status].ring)}>
                           <div className="flex items-center justify-between gap-1"><span className="font-medium">{b.bed.label}</span><BedStatusBadge status={b.bed.status} /></div>
-                          {b.admission && <p className="truncate text-xs">{b.admission.patientName}</p>}
+                          {b.admission && <PersonName name={b.admission.patientName} size="xs" strong={false} />}
                           {b.bed.maintenanceReason && <p className="text-xs text-muted-foreground">{b.bed.maintenanceReason}</p>}
                           <div className="flex flex-wrap gap-1">
                             {b.bed.status === 'free' && <Can permission={P.hospitalization.create}><Button size="sm" onClick={() => onAdmit(b.bed.id)}>{t('beds.assign')}</Button></Can>}

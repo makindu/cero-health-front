@@ -11,6 +11,7 @@ import { SERVICE_KEYS } from '../_shared/demo-people';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { FacilityForm } from './FacilityForm';
 import { RolesMatrix } from './RolesMatrix';
+import { PersonName } from '@/components/ui/avatar';
 import {
   hospitalServiceService,
   ROLE_IDS,
@@ -22,7 +23,7 @@ import {
 function UsersTab() {
   const { t } = useTranslation('administration');
   const columns: Column<UserAccount>[] = [
-    { id: 'name', header: t('users.name'), cell: (u) => <span className="font-medium">{u.name}</span>, sortable: true, primary: true },
+    { id: 'name', header: t('users.name'), cell: (u) => <PersonName name={u.name} />, sortable: true, primary: true },
     { id: 'email', header: t('users.email'), cell: (u) => u.email },
     { id: 'role', header: t('users.role'), cell: (u) => t(`roles.names.${u.role}`) },
     { id: 'service', header: t('users.service'), cell: (u) => (u.service ? t(`serviceNames.${u.service}`) : '—') },

@@ -20,7 +20,7 @@ export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="app-shell flex h-dvh overflow-hidden bg-background text-foreground">
+    <div className="app-shell relative flex h-dvh overflow-hidden bg-background text-foreground">
       <a
         href="#main"
         className="sr-only z-50 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-3 focus:top-3"

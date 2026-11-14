@@ -15,6 +15,7 @@ import type { BedView } from './hospital-service';
 import { AccountSection } from './AccountSection';
 import { AdmissionStatusBadge } from './StatusBadges';
 import { useHospitalBoard, useHospitalMutation } from './use-hospital';
+import { Avatar } from '@/components/ui/avatar';
 
 export function AdmissionDetail({ admission, onClose }: { admission: Admission | undefined; onClose: () => void }) {
   const { t } = useTranslation('hospitalization');
@@ -35,7 +36,7 @@ export function AdmissionDetail({ admission, onClose }: { admission: Admission |
   const free = beds.filter((b) => b.bed.status === 'free');
   const cur = currentStay(a);
   return (
-    <Dialog open onClose={onClose} title={`${a.number} — ${a.patientName}`} description={t('detail.description')}>
+    <Dialog open onClose={onClose} title={`${a.number} — ${a.patientName}`} leading={<Avatar name={a.patientName} size="lg" />} description={t('detail.description')}>
       <div className="space-y-5">
         <DetailSection title={t('detail.summary')}>
           <DescriptionList items={[
