@@ -1,0 +1,143 @@
+{
+  "title": "Kulazwa na vitanda",
+  "subtitle": "Ramani ya vitanda kwa idara, kulazwa na uhamisho — kitanda kimoja, mgonjwa mmoja",
+  "search": "Tafuta (mgonjwa, kitanda, namba)",
+  "tabs": {
+    "beds": "Ramani ya vitanda",
+    "admissions": "Waliolazwa"
+  },
+  "columns": {
+    "patient": "Mgonjwa",
+    "ward": "Idara",
+    "bed": "Kitanda",
+    "admittedAt": "Alilazwa",
+    "expectedDischarge": "Kutoka kunakotarajiwa",
+    "status": "Hali",
+    "number": "Na."
+  },
+  "admissionStatus": {
+    "admitted": "Amelazwa",
+    "dischargePending": "Kutoka kunasubiriwa",
+    "discharged": "Ametoka",
+    "cancelled": "Imeghairiwa"
+  },
+  "bedStatus": {
+    "free": "Wazi",
+    "occupied": "Umejaa",
+    "cleaning": "Usafishaji",
+    "maintenance": "Matengenezo"
+  },
+  "beds": {
+    "empty": "Hakuna kitanda kilichowekwa",
+    "occupancy": "{{occupied}} kati ya {{total}} vimejaa",
+    "room": "Chumba {{room}}",
+    "bed": "Kitanda {{label}}",
+    "ward": "Idara",
+    "roomLabel": "Chumba",
+    "status": "Hali",
+    "patient": "Mgonjwa",
+    "assign": "Mpangie mgonjwa",
+    "assignTitle": "Mpangie kitanda {{label}}",
+    "patientField": "Mgonjwa (jina au namba)",
+    "expectedDischarge": "Kutoka kunakotarajiwa",
+    "markReady": "Weka tayari",
+    "markReadyTitle": "Je, kitanda kiko tayari kutumika?",
+    "open": "Fungua",
+    "endMaintenance": "Maliza matengenezo",
+    "maintenance": "Matengenezo",
+    "maintenanceTitle": "Weka kitanda kwenye matengenezo"
+  },
+  "create": {
+    "button": "Kulazwa kwa mgonjwa",
+    "title": "Mlaze mgonjwa",
+    "submit": "Hifadhi kulazwa",
+    "attending": "Daktari msimamizi",
+    "description": "Kitanda wazi kinahitajika: kitanda kimoja kinachukua mgonjwa mmoja, na mgonjwa ana kulazwa mara moja tu kunakoendelea.",
+    "choosePatient": "Chagua mgonjwa",
+    "chooseBed": "Chagua kitanda wazi",
+    "bedHint": "Vitanda vilivyo wazi pekee vinatolewa.",
+    "reason": "Sababu ya kulazwa",
+    "consultation": "Mashauriano (hiari)",
+    "consultationHint": "Kitambulisho cha mashauriano asili",
+    "notice": "Utozaji wa siku za chumba na kuruhusiwa hushughulikiwa na akaunti ya hospitali."
+  },
+  "detail": {
+    "summary": "Kulazwa",
+    "attending": "Daktari msimamizi",
+    "care": "Huduma kitandani",
+    "careBody": "Ufuatiliaji wa huduma kitandani utaunganishwa na API ya kulazwa. Hakuna data ya kliniki inayoonyeshwa kwenye majaribio.",
+    "actions": "Vitendo",
+    "discharge": "Thibitisha kutoka",
+    "dischargeTitle": "Omba mgonjwa aruhusiwe?",
+    "dischargeBody": "Kitanda kinabaki kimekaliwa hadi kuruhusiwa kwa kweli.",
+    "description": "Kulazwa, makazi mfululizo na ombi la kuruhusiwa.",
+    "stays": "Makazi (vitanda mfululizo)",
+    "ongoing": "yanaendelea",
+    "transfer": "Badilisha kitanda",
+    "transferTitle": "Hamisha mgonjwa",
+    "newBed": "Kitanda kipya",
+    "reasonLabel": "Sababu",
+    "cancel": "Ghairi kulazwa",
+    "cancelTitle": "Ghairi kulazwa huku?",
+    "cancelBody": "Kwa kosa la kuingiza data. Kitanda kinakwenda kusafishwa; sababu inarekodiwa.",
+    "requestDischarge": "Omba kuruhusiwa",
+    "revokeDischarge": "Ondoa ombi",
+    "dischargeNotice": "Kuruhusiwa kwa kweli (hesabu ya fedha, kuachilia kitanda) hushughulikiwa na akaunti ya hospitali.",
+    "note": "Maelezo",
+    "dischargeRequest": "Ombi la kuruhusiwa",
+    "cancelled": "Kughairi"
+  },
+  "common": {
+    "cancel": "Ghairi"
+  },
+  "filters": {
+    "allStatuses": "Hali zote"
+  },
+  "empty": "Hakuna waliolazwa",
+  "emptyHint": "Mlaze mgonjwa kutoka kitanda wazi au kutoka kwa mashauriano.",
+  "roomKind": {
+    "standard": "kawaida",
+    "private": "ya kibinafsi"
+  },
+  "done": {
+    "admit": "Mgonjwa amelazwa",
+    "transfer": "Mgonjwa amehamishwa",
+    "cancel": "Kulazwa kumeghairiwa",
+    "dischargeRequest": "Ombi la kuruhusiwa limerekodiwa",
+    "dischargeRevoke": "Ombi la kuruhusiwa limeondolewa",
+    "bedState": "Hali ya kitanda imesasishwa",
+    "roomDays": "Siku za chumba zimetozwa",
+    "discharged": "Kuruhusiwa kumerekodiwa"
+  },
+  "account": {
+    "title": "Akaunti ya hospitali",
+    "loading": "Inapakia akaunti…",
+    "loadFailed": "Akaunti haikuweza kupakiwa.",
+    "billed": "Jumla iliyotozwa",
+    "patientShare": "Sehemu ya mgonjwa",
+    "paid": "Kilicholipwa",
+    "patientDue": "Deni la mgonjwa",
+    "orgDue": "Deni la mashirika",
+    "roomDaysBilled": "Siku za chumba zilizotozwa",
+    "roomDaysPending": "Siku za chumba za kutoza",
+    "noInvoices": "Hakuna ankara tangu kulazwa.",
+    "postDays": "Toza siku za chumba",
+    "postDaysDischarge": "Toza siku hadi kuruhusiwa",
+    "discharge": "Kuruhusu",
+    "dischargeTitle": "Kumruhusu mgonjwa",
+    "dischargeBody": "Kuruhusiwa huachilia kitanda (usafi) na kufunga kulazwa. Siku zote za chumba lazima zitozwe na deni la mgonjwa lilipwe.",
+    "outcome": "Matokeo ya kuruhusiwa",
+    "blockDays": "Siku {{count}} za chumba bado hazijatozwa.",
+    "blockBalance": "Deni la mgonjwa: {{due}}. Lipisha, ruhusu mkopo kwa mtunza fedha, au andika ruhusa maalum yenye sababu.",
+    "exceptionReason": "Sababu ya ruhusa maalum",
+    "noException": "Huna ruhusa ya kuruhusu kuondoka mgonjwa mwenye deni.",
+    "dischargeRecord": "Kuruhusiwa",
+    "convention": "Kanuni: siku ya kulazwa inahesabiwa, siku ya kuruhusiwa haihesabiwi, angalau siku moja. Sehemu ya mashirika haizuii kuruhusiwa."
+  },
+  "outcome": {
+    "normal": "Kuruhusiwa kawaida",
+    "referral": "Rufaa kwa kituo kingine",
+    "againstAdvice": "Kuondoka kinyume na ushauri wa daktari",
+    "deceased": "Kifo"
+  }
+}

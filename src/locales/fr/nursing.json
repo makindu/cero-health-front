@@ -1,0 +1,95 @@
+{
+  "title": "Triage et soins infirmiers",
+  "subtitle": "File d'attente classée par priorité et saisie des constantes",
+  "search": "Rechercher (patient, numéro)",
+  "minutes": "{{count}} min",
+  "summary": {
+    "queue": "En attente ou en triage"
+  },
+  "priority": {
+    "immediate": "Immédiate",
+    "veryUrgent": "Très urgente",
+    "urgent": "Urgente",
+    "standard": "Standard",
+    "nonUrgent": "Non urgente"
+  },
+  "category": {
+    "injury": "Blessure",
+    "fever": "Fièvre",
+    "pregnancy": "Grossesse",
+    "followUp": "Suivi",
+    "other": "Autre"
+  },
+  "status": {
+    "waiting": "En attente",
+    "inTriage": "En triage",
+    "inCare": "En soins",
+    "transferred": "Transféré",
+    "discharged": "Sorti"
+  },
+  "columns": {
+    "priority": "Priorité",
+    "patient": "Patient",
+    "category": "Catégorie",
+    "arrival": "Arrivée",
+    "wait": "Attente",
+    "status": "Statut"
+  },
+  "filters": {
+    "priority": "Priorité",
+    "status": "Statut"
+  },
+  "create": {
+    "button": "Enregistrer une arrivée",
+    "title": "Enregistrer l'arrivée d'un patient",
+    "submit": "Enregistrer l'arrivée"
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "priority": "Priorité",
+    "category": "Catégorie"
+  },
+  "detail": {
+    "summary": "Arrivée",
+    "nurse": "Infirmier référent",
+    "vitals": "Constantes vitales",
+    "vitalsBody": "Les constantes saisies seront rattachées à l'épisode de soins. Aucune valeur n'est affichée en démonstration.",
+    "enterVitals": "Saisir les constantes",
+    "care": "Circuit de prise en charge",
+    "noActions": "Aucune étape suivante : ce passage est terminé.",
+    "noVitals": "Aucune constante enregistrée pour ce passage.",
+    "vitalsBodyLocal": "Les constantes sont enregistrées sur cet appareil (mode local), rattachées à ce passage. Elles sont affichées telles que saisies, sans interprétation."
+  },
+  "vitals": {
+    "title": "Saisie des constantes vitales",
+    "submit": "Enregistrer les constantes",
+    "temperature": "Température",
+    "pulse": "Pouls",
+    "systolic": "Tension systolique",
+    "diastolic": "Tension diastolique",
+    "respiratoryRate": "Fréquence respiratoire",
+    "spo2": "Saturation en oxygène",
+    "weight": "Poids",
+    "note": "Remarque",
+    "unit": {
+      "temperature": "en °C",
+      "pulse": "battements par minute",
+      "pressure": "en mmHg",
+      "respiratory": "cycles par minute",
+      "spo2": "en %",
+      "weight": "en kg"
+    }
+  },
+  "actions": {
+    "start-triage": "Démarrer le triage",
+    "send-to-care": "Envoyer en soins",
+    "transfer": "Transférer",
+    "discharge": "Clôturer (sortie)"
+  },
+  "confirmTitles": {
+    "start-triage": "Démarrer le triage de ce patient ?",
+    "send-to-care": "Envoyer ce patient en soins ?",
+    "transfer": "Marquer ce patient comme transféré ?",
+    "discharge": "Clôturer ce passage (sortie) ?"
+  }
+}

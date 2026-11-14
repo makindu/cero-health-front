@@ -1,0 +1,21 @@
+{
+  "title": "Tableau de bord",
+  "subtitle": "Vue d'ensemble de l'activité de l'établissement",
+  "tiles": {
+    "appointmentsToday": "Rendez-vous aujourd'hui",
+    "waitingNow": "Patients en attente",
+    "beds": "Lits occupés",
+    "pendingLabOrders": "Examens en cours",
+    "toDispense": "Prescriptions à dispenser",
+    "stockAlerts": "Alertes de stock",
+    "unpaidInvoices": "Factures impayées"
+  },
+  "lists": {
+    "appointments": "Prochains rendez-vous confirmés",
+    "queue": "File d'attente",
+    "stock": "Stocks à surveiller",
+    "seeAll": "Tout voir",
+    "none": "Rien à signaler",
+    "minutes": "{{count}} min"
+  }
+}

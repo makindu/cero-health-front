@@ -1,0 +1,419 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "save": "Save",
+    "loading": "Loading…"
+  },
+  "localOnly": {
+    "title": "Available in local mode or with the server",
+    "description": "Billing and cash record accounting entries: they are not simulated. Enable local mode (VITE_LOCAL_MODE=true) or connect the CERO HEALTH server."
+  },
+  "billing": {
+    "title": "Billing",
+    "subtitle": "Invoices, patient and payer shares, payments",
+    "search": "Search (number, patient)",
+    "empty": "No invoices",
+    "emptyHint": "Create an invoice: the price is computed by the pricing engine (insurance, mutual fund, subscription)."
+  },
+  "cash": {
+    "title": "Cash desk",
+    "subtitle": "Patient collections by payment method",
+    "day": "Day",
+    "allCashiers": "All cashiers",
+    "patientNet": "Net collected (patients)",
+    "drawerHint": "Cash expected in the drawer",
+    "cardTransferHint": "Card and transfer",
+    "orgReceipts": "Payer settlements",
+    "orgReceiptsHint": "Tracked separately: never mixed with patient cash",
+    "empty": "No entries on this day",
+    "emptyHint": "Choose another day or cashier.",
+    "closureNotice": "Cash closing (count, variance, signature) is not available yet: only the entries and the day's totals are provided."
+  },
+  "columns": {
+    "number": "Invoice no.",
+    "patient": "Patient",
+    "date": "Date",
+    "dateTime": "Date and time",
+    "status": "Status",
+    "patientBalance": "Patient balance",
+    "orgBalance": "Payer balance",
+    "method": "Method",
+    "amount": "Amount",
+    "cashier": "Cashier",
+    "type": "Type"
+  },
+  "summary": {
+    "invoices": "Active invoices",
+    "billed": "Billed",
+    "collected": "Collected (patients)",
+    "receivables": "To collect",
+    "receivablesHint": "Patients {{patient}} · payers {{orgs}}"
+  },
+  "filters": {
+    "allStatuses": "All statuses"
+  },
+  "status": {
+    "draft": "Draft",
+    "awaitingPayment": "Awaiting payment",
+    "partiallyPaid": "Partially paid",
+    "paid": "Paid",
+    "creditAuthorized": "Credit authorized",
+    "cancelled": "Cancelled"
+  },
+  "methods": {
+    "cash": "Cash",
+    "mobileMoney": "Mobile money",
+    "card": "Card",
+    "transfer": "Transfer"
+  },
+  "category": {
+    "consultation": "Consultation",
+    "laboratory": "Laboratory",
+    "pharmacy": "Pharmacy",
+    "hospitalization": "Hospitalization",
+    "room": "Room",
+    "procedure": "Procedure",
+    "nursing": "Nursing care",
+    "consumable": "Consumable"
+  },
+  "ledger": {
+    "payment": "Payment",
+    "refund": "Refund",
+    "reversal": "Reversal",
+    "insurerSettlement": "Payer settlement",
+    "insurerRejection": "Payer rejection",
+    "reversedMark": "reversed"
+  },
+  "coordination": {
+    "none": "No coverage applied",
+    "primary": "Primary coverage only",
+    "primary+complementary": "Primary + complementary coverage",
+    "subscription": "Subscription"
+  },
+  "validation": {
+    "pending": "Awaiting validation",
+    "validated": "Validated",
+    "rejected": "Rejected",
+    "suspended": "Suspended"
+  },
+  "actions": {
+    "open": "Open",
+    "pay": "Collect payment",
+    "refund": "Refund",
+    "cancel": "Cancel invoice",
+    "credit": "Authorize credit",
+    "reverse": "Reverse",
+    "settle": "Record a settlement",
+    "reject": "Record a rejection",
+    "printInvoice": "Print invoice",
+    "printReceipt": "Receipt",
+    "balanceHint": "Balance due by the patient: {{amount}}"
+  },
+  "form": {
+    "amount": "Amount ({{currency}})",
+    "reason": "Reason",
+    "referenceHint": "Transaction, card or transfer number (required unless cash).",
+    "rejectTransfer": "What happens to the rejected amount",
+    "rejectDispute": "Dispute to follow up with the payer",
+    "rejectToPatient": "Carried over to the patient",
+    "cancelHint": "An invoice with payments cannot be cancelled: reverse the payments first. Cancellation is traced and final."
+  },
+  "detail": {
+    "title": "Invoice",
+    "summary": "Summary",
+    "createdBy": "Created by",
+    "item": "Service",
+    "qty": "Qty",
+    "billable": "Billable",
+    "insurer": "Payer",
+    "subscription": "Subscription",
+    "patientShare": "Patient",
+    "total": "Total",
+    "paid": "Paid",
+    "balance": "Balance due",
+    "credit": "Credit authorized",
+    "cancellation": "Cancellation",
+    "lines": "Lines and justification",
+    "justification": "Why this price?",
+    "needsAuthorization": "Prior authorization required: not applied, charged to the patient",
+    "rulesSnapshot": "Frozen rules: {{org}} · {{contract}} · policy {{policy}}",
+    "organizations": "Paying organizations",
+    "orgDue": "Due",
+    "orgSettled": "Settled",
+    "orgTransferred": "Carried to patient",
+    "orgDisputed": "Disputed",
+    "orgOutstanding": "Left to collect",
+    "ledger": "Entries (ledger)",
+    "noLedger": "No entries",
+    "actions": "Actions",
+    "reference": "Reference"
+  },
+  "done": {
+    "invoice": "Invoice created",
+    "payment": "Payment recorded",
+    "refund": "Refund recorded",
+    "cancel": "Invoice cancelled",
+    "credit": "Credit authorized",
+    "reverse": "Entry reversed",
+    "settle": "Settlement recorded",
+    "reject": "Rejection recorded",
+    "saved": "Saved",
+    "coverageCreated": "Coverage created, awaiting validation",
+    "coverageUpdated": "Coverage updated",
+    "authorization": "Prior authorization recorded",
+    "exempted": "Exemption recorded"
+  },
+  "new": {
+    "button": "New invoice",
+    "title": "New invoice",
+    "description": "The price is computed as of today with the patient's validated rights.",
+    "submit": "Create invoice",
+    "choosePatient": "Choose a patient",
+    "primaryCoverage": "Primary coverage",
+    "secondaryCoverage": "Complementary coverage",
+    "primaryHint": "Only one primary coverage per care episode.",
+    "secondaryHint": "Applied only if both contracts allow it.",
+    "autoCoverage": "Automatic (highest-priority eligible)",
+    "noCoverage": "None",
+    "lines": "Services",
+    "chooseItem": "Choose a service",
+    "addLine": "Add a line",
+    "removeLine": "Remove line",
+    "episode": "Care episode",
+    "episodeHint": "Ceilings and deductibles accumulate within one episode.",
+    "forcePrivate": "Force the private tariff (traced exception)"
+  },
+  "preview": {
+    "title": "Price preview",
+    "failed": "The price could not be computed.",
+    "patientPays": "Patient pays",
+    "notConfirmed": "Preview only, nothing saved. Only a coverage validated with a trace is applied."
+  },
+  "fee": {
+    "valid": "Consultation fee valid",
+    "until": "until {{date}} inclusive ({{days}} days left)",
+    "exempted": "exemption",
+    "expired": "Fee expired",
+    "expiredOn": "expired on {{date}}: a new payment is required",
+    "none": "No fee paid",
+    "noneHint": "The consultation fee is due."
+  },
+  "patient": {
+    "coverages": "Coverages",
+    "noCoverage": "No coverage on file: private tariff."
+  },
+  "print": {
+    "facility": "CERO HEALTH — facility (local mode)",
+    "localNotice": "LOCAL MODE — Data saved on this device only. No server synchronization. Non-fiscal document.",
+    "invoice": "Invoice",
+    "receipt": "Payment receipt",
+    "number": "No.",
+    "organizationsDue": "Shares to be settled by payers:",
+    "thanks": "Thank you"
+  },
+  "reason": {
+    "authorization.required": "Prior authorization required and not granted: charged to the patient.",
+    "ceiling.reached": "Ceiling reached: coverage limited to {{cap}} instead of {{wanted}}.",
+    "complement.applied": "Complementary coverage {{organization}}: {{bp}} of the remaining amount within its contract.",
+    "complement.notAllowed": "Complementary coverage not applied: the two contracts do not allow it.",
+    "complement.sameCoverage": "The complementary coverage is the same as the primary one: ignored.",
+    "coverage.contractOutOfPeriod": "Contract inactive or out of period: coverage not applied.",
+    "coverage.currencyMismatch": "Contract currency differs: coverage not applied.",
+    "coverage.designatedMissing": "The designated coverage does not exist for this patient.",
+    "coverage.expired": "Coverage expired on {{to}}: not applied.",
+    "coverage.notBeneficiary": "The patient is not a beneficiary of this coverage.",
+    "coverage.notStarted": "Coverage only valid from {{from}}: not applied.",
+    "coverage.organizationInactive": "Organization inactive or out of period: coverage not applied.",
+    "coverage.pending": "Coverage not validated (pending): not applied.",
+    "coverage.rejected": "Coverage rejected: not applied.",
+    "coverage.suspended": "Coverage suspended: not applied.",
+    "coverage.rate": "Coverage rate {{bp}} on the negotiated tariff.",
+    "franchise.applied": "Deductible of {{amount}} left to the patient.",
+    "private.forced": "Private tariff imposed by an authorized person (traced exception).",
+    "private.noCoverage": "No applicable coverage: private tariff.",
+    "quota.exceeded": "Quota exceeded: {{covered}} unit(s) covered out of {{requested}}, the rest at the private tariff.",
+    "rule.excluded": "Service excluded from the contract: charged to the patient.",
+    "rule.none": "No contract rule for this service.",
+    "subscription.discount": "Subscription discount of {{bp}}.",
+    "subscription.free": "Free consultation thanks to the subscription.",
+    "subscription.freeExhausted": "Free consultations of the subscription used up.",
+    "subscription.included": "Category included in the subscription.",
+    "subscription.notBeneficiary": "The patient is not covered by this subscription.",
+    "subscription.notStacked": "Subscription not combined with an insurance coverage.",
+    "subscription.cancelled": "Subscription cancelled.",
+    "subscription.suspended": "Subscription suspended.",
+    "subscription.expired": "Subscription expired.",
+    "subscription.notStarted": "Subscription not yet in force.",
+    "tariff.negotiated": "Negotiated tariff of {{unit}} per unit."
+  },
+  "insurance": {
+    "title": "Insurance and tariffs",
+    "subtitle": "Payers, contracts, patient coverages, subscriptions, catalog and fee validity",
+    "tabs": {
+      "coverages": "Coverages",
+      "organizations": "Organizations",
+      "contracts": "Contracts",
+      "subscriptions": "Subscriptions",
+      "catalog": "Catalog",
+      "validity": "Fee validity"
+    },
+    "kpi": {
+      "insured": "Active insured",
+      "mutuelle": "Mutual fund members",
+      "subscriptions": "Active subscriptions",
+      "pending": "Pending validations",
+      "rejections": "Payer rejections",
+      "rejectionsHint": "{{count}} rejection(s)",
+      "receivables": "Payer receivables"
+    },
+    "receivablesTitle": "Receivables by payer",
+    "receivablesHint": "A payer receivable is never a cash receipt.",
+    "noReceivables": "No receivables.",
+    "orgLine": "due {{due}} · settled {{settled}} · left {{outstanding}} · disputed {{disputed}}",
+    "orgKind": {
+      "insurer": "Insurer",
+      "mutuelle": "Mutual fund",
+      "company": "Company",
+      "institution": "Institution",
+      "other": "Other"
+    },
+    "orgStatus": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "inactive": "Inactive"
+    },
+    "org": {
+      "name": "Name",
+      "code": "Code",
+      "kind": "Type",
+      "contact": "Contact",
+      "phone": "Phone",
+      "add": "Add an organization",
+      "edit": "Edit organization"
+    },
+    "contractStatus": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "terminated": "Terminated"
+    },
+    "contract": {
+      "label": "Title",
+      "organization": "Organization",
+      "period": "Period",
+      "from": "Start",
+      "to": "End",
+      "generalRate": "General rate",
+      "limits": "Deductible · ceiling",
+      "franchise": "Deductible per episode",
+      "ceiling": "Ceiling per episode",
+      "coordination": "Coordination",
+      "allowsComplementary": "Accepts a complementary",
+      "canBeComplementary": "Can be complementary",
+      "exclusive": "Exclusive",
+      "add": "Add a contract",
+      "edit": "Edit contract",
+      "editHint": "Editing a contract NEVER affects invoices already issued: they keep the snapshot of the rules applied.",
+      "rules": "Coverage rules",
+      "rulesHint": "The most specific rule wins: service > category > general. The rate applies to the negotiated tariff.",
+      "scope": "Applies to",
+      "scopeGeneral": "All services",
+      "rate": "Rate %",
+      "negotiated": "Negotiated tariff",
+      "ceilingLine": "Ceiling per line",
+      "quota": "Quota (units)",
+      "excluded": "Excluded",
+      "requiresAuth": "Prior authorization",
+      "addRule": "Add a rule",
+      "removeRule": "Remove rule"
+    },
+    "covKind": {
+      "insurance": "Insurance",
+      "mutuelle": "Mutual fund"
+    },
+    "cov": {
+      "kind": "Type",
+      "policy": "Policy no.",
+      "card": "Card no.",
+      "member": "Member no.",
+      "contract": "Contract",
+      "priority": "Priority",
+      "priorityHint": "1 = highest (automatic choice of the primary).",
+      "spent": "Used",
+      "add": "Add a coverage",
+      "createHint": "The coverage is created as “pending”: it grants no rights until a traced validation happens.",
+      "validate": "Validate",
+      "reject": "Reject",
+      "suspend": "Suspend",
+      "validateHint": "The decision is recorded with your name and the time.",
+      "authorize": "Prior authorization",
+      "authReference": "Authorization reference",
+      "authHint": "Number supplied by the payer. Without a reference, no authorization is recorded.",
+      "noAuthItems": "This contract requires prior authorization for no specific service.",
+      "neverConfirmed": "A coverage is never considered confirmed without a traced validation."
+    },
+    "subStatus": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "cancelled": "Cancelled"
+    },
+    "subType": {
+      "individual": "Individual",
+      "family": "Family",
+      "company": "Company"
+    },
+    "sub": {
+      "holder": "Holder",
+      "type": "Type",
+      "members": "Beneficiaries",
+      "membersHint": "Hold Ctrl (or Cmd) to pick several.",
+      "price": "Price",
+      "free": "Free consultations",
+      "labDiscount": "Laboratory discount %",
+      "included": "Included categories",
+      "add": "Add a subscription",
+      "edit": "Edit subscription",
+      "notFullCover": "A subscriber is NOT 100% covered by default: only the free visits, included categories and discounts of the subscription terms apply."
+    },
+    "catalog": {
+      "code": "Code",
+      "category": "Category",
+      "price": "Private tariff",
+      "active": "Active",
+      "inactive": "Inactive",
+      "add": "Add a service",
+      "edit": "Edit service",
+      "codeHint": "The code does not change: contracts refer to it.",
+      "hint": "The private tariff is the reference. Negotiated tariffs are set in contracts. A change does not affect existing invoices."
+    }
+  },
+  "validity": {
+    "currentTitle": "Consultation fee validity period",
+    "rule": "Computed in calendar months, on the facility's civil days, end date included.",
+    "currentLine": "Currently: {{months}} month(s) — {{mode}}.",
+    "noConfig": "No period configured.",
+    "change": "Change the period",
+    "history": "Configuration history",
+    "effectiveFrom": "Effective from",
+    "months": "Months",
+    "mode": "Month-end rule",
+    "changedBy": "Changed by",
+    "modes": {
+      "clamp": "Same day of month, moved back to the last day if needed",
+      "endOfMonth": "Until the end of the arrival month"
+    },
+    "modesHelp": "Examples for 1 month. “Same day”: from 31 January → last day of February; from 15 January → 15 February. “End of arrival month”: from 15 January → last day of February.",
+    "nonRetroactive": "A change is never retroactive: payments already recorded keep their expiry date.",
+    "paymentsTitle": "Fees paid and exemptions",
+    "noPayments": "No fee payments",
+    "until": "Valid until",
+    "source": {
+      "payment": "Payment",
+      "exemption": "Exemption"
+    },
+    "voided": "Voided",
+    "exempt": "Exempt a patient",
+    "exemptHint": "Restricted to authorized people. The reason and the author are kept."
+  }
+}

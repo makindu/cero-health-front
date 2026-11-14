@@ -1,0 +1,53 @@
+{
+  "title": "Reports",
+  "subtitle": "Activity, financial and stock reports over a period",
+  "apiNote": "Report generation relies on the reports API, which is not configured yet: requests will produce nothing until it is available.",
+  "generate": "Generate",
+  "requested": "Report requested",
+  "demoTitle": "Demo: no report generated",
+  "demoHint": "The parameters are valid, but the reports API is not available.",
+  "fields": {
+    "from": "From",
+    "to": "To",
+    "format": "Format"
+  },
+  "formats": {
+    "screen": "On screen",
+    "pdf": "PDF",
+    "csv": "Spreadsheet (CSV)"
+  },
+  "items": {
+    "activity": {
+      "title": "Facility activity",
+      "description": "Patients seen, consultations and visits by department."
+    },
+    "appointments": {
+      "title": "Appointments",
+      "description": "Attendance rate, cancellations and no-shows."
+    },
+    "hospitalization": {
+      "title": "Hospitalization",
+      "description": "Bed occupancy and length of stay."
+    },
+    "laboratory": {
+      "title": "Laboratory",
+      "description": "Requested tests, turnaround and validations."
+    },
+    "stock": {
+      "title": "Stock",
+      "description": "Levels, stock-outs and expiries."
+    },
+    "finance": {
+      "title": "Finance",
+      "description": "Billing, collections and receivables."
+    },
+    "cash": {
+      "title": "Cash desk",
+      "description": "Cash journal and closing differences."
+    },
+    "audit": {
+      "title": "Usage and audit",
+      "description": "Record access and sensitive actions."
+    }
+  }
+}

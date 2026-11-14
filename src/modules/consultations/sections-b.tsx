@@ -1,0 +1,252 @@
+import { Download, Link2, TriangleAlert } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { StatusBadge, type StatusTone } from '@/components/ui/badge';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
+import { useFormatters } from '@/core/i18n/useFormatters';
+import { Can } from '@/core/permissions/PermissionsProvider';
+import { PERMISSIONS } from '@/core/permissions/permissions';
+import { AdmitDialog } from '../hospitalization/AdmitDialog';
+import { HOSPITAL_AVAILABLE } from '../hospitalization/use-hospital';
+import { NewLabOrderDialog } from '../laboratory/NewLabOrderDialog';
+import { LAB_AVAILABLE } from '../laboratory/use-lab';
+import { NewRxDialog } from '../prescriptions/NewRxDialog';
+import { RX_AVAILABLE } from '../prescriptions/use-rx';
+import { createResourceService } from '../_shared/resource-service';
+import { useResourceList } from '../_shared/use-resource';
+import { SuggestInput } from '@/components/forms/suggest-input';
+import { FormField } from '@/components/forms/form-field';
+import { SERVICE_KEYS } from '../_shared/demo-people';
+import { AreaField, Panel, RichField, SelectField, TextField } from './clinical/fields';
+import { addDiagnosis, computeBmi, principalDiagnosis, updateDiagnosis, vitalsOutOfRange, type DiagnosisError } from './clinical/logic';
+import { EMPTY_VITALS, type ConsultationDraft, type DiagnosisStatus, type DiagnosisType, type Vitals } from './clinical/model';
+import { ICD10_SUGGESTIONS } from './clinical/icd10';
+import { newCtx } from './sections-a';
+
+type Update = (fn: (d: ConsultationDraft) => ConsultationDraft) => void;
+const VITAL_KEYS = ['systolic', 'diastolic', 'pulse', 'temperature', 'respiratoryRate', 'spo2', 'weight', 'height'] as const;
+
+interface TriageVitalsRow extends Partial<Vitals> {
+  id: string;
+  recordedAt: string;
+  author: string;
+}
+
+// ───────────── D. Examen clinique ─────────────
+function TriageVitals({ triageEntryId, onImport, readOnly }: { triageEntryId?: string; onImport: (v: Partial<Vitals>) => void; readOnly: boolean }) {
+  const { t } = useTranslation('consultations');
+  const f = useFormatters();
+  // Contrat proposé : GET /health/triage/{id}/vitals. Aucune constante n'est inventée en démonstration.
+  const service = useMemo(
+    () => createResourceService<TriageVitalsRow>({ source: 'health', endpoint: triageEntryId ? HEALTH_ENDPOINTS.triage.vitals(triageEntryId) : undefined, demoRows: [] }),
+    [triageEntryId],
+  );
+  const list = useResourceList('triage-vitals', service, { page: 1, perPage: 5, search: '', filters: {}, sort: null });
+  if (!triageEntryId) return <p className="text-sm text-muted-foreground">{t('clinical.exam.noTriageLink')}</p>;
+  const rows = list.data?.rows ?? [];
+  if (list.isPending) return <p className="text-sm text-muted-foreground">…</p>;
+  if (list.error) return <p role="alert" className="text-sm text-danger-ink">{t('clinical.exam.triageError')}</p>;
+  if (rows.length === 0) return <p className="text-sm text-muted-foreground">{t('clinical.exam.noTriageVitals')}</p>;
+  return (
+    <ul className="space-y-2">
+      {rows.map((r) => (
+        <li key={r.id} className="rounded-md border border-border p-3 text-sm">
+          <p className="font-medium">{f.dateTime(r.recordedAt)} · {r.author}</p>
+          <p className="text-muted-foreground">{VITAL_KEYS.filter((k) => r[k]).map((k) => `${t(`clinical.exam.vitals.${k}`)}: ${r[k]}`).join(' · ')}</p>
+          {!readOnly && <Button size="sm" variant="outline" leftIcon={<Download className="size-4" />} onClick={() => onImport(r)}>{t('clinical.exam.importTriage')}</Button>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function ExamSection({ draft, update, readOnly, triageEntryId }: { draft: ConsultationDraft; update: Update; readOnly: boolean; triageEntryId?: string }) {
+  const { t } = useTranslation('consultations');
+  const e = draft.exam;
+  const set = <K extends keyof typeof e>(key: K, value: (typeof e)[K]) => update((d) => ({ ...d, exam: { ...d.exam, [key]: value } }));
+  const setVital = (key: keyof Vitals, value: string) => set('vitals', { ...e.vitals, [key]: value });
+  const bmi = computeBmi(e.vitals.weight, e.vitals.height);
+  const odd = vitalsOutOfRange(e.vitals);
+  const units: Record<keyof Vitals, string> = { systolic: 'mmHg', diastolic: 'mmHg', pulse: '/min', temperature: '°C', respiratoryRate: '/min', spo2: '%', weight: 'kg', height: 'cm' };
+  const importTriage = (v: Partial<Vitals>) => set('vitals', { ...EMPTY_VITALS, ...e.vitals, ...Object.fromEntries(VITAL_KEYS.filter((k) => v[k]).map((k) => [k, String(v[k])])) });
+  return (
+    <div className="space-y-4">
+      <Panel title={t('clinical.exam.notDoneTitle')}>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={e.notDone} disabled={readOnly} onChange={(ev) => set('notDone', ev.target.checked)} />
+          {t('clinical.exam.notDone')}
+        </label>
+        {e.notDone && <AreaField label={t('clinical.exam.notDoneReason')} rows={2} value={e.notDoneReason} onChange={(v) => set('notDoneReason', v)} disabled={readOnly} />}
+      </Panel>
+      {!e.notDone && (
+        <>
+          <Panel title={t('clinical.exam.triageTitle')}>
+            <TriageVitals triageEntryId={triageEntryId} onImport={importTriage} readOnly={readOnly} />
+          </Panel>
+          <Panel title={t('clinical.exam.vitalsTitle')}>
+            <p className="text-xs text-muted-foreground">{t('clinical.exam.vitalsHint')}</p>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {VITAL_KEYS.map((k) => (
+                <TextField key={k} type="number" label={`${t(`clinical.exam.vitals.${k}`)} (${units[k]})`} value={e.vitals[k]} onChange={(v) => setVital(k, v)} disabled={readOnly} />
+              ))}
+            </div>
+            <p className="text-sm"><span className="font-medium">{t('clinical.exam.bmi')} :</span> {bmi === null ? t('clinical.exam.bmiNone') : `${bmi} kg/m²`}</p>
+            {odd.length > 0 && (
+              <p role="alert" className="flex items-center gap-2 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning-ink">
+                <TriangleAlert aria-hidden className="size-4" />
+                {t('clinical.exam.outOfRange', { fields: odd.map((k) => t(`clinical.exam.vitals.${k}`)).join(', ') })}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">{t('clinical.exam.vitalsSource')}</p>
+          </Panel>
+          <SelectField label={t('clinical.exam.generalState')} value={e.generalState} onChange={(v) => set('generalState', v)} disabled={readOnly}
+            options={['', 'good', 'altered', 'severe'].map((s) => ({ value: s, label: s ? t(`clinical.exam.states.${s}`) : t('clinical.notAssessed') }))} />
+          <RichField label={t('clinical.exam.physical')} target="exam" value={e.physical} onChange={(v) => set('physical', v)} disabled={readOnly} />
+          <RichField label={t('clinical.exam.systems')} target="exam" value={e.systems} onChange={(v) => set('systems', v)} disabled={readOnly} />
+          <RichField label={t('clinical.exam.observations')} target="exam" value={e.observations} onChange={(v) => set('observations', v)} disabled={readOnly} />
+        </>
+      )}
+    </div>
+  );
+}
+
+// ───────────── E. Évaluation et diagnostics ─────────────
+const STATUS_TONE: Record<DiagnosisStatus, StatusTone> = { presumptive: 'warning', confirmed: 'success', ruledOut: 'neutral', investigating: 'info' };
+const TYPES: DiagnosisType[] = ['principal', 'secondary', 'differential'];
+const STATUSES: DiagnosisStatus[] = ['presumptive', 'investigating', 'confirmed', 'ruledOut'];
+
+export function AssessmentSection({ draft, update, readOnly, author }: { draft: ConsultationDraft; update: Update; readOnly: boolean; author: string }) {
+  const { t } = useTranslation('consultations');
+  const f = useFormatters();
+  const [form, setForm] = useState({ label: '', icd10: '', type: 'principal' as DiagnosisType, status: 'presumptive' as DiagnosisStatus, comment: '' });
+  const [error, setError] = useState<DiagnosisError | null>(null);
+  const [evolving, setEvolving] = useState<{ id: string; status: DiagnosisStatus; type: DiagnosisType; comment: string } | null>(null);
+  const [showHistory, setShowHistory] = useState<string | null>(null);
+
+  function add() {
+    const res = addDiagnosis(draft.diagnoses, form, newCtx(author));
+    if (!res.ok) return setError(res.error);
+    update((d) => ({ ...d, diagnoses: res.list }));
+    setError(null);
+    setForm({ ...form, label: '', icd10: '', comment: '', type: 'secondary' });
+  }
+  function evolve() {
+    if (!evolving) return;
+    const res = updateDiagnosis(draft.diagnoses, evolving.id, { status: evolving.status, type: evolving.type, comment: evolving.comment }, newCtx(author));
+    if (!res.ok) return setError(res.error);
+    update((d) => ({ ...d, diagnoses: res.list }));
+    setError(null);
+    setEvolving(null);
+  }
+  const principal = principalDiagnosis(draft.diagnoses);
+  return (
+    <div className="space-y-4">
+      <p role="note" className="rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink">{t('clinical.assessment.noAi')}</p>
+      <datalist id="icd10-list">
+        {ICD10_SUGGESTIONS.map((c) => <option key={c.code} value={c.code}>{c.title}</option>)}
+      </datalist>
+      <Panel title={t('clinical.assessment.title')}>
+        {draft.diagnoses.length === 0 && <p className="text-sm text-muted-foreground">{t('clinical.assessment.empty')}</p>}
+        <ul className="space-y-2">
+          {draft.diagnoses.map((d) => (
+            <li key={d.id} className="rounded-md border border-border p-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-medium">{d.label}{d.icd10 ? ` · ${d.icd10}` : ''}</p>
+                <span className="flex flex-wrap gap-1.5">
+                  <StatusBadge tone={d.type === 'principal' ? 'info' : 'neutral'}>{t(`clinical.assessment.types.${d.type}`)}</StatusBadge>
+                  <StatusBadge tone={STATUS_TONE[d.status]}>{t(`clinical.assessment.statuses.${d.status}`)}</StatusBadge>
+                </span>
+              </div>
+              {d.comment && <p className="mt-1 text-muted-foreground">{d.comment}</p>}
+              <p className="mt-1 text-xs text-muted-foreground">{t('clinical.history.recordedBy', { by: d.author, when: f.dateTime(d.createdAt) })}</p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {!readOnly && <Button size="sm" variant="outline" onClick={() => setEvolving({ id: d.id, status: d.status, type: d.type, comment: '' })}>{t('clinical.assessment.evolve')}</Button>}
+                {d.history.length > 1 && <Button size="sm" variant="ghost" onClick={() => setShowHistory(showHistory === d.id ? null : d.id)}>{t('clinical.history.versions')}</Button>}
+              </div>
+              {showHistory === d.id && (
+                <ol className="mt-2 space-y-1 border-s-2 border-border ps-3 text-xs">
+                  {d.history.map((h, i) => (
+                    <li key={i}>{f.dateTime(h.at)} · {h.by} · {t(`clinical.assessment.types.${h.type}`)} / {t(`clinical.assessment.statuses.${h.status}`)}{h.comment ? ` — ${h.comment}` : ''}</li>
+                  ))}
+                </ol>
+              )}
+              {evolving?.id === d.id && (
+                <div className="mt-3 grid gap-3 rounded-md bg-surface-muted p-3 sm:grid-cols-2">
+                  <SelectField label={t('clinical.assessment.status')} value={evolving.status} onChange={(v) => setEvolving({ ...evolving, status: v as DiagnosisStatus })} options={STATUSES.map((s) => ({ value: s, label: t(`clinical.assessment.statuses.${s}`) }))} />
+                  <SelectField label={t('clinical.assessment.type')} value={evolving.type} onChange={(v) => setEvolving({ ...evolving, type: v as DiagnosisType })} options={TYPES.map((s) => ({ value: s, label: t(`clinical.assessment.types.${s}`) }))} />
+                  <AreaField className="sm:col-span-2" rows={2} label={t('clinical.assessment.reason')} hint={t('clinical.assessment.reasonHint')} value={evolving.comment} onChange={(v) => setEvolving({ ...evolving, comment: v })} />
+                  <div className="flex gap-2 sm:col-span-2"><Button onClick={evolve}>{t('clinical.assessment.recordChange')}</Button><Button variant="ghost" onClick={() => setEvolving(null)}>{t('clinical.cancel')}</Button></div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+        {error && <p role="alert" className="text-sm text-danger-ink">{t(`clinical.assessment.errors.${error}`)}</p>}
+      </Panel>
+      {!readOnly && (
+        <Panel title={t('clinical.assessment.addTitle')}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <TextField className="sm:col-span-2" label={t('clinical.assessment.label')} value={form.label} onChange={(v) => setForm({ ...form, label: v })} />
+            <TextField label={t('clinical.assessment.icd10')} hint={t('clinical.assessment.icd10Hint')} list="icd10-list" value={form.icd10} onChange={(v) => setForm({ ...form, icd10: v })} />
+            <SelectField label={t('clinical.assessment.type')} value={form.type} onChange={(v) => setForm({ ...form, type: v as DiagnosisType })} options={TYPES.map((s) => ({ value: s, label: t(`clinical.assessment.types.${s}`) }))} />
+            <SelectField label={t('clinical.assessment.status')} value={form.status} onChange={(v) => setForm({ ...form, status: v as DiagnosisStatus })} options={STATUSES.map((s) => ({ value: s, label: t(`clinical.assessment.statuses.${s}`) }))} />
+            <AreaField label={t('clinical.assessment.comment')} rows={2} value={form.comment} onChange={(v) => setForm({ ...form, comment: v })} />
+          </div>
+          <Button onClick={add} disabled={form.label.trim() === ''}>{t('clinical.assessment.add')}</Button>
+        </Panel>
+      )}
+      <p className="text-sm">{principal ? t('clinical.assessment.principalIs', { label: principal.label, status: t(`clinical.assessment.statuses.${principal.status}`) }) : t('clinical.assessment.noPrincipal')}</p>
+      <RichField label={t('clinical.assessment.evaluation')} target="assessment" value={draft.evaluation} onChange={(v) => update((d) => ({ ...d, evaluation: v }))} disabled={readOnly} />
+    </div>
+  );
+}
+
+// ───────────── F. Conduite à tenir ─────────────
+export function PlanSection({ draft, update, readOnly, patientId, consultationId }: { draft: ConsultationDraft; update: Update; readOnly: boolean; patientId?: string; consultationId?: string }) {
+  const { t } = useTranslation('consultations');
+  const [ordering, setOrdering] = useState<'lab' | 'rx' | 'admit' | null>(null);
+  const p = draft.plan;
+  const set = <K extends keyof typeof p>(key: K, value: (typeof p)[K]) => update((d) => ({ ...d, plan: { ...d.plan, [key]: value } }));
+  return (
+    <div className="space-y-4">
+      <RichField label={t('clinical.plan.synthesis')} target="plan" value={p.synthesis} onChange={(v) => set('synthesis', v)} disabled={readOnly} />
+      <Panel title={t('clinical.plan.ordersTitle')}>
+        <p className="text-sm text-muted-foreground">{t('clinical.plan.ordersHint')}</p>
+        <div className="flex flex-wrap gap-2">
+          {LAB_AVAILABLE && patientId && !readOnly && (
+            <Can permission={PERMISSIONS.laboratory.order}><Button variant="primary" onClick={() => setOrdering('lab')}>{t('clinical.plan.labOrder')}</Button></Can>
+          )}
+          {RX_AVAILABLE && patientId && !readOnly && (
+            <Can permission={PERMISSIONS.prescriptions.create}><Button variant="primary" onClick={() => setOrdering('rx')}>{t('clinical.plan.rxOrder')}</Button></Can>
+          )}
+          {HOSPITAL_AVAILABLE && patientId && !readOnly && (
+            <Can permission={PERMISSIONS.hospitalization.create}><Button variant="primary" onClick={() => setOrdering('admit')}>{t('clinical.plan.admitOrder')}</Button></Can>
+          )}
+          <Link to="/laboratory" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.labLink')}</Link>
+          <Link to="/prescriptions" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.rxLink')}</Link>
+          <Link to="/hospitalization" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.admissionLink')}</Link>
+        </div>
+      </Panel>
+      {ordering === 'lab' && patientId && <NewLabOrderDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onCreated={() => setOrdering(null)} />}
+      {ordering === 'admit' && patientId && <AdmitDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onDone={() => setOrdering(null)} />}
+      {ordering === 'rx' && patientId && <NewRxDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onCreated={() => setOrdering(null)} />}
+      <RichField label={t('clinical.plan.actions')} target="plan" value={p.actions} onChange={(v) => set('actions', v)} disabled={readOnly} />
+      <Panel title={t('clinical.plan.orientationTitle')}>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <SelectField label={t('clinical.plan.orientation')} value={p.orientation} onChange={(v) => set('orientation', v as typeof p.orientation)} disabled={readOnly}
+            options={(['none', 'service', 'hospitalization', 'referral'] as const).map((o) => ({ value: o, label: t(`clinical.plan.orientations.${o}`) }))} />
+          {p.orientation !== 'none' && (
+            <FormField label={t(`clinical.plan.target.${p.orientation}`)} hint={t(`clinical.plan.targetHint.${p.orientation}`)}>
+              {(c) => <SuggestInput {...c} value={p.orientationTarget} disabled={readOnly} onChange={(v) => set('orientationTarget', v)}
+                suggestions={p.orientation === 'referral' ? [] : SERVICE_KEYS.map((k) => ({ value: t(`services.${k}`) }))} />}
+            </FormField>
+          )}
+          <TextField type="date" label={t('clinical.plan.followUp')} value={p.followUpDate} onChange={(v) => set('followUpDate', v)} disabled={readOnly} />
+        </div>
+        {p.orientation === 'hospitalization' && <p role="note" className="rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink">{t('clinical.plan.admissionNote')}</p>}
+      </Panel>
+    </div>
+  );
+}

@@ -1,0 +1,54 @@
+{
+  "title": "Hifadhi na wasambazaji",
+  "subtitle": "Viwango vya hifadhi, tarehe za kuisha na mapokezi",
+  "search": "Tafuta (bidhaa, msambazaji)",
+  "sourceNote": "Hifadhi inasimamiwa na programu ya hifadhi iliyopo (CERO UZISHA). Ukurasa huu ni mwonekano wake tu.",
+  "columns": {
+    "name": "Bidhaa",
+    "category": "Aina",
+    "quantity": "Kiasi",
+    "minLevel": "Kiwango cha chini",
+    "expiry": "Kuisha muda",
+    "level": "Kiwango"
+  },
+  "category": {
+    "pharmacy": "Famasia",
+    "consumables": "Vifaa vinavyotumika",
+    "reagents": "Vitendanishi",
+    "equipment": "Vifaa"
+  },
+  "level": {
+    "ok": "Kawaida",
+    "low": "Hifadhi ndogo",
+    "out": "Imeisha",
+    "expiring": "Inakaribia kuisha muda"
+  },
+  "filters": {
+    "category": "Aina",
+    "level": "Kiwango"
+  },
+  "summary": {
+    "references": "Bidhaa",
+    "low": "Hifadhi ndogo",
+    "out": "Zimeisha",
+    "expiring": "Zinakaribia kuisha"
+  },
+  "create": {
+    "button": "Pokea bidhaa",
+    "title": "Rekodi mapokezi",
+    "submit": "Rekodi mapokezi"
+  },
+  "fields": {
+    "product": "Bidhaa",
+    "quantity": "Kiasi kilichopokelewa",
+    "supplier": "Msambazaji",
+    "batch": "Namba ya kundi",
+    "expiry": "Tarehe ya kuisha muda"
+  },
+  "detail": {
+    "summary": "Taarifa za bidhaa",
+    "reference": "Rejea",
+    "supplier": "Msambazaji",
+    "location": "Mahali"
+  }
+}

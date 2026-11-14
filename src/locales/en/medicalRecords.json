@@ -1,0 +1,43 @@
+{
+  "title": "Medical records",
+  "subtitle": "Patient records and their completeness",
+  "search": "Search (patient, record number)",
+  "sensitive": "Sensitive data: every access to a record’s content is logged in the audit trail.",
+  "columns": {
+    "patient": "Patient",
+    "number": "Record no.",
+    "service": "Department",
+    "lastUpdate": "Last update",
+    "completeness": "Completeness",
+    "status": "Status"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived",
+    "locked": "Locked"
+  },
+  "completeness": {
+    "complete": "Complete",
+    "partial": "Partial",
+    "incomplete": "Incomplete"
+  },
+  "filters": {
+    "status": "Status",
+    "completeness": "Completeness",
+    "service": "Department"
+  },
+  "detail": {
+    "summary": "Record information",
+    "openedAt": "Opened on",
+    "contents": "Contents (item count)",
+    "consultations": "Consultations",
+    "prescriptions": "Prescriptions",
+    "labOrders": "Lab orders",
+    "documents": "Documents",
+    "access": "Access to clinical content",
+    "accessBody": "Opening clinical content requires the dedicated permission and leaves a named trace.",
+    "openContent": "Open record content",
+    "confirmTitle": "Open this record?",
+    "confirmBody": "Your name, the date and the access reason will be recorded in the audit log."
+  }
+}

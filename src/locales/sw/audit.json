@@ -1,0 +1,39 @@
+{
+  "title": "Ukaguzi",
+  "subtitle": "Kumbukumbu za vitendo na ufikiaji wa data",
+  "search": "Tafuta (mtumiaji, rejea)",
+  "columns": {
+    "date": "Tarehe na saa",
+    "user": "Mtumiaji",
+    "action": "Kitendo",
+    "resource": "Rasilimali",
+    "reference": "Rejea",
+    "outcome": "Matokeo"
+  },
+  "action": {
+    "view": "Kuona",
+    "create": "Kuunda",
+    "update": "Kubadilisha",
+    "validate": "Kuthibitisha",
+    "cancel": "Kughairi",
+    "export": "Kusafirisha",
+    "login": "Kuingia"
+  },
+  "resource": {
+    "patient": "Mgonjwa",
+    "medicalRecord": "Faili ya matibabu",
+    "prescription": "Agizo",
+    "labOrder": "Kipimo cha maabara",
+    "invoice": "Ankara",
+    "stock": "Hifadhi",
+    "session": "Kikao"
+  },
+  "outcome": {
+    "success": "Imefanikiwa",
+    "denied": "Imekataliwa"
+  },
+  "detail": {
+    "summary": "Maelezo ya tukio",
+    "immutable": "Kumbukumbu ya ukaguzi haiwezi kubadilishwa wala kufutwa kutoka kwenye kiolesura."
+  }
+}

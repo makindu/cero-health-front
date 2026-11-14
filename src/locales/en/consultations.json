@@ -1,0 +1,471 @@
+{
+  "title": "Consultations",
+  "subtitle": "Ongoing and past medical consultations",
+  "search": "Search (patient, practitioner, number)",
+  "columns": {
+    "date": "Date and time",
+    "patient": "Patient",
+    "practitioner": "Practitioner",
+    "service": "Department",
+    "reason": "Reason",
+    "status": "Status"
+  },
+  "status": {
+    "draft": "Draft",
+    "inProgress": "In progress",
+    "signed": "Signed",
+    "closed": "Closed",
+    "awaitingResults": "Awaiting results",
+    "toValidate": "To validate"
+  },
+  "reason": {
+    "firstVisit": "First visit",
+    "followUp": "Follow-up",
+    "control": "Check-up",
+    "vaccination": "Vaccination",
+    "prenatal": "Prenatal visit"
+  },
+  "filters": {
+    "status": "Status",
+    "service": "Department"
+  },
+  "create": {
+    "button": "New consultation",
+    "title": "Open a consultation",
+    "submit": "Open consultation"
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "service": "Department",
+    "practitioner": "Practitioner",
+    "reason": "Reason"
+  },
+  "detail": {
+    "summary": "Consultation",
+    "reference": "Reference",
+    "clinical": "Clinical content",
+    "clinicalBody": "Findings, diagnoses and prescriptions will be entered by the practitioner once the consultations API is available. No clinical data is shown in the demo.",
+    "actions": "Actions"
+  },
+  "actions": {
+    "sign": "Sign",
+    "signTitle": "Sign this consultation?",
+    "signBody": "Once signed, the content cannot be changed without a trace.",
+    "close": "Close",
+    "closeTitle": "Close this consultation?",
+    "closeBody": "Closing is recorded in the audit log."
+  },
+  "clinical": {
+    "open": "Open the consultation record",
+    "you": "You (current session)",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "previous": "Previous",
+    "next": "Next",
+    "navigation": "Consultation sections",
+    "progress": "Consultation progress: {{percent}}%",
+    "notAssessed": "Not assessed",
+    "ageYears": "{{count}} year(s)",
+    "sex": {
+      "F": "Female",
+      "M": "Male"
+    },
+    "noMedicalAccess": "You do not have permission to view medical information.",
+    "lockedNote": "Signed consultation: the content can no longer be edited. Only a traced addendum can be added (Conclusion section).",
+    "readOnlyNote": "Read-only: you do not have permission to edit this consultation.",
+    "sections": {
+      "general": "General information",
+      "anamnesis": "Reason and history taking",
+      "history": "Medical history",
+      "exam": "Clinical examination",
+      "assessment": "Assessment and diagnoses",
+      "plan": "Management plan",
+      "conclusion": "Conclusion and validation"
+    },
+    "targets": {
+      "general": "General information",
+      "anamnesis": "Reason and history taking",
+      "history": "Medical history",
+      "exam": "Clinical examination",
+      "assessment": "Assessment and diagnoses",
+      "plan": "Management plan",
+      "conclusion": "Conclusion and validation",
+      "report": "Full report"
+    },
+    "save": {
+      "button": "Save draft",
+      "ok": "Draft saved",
+      "demoTitle": "Demo: nothing was saved",
+      "demoBody": "The form works but no data is sent until the HEALTH API is connected.",
+      "failed": "Saving failed",
+      "failedBody": "Your entries are still on screen. Try again.",
+      "clean": "No pending changes",
+      "dirty": "Unsaved changes",
+      "dirtyDemo": "Local draft, not saved (demo)",
+      "locked": "Consultation locked"
+    },
+    "status": {
+      "actions": {
+        "inProgress": "Start the consultation",
+        "awaitingResults": "Set to awaiting results",
+        "toValidate": "Submit for validation",
+        "signed": "Validate and sign",
+        "closed": "Close",
+        "draft": "Draft"
+      },
+      "confirmBody": "The consultation status will be changed and recorded.",
+      "signBody": "After signing, the consultation can no longer be edited: only a traced addendum can be added.",
+      "changed": "Status: {{status}}",
+      "previewTitle": "Local preview: nothing was saved",
+      "previewBody": "The status change is only visible on this screen (demo mode).",
+      "previewBanner": "Local preview of the status change: it is NOT saved and will disappear on reload."
+    },
+    "validation": {
+      "title": "Pre-validation check",
+      "ready": "Required items are filled in.",
+      "issues": {
+        "chiefComplaint": "Chief complaint missing",
+        "antecedentsNotVerified": "Medical history not verified during this consultation",
+        "principalDiagnosis": "No principal diagnosis recorded",
+        "conclusion": "Medical conclusion missing"
+      }
+    },
+    "summary": {
+      "title": "Summary before validation (report)",
+      "hint": "Preview of the report as it will be printed. Only entered information appears.",
+      "print": "Print / PDF"
+    },
+    "report": {
+      "title": "Medical consultation report",
+      "facility": "Facility (name provided by CERO ID CORE)",
+      "footer": "Document generated by CERO HEALTH. It has medical value only when signed by the practitioner.",
+      "demo": "FICTITIOUS DATA — demonstration document, no medical value",
+      "notSigned": "DRAFT — not signed",
+      "signedBy": "Signed by {{by}} on {{when}}"
+    },
+    "addendum": {
+      "title": "Medical addendum",
+      "hint": "The consultation is signed: any clarification goes through a dated addendum, without changing the original content.",
+      "text": "Addendum text",
+      "add": "Add addendum"
+    },
+    "revisions": {
+      "title": "Change history",
+      "none": "No changes recorded.",
+      "serverNote": "Final author and date: assigned by the server on save."
+    },
+    "general": {
+      "title": "General information",
+      "hint": "Administrative information retrieved from the patient file. Medical data is in the other sections.",
+      "fileNumber": "File number",
+      "age": "Age",
+      "sex": "Sex",
+      "origin": "Origin",
+      "fromAppointment": "Appointment {{id}}",
+      "walkIn": "Walk-in"
+    },
+    "anamnesis": {
+      "title": "Reason and history taking",
+      "chiefComplaint": "Chief complaint",
+      "source": "Source of information",
+      "sources": {
+        "patient": "Patient",
+        "companion": "Companion",
+        "other": "Other"
+      },
+      "onset": "Onset date",
+      "duration": "Duration and course",
+      "durationHint": "E.g. for 3 days, worsening.",
+      "location": "Location of symptoms",
+      "intensity": "Intensity (if relevant)",
+      "associated": "Associated symptoms",
+      "aggravating": "Aggravating factors",
+      "relieving": "Relieving factors",
+      "priorTreatments": "Treatments already taken",
+      "history": "History of the present illness",
+      "notes": "Additional information"
+    },
+    "allergy": {
+      "title": "ALLERGIES",
+      "noneKnown": "No known allergy (declared).",
+      "unknown": "Allergies not recorded: check with the patient."
+    },
+    "severity": {
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "history": {
+      "verifyTitle": "Medical history verification",
+      "verify": "I have verified the history",
+      "verifiedAt": "Verified on {{when}} by {{by}}.",
+      "noChange": "No change.",
+      "changed": "{{count}} entry(ies) changed or added.",
+      "notVerified": "Not verified during this consultation.",
+      "patientLevel": "History belongs to the patient: it stays visible in later consultations. Every change creates a new version; the old one is kept.",
+      "categories": {
+        "medical": "Personal medical history",
+        "surgical": "Surgical history",
+        "family": "Family history",
+        "allergy": "Allergies and reactions",
+        "medication": "Usual medications",
+        "obstetric": "Gynaecological / obstetric (if relevant)",
+        "lifestyle": "Habits and lifestyle"
+      },
+      "empty": "No information recorded.",
+      "markNone": "None known",
+      "markUnknown": "Unknown",
+      "noneLabel": "None known (declared)",
+      "unknownLabel": "Unknown information",
+      "origin": {
+        "declared": "Declared by the patient",
+        "observed": "Observed / confirmed by a professional"
+      },
+      "state": {
+        "active": "Active",
+        "resolved": "Resolved",
+        "unknown": "Unknown",
+        "none": "None"
+      },
+      "recordedBy": "Recorded by {{by}} on {{when}}",
+      "confirm": "Confirm (observed)",
+      "resolve": "Mark resolved",
+      "versions": "Versions",
+      "addTitle": "Add information",
+      "category": "Category",
+      "label": "Label",
+      "detail": "Details",
+      "severity": "Reaction severity",
+      "originLabel": "Source",
+      "stateLabel": "State",
+      "add": "Add",
+      "notes": "History and observations"
+    },
+    "exam": {
+      "notDoneTitle": "Examination performed",
+      "notDone": "Examination not performed or not applicable",
+      "notDoneReason": "Reason",
+      "triageTitle": "Vitals taken at triage",
+      "noTriageLink": "No triage record linked to this consultation.",
+      "noTriageVitals": "No vitals recorded at triage.",
+      "triageError": "Unable to load triage vitals.",
+      "importTriage": "Use these values",
+      "vitalsTitle": "Vital signs",
+      "vitalsHint": "Leave blank what was not measured: no value is ever prefilled.",
+      "vitalsSource": "Values entered by the practitioner. Triage values keep their date, time and author in the list above.",
+      "vitals": {
+        "systolic": "Systolic pressure",
+        "diastolic": "Diastolic pressure",
+        "pulse": "Heart rate",
+        "temperature": "Temperature",
+        "respiratoryRate": "Respiratory rate",
+        "spo2": "O2 saturation",
+        "weight": "Weight",
+        "height": "Height"
+      },
+      "bmi": "BMI",
+      "bmiNone": "not computable (weight and height required)",
+      "outOfRange": "Implausible value(s): {{fields}}. Check the entry.",
+      "generalState": "General condition",
+      "states": {
+        "good": "Good",
+        "altered": "Altered",
+        "severe": "Severely altered"
+      },
+      "physical": "Physical examination",
+      "systems": "Examination by system",
+      "observations": "Clinical observations and relevant results"
+    },
+    "assessment": {
+      "title": "Diagnoses",
+      "noAi": "The physician makes and confirms the diagnoses. The application neither suggests nor confirms any.",
+      "empty": "No diagnosis added.",
+      "addTitle": "Add a diagnosis",
+      "label": "Diagnosis label",
+      "icd10": "ICD-10 code (optional)",
+      "icd10Hint": "Common suggestions; the full reference will come from the API.",
+      "type": "Type",
+      "status": "Status",
+      "comment": "Clinical comment",
+      "add": "Add diagnosis",
+      "evolve": "Update status",
+      "reason": "Reason for the change",
+      "reasonHint": "E.g. confirmed after laboratory result.",
+      "recordChange": "Record the change",
+      "evaluation": "Medical assessment",
+      "principalIs": "Principal diagnosis: {{label}} ({{status}}).",
+      "noPrincipal": "No principal diagnosis recorded.",
+      "types": {
+        "principal": "Principal",
+        "secondary": "Secondary",
+        "differential": "Differential"
+      },
+      "statuses": {
+        "presumptive": "Presumptive",
+        "investigating": "Under investigation",
+        "confirmed": "Confirmed",
+        "ruledOut": "Ruled out"
+      },
+      "errors": {
+        "labelRequired": "The label is required.",
+        "invalidIcd10": "Invalid ICD-10 code (e.g. B54 or J18.9).",
+        "principalExists": "An active principal diagnosis already exists: rule it out or change its type first.",
+        "differentialCannotBeConfirmed": "A differential diagnosis cannot be “confirmed”: change its type first (principal or secondary).",
+        "notFound": "Diagnosis not found.",
+        "noChange": "No change to record."
+      }
+    },
+    "plan": {
+      "synthesis": "Clinical synthesis",
+      "ordersTitle": "Tests and prescriptions",
+      "ordersHint": "Lab requests and prescriptions are created in their own module, without duplication, then linked to this consultation (linking done by the API).",
+      "labLink": "Laboratory",
+      "rxLink": "Prescriptions",
+      "admissionLink": "Hospitalization",
+      "actions": "Care, procedures and patient advice",
+      "orientationTitle": "Orientation and follow-up",
+      "orientation": "Orientation",
+      "orientations": {
+        "none": "None",
+        "service": "To another service",
+        "hospitalization": "Hospitalization decision",
+        "referral": "Referral to another facility"
+      },
+      "target": {
+        "service": "Destination service",
+        "hospitalization": "Admitting service",
+        "referral": "Referral facility"
+      },
+      "followUp": "Recommended follow-up date",
+      "admissionNote": "The admission itself is done in the Hospitalization module.",
+      "labOrder": "Order lab tests",
+      "rxOrder": "Prescribe",
+      "admitOrder": "Admit to ward",
+      "targetHint": {
+        "service": "Hospital service that will take over the patient’s care.",
+        "hospitalization": "Service where the patient will be admitted.",
+        "referral": "External hospital or centre the patient is referred to."
+      }
+    },
+    "conclusion": {
+      "text": "Medical conclusion",
+      "decision": "Medical decision",
+      "recommendations": "Recommendations",
+      "nextAppointment": "Next appointment date"
+    },
+    "tpl": {
+      "title": "Writing templates",
+      "subtitle": "Load a fully editable outline, or start from a blank page.",
+      "search": "Search templates",
+      "onlySection": "This section only",
+      "new": "New template",
+      "blank": "Blank page",
+      "blankHint": "Start without a template.",
+      "clear": "Clear the editor",
+      "favorite": "Favorite",
+      "use": "Use",
+      "replace": "Replace content",
+      "append": "Append",
+      "duplicate": "Duplicate",
+      "edit": "Edit",
+      "copyOf": "Copy of {{name}}",
+      "none": "No template found.",
+      "name": "Template name",
+      "target": "Target section",
+      "scopeLabel": "Scope",
+      "scope": {
+        "common": "Common (application)",
+        "facility": "Facility",
+        "personal": "Personal"
+      },
+      "content": "Template content",
+      "noPatientData": "A template is a reusable outline: never put any patient data in it.",
+      "useNow": "Use without saving",
+      "save": "Save template",
+      "saved": "Template saved",
+      "saveFailed": "Saving the template failed",
+      "demoNotSaved": "Demo: template not saved",
+      "demoNotSavedHint": "Use “Use without saving” to insert it into the editor.",
+      "names": {
+        "anamnesis": "Anamnesis template",
+        "illnessHistory": "History of present illness template",
+        "medicalHistory": "Medical history template",
+        "clinicalExam": "Clinical examination template",
+        "observations": "Medical observations template",
+        "synthesis": "Clinical synthesis template",
+        "conclusion": "Medical conclusion template",
+        "fullReport": "Full consultation report template"
+      },
+      "sec": {
+        "chiefComplaint": "Chief complaint",
+        "onset": "Onset of symptoms",
+        "duration": "Duration and course",
+        "location": "Location",
+        "intensity": "Intensity",
+        "associated": "Associated symptoms",
+        "aggravating": "Aggravating factors",
+        "relieving": "Relieving factors",
+        "priorTreatment": "Treatments already taken",
+        "onsetCircumstances": "Circumstances of onset",
+        "evolution": "Course",
+        "previousConsultations": "Previous consultations and tests",
+        "currentState": "Current state",
+        "medical": "Medical history",
+        "surgical": "Surgical history",
+        "family": "Family history",
+        "allergies": "Allergies",
+        "medications": "Usual medications",
+        "obstetric": "Gynaecology / obstetrics",
+        "lifestyle": "Lifestyle",
+        "generalState": "General condition",
+        "head": "Head and neck",
+        "cardiovascular": "Cardiovascular",
+        "respiratory": "Respiratory",
+        "abdomen": "Abdomen",
+        "neurological": "Neurological",
+        "skin": "Skin",
+        "musculoskeletal": "Musculoskeletal",
+        "observations": "Clinical observations",
+        "results": "Relevant results",
+        "summary": "Case summary",
+        "problems": "Identified problems",
+        "hypotheses": "Diagnostic hypotheses",
+        "conclusion": "Conclusion",
+        "decision": "Medical decision",
+        "recommendations": "Recommendations",
+        "followUp": "Follow-up",
+        "illnessHistory": "History of present illness",
+        "physicalExam": "Physical examination",
+        "plan": "Management plan"
+      }
+    }
+  },
+  "editor": {
+    "toolbar": "Formatting tools",
+    "templates": "Writing templates",
+    "undo": "Undo",
+    "redo": "Redo",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strikethrough",
+    "bullets": "Bulleted list",
+    "numbered": "Numbered list",
+    "h2": "Heading",
+    "h3": "Subheading",
+    "alignLeft": "Align left",
+    "alignCenter": "Center",
+    "alignRight": "Align right",
+    "alignJustify": "Justify",
+    "table": "Insert a table",
+    "addRow": "+ Row",
+    "addColumn": "+ Column",
+    "deleteTable": "Delete table",
+    "moreTools": "More tools",
+    "print": "Print / PDF",
+    "fullscreen": "Full screen",
+    "exitFullscreen": "Exit full screen",
+    "printFacility": "Clinical writing",
+    "printFooter": "Extract printed from CERO HEALTH."
+  }
+}

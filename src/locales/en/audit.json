@@ -1,0 +1,39 @@
+{
+  "title": "Audit",
+  "subtitle": "Log of actions and data access",
+  "search": "Search (user, reference)",
+  "columns": {
+    "date": "Date and time",
+    "user": "User",
+    "action": "Action",
+    "resource": "Resource",
+    "reference": "Reference",
+    "outcome": "Outcome"
+  },
+  "action": {
+    "view": "View",
+    "create": "Create",
+    "update": "Update",
+    "validate": "Validate",
+    "cancel": "Cancel",
+    "export": "Export",
+    "login": "Sign-in"
+  },
+  "resource": {
+    "patient": "Patient",
+    "medicalRecord": "Medical record",
+    "prescription": "Prescription",
+    "labOrder": "Lab order",
+    "invoice": "Invoice",
+    "stock": "Stock",
+    "session": "Session"
+  },
+  "outcome": {
+    "success": "Succeeded",
+    "denied": "Denied"
+  },
+  "detail": {
+    "summary": "Event details",
+    "immutable": "An audit entry cannot be edited or deleted from the interface."
+  }
+}

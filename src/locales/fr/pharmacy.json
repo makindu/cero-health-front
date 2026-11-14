@@ -1,0 +1,135 @@
+{
+  "title": "Pharmacie",
+  "subtitle": "Dispensation des prescriptions validées, facturation et stock par lots",
+  "search": "Rechercher une prescription",
+  "searchStock": "Rechercher un article",
+  "tabs": {
+    "queue": "À dispenser",
+    "stock": "Stock pharmacie",
+    "dispensations": "Dispensations"
+  },
+  "filters": {
+    "level": "Niveau"
+  },
+  "level": {
+    "ok": "Normal",
+    "low": "Stock bas",
+    "out": "Rupture",
+    "expiring": "Péremption proche"
+  },
+  "stock": {
+    "quantity": "Quantité",
+    "minLevel": "Seuil minimal",
+    "expiry": "Péremption",
+    "level": "Niveau",
+    "item": "Produit",
+    "total": "Total en stock",
+    "usable": "Utilisable",
+    "lots": "Lots (n° · quantité · péremption)",
+    "expired": "Périmé",
+    "adjust": "Ajuster",
+    "receive": "Réceptionner un lot",
+    "empty": "Aucun produit pharmacie au catalogue",
+    "notice": "Les lots périmés ne sont jamais dispensés. La sortie suit le principe premier périmé, premier sorti.",
+    "movements": "Journal des mouvements ({{count}})",
+    "receiveTitle": "Réceptionner un lot",
+    "chooseItem": "Choisir un produit",
+    "lotNumber": "N° de lot",
+    "adjustTitle": "Ajuster un lot",
+    "adjustBody": "Correction d’inventaire : motif obligatoire, mouvement tracé, jamais de stock négatif.",
+    "delta": "Variation",
+    "deltaHint": "Négatif pour retirer"
+  },
+  "columns": {
+    "prescription": "Prescription",
+    "patient": "Patient",
+    "items": "Produits (reste/prescrit)",
+    "date": "Prescrite le",
+    "number": "N°",
+    "payment": "Paiement",
+    "status": "Statut"
+  },
+  "queue": {
+    "prepare": "Préparer",
+    "empty": "Rien à dispenser",
+    "emptyHint": "Les prescriptions validées apparaissent ici."
+  },
+  "payment": {
+    "paid": "Payé",
+    "unpaid": "À payer en caisse",
+    "credit": "Crédit autorisé",
+    "exception": "Exception tracée",
+    "invoiceCancelled": "Facture annulée"
+  },
+  "dispensationStatus": {
+    "prepared": "Préparée",
+    "dispensed": "Remise",
+    "cancelled": "Annulée"
+  },
+  "actions": {
+    "open": "Ouvrir"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "reason": "Motif"
+  },
+  "done": {
+    "prepare": "Dispensation préparée et facturée",
+    "dispense": "Produits remis, stock mis à jour",
+    "exception": "Exception enregistrée",
+    "cancel": "Dispensation annulée",
+    "receive": "Lot reçu",
+    "adjust": "Stock ajusté"
+  },
+  "prepare": {
+    "title": "Préparer la dispensation — {{number}}",
+    "description": "Choisissez, pour chaque ligne prescrite, le produit du stock à remettre.",
+    "submit": "Préparer et facturer",
+    "remaining": "reste {{count}} à dispenser",
+    "product": "Produit du stock",
+    "skip": "Ne pas dispenser cette ligne",
+    "usable": "{{count}} utilisables",
+    "quantity": "Quantité",
+    "notice": "La facture est créée maintenant ; le stock ne sort qu’à la remise, après paiement. Aucune correspondance produit n’est faite automatiquement.",
+    "reason": "Motif de l’écart",
+    "reasonPlaceholder": "Ex. rupture de stock, générique équivalent, refus du patient",
+    "deviation": {
+      "reduced": "Quantité inférieure à la prescription",
+      "substituted": "Produit différent de la prescription"
+    }
+  },
+  "dispensation": {
+    "title": "Dispensation",
+    "description": "Remise de produits au patient. L’administration relève des soins infirmiers.",
+    "summary": "Informations",
+    "preparedBy": "Préparée par",
+    "dispensedBy": "Remise par",
+    "lines": "Produits",
+    "forLine": "pour « {{label}} »",
+    "payment": "Facturation et paiement",
+    "invoice": "Facture",
+    "patientShare": "Part patient",
+    "remaining": "Reste à payer",
+    "gate": "Remise",
+    "noInvoice": "Facture introuvable : la remise est bloquée.",
+    "exceptionBy": "Exception de paiement accordée par {{by}} : {{reason}}",
+    "cancelledBy": "Annulée par {{by}} : {{reason}}",
+    "refundPending": "un paiement a été encaissé, remboursement à faire en caisse",
+    "actions": "Actions",
+    "dispense": "Remettre les produits",
+    "cancel": "Annuler",
+    "exception": "Remettre sans paiement",
+    "gateHint": "La remise est possible après paiement, crédit autorisé ou exception motivée.",
+    "exceptionTitle": "Remettre sans paiement ?",
+    "exceptionBody": "Exception réservée aux urgences, tracée avec votre nom et le motif.",
+    "cancelTitle": "Annuler cette dispensation ?",
+    "cancelBody": "Possible avant la remise. La facture non payée est annulée ; un paiement reste à rembourser en caisse.",
+    "empty": "Aucune dispensation"
+  },
+  "movementKind": {
+    "receive": "Entrée",
+    "dispense": "Dispensation",
+    "adjust": "Ajustement",
+    "dispenseCancel": "Annulation"
+  }
+}

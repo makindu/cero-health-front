@@ -1,0 +1,135 @@
+{
+  "title": "Famasia",
+  "subtitle": "Utoaji wa maagizo yaliyothibitishwa, ankara na hisa kwa kundi",
+  "search": "Tafuta maagizo",
+  "searchStock": "Tafuta bidhaa",
+  "tabs": {
+    "queue": "Za kutoa",
+    "stock": "Hisa ya famasia",
+    "dispensations": "Utoaji"
+  },
+  "filters": {
+    "level": "Kiwango"
+  },
+  "level": {
+    "ok": "Kawaida",
+    "low": "Hifadhi ndogo",
+    "out": "Imeisha",
+    "expiring": "Inakaribia kuisha muda"
+  },
+  "stock": {
+    "quantity": "Kiasi",
+    "minLevel": "Kiwango cha chini",
+    "expiry": "Kuisha muda",
+    "level": "Kiwango",
+    "item": "Bidhaa",
+    "total": "Jumla ya hisa",
+    "usable": "Inayotumika",
+    "lots": "Makundi (na. · kiasi · kuisha muda)",
+    "expired": "Imeisha muda",
+    "adjust": "Rekebisha",
+    "receive": "Pokea kundi",
+    "empty": "Hakuna bidhaa ya famasia kwenye orodha",
+    "notice": "Makundi yaliyoisha muda hayatolewi kamwe. Utoaji hufuata kuisha muda kwanza, kutoka kwanza.",
+    "movements": "Kumbukumbu ya mienendo ({{count}})",
+    "receiveTitle": "Pokea kundi",
+    "chooseItem": "Chagua bidhaa",
+    "lotNumber": "Na. ya kundi",
+    "adjustTitle": "Rekebisha kundi",
+    "adjustBody": "Marekebisho ya hesabu: sababu inahitajika, mwendo unarekodiwa, hisa haiwi hasi.",
+    "delta": "Mabadiliko",
+    "deltaHint": "Hasi kuondoa"
+  },
+  "columns": {
+    "prescription": "Agizo",
+    "patient": "Mgonjwa",
+    "items": "Bidhaa (zilizobaki/zilizoagizwa)",
+    "date": "Liliandikwa",
+    "number": "Na.",
+    "payment": "Malipo",
+    "status": "Hali"
+  },
+  "queue": {
+    "prepare": "Andaa",
+    "empty": "Hakuna cha kutoa",
+    "emptyHint": "Maagizo yaliyothibitishwa yanaonekana hapa."
+  },
+  "payment": {
+    "paid": "Imelipwa",
+    "unpaid": "Ilipwe kwa mhasibu",
+    "credit": "Mkopo umeidhinishwa",
+    "exception": "Ubaguzi umerekodiwa",
+    "invoiceCancelled": "Ankara imeghairiwa"
+  },
+  "dispensationStatus": {
+    "prepared": "Imeandaliwa",
+    "dispensed": "Imekabidhiwa",
+    "cancelled": "Imeghairiwa"
+  },
+  "actions": {
+    "open": "Fungua"
+  },
+  "common": {
+    "cancel": "Ghairi",
+    "reason": "Sababu"
+  },
+  "done": {
+    "prepare": "Utoaji umeandaliwa na kutozwa",
+    "dispense": "Bidhaa zimekabidhiwa, hisa imesasishwa",
+    "exception": "Ubaguzi umerekodiwa",
+    "cancel": "Utoaji umeghairiwa",
+    "receive": "Kundi limepokelewa",
+    "adjust": "Hisa imerekebishwa"
+  },
+  "prepare": {
+    "title": "Andaa utoaji — {{number}}",
+    "description": "Kwa kila mstari ulioagizwa, chagua bidhaa ya hisa ya kukabidhi.",
+    "submit": "Andaa na toza",
+    "remaining": "zimebaki {{count}} za kutoa",
+    "product": "Bidhaa ya hisa",
+    "skip": "Usitoe mstari huu",
+    "usable": "{{count}} zinatumika",
+    "quantity": "Kiasi",
+    "notice": "Ankara hutengenezwa sasa; hisa hutoka wakati wa kukabidhi, baada ya malipo. Hakuna ulinganisho wa bidhaa wa kiotomatiki.",
+    "reason": "Sababu ya tofauti",
+    "reasonPlaceholder": "Mf. dawa imeisha, dawa mbadala sawa, mgonjwa amekataa",
+    "deviation": {
+      "reduced": "Kiasi ni kidogo kuliko kilichoagizwa",
+      "substituted": "Bidhaa tofauti na agizo"
+    }
+  },
+  "dispensation": {
+    "title": "Utoaji",
+    "description": "Kukabidhi bidhaa kwa mgonjwa. Kumpa mgonjwa dawa ni kazi ya uuguzi.",
+    "summary": "Taarifa",
+    "preparedBy": "Imeandaliwa na",
+    "dispensedBy": "Imekabidhiwa na",
+    "lines": "Bidhaa",
+    "forLine": "kwa «{{label}}»",
+    "payment": "Ankara na malipo",
+    "invoice": "Ankara",
+    "patientShare": "Sehemu ya mgonjwa",
+    "remaining": "Kiasi kilichobaki",
+    "gate": "Kukabidhi",
+    "noInvoice": "Ankara haipatikani: kukabidhi kumezuiwa.",
+    "exceptionBy": "Ubaguzi wa malipo umetolewa na {{by}}: {{reason}}",
+    "cancelledBy": "Imeghairiwa na {{by}}: {{reason}}",
+    "refundPending": "malipo yalipokelewa, marejesho yafanywe kwa mhasibu",
+    "actions": "Vitendo",
+    "dispense": "Kabidhi bidhaa",
+    "cancel": "Ghairi",
+    "exception": "Kabidhi bila malipo",
+    "gateHint": "Kukabidhi kunawezekana baada ya malipo, mkopo ulioidhinishwa au ubaguzi wenye sababu.",
+    "exceptionTitle": "Kabidhi bila malipo?",
+    "exceptionBody": "Ubaguzi kwa dharura pekee, unarekodiwa na jina lako na sababu.",
+    "cancelTitle": "Ghairi utoaji huu?",
+    "cancelBody": "Inawezekana kabla ya kukabidhi. Ankara isiyolipwa inaghairiwa; malipo yanarejeshwa kwa mhasibu.",
+    "empty": "Hakuna utoaji"
+  },
+  "movementKind": {
+    "receive": "Kuingia",
+    "dispense": "Utoaji",
+    "adjust": "Marekebisho",
+    "dispenseCancel": "Kughairi"
+  }
+}

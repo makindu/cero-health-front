@@ -1,0 +1,105 @@
+{
+  "title": "Utawala",
+  "subtitle": "Kituo, watumiaji, majukumu na idara",
+  "tabs": {
+    "facility": "Kituo",
+    "users": "Wafanyakazi",
+    "roles": "Majukumu na ruhusa",
+    "services": "Idara"
+  },
+  "facility": {
+    "title": "Mipangilio ya kituo",
+    "description": "Taarifa hizi huonekana kwenye nyaraka zilizochapishwa.",
+    "name": "Jina la kituo",
+    "type": "Aina",
+    "types": {
+      "hospital": "Hospitali",
+      "healthCenter": "Kituo cha afya",
+      "clinic": "Kliniki",
+      "dispensary": "Zahanati"
+    },
+    "phone": "Simu",
+    "email": "Barua pepe",
+    "address": "Anwani",
+    "timeZone": "Saa za eneo",
+    "timeZoneHint": "Mfano Africa/Lubumbashi",
+    "currency": "Sarafu",
+    "currencyHint": "Msimbo wa ISO 4217, mf. USD au CDF",
+    "save": "Hifadhi mipangilio"
+  },
+  "users": {
+    "name": "Jina",
+    "email": "Barua pepe",
+    "role": "Jukumu",
+    "status": "Hali",
+    "statuses": {
+      "active": "Hai",
+      "suspended": "Amesimamishwa"
+    },
+    "lastLogin": "Kuingia kwa mwisho",
+    "never": "Hajawahi",
+    "search": "Tafuta watumiaji",
+    "invite": "Ongeza mfanyakazi",
+    "inviteTitle": "Ongeza mfanyakazi",
+    "inviteSubmit": "Hifadhi",
+    "detail": "Akaunti ya mtumiaji",
+    "managedByIdCore": "Orodha ya wafanyakazi ya ndani: inalisha orodha za madaktari, bila nenosiri wala akaunti ya kuingia. Akaunti na ufikiaji halisi vitasimamiwa na CERO ID CORE.",
+    "service": "Idara",
+    "serviceHint": "Inahitajika kwa daktari.",
+    "specialty": "Utaalamu",
+    "registration": "Namba ya usajili wa baraza",
+    "actions": "Vitendo",
+    "suspend": "Simamisha",
+    "suspendTitle": "Kumsimamisha mfanyakazi huyu?",
+    "suspendBody": "Hataonyeshwa tena kwenye orodha za madaktari. Historia yake inahifadhiwa.",
+    "reactivate": "Washa tena",
+    "reactivateTitle": "Kumrudisha mfanyakazi huyu kazini?"
+  },
+  "roles": {
+    "note": "Pendekezo la majukumu ya kawaida, linalopaswa kuthibitishwa na CERO ID CORE. Misimbo ya ruhusa ni halisi; ugawaji kwa majukumu ni wa mfano na haujatekelezwa.",
+    "caption": "Ruhusa zilizotolewa kwa kila jukumu",
+    "permission": "Ruhusa",
+    "names": {
+      "doctor": "Daktari",
+      "nurse": "Muuguzi",
+      "pharmacist": "Mfamasia",
+      "labTech": "Mtaalamu wa maabara",
+      "cashier": "Mhasibu",
+      "admin": "Msimamizi"
+    },
+    "modules": {
+      "dashboard": "Dashibodi",
+      "patients": "Wagonjwa",
+      "appointments": "Miadi",
+      "medicalRecords": "Faili za matibabu",
+      "consultations": "Mashauriano",
+      "nursing": "Uuguzi",
+      "prescriptions": "Maagizo",
+      "pharmacy": "Famasia",
+      "laboratory": "Maabara",
+      "hospitalization": "Kulazwa",
+      "billing": "Malipo",
+      "cash": "Kasha",
+      "inventory": "Hifadhi",
+      "reports": "Ripoti",
+      "administration": "Utawala",
+      "audit": "Ukaguzi"
+    }
+  },
+  "services": {
+    "name": "Idara",
+    "head": "Mkuu",
+    "beds": "Vitanda",
+    "search": "Tafuta idara",
+    "create": "Idara mpya",
+    "createTitle": "Unda idara",
+    "createSubmit": "Unda idara"
+  },
+  "serviceNames": {
+    "generalMedicine": "Tiba ya jumla",
+    "pediatrics": "Watoto",
+    "maternity": "Uzazi",
+    "emergency": "Dharura",
+    "surgery": "Upasuaji"
+  }
+}

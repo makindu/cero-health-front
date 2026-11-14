@@ -1,0 +1,90 @@
+{
+  "title": "Component catalogue",
+  "subtitle": "CERO HEALTH design system: colours, components and states. Development-only page.",
+  "demoBanner": "Sample demo data: no real patient or result is displayed on this page.",
+  "colors": {
+    "title": "Colours",
+    "description": "Colours come from CSS variables (design tokens) and adapt to the light, dark or system theme.",
+    "brand": "Identity and navigation",
+    "surfaces": "Surfaces and text",
+    "status": "Statuses"
+  },
+  "buttons": {
+    "title": "Buttons",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "outline": "Outline",
+    "ghost": "Ghost",
+    "danger": "Danger",
+    "loading": "Loading",
+    "disabled": "Disabled",
+    "withIcon": "New patient"
+  },
+  "forms": {
+    "title": "Forms",
+    "fullName": "Full name",
+    "fullNameHint": "Example of a field with help text.",
+    "birthDate": "Date of birth",
+    "service": "Department",
+    "servicePlaceholder": "Choose a department",
+    "notes": "Notes",
+    "withError": "Field with an error",
+    "serviceGeneral": "General medicine",
+    "servicePediatrics": "Paediatrics",
+    "serviceMaternity": "Maternity"
+  },
+  "badges": {
+    "title": "Status badges",
+    "description": "Each status combines an icon and a label: colour is never the only indicator.",
+    "validated": "Validated",
+    "pending": "Pending",
+    "critical": "Critical",
+    "info": "Information",
+    "inactive": "Inactive"
+  },
+  "feedback": {
+    "title": "Loading, empty and error states",
+    "loading": "Loading in progress",
+    "emptyTitle": "No patients",
+    "emptyDescription": "No patient matches your search.",
+    "emptyAction": "New patient"
+  },
+  "dialogs": {
+    "title": "Dialogs and confirmations",
+    "openDialog": "Open a dialog",
+    "dialogTitle": "Demo dialog",
+    "dialogBody": "On mobile the dialog slides up from the bottom of the screen; on desktop it is centred.",
+    "openConfirm": "Ask for confirmation",
+    "confirmTitle": "Cancel this appointment?",
+    "confirmBody": "This action is recorded in the audit log and cannot be erased.",
+    "confirmAction": "Cancel appointment"
+  },
+  "tabs": {
+    "title": "Tabs",
+    "identity": "Identity",
+    "clinical": "Clinical record",
+    "billing": "Billing",
+    "identityBody": "Administrative identity, separate from the clinical record.",
+    "clinicalBody": "Access is permission-based and logged.",
+    "billingBody": "Invoices and payments linked to the episode of care."
+  },
+  "toasts": {
+    "title": "Notifications",
+    "success": "Saved successfully",
+    "warning": "Low stock",
+    "danger": "Sending failed",
+    "info": "New version available",
+    "details": "Demo message."
+  },
+  "table": {
+    "title": "Table with pagination",
+    "caption": "List of sample patients",
+    "id": "Reference",
+    "name": "Patient",
+    "service": "Department",
+    "status": "Status",
+    "lastVisit": "Last visit",
+    "searchLabel": "Search a sample patient",
+    "emptyFilter": "No sample patient matches the search."
+  }
+}

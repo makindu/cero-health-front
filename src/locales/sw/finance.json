@@ -1,0 +1,419 @@
+{
+  "common": {
+    "cancel": "Ghairi",
+    "confirm": "Thibitisha",
+    "edit": "Hariri",
+    "save": "Hifadhi",
+    "loading": "Inapakia…"
+  },
+  "localOnly": {
+    "title": "Inapatikana katika hali ya ndani au na seva",
+    "description": "Ankara na kasha hurekodi miamala ya hesabu: haziigizwi. Washa hali ya ndani (VITE_LOCAL_MODE=true) au unganisha seva ya CERO HEALTH."
+  },
+  "billing": {
+    "title": "Ankara",
+    "subtitle": "Ankara, sehemu za mgonjwa na walipaji, malipo",
+    "search": "Tafuta (nambari, mgonjwa)",
+    "empty": "Hakuna ankara",
+    "emptyHint": "Tengeneza ankara: bei hukokotolewa na injini ya bei (bima, mutuelle, usajili)."
+  },
+  "cash": {
+    "title": "Kasha",
+    "subtitle": "Makusanyo ya wagonjwa kwa njia ya malipo",
+    "day": "Siku",
+    "allCashiers": "Wahazina wote",
+    "patientNet": "Jumla iliyokusanywa (wagonjwa)",
+    "drawerHint": "Pesa taslimu zinazopaswa kuwa kwenye droo",
+    "cardTransferHint": "Kadi na uhamisho",
+    "orgReceipts": "Malipo ya walipaji",
+    "orgReceiptsHint": "Hufuatiliwa tofauti: hayachanganywi na kasha ya wagonjwa",
+    "empty": "Hakuna miamala siku hii",
+    "emptyHint": "Chagua siku au mhazini mwingine.",
+    "closureNotice": "Kufunga kasha (kuhesabu, tofauti, saini) bado hakupatikani: ni miamala na jumla za siku pekee zinazotolewa."
+  },
+  "columns": {
+    "number": "Nambari ya ankara",
+    "patient": "Mgonjwa",
+    "date": "Tarehe",
+    "dateTime": "Tarehe na saa",
+    "status": "Hali",
+    "patientBalance": "Salio la mgonjwa",
+    "orgBalance": "Salio la walipaji",
+    "method": "Njia",
+    "amount": "Kiasi",
+    "cashier": "Mhazini",
+    "type": "Aina"
+  },
+  "summary": {
+    "invoices": "Ankara hai",
+    "billed": "Zilizotozwa",
+    "collected": "Zilizokusanywa (wagonjwa)",
+    "receivables": "Za kukusanya",
+    "receivablesHint": "Wagonjwa {{patient}} · walipaji {{orgs}}"
+  },
+  "filters": {
+    "allStatuses": "Hali zote"
+  },
+  "status": {
+    "draft": "Rasimu",
+    "awaitingPayment": "Inasubiri malipo",
+    "partiallyPaid": "Imelipwa kiasi",
+    "paid": "Imelipwa",
+    "creditAuthorized": "Mkopo umeidhinishwa",
+    "cancelled": "Imeghairiwa"
+  },
+  "methods": {
+    "cash": "Pesa taslimu",
+    "mobileMoney": "Pesa ya simu",
+    "card": "Kadi",
+    "transfer": "Uhamisho"
+  },
+  "category": {
+    "consultation": "Mashauriano",
+    "laboratory": "Maabara",
+    "pharmacy": "Famasia",
+    "hospitalization": "Kulazwa hospitalini",
+    "room": "Chumba",
+    "procedure": "Utaratibu",
+    "nursing": "Huduma ya uuguzi",
+    "consumable": "Matumizi"
+  },
+  "ledger": {
+    "payment": "Malipo",
+    "refund": "Marejesho",
+    "reversal": "Kubatilisha muamala",
+    "insurerSettlement": "Malipo ya mlipaji",
+    "insurerRejection": "Kukataliwa na mlipaji",
+    "reversedMark": "imebatilishwa"
+  },
+  "coordination": {
+    "none": "Hakuna bima iliyotumika",
+    "primary": "Bima kuu pekee",
+    "primary+complementary": "Bima kuu + ya nyongeza",
+    "subscription": "Usajili"
+  },
+  "validation": {
+    "pending": "Inasubiri uthibitisho",
+    "validated": "Imethibitishwa",
+    "rejected": "Imekataliwa",
+    "suspended": "Imesimamishwa"
+  },
+  "actions": {
+    "open": "Fungua",
+    "pay": "Pokea malipo",
+    "refund": "Rejesha pesa",
+    "cancel": "Ghairi ankara",
+    "credit": "Idhinisha mkopo",
+    "reverse": "Batilisha",
+    "settle": "Rekodi malipo ya mlipaji",
+    "reject": "Rekodi kukataliwa",
+    "printInvoice": "Chapisha ankara",
+    "printReceipt": "Risiti",
+    "balanceHint": "Salio analodaiwa mgonjwa: {{amount}}"
+  },
+  "form": {
+    "amount": "Kiasi ({{currency}})",
+    "reason": "Sababu",
+    "referenceHint": "Nambari ya muamala, kadi au uhamisho (inahitajika isipokuwa pesa taslimu).",
+    "rejectTransfer": "Kiasi kilichokataliwa kifanyweje",
+    "rejectDispute": "Mgogoro wa kufuatilia na mlipaji",
+    "rejectToPatient": "Kihamishiwe kwa mgonjwa",
+    "cancelHint": "Ankara yenye malipo haiwezi kughairiwa: batilisha malipo kwanza. Kughairi kunarekodiwa na ni la mwisho."
+  },
+  "detail": {
+    "title": "Ankara",
+    "summary": "Muhtasari",
+    "createdBy": "Imetengenezwa na",
+    "item": "Huduma",
+    "qty": "Idadi",
+    "billable": "Inayotozwa",
+    "insurer": "Mlipaji",
+    "subscription": "Usajili",
+    "patientShare": "Mgonjwa",
+    "total": "Jumla",
+    "paid": "Kilicholipwa",
+    "balance": "Salio linalodaiwa",
+    "credit": "Mkopo ulioidhinishwa",
+    "cancellation": "Kughairi",
+    "lines": "Mistari na uhalalishaji",
+    "justification": "Kwa nini bei hii?",
+    "needsAuthorization": "Idhini ya awali inahitajika: haijatumika, inalipwa na mgonjwa",
+    "rulesSnapshot": "Kanuni zilizogandishwa: {{org}} · {{contract}} · polisi {{policy}}",
+    "organizations": "Mashirika yanayolipa",
+    "orgDue": "Linalodaiwa",
+    "orgSettled": "Lililolipwa",
+    "orgTransferred": "Lililohamishiwa mgonjwa",
+    "orgDisputed": "Lenye mgogoro",
+    "orgOutstanding": "Lililobaki kukusanywa",
+    "ledger": "Miamala (leja)",
+    "noLedger": "Hakuna miamala",
+    "actions": "Vitendo",
+    "reference": "Kumbukumbu"
+  },
+  "done": {
+    "invoice": "Ankara imetengenezwa",
+    "payment": "Malipo yamerekodiwa",
+    "refund": "Marejesho yamerekodiwa",
+    "cancel": "Ankara imeghairiwa",
+    "credit": "Mkopo umeidhinishwa",
+    "reverse": "Muamala umebatilishwa",
+    "settle": "Malipo ya mlipaji yamerekodiwa",
+    "reject": "Kukataliwa kumerekodiwa",
+    "saved": "Imehifadhiwa",
+    "coverageCreated": "Bima imeundwa, inasubiri uthibitisho",
+    "coverageUpdated": "Bima imesasishwa",
+    "authorization": "Idhini ya awali imerekodiwa",
+    "exempted": "Msamaha umerekodiwa"
+  },
+  "new": {
+    "button": "Ankara mpya",
+    "title": "Ankara mpya",
+    "description": "Bei hukokotolewa kwa tarehe ya leo kwa haki zilizothibitishwa za mgonjwa.",
+    "submit": "Tengeneza ankara",
+    "choosePatient": "Chagua mgonjwa",
+    "primaryCoverage": "Bima kuu",
+    "secondaryCoverage": "Bima ya nyongeza",
+    "primaryHint": "Bima kuu moja tu kwa kila kipindi cha matibabu.",
+    "secondaryHint": "Hutumika tu ikiwa mikataba yote miwili inaruhusu.",
+    "autoCoverage": "Kiotomatiki (yenye kipaumbele cha juu inayostahiki)",
+    "noCoverage": "Hakuna",
+    "lines": "Huduma",
+    "chooseItem": "Chagua huduma",
+    "addLine": "Ongeza mstari",
+    "removeLine": "Ondoa mstari",
+    "episode": "Kipindi cha matibabu",
+    "episodeHint": "Viwango vya juu na kiasi cha kwanza hujumlishwa ndani ya kipindi kimoja.",
+    "forcePrivate": "Lazimisha bei ya kibinafsi (ubaguzi unaorekodiwa)"
+  },
+  "preview": {
+    "title": "Muhtasari wa bei",
+    "failed": "Bei haikuweza kukokotolewa.",
+    "patientPays": "Mgonjwa hulipa",
+    "notConfirmed": "Muhtasari tu, hakuna kilichohifadhiwa. Ni bima iliyothibitishwa kwa kumbukumbu pekee hutumika."
+  },
+  "fee": {
+    "valid": "Ada ya mashauriano ni halali",
+    "until": "hadi {{date}} ikijumuishwa (siku {{days}} zimebaki)",
+    "exempted": "msamaha",
+    "expired": "Ada imeisha muda",
+    "expiredOn": "iliisha {{date}}: malipo mapya yanahitajika",
+    "none": "Hakuna ada iliyolipwa",
+    "noneHint": "Ada ya mashauriano inadaiwa."
+  },
+  "patient": {
+    "coverages": "Bima",
+    "noCoverage": "Hakuna bima iliyorekodiwa: bei ya kibinafsi."
+  },
+  "print": {
+    "facility": "CERO HEALTH — kituo (hali ya ndani)",
+    "localNotice": "HALI YA NDANI — Data imehifadhiwa kwenye kifaa hiki pekee. Hakuna ulandanishi na seva. Hati isiyo ya kodi.",
+    "invoice": "Ankara",
+    "receipt": "Risiti ya malipo",
+    "number": "Na.",
+    "organizationsDue": "Sehemu zitakazolipwa na walipaji:",
+    "thanks": "Asante"
+  },
+  "reason": {
+    "authorization.required": "Idhini ya awali inahitajika na haijatolewa: inalipwa na mgonjwa.",
+    "ceiling.reached": "Kiwango cha juu kimefikiwa: bima imepunguzwa hadi {{cap}} badala ya {{wanted}}.",
+    "complement.applied": "Bima ya nyongeza {{organization}}: {{bp}} ya kiasi kilichobaki ndani ya mkataba wake.",
+    "complement.notAllowed": "Bima ya nyongeza haijatumika: mikataba hairuhusu.",
+    "complement.sameCoverage": "Bima ya nyongeza ni ileile kuu: imepuuzwa.",
+    "coverage.contractOutOfPeriod": "Mkataba haufanyi kazi au uko nje ya kipindi: bima haijatumika.",
+    "coverage.currencyMismatch": "Sarafu ya mkataba ni tofauti: bima haijatumika.",
+    "coverage.designatedMissing": "Bima iliyochaguliwa haipo kwa mgonjwa huyu.",
+    "coverage.expired": "Bima iliisha {{to}}: haijatumika.",
+    "coverage.notBeneficiary": "Mgonjwa si mnufaika wa bima hii.",
+    "coverage.notStarted": "Bima ni halali kuanzia {{from}} tu: haijatumika.",
+    "coverage.organizationInactive": "Shirika halifanyi kazi au liko nje ya kipindi: bima haijatumika.",
+    "coverage.pending": "Bima haijathibitishwa (inasubiri): haijatumika.",
+    "coverage.rejected": "Bima imekataliwa: haijatumika.",
+    "coverage.suspended": "Bima imesimamishwa: haijatumika.",
+    "coverage.rate": "Kiwango cha bima {{bp}} kwenye bei iliyojadiliwa.",
+    "franchise.applied": "Kiasi cha kwanza cha {{amount}} kimeachwa kwa mgonjwa.",
+    "private.forced": "Bei ya kibinafsi imelazimishwa na mtu aliyeidhinishwa (ubaguzi unaorekodiwa).",
+    "private.noCoverage": "Hakuna bima inayotumika: bei ya kibinafsi.",
+    "quota.exceeded": "Kiwango kimepitwa: vipimo {{covered}} vimefunikwa kati ya {{requested}}, vilivyobaki kwa bei ya kibinafsi.",
+    "rule.excluded": "Huduma haimo kwenye mkataba: inalipwa na mgonjwa.",
+    "rule.none": "Hakuna kanuni ya mkataba kwa huduma hii.",
+    "subscription.discount": "Punguzo la usajili la {{bp}}.",
+    "subscription.free": "Mashauriano bure kutokana na usajili.",
+    "subscription.freeExhausted": "Mashauriano ya bure ya usajili yamekwisha.",
+    "subscription.included": "Aina imejumuishwa kwenye usajili.",
+    "subscription.notBeneficiary": "Mgonjwa hajafunikwa na usajili huu.",
+    "subscription.notStacked": "Usajili haujumuishwi na bima.",
+    "subscription.cancelled": "Usajili umeghairiwa.",
+    "subscription.suspended": "Usajili umesimamishwa.",
+    "subscription.expired": "Usajili umeisha muda.",
+    "subscription.notStarted": "Usajili bado haujaanza.",
+    "tariff.negotiated": "Bei iliyojadiliwa ya {{unit}} kwa kipimo."
+  },
+  "insurance": {
+    "title": "Bima na bei",
+    "subtitle": "Walipaji, mikataba, bima za wagonjwa, usajili, orodha ya huduma na muda wa ada",
+    "tabs": {
+      "coverages": "Bima",
+      "organizations": "Mashirika",
+      "contracts": "Mikataba",
+      "subscriptions": "Usajili",
+      "catalog": "Orodha ya huduma",
+      "validity": "Muda wa ada"
+    },
+    "kpi": {
+      "insured": "Wenye bima hai",
+      "mutuelle": "Wanachama wa mutuelle",
+      "subscriptions": "Usajili hai",
+      "pending": "Uthibitisho unaosubiri",
+      "rejections": "Kukataliwa na walipaji",
+      "rejectionsHint": "{{count}} kukataliwa",
+      "receivables": "Madai kwa walipaji"
+    },
+    "receivablesTitle": "Madai kwa kila mlipaji",
+    "receivablesHint": "Dai la mlipaji kamwe si mapato ya kasha.",
+    "noReceivables": "Hakuna madai.",
+    "orgLine": "linalodaiwa {{due}} · lililolipwa {{settled}} · lililobaki {{outstanding}} · mgogoro {{disputed}}",
+    "orgKind": {
+      "insurer": "Kampuni ya bima",
+      "mutuelle": "Mutuelle",
+      "company": "Kampuni",
+      "institution": "Taasisi",
+      "other": "Nyingine"
+    },
+    "orgStatus": {
+      "active": "Hai",
+      "suspended": "Imesimamishwa",
+      "inactive": "Haifanyi kazi"
+    },
+    "org": {
+      "name": "Jina",
+      "code": "Msimbo",
+      "kind": "Aina",
+      "contact": "Mwasiliani",
+      "phone": "Simu",
+      "add": "Ongeza shirika",
+      "edit": "Hariri shirika"
+    },
+    "contractStatus": {
+      "active": "Hai",
+      "suspended": "Umesimamishwa",
+      "terminated": "Umekatishwa"
+    },
+    "contract": {
+      "label": "Jina",
+      "organization": "Shirika",
+      "period": "Kipindi",
+      "from": "Mwanzo",
+      "to": "Mwisho",
+      "generalRate": "Kiwango cha jumla",
+      "limits": "Kiasi cha kwanza · kiwango cha juu",
+      "franchise": "Kiasi cha kwanza kwa kipindi",
+      "ceiling": "Kiwango cha juu kwa kipindi",
+      "coordination": "Uratibu",
+      "allowsComplementary": "Hukubali ya nyongeza",
+      "canBeComplementary": "Inaweza kuwa ya nyongeza",
+      "exclusive": "Peke yake",
+      "add": "Ongeza mkataba",
+      "edit": "Hariri mkataba",
+      "editHint": "Kuhariri mkataba KAMWE hakuathiri ankara zilizokwisha tolewa: zinahifadhi picha ya kanuni zilizotumika.",
+      "rules": "Kanuni za bima",
+      "rulesHint": "Kanuni mahususi zaidi hushinda: huduma > aina > jumla. Kiwango hutumika kwenye bei iliyojadiliwa.",
+      "scope": "Inatumika kwa",
+      "scopeGeneral": "Huduma zote",
+      "rate": "Kiwango %",
+      "negotiated": "Bei iliyojadiliwa",
+      "ceilingLine": "Kiwango cha juu kwa mstari",
+      "quota": "Kikomo (vipimo)",
+      "excluded": "Imeondolewa",
+      "requiresAuth": "Idhini ya awali",
+      "addRule": "Ongeza kanuni",
+      "removeRule": "Ondoa kanuni"
+    },
+    "covKind": {
+      "insurance": "Bima",
+      "mutuelle": "Mutuelle"
+    },
+    "cov": {
+      "kind": "Aina",
+      "policy": "Nambari ya polisi",
+      "card": "Nambari ya kadi",
+      "member": "Nambari ya mwanachama",
+      "contract": "Mkataba",
+      "priority": "Kipaumbele",
+      "priorityHint": "1 = cha juu zaidi (uteuzi wa kiotomatiki wa bima kuu).",
+      "spent": "Kilichotumika",
+      "add": "Ongeza bima",
+      "createHint": "Bima huundwa “inasubiri”: haitoi haki yoyote hadi uthibitisho wenye kumbukumbu ufanyike.",
+      "validate": "Thibitisha",
+      "reject": "Kataa",
+      "suspend": "Simamisha",
+      "validateHint": "Uamuzi hurekodiwa kwa jina lako na saa.",
+      "authorize": "Idhini ya awali",
+      "authReference": "Kumbukumbu ya idhini",
+      "authHint": "Nambari inayotolewa na mlipaji. Bila kumbukumbu, hakuna idhini inayorekodiwa.",
+      "noAuthItems": "Mkataba huu hauhitaji idhini ya awali kwa huduma yoyote mahususi.",
+      "neverConfirmed": "Bima haichukuliwi kuwa imethibitishwa bila uthibitisho wenye kumbukumbu."
+    },
+    "subStatus": {
+      "active": "Hai",
+      "suspended": "Umesimamishwa",
+      "cancelled": "Umeghairiwa"
+    },
+    "subType": {
+      "individual": "Binafsi",
+      "family": "Familia",
+      "company": "Kampuni"
+    },
+    "sub": {
+      "holder": "Mmiliki",
+      "type": "Aina",
+      "members": "Wanufaika",
+      "membersHint": "Shikilia Ctrl (au Cmd) kuchagua wengi.",
+      "price": "Bei",
+      "free": "Mashauriano ya bure",
+      "labDiscount": "Punguzo la maabara %",
+      "included": "Aina zilizojumuishwa",
+      "add": "Ongeza usajili",
+      "edit": "Hariri usajili",
+      "notFullCover": "Mwanachama HAFUNIKWI 100% moja kwa moja: ni mashauriano ya bure, aina zilizojumuishwa na punguzo la masharti ya usajili pekee hutumika."
+    },
+    "catalog": {
+      "code": "Msimbo",
+      "category": "Aina",
+      "price": "Bei ya kibinafsi",
+      "active": "Hai",
+      "inactive": "Haifanyi kazi",
+      "add": "Ongeza huduma",
+      "edit": "Hariri huduma",
+      "codeHint": "Msimbo haubadiliki: mikataba huutaja.",
+      "hint": "Bei ya kibinafsi ndiyo rejea. Bei zilizojadiliwa huwekwa kwenye mikataba. Mabadiliko hayaathiri ankara zilizopo."
+    }
+  },
+  "validity": {
+    "currentTitle": "Muda wa ada ya mashauriano",
+    "rule": "Hukokotolewa kwa miezi ya kalenda, kwa siku za kiraia za kituo, siku ya mwisho ikijumuishwa.",
+    "currentLine": "Sasa: miezi {{months}} — {{mode}}.",
+    "noConfig": "Hakuna muda uliowekwa.",
+    "change": "Badilisha muda",
+    "history": "Historia ya mipangilio",
+    "effectiveFrom": "Inaanza kutumika",
+    "months": "Miezi",
+    "mode": "Kanuni ya mwisho wa mwezi",
+    "changedBy": "Imebadilishwa na",
+    "modes": {
+      "clamp": "Tarehe ileile ya mwezi, ikirudishwa siku ya mwisho ikibidi",
+      "endOfMonth": "Hadi mwisho wa mwezi wa kufikia"
+    },
+    "modesHelp": "Mifano kwa mwezi 1. “Tarehe ileile”: kutoka 31 Januari → siku ya mwisho ya Februari; kutoka 15 Januari → 15 Februari. “Mwisho wa mwezi wa kufikia”: kutoka 15 Januari → siku ya mwisho ya Februari.",
+    "nonRetroactive": "Mabadiliko kamwe hayarudi nyuma: malipo yaliyokwisha rekodiwa yanahifadhi tarehe yake ya mwisho.",
+    "paymentsTitle": "Ada zilizolipwa na misamaha",
+    "noPayments": "Hakuna malipo ya ada",
+    "until": "Halali hadi",
+    "source": {
+      "payment": "Malipo",
+      "exemption": "Msamaha"
+    },
+    "voided": "Imebatilishwa",
+    "exempt": "Msamehe mgonjwa",
+    "exemptHint": "Kwa watu walioidhinishwa pekee. Sababu na mhusika huhifadhiwa."
+  }
+}

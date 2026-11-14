@@ -1,0 +1,82 @@
+{
+  "title": "Malipo",
+  "subtitle": "Ankara, malipo na salio za wagonjwa",
+  "search": "Tafuta (namba, mgonjwa)",
+  "columns": {
+    "number": "Namba ya ankara",
+    "patient": "Mgonjwa",
+    "date": "Tarehe",
+    "amount": "Kiasi",
+    "balance": "Salio",
+    "status": "Hali"
+  },
+  "status": {
+    "draft": "Rasimu",
+    "issued": "Imetolewa",
+    "partial": "Imelipwa kiasi",
+    "paid": "Imelipwa",
+    "cancelled": "Imeghairiwa"
+  },
+  "filters": {
+    "status": "Hali",
+    "payer": "Mlipaji"
+  },
+  "payer": {
+    "self": "Mgonjwa",
+    "insurance": "Bima",
+    "company": "Kampuni"
+  },
+  "create": {
+    "button": "Ankara mpya",
+    "title": "Unda ankara",
+    "submit": "Unda ankara"
+  },
+  "fields": {
+    "patient": "Mgonjwa (jina au namba)",
+    "payer": "Mlipaji",
+    "currency": "Sarafu",
+    "note": "Maelezo"
+  },
+  "detail": {
+    "invoice": "Ankara",
+    "summary": "Taarifa",
+    "lines": "Mistari ya ankara",
+    "item": "Huduma",
+    "quantity": "Idadi",
+    "total": "Jumla",
+    "paid": "Tayari imelipwa",
+    "actions": "Vitendo"
+  },
+  "lines": {
+    "consultation": "Mashauriano",
+    "laboratory": "Maabara",
+    "pharmacy": "Famasia",
+    "hospitalization": "Kulazwa (siku)",
+    "procedure": "Utaratibu"
+  },
+  "actions": {
+    "pay": "Rekodi malipo",
+    "cancel": "Ghairi ankara",
+    "cancelTitle": "Ghairi ankara hii?",
+    "cancelBody": "Ankara iliyoghairiwa inabaki kwenye historia na ukaguzi."
+  },
+  "summary": {
+    "invoices": "Ankara zinazoendelea",
+    "billed": "Jumla iliyotozwa",
+    "collected": "Iliyokusanywa",
+    "outstanding": "Inayosubiriwa"
+  },
+  "pay": {
+    "title": "Rekodi malipo",
+    "submit": "Rekodi malipo",
+    "amount": "Kiasi",
+    "method": "Njia ya malipo",
+    "reference": "Rejea (risiti, muamala)"
+  },
+  "methods": {
+    "cash": "Pesa taslimu",
+    "mobileMoney": "Pesa kwa simu",
+    "card": "Kadi",
+    "transfer": "Uhamisho"
+  }
+}

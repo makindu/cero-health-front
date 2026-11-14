@@ -1,0 +1,112 @@
+{
+  "title": "Patients",
+  "subtitle": "The facility's patient register",
+  "search": "Search (name, number, phone)",
+  "noVisit": "No visit",
+  "columns": {
+    "name": "Patient",
+    "id": "Number",
+    "sex": "Sex",
+    "age": "Age",
+    "phone": "Phone",
+    "service": "Department",
+    "status": "Status",
+    "lastVisit": "Last visit",
+    "fileNumber": "File no.",
+    "registeredAt": "Registered on"
+  },
+  "filters": {
+    "sex": "Sex",
+    "status": "Status",
+    "service": "Department",
+    "registeredFrom": "Registered from",
+    "registeredTo": "Registered until"
+  },
+  "create": {
+    "button": "New patient",
+    "title": "Register a patient",
+    "submit": "Register patient"
+  },
+  "fields": {
+    "fullName": "Full name",
+    "sex": "Sex",
+    "birthDate": "Date of birth",
+    "phone": "Phone",
+    "address": "Address",
+    "service": "Assigned department",
+    "insurer": "Insurer / agreement",
+    "emergencyContact": "Emergency contact",
+    "fileNumber": "File number",
+    "fileNumberHint": "Number of the paper file or old system, if any (3 to 30 characters: letters, digits, . _ / -)."
+  },
+  "detail": {
+    "tabs": {
+      "identity": "Administrative",
+      "appointments": "Appointments",
+      "billing": "Billing",
+      "record": "Medical record (clinical)",
+      "consultations": "Consultations",
+      "prescriptions": "Prescriptions",
+      "hospitalizations": "Hospitalizations"
+    },
+    "section": {
+      "civil": "Personal details",
+      "contact": "Contact",
+      "admin": "Administrative"
+    },
+    "registeredAt": "Registered on",
+    "record": {
+      "noAccess": "You do not have permission to view the medical record.",
+      "body": "The medical record holds the patient's clinical information. It is separate from the administrative identity.",
+      "sensitive": "Sensitive data: every access to the record is logged in the audit trail.",
+      "open": "Go to medical records"
+    },
+    "adminOnly": "Administrative information. No clinical data appears here: the medical record is separate and protected by a dedicated permission.",
+    "techId": "Technical identifier",
+    "history": {
+      "noAccess": "You do not have permission to view this history."
+    }
+  },
+  "duplicates": {
+    "button": "Duplicates",
+    "title": "Probable duplicates",
+    "subtitle": "Records sharing the same file number or phone.",
+    "none": "No duplicates detected",
+    "truncated": "Analysis limited to the first {{count}} records.",
+    "found": "{{count}} existing record(s) look like this one:",
+    "reason": {
+      "phone": "Same phone",
+      "fileNumber": "Same file number",
+      "label": "Reason for the merge"
+    },
+    "createAnyway": "Create anyway",
+    "saveAnyway": "Save anyway",
+    "merge": "Merge",
+    "mergeTitle": "Merge records",
+    "mergeHint": "The other records of the group will be attached to the kept one. Sensitive operation, recorded by the server.",
+    "mergeSubmit": "Merge records",
+    "keep": "Record to keep",
+    "fileIssues": "File numbers to fix ({{count}})",
+    "issue": {
+      "missing": "file number missing",
+      "format": "invalid format"
+    }
+  },
+  "edit": {
+    "button": "Edit",
+    "title": "Edit administrative information",
+    "hint": "Clinical data is not edited here.",
+    "submit": "Save changes"
+  },
+  "sheet": {
+    "button": "Export sheet",
+    "title": "Administrative sheet",
+    "adminOnly": "Administrative information only, no clinical data",
+    "demoMark": "FICTITIOUS DATA — demonstration",
+    "field": "Field",
+    "value": "Value",
+    "done": "Sheet generated",
+    "confirmTitle": "Export the patient sheet?",
+    "confirmBody": "The PDF contains personal data. Keep it confidential."
+  }
+}

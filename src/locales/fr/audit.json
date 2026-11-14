@@ -1,0 +1,39 @@
+{
+  "title": "Audit",
+  "subtitle": "Journal des actions et des accès aux données",
+  "search": "Rechercher (utilisateur, référence)",
+  "columns": {
+    "date": "Date et heure",
+    "user": "Utilisateur",
+    "action": "Action",
+    "resource": "Ressource",
+    "reference": "Référence",
+    "outcome": "Résultat"
+  },
+  "action": {
+    "view": "Consultation",
+    "create": "Création",
+    "update": "Modification",
+    "validate": "Validation",
+    "cancel": "Annulation",
+    "export": "Export",
+    "login": "Connexion"
+  },
+  "resource": {
+    "patient": "Patient",
+    "medicalRecord": "Dossier médical",
+    "prescription": "Prescription",
+    "labOrder": "Examen de laboratoire",
+    "invoice": "Facture",
+    "stock": "Stock",
+    "session": "Session"
+  },
+  "outcome": {
+    "success": "Réussi",
+    "denied": "Refusé"
+  },
+  "detail": {
+    "summary": "Détail de l'événement",
+    "immutable": "Une entrée d'audit ne peut être ni modifiée ni supprimée depuis l'interface."
+  }
+}

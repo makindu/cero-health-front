@@ -1,0 +1,21 @@
+{
+  "title": "Dashibodi",
+  "subtitle": "Muhtasari wa shughuli za kituo",
+  "tiles": {
+    "appointmentsToday": "Miadi ya leo",
+    "waitingNow": "Wagonjwa wanaosubiri",
+    "beds": "Vitanda vilivyojaa",
+    "pendingLabOrders": "Vipimo vinavyoendelea",
+    "toDispense": "Maagizo ya kutoa",
+    "stockAlerts": "Tahadhari za hifadhi",
+    "unpaidInvoices": "Ankara zisizolipwa"
+  },
+  "lists": {
+    "appointments": "Miadi ijayo iliyothibitishwa",
+    "queue": "Foleni ya kusubiri",
+    "stock": "Hifadhi ya kufuatilia",
+    "seeAll": "Ona yote",
+    "none": "Hakuna cha kuripoti",
+    "minutes": "dakika {{count}}"
+  }
+}

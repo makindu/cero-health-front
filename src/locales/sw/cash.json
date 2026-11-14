@@ -1,0 +1,49 @@
+{
+  "title": "Kasha",
+  "subtitle": "Mapato, matumizi na kufunga kasha",
+  "search": "Tafuta (namba, mhasibu)",
+  "columns": {
+    "date": "Tarehe na saa",
+    "type": "Aina",
+    "category": "Kategoria",
+    "method": "Njia",
+    "amount": "Kiasi",
+    "cashier": "Mhasibu"
+  },
+  "direction": {
+    "in": "Mapato",
+    "out": "Matumizi"
+  },
+  "category": {
+    "patientPayment": "Malipo ya mgonjwa",
+    "insurancePayment": "Malipo ya bima",
+    "supplies": "Ununuzi wa vifaa",
+    "salary": "Mishahara",
+    "expense": "Gharama nyingine"
+  },
+  "methods": {
+    "cash": "Pesa taslimu",
+    "mobileMoney": "Pesa kwa simu",
+    "card": "Kadi",
+    "transfer": "Uhamisho"
+  },
+  "summary": {
+    "in": "Mapato",
+    "out": "Matumizi",
+    "balance": "Salio"
+  },
+  "close": {
+    "button": "Funga kasha",
+    "title": "Funga kasha?",
+    "body": "Kufunga kunaganda shughuli za kipindi na kunarekodiwa kwenye kumbukumbu za ukaguzi."
+  },
+  "create": {
+    "button": "Muamala mpya",
+    "title": "Rekodi muamala",
+    "submit": "Rekodi muamala",
+    "reference": "Rejea (risiti, hati)"
+  },
+  "detail": {
+    "summary": "Muamala"
+  }
+}

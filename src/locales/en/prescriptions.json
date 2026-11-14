@@ -1,0 +1,80 @@
+{
+  "title": "Prescriptions",
+  "subtitle": "Prescriptions to validate, to dispense and history",
+  "search": "Search (patient, practitioner, number)",
+  "itemsCount": "{{count}} item(s)",
+  "columns": {
+    "date": "Date",
+    "patient": "Patient",
+    "practitioner": "Prescriber",
+    "items": "Contents",
+    "status": "Status",
+    "number": "No."
+  },
+  "status": {
+    "toValidate": "To validate",
+    "validated": "Validated",
+    "dispensed": "Dispensed",
+    "cancelled": "Cancelled"
+  },
+  "filters": {
+    "status": "Status",
+    "allStatuses": "All statuses"
+  },
+  "create": {
+    "button": "New prescription",
+    "title": "Write a prescription",
+    "submit": "Save prescription",
+    "description": "Dosage, frequency and duration are entered by the prescriber.",
+    "cancel": "Cancel",
+    "choosePatient": "Choose a patient",
+    "notice": "The application neither suggests nor checks any dosage: responsibility for the prescription remains with the prescriber.",
+    "line": "Line {{n}}",
+    "removeLine": "Remove line",
+    "addLine": "Add a line",
+    "consultation": "Consultation (optional)",
+    "consultationHint": "ID of the originating consultation",
+    "note": "Note",
+    "drugPlaceholder": "Type the drug name…"
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "product": "Product",
+    "quantity": "Quantity",
+    "instructions": "Instructions",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "duration": "Duration"
+  },
+  "detail": {
+    "prescription": "Prescription",
+    "summary": "Information",
+    "reference": "Reference",
+    "items": "Prescribed items",
+    "actions": "Actions",
+    "description": "Prescribing is not dispensing: dispensing is traced separately by the pharmacy.",
+    "validatedBy": "Validated by",
+    "cancelledBy": "Cancelled by",
+    "dispenseNotice": "Dispensing is not yet available in local mode (pharmacy phase)."
+  },
+  "actions": {
+    "validate": "Validate",
+    "validateTitle": "Validate this prescription?",
+    "validateBody": "The validation is recorded under your name.",
+    "dispense": "Dispense",
+    "dispenseTitle": "Dispense this prescription?",
+    "dispenseBody": "Stock will be updated and the dispensing recorded.",
+    "cancel": "Cancel",
+    "cancelTitle": "Cancel this prescription?",
+    "cancelBody": "The cancellation is recorded in the audit log.",
+    "open": "Open",
+    "reason": "Reason"
+  },
+  "empty": "No prescriptions",
+  "emptyHint": "Write a prescription from this screen or from a consultation.",
+  "done": {
+    "create": "Prescription saved",
+    "validate": "Prescription validated",
+    "cancel": "Prescription cancelled"
+  }
+}

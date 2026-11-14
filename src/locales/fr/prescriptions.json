@@ -1,0 +1,80 @@
+{
+  "title": "Prescriptions",
+  "subtitle": "Ordonnances à valider, à dispenser et historique",
+  "search": "Rechercher (patient, praticien, numéro)",
+  "itemsCount": "{{count}} article(s)",
+  "columns": {
+    "date": "Date",
+    "patient": "Patient",
+    "practitioner": "Prescripteur",
+    "items": "Contenu",
+    "status": "Statut",
+    "number": "N°"
+  },
+  "status": {
+    "toValidate": "À valider",
+    "validated": "Validée",
+    "dispensed": "Dispensée",
+    "cancelled": "Annulée"
+  },
+  "filters": {
+    "status": "Statut",
+    "allStatuses": "Tous les statuts"
+  },
+  "create": {
+    "button": "Nouvelle prescription",
+    "title": "Rédiger une prescription",
+    "submit": "Enregistrer la prescription",
+    "description": "Posologie, fréquence et durée sont saisies par le prescripteur.",
+    "cancel": "Annuler",
+    "choosePatient": "Choisir un patient",
+    "notice": "L’application ne propose ni ne contrôle aucune posologie : la responsabilité de la prescription reste celle du prescripteur.",
+    "line": "Ligne {{n}}",
+    "removeLine": "Retirer la ligne",
+    "addLine": "Ajouter une ligne",
+    "consultation": "Consultation (optionnel)",
+    "consultationHint": "Identifiant de la consultation d’origine",
+    "note": "Note",
+    "drugPlaceholder": "Tapez le nom du médicament…"
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "product": "Produit",
+    "quantity": "Quantité",
+    "instructions": "Instructions",
+    "dosage": "Posologie",
+    "frequency": "Fréquence",
+    "duration": "Durée"
+  },
+  "detail": {
+    "prescription": "Prescription",
+    "summary": "Informations",
+    "reference": "Référence",
+    "items": "Articles prescrits",
+    "actions": "Actions",
+    "description": "Prescrire n’est pas dispenser : la dispensation est tracée à part par la pharmacie.",
+    "validatedBy": "Validée par",
+    "cancelledBy": "Annulée par",
+    "dispenseNotice": "La dispensation n’est pas encore disponible en mode local (phase pharmacie)."
+  },
+  "actions": {
+    "validate": "Valider",
+    "validateTitle": "Valider cette prescription ?",
+    "validateBody": "La validation est tracée avec votre nom.",
+    "dispense": "Dispenser",
+    "dispenseTitle": "Dispenser cette prescription ?",
+    "dispenseBody": "Le stock sera mis à jour et la dispensation tracée.",
+    "cancel": "Annuler",
+    "cancelTitle": "Annuler cette prescription ?",
+    "cancelBody": "L'annulation est enregistrée dans le journal d'audit.",
+    "open": "Ouvrir",
+    "reason": "Motif"
+  },
+  "empty": "Aucune prescription",
+  "emptyHint": "Rédigez une prescription depuis cet écran ou depuis une consultation.",
+  "done": {
+    "create": "Prescription enregistrée",
+    "validate": "Prescription validée",
+    "cancel": "Prescription annulée"
+  }
+}

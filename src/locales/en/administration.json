@@ -1,0 +1,105 @@
+{
+  "title": "Administration",
+  "subtitle": "Facility, users, roles and departments",
+  "tabs": {
+    "facility": "Facility",
+    "users": "Staff",
+    "roles": "Roles and permissions",
+    "services": "Departments"
+  },
+  "facility": {
+    "title": "Facility settings",
+    "description": "This information appears on printed documents.",
+    "name": "Facility name",
+    "type": "Type",
+    "types": {
+      "hospital": "Hospital",
+      "healthCenter": "Health center",
+      "clinic": "Clinic",
+      "dispensary": "Dispensary"
+    },
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "timeZone": "Time zone",
+    "timeZoneHint": "E.g. Africa/Lubumbashi",
+    "currency": "Currency",
+    "currencyHint": "ISO 4217 code, e.g. USD or CDF",
+    "save": "Save settings"
+  },
+  "users": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "statuses": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "lastLogin": "Last sign-in",
+    "never": "Never",
+    "search": "Search users",
+    "invite": "Add a staff member",
+    "inviteTitle": "Add a staff member",
+    "inviteSubmit": "Save",
+    "detail": "User account",
+    "managedByIdCore": "Local staff directory: it feeds the doctor lists, with no password or login account. Real accounts and access will be managed by CERO ID CORE.",
+    "service": "Service",
+    "serviceHint": "Required for a doctor.",
+    "specialty": "Specialty",
+    "registration": "Medical council registration no.",
+    "actions": "Actions",
+    "suspend": "Suspend",
+    "suspendTitle": "Suspend this staff member?",
+    "suspendBody": "They will no longer be offered in doctor lists. Their history is kept.",
+    "reactivate": "Reactivate",
+    "reactivateTitle": "Reactivate this staff member?"
+  },
+  "roles": {
+    "note": "Proposed standard roles, to be validated with CERO ID CORE. Permission codes are real; the assignment to roles is illustrative and not enforced.",
+    "caption": "Permissions granted per role",
+    "permission": "Permission",
+    "names": {
+      "doctor": "Doctor",
+      "nurse": "Nurse",
+      "pharmacist": "Pharmacist",
+      "labTech": "Lab technician",
+      "cashier": "Cashier",
+      "admin": "Administrator"
+    },
+    "modules": {
+      "dashboard": "Dashboard",
+      "patients": "Patients",
+      "appointments": "Appointments",
+      "medicalRecords": "Medical records",
+      "consultations": "Consultations",
+      "nursing": "Nursing",
+      "prescriptions": "Prescriptions",
+      "pharmacy": "Pharmacy",
+      "laboratory": "Laboratory",
+      "hospitalization": "Hospitalization",
+      "billing": "Billing",
+      "cash": "Cash",
+      "inventory": "Inventory",
+      "reports": "Reports",
+      "administration": "Administration",
+      "audit": "Audit"
+    }
+  },
+  "services": {
+    "name": "Department",
+    "head": "Head",
+    "beds": "Beds",
+    "search": "Search departments",
+    "create": "New department",
+    "createTitle": "Create a department",
+    "createSubmit": "Create department"
+  },
+  "serviceNames": {
+    "generalMedicine": "General medicine",
+    "pediatrics": "Pediatrics",
+    "maternity": "Maternity",
+    "emergency": "Emergency",
+    "surgery": "Surgery"
+  }
+}

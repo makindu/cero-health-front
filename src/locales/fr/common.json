@@ -1,0 +1,470 @@
+{
+  "meta": {
+    "nativeName": "Français",
+    "direction": "ltr"
+  },
+  "app": {
+    "name": "CERO HEALTH",
+    "skipToContent": "Aller au contenu principal"
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "open": "Ouvrir le menu de navigation",
+    "close": "Fermer le menu de navigation",
+    "collapse": "Réduire le menu",
+    "expand": "Développer le menu",
+    "groups": {
+      "overview": "Vue d'ensemble",
+      "patientFlow": "Parcours patient",
+      "care": "Soins et services",
+      "resources": "Ressources et finances",
+      "management": "Pilotage et administration"
+    },
+    "dashboard": "Tableau de bord",
+    "patients": "Patients",
+    "appointments": "Rendez-vous et accueil",
+    "medicalRecords": "Dossiers médicaux",
+    "consultations": "Consultations",
+    "nursing": "Triage et soins infirmiers",
+    "prescriptions": "Prescriptions",
+    "pharmacy": "Pharmacie",
+    "laboratory": "Laboratoire",
+    "hospitalization": "Hospitalisation et lits",
+    "billing": "Facturation",
+    "cash": "Caisse",
+    "inventory": "Stocks et fournisseurs",
+    "reports": "Rapports",
+    "administration": "Administration",
+    "audit": "Audit",
+    "insurance": "Assurances et tarifs"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "clear": "Effacer",
+    "retry": "Réessayer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "apply": "Appliquer",
+    "reset": "Réinitialiser",
+    "export": "Exporter",
+    "print": "Imprimer",
+    "view": "Consulter"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "density": {
+    "label": "Densité des tableaux",
+    "comfortable": "Confortable",
+    "compact": "Compact"
+  },
+  "facility": {
+    "label": "Établissement actif",
+    "none": "Aucun établissement",
+    "notConnected": "Non connecté",
+    "select": "Choisir un établissement"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "emptyHint": "Les alertes de rendez-vous, de résultats et de stock apparaîtront ici."
+  },
+  "user": {
+    "menu": "Menu utilisateur",
+    "guest": "Utilisateur non connecté",
+    "authPending": "La connexion via CERO ID CORE sera activée en phase 2."
+  },
+  "preview": {
+    "badge": "Aperçu",
+    "hint": "Aperçu de conception : aucune connexion, permissions non appliquées, données fictives."
+  },
+  "states": {
+    "loading": "Chargement…",
+    "empty": "Aucune donnée",
+    "emptyHint": "Il n'y a rien à afficher pour le moment."
+  },
+  "errors": {
+    "reference": "Référence : {{id}}",
+    "generic": {
+      "title": "Une erreur est survenue",
+      "description": "Un problème inattendu est survenu. Réessayez ou contactez l'assistance."
+    },
+    "kind": {
+      "config": {
+        "title": "Service non configuré",
+        "description": "L'adresse de l'API n'est pas configurée pour cet environnement."
+      },
+      "network": {
+        "title": "Connexion impossible",
+        "description": "Vérifiez votre connexion internet, puis réessayez."
+      },
+      "timeout": {
+        "title": "Le serveur met trop de temps à répondre",
+        "description": "La demande a expiré. Réessayez dans un instant."
+      },
+      "unauthorized": {
+        "title": "Session expirée",
+        "description": "Votre session n'est plus valide. Veuillez vous reconnecter."
+      },
+      "forbidden": {
+        "title": "Accès refusé",
+        "description": "Vous n'avez pas les droits nécessaires pour cette action."
+      },
+      "not_found": {
+        "title": "Élément introuvable",
+        "description": "La ressource demandée n'existe pas ou n'est plus disponible."
+      },
+      "csrf": {
+        "title": "Session de sécurité expirée",
+        "description": "Rechargez la page ou reconnectez-vous pour continuer."
+      },
+      "validation": {
+        "title": "Données invalides",
+        "description": "Corrigez les champs signalés puis réessayez."
+      },
+      "conflict": {
+        "title": "Conflit de données",
+        "description": "Cet élément a été modifié entre-temps. Rechargez-le avant de continuer."
+      },
+      "rate_limited": {
+        "title": "Trop de tentatives",
+        "description": "Patientez quelques instants avant de réessayer."
+      },
+      "server": {
+        "title": "Erreur du serveur",
+        "description": "Le serveur a rencontré un problème. Réessayez plus tard."
+      },
+      "unknown": {
+        "title": "Une erreur est survenue",
+        "description": "Un problème inattendu est survenu. Réessayez ou contactez l'assistance."
+      }
+    }
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire.",
+    "email": "Adresse e-mail invalide.",
+    "min": "Minimum {{count}} caractères.",
+    "max": "Maximum {{count}} caractères.",
+    "invalidDate": "Date invalide.",
+    "number": "Nombre invalide.",
+    "fileNumber": "N° de dossier invalide : 3 à 30 caractères (lettres, chiffres, . _ / -).",
+    "invalidFormat": "Format invalide."
+  },
+  "table": {
+    "rowsRange": "{{from}}–{{to}} sur {{total}}",
+    "page": "Page {{page}} sur {{pages}}",
+    "sortBy": "Trier par {{column}}",
+    "noResults": "Aucun résultat"
+  },
+  "search": {
+    "label": "Recherche",
+    "placeholder": "Rechercher…"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Page précédente",
+    "next": "Page suivante"
+  },
+  "dialog": {
+    "close": "Fermer la fenêtre"
+  },
+  "toast": {
+    "region": "Notifications",
+    "dismiss": "Fermer la notification"
+  },
+  "breadcrumb": {
+    "label": "Fil d'Ariane"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page demandée n'existe pas ou a été déplacée.",
+    "backHome": "Retour au tableau de bord"
+  },
+  "placeholder": {
+    "title": "Module en préparation",
+    "description": "« {{module}} » sera développé en phase {{phase}}.",
+    "apiHint": "Il dépendra des contrats d'API HEALTH décrits dans docs/API_CONTRACTS_NEEDED.md.",
+    "phase": "Phase {{phase}}"
+  },
+  "module": {
+    "actions": "Actions",
+    "all": "Tous",
+    "choose": "Choisir…",
+    "requiredHint": "* champ obligatoire",
+    "demo": {
+      "title": "Données de démonstration",
+      "body": "Ces données sont fictives et ne correspondent à aucune personne réelle. Aucune modification n'est enregistrée.",
+      "endpoint": "Contrat d’API cible :"
+    },
+    "demoNotSaved": "Démonstration : rien n’a été enregistré",
+    "demoNotSavedHint": "Le formulaire est valide, mais l’API correspondante n’est pas disponible.",
+    "saved": "Enregistrement réussi",
+    "saveFailed": "Échec de l’enregistrement",
+    "saveFailedHint": "Vérifiez les informations puis réessayez.",
+    "sensitive": "Données sensibles : chaque consultation de ces informations est enregistrée dans le journal d’audit.",
+    "noAccessHint": "Vous n’avez pas la permission de consulter cette section.",
+    "back": "Retour à la liste",
+    "notAvailable": "Non disponible",
+    "conflict": "L'action est en conflit avec une autre donnée (ex. créneau déjà pris). Actualisez et réessayez.",
+    "proceedAnyway": "Continuer malgré tout",
+    "patientNoMatch": "Aucun patient trouvé. Vérifiez l’orthographe ou le numéro de dossier.",
+    "patientSearchPlaceholder": "Tapez un nom, un numéro de dossier…",
+    "itemNoMatch": "Aucun résultat. Vérifiez l’orthographe ou le code.",
+    "itemSearchPlaceholder": "Tapez un nom ou un code…",
+    "remove": "Retirer"
+  },
+  "sex": {
+    "F": "Féminin",
+    "M": "Masculin"
+  },
+  "services": {
+    "generalMedicine": "Médecine générale",
+    "pediatrics": "Pédiatrie",
+    "maternity": "Maternité",
+    "emergency": "Urgences",
+    "surgery": "Chirurgie"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif"
+  },
+  "age": {
+    "years": "{{count}} ans"
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "export": {
+    "menu": "Exporter",
+    "excel": "Excel (.xlsx)",
+    "pdf": "PDF",
+    "generatedAt": "Généré le",
+    "rows": "{{count}} ligne(s)",
+    "demoMark": "DONNÉES FICTIVES — démonstration, aucune donnée réelle.",
+    "truncated": "Export limité aux {{count}} premières lignes : affinez les filtres pour obtenir le reste.",
+    "done": "Fichier généré",
+    "failed": "L'export a échoué",
+    "confirmTitle": "Exporter ces données ?",
+    "confirmBody": "Le fichier contiendra des données personnelles de patients, selon la recherche et les filtres affichés. Conservez-le comme une donnée confidentielle et ne le partagez qu'avec des personnes autorisées.",
+    "confirm": "Générer le fichier"
+  },
+  "local": {
+    "banner": "MODE LOCAL — Données enregistrées uniquement sur cet appareil. Aucune synchronisation serveur.",
+    "roleLabel": "Rôle de démonstration",
+    "manage": "Données locales",
+    "page": {
+      "title": "Données locales",
+      "description": "Sauvegarde, restauration et réinitialisation des données de ce mode local (stockées uniquement sur cet appareil).",
+      "fallback": "Le stockage durable du navigateur n'est pas disponible : les données sont en mémoire et seront perdues à la fermeture de l'onglet. Exportez une sauvegarde.",
+      "backupTitle": "Sauvegarde",
+      "backupHelp": "Télécharge toutes les données locales dans un fichier JSON. Conservez-le en lieu sûr : il peut contenir des données de patients fictifs ou saisies.",
+      "export": "Exporter la sauvegarde",
+      "exported": "Sauvegarde exportée",
+      "counts": "{{records}} enregistrements, {{audit}} entrées de journal.",
+      "restoreTitle": "Restauration",
+      "restoreHelp": "Remplace toutes les données locales par celles d'un fichier de sauvegarde. Le fichier est vérifié avant toute modification.",
+      "restore": "Restaurer",
+      "restoreConfirmTitle": "Restaurer cette sauvegarde ?",
+      "restoreConfirm": "Toutes les données locales actuelles seront remplacées. Cette action est irréversible : exportez une sauvegarde avant si nécessaire.",
+      "resetTitle": "Réinitialiser la démonstration",
+      "resetHelp": "Efface toutes les données locales et recharge le jeu de données fictives initial.",
+      "reset": "Réinitialiser",
+      "resetConfirmTitle": "Réinitialiser les données locales ?",
+      "resetConfirm": "Toutes les données saisies sur cet appareil seront définitivement effacées, puis le jeu de démonstration sera rechargé.",
+      "failed": "L'opération a échoué"
+    },
+    "roles": {
+      "receptionist": "Réceptionniste (démo)",
+      "cashier": "Caissier (démo)",
+      "doctor": "Médecin (démo)",
+      "nurse": "Infirmier (démo)",
+      "labTech": "Laborantin (démo)",
+      "pharmacist": "Pharmacien (démo)",
+      "wardManager": "Resp. hospitalisation (démo)",
+      "admin": "Administrateur (démo)"
+    }
+  },
+  "business": {
+    "rejected": "Opération refusée",
+    "patientRequired": "Indiquez le patient (identifiant, numéro de dossier ou nom exact).",
+    "patientNotFound": "Aucun patient actif ne correspond. Saisissez l'identifiant ou le numéro de dossier.",
+    "patientAmbiguous": "{{count}} patients correspondent à cette saisie. Saisissez l'identifiant ou le numéro de dossier pour choisir.",
+    "patientInactive": "Le dossier de {{name}} est inactif ou fusionné : aucune prise en charge possible.",
+    "patientNameRequired": "Le nom complet est obligatoire (2 caractères au moins).",
+    "patientSexRequired": "Le sexe est obligatoire.",
+    "patientBirthInvalid": "La date de naissance est invalide.",
+    "patientBirthFuture": "La date de naissance ne peut pas être dans le futur.",
+    "patientFileNumberFormat": "Le numéro de dossier est hors format (3 à 30 caractères : lettres, chiffres, . _ / -).",
+    "patientFileNumberTaken": "Le numéro de dossier {{fileNumber}} est déjà attribué à {{name}}.",
+    "patientMerged": "Ce dossier a été fusionné dans un autre : il ne peut plus être modifié.",
+    "mergeReasonRequired": "Le motif de la fusion est obligatoire.",
+    "mergeNothing": "Aucun dossier à fusionner.",
+    "mergeSelf": "Le dossier conservé ne peut pas être fusionné avec lui-même.",
+    "mergeKeepInactive": "Le dossier conservé doit être actif.",
+    "serviceRequired": "Le service est obligatoire.",
+    "practitionerRequired": "Le praticien est obligatoire.",
+    "reasonRequired": "Le motif est obligatoire.",
+    "durationInvalid": "La durée doit être comprise entre 5 et 240 minutes.",
+    "slotInvalid": "Le créneau est invalide.",
+    "appointmentPast": "Un rendez-vous ne peut pas être planifié avant aujourd’hui.",
+    "slotTaken": "Créneau déjà pris pour {{practitioner}}.",
+    "patientBusy": "Ce patient a déjà un rendez-vous qui chevauche ce créneau.",
+    "urgencyInvalid": "Le degré d'urgence est invalide.",
+    "triageRequired": "Ce degré d'urgence exige un passage par le triage infirmier.",
+    "patientAlreadyInQueue": "Ce patient est déjà dans la file (arrivé, en attente ou en consultation).",
+    "checkInWrongDay": "L'arrivée ne peut être enregistrée que le jour du rendez-vous. Reportez le rendez-vous.",
+    "invalidTransition": "Cette action n'est pas possible depuis l'état actuel ({{status}}).",
+    "unknownAction": "Action inconnue : {{action}}.",
+    "categoryInvalid": "La catégorie est invalide.",
+    "vitalOutOfRange": "Valeur invraisemblable pour « {{field}} » (attendu entre {{min}} et {{max}}). Vérifiez la saisie.",
+    "vitalsEmpty": "Saisissez au moins une constante.",
+    "vitalPressureOrder": "La tension diastolique doit être inférieure à la systolique.",
+    "billing": {
+      "alreadyInvoiced": "Cette prestation a déjà été facturée ({{source}}).",
+      "alreadyReversed": "Cette écriture a déjà été contrepassée.",
+      "amountInvalid": "Le montant est invalide.",
+      "cannotReverseReversal": "Une contrepassation ne se contrepasse pas.",
+      "duplicatePayment": "Cette opération est déjà enregistrée (double envoi évité).",
+      "hasPayments": "La facture a des paiements : contrepassez-les d'abord.",
+      "hasSettlements": "La facture a des règlements ou rejets d'organismes : annulation impossible.",
+      "invoiceCancelled": "La facture est annulée.",
+      "invoiceDraft": "La facture est encore un brouillon.",
+      "invoiceEmpty": "Ajoutez au moins une prestation.",
+      "nothingDue": "Il ne reste rien à payer sur cette facture.",
+      "organizationNotOnInvoice": "Cet organisme n'a pas de part sur cette facture.",
+      "overpayment": "Le montant dépasse le reste dû ({{due}}).",
+      "reasonRequired": "Le motif est obligatoire.",
+      "referenceRequired": "La référence est obligatoire hors espèces.",
+      "refundExceedsPaid": "Le remboursement dépasse le montant encaissé ({{paid}}).",
+      "rejectionExceedsDue": "Le rejet dépasse la part restante de l'organisme ({{due}}).",
+      "settlementExceedsDue": "Le règlement dépasse la part restante de l'organisme ({{due}}).",
+      "totalsMismatch": "Les totaux de la facture sont incohérents : facture refusée.",
+      "configDateTaken": "Une configuration existe déjà à cette date.",
+      "configRetroactive": "Une nouvelle durée ne peut pas s'appliquer à une date passée.",
+      "coverageNotFound": "Couverture introuvable pour ce patient.",
+      "coverageSame": "Les couvertures principale et complémentaire doivent différer.",
+      "currencyMismatch": "Les prestations n'ont pas la même devise.",
+      "entryNotFound": "Écriture introuvable.",
+      "feeStillValid": "Les frais de consultation sont valides jusqu'au {{until}} : aucun nouveau paiement.",
+      "invoiceNotFound": "Facture introuvable.",
+      "itemInactive": "La prestation « {{item}} » n'est plus active.",
+      "itemNotFound": "Prestation introuvable au catalogue.",
+      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
+      "patientNotFound": "Patient introuvable.",
+      "periodInvalid": "La période est invalide (fin avant début).",
+      "quantityInvalid": "La quantité doit être un nombre positif (2 décimales au plus).",
+      "rateInvalid": "Un taux doit être compris entre 0 et 100 %.",
+      "validityInvalid": "La durée de validité est invalide (1 à 120 mois)."
+    },
+    "lab": {
+      "testsRequired": "Choisissez au moins un examen.",
+      "duplicateTest": "Un examen ne peut être demandé qu’une fois par demande.",
+      "wrongStatus": "Cette action n’est pas possible à ce stade de la demande.",
+      "reasonRequired": "Le motif est obligatoire.",
+      "exceptionExists": "Une exception a déjà été accordée.",
+      "paymentRequired": "Prélèvement impossible : la part patient n’est pas payée (ni crédit autorisé, ni exception).",
+      "unknownTest": "Cet examen ne fait pas partie de la demande.",
+      "incompleteResults": "Toutes les valeurs doivent être renseignées pour rectifier.",
+      "alreadyCancelled": "Demande déjà annulée.",
+      "cannotCancelAfterCollect": "Annulation impossible après le prélèvement.",
+      "notFound": "Demande introuvable.",
+      "patientNotFound": "Patient introuvable.",
+      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
+      "testNotInCatalog": "Examen absent du catalogue.",
+      "testInactive": "Examen inactif dans le catalogue."
+    },
+    "rx": {
+      "itemsRequired": "Ajoutez au moins une ligne.",
+      "labelRequired": "Ligne {{line}} : le produit est obligatoire.",
+      "quantityInvalid": "Ligne {{line}} : la quantité doit être un nombre positif (2 décimales au plus, ex. 0,5).",
+      "posologyRequired": "Ligne {{line}} : posologie et fréquence sont obligatoires.",
+      "textTooLong": "Ligne {{line}} : texte trop long.",
+      "wrongStatus": "Cette action n’est pas possible à ce stade de la prescription.",
+      "reasonRequired": "Le motif est obligatoire.",
+      "alreadyCancelled": "Prescription déjà annulée.",
+      "notFound": "Prescription introuvable.",
+      "patientNotFound": "Patient introuvable.",
+      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
+      "hasDispensation": "Annulation impossible : une dispensation existe déjà pour cette prescription.",
+      "cannotCancelDispensed": "Annulation impossible : prescription déjà dispensée."
+    },
+    "pharmacy": {
+      "quantityInvalid": "La quantité doit être un nombre positif (2 décimales au plus).",
+      "insufficientStock": "Stock utilisable insuffisant (disponible : {{available}}).",
+      "lotRequired": "Le numéro de lot est obligatoire.",
+      "dateInvalid": "Date de péremption invalide.",
+      "alreadyExpired": "Ce lot est déjà périmé.",
+      "reasonRequired": "Le motif est obligatoire.",
+      "negativeStock": "Le stock ne peut pas devenir négatif.",
+      "linesRequired": "Choisissez au moins un produit.",
+      "unknownLine": "Ligne de prescription inconnue.",
+      "overDispense": "« {{label}} » : il ne reste que {{remaining}} à dispenser.",
+      "wrongStatus": "Action impossible à ce stade de la dispensation.",
+      "exceptionExists": "Une exception a déjà été accordée.",
+      "paymentRequired": "Remise impossible : la part patient n’est pas payée (ni crédit autorisé, ni exception).",
+      "alreadyCancelled": "Dispensation déjà annulée.",
+      "cannotCancelDispensed": "Annulation impossible : les produits ont été remis.",
+      "prescriptionNotFound": "Prescription introuvable.",
+      "prescriptionNotValidated": "La prescription doit être validée avant dispensation.",
+      "itemNotInCatalog": "Produit absent du catalogue pharmacie.",
+      "itemInactive": "Produit inactif dans le catalogue.",
+      "notFound": "Dispensation introuvable.",
+      "lotExists": "Ce numéro de lot existe déjà pour ce produit.",
+      "lotNotFound": "Lot introuvable.",
+      "deviationReasonRequired": "Un motif est obligatoire quand la quantité servie est inférieure à la prescription ou que le produit diffère.",
+      "deviationReasonTooLong": "Le motif est trop long ({{max}} caractères au plus)."
+    },
+    "hospital": {
+      "alreadyAdmitted": "Ce patient est déjà hospitalisé ({{number}}).",
+      "reasonRequired": "Le motif est obligatoire.",
+      "attendingRequired": "Le médecin référent est obligatoire.",
+      "dischargeInPast": "La sortie prévue ne peut pas être dans le passé.",
+      "bedNotFound": "Lit introuvable.",
+      "bedNotFree": "Ce lit n’est pas libre (état : {{status}}).",
+      "notActive": "Cette admission n’est plus active.",
+      "noStay": "Séjour courant introuvable.",
+      "sameBed": "Le patient est déjà dans ce lit.",
+      "wrongStatus": "Action impossible à ce stade.",
+      "bedOccupied": "Un lit occupé ne se modifie pas à la main.",
+      "patientNotFound": "Patient introuvable.",
+      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
+      "admissionNotFound": "Admission introuvable.",
+      "hasBilledDays": "Des jours de chambre sont déjà facturés : l’admission ne peut plus être annulée.",
+      "nothingToPost": "Aucun jour de chambre à facturer.",
+      "roomDaysUnbilled": "{{count}} jour(s) de chambre non facturé(s) : facturez-les avant la sortie.",
+      "balanceDue": "Solde patient dû ({{due}} {{currency}}) : encaissez-le, autorisez un crédit ou saisissez une exception motivée.",
+      "outcomeInvalid": "Issue de sortie invalide.",
+      "dateInvalid": "Date invalide."
+    },
+    "consultationFeeRequired": "Aucun paiement de consultation (générale ou spécialisée) trouvé pour {{name}} : facturez et encaissez-le en caisse (ou exemption motivée) avant d’ouvrir la consultation.",
+    "consultationServiceInvalid": "Service invalide.",
+    "consultationReasonInvalid": "Motif invalide.",
+    "consultationTransitionInvalid": "Ce changement de statut n’est pas permis à ce stade.",
+    "staffNameRequired": "Le nom est obligatoire.",
+    "staffRoleInvalid": "Catégorie invalide.",
+    "staffEmailInvalid": "Adresse e-mail invalide.",
+    "staffEmailTaken": "Cette adresse e-mail est déjà utilisée.",
+    "staffServiceInvalid": "Service invalide.",
+    "staffServiceRequired": "Le service est obligatoire pour un médecin.",
+    "staffRegistrationTaken": "Ce numéro d’inscription est déjà utilisé.",
+    "staffAlreadySuspended": "Ce membre est déjà suspendu.",
+    "staffAlreadyActive": "Ce membre est déjà actif.",
+    "consultationPractitionerInvalid": "Choisissez un médecin actif dans la liste (Administration → Personnel).",
+    "consultationFeeExpired": "La validité des frais de consultation de {{name}} est expirée : une nouvelle consultation doit être facturée et encaissée (ou exemption motivée)."
+  }
+}

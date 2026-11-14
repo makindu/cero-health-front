@@ -1,0 +1,105 @@
+{
+  "title": "Administration",
+  "subtitle": "Établissement, utilisateurs, rôles et services",
+  "tabs": {
+    "facility": "Établissement",
+    "users": "Personnel",
+    "roles": "Rôles et permissions",
+    "services": "Services"
+  },
+  "facility": {
+    "title": "Paramètres de l'établissement",
+    "description": "Ces informations apparaissent sur les documents imprimés.",
+    "name": "Nom de l’établissement",
+    "type": "Type",
+    "types": {
+      "hospital": "Hôpital",
+      "healthCenter": "Centre de santé",
+      "clinic": "Clinique",
+      "dispensary": "Dispensaire"
+    },
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "address": "Adresse",
+    "timeZone": "Fuseau horaire",
+    "timeZoneHint": "Ex. Africa/Lubumbashi",
+    "currency": "Devise",
+    "currencyHint": "Code ISO 4217, ex. USD ou CDF",
+    "save": "Enregistrer les paramètres"
+  },
+  "users": {
+    "name": "Nom",
+    "email": "E-mail",
+    "role": "Rôle",
+    "status": "Statut",
+    "statuses": {
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "lastLogin": "Dernière connexion",
+    "never": "Jamais",
+    "search": "Rechercher un utilisateur",
+    "invite": "Ajouter un membre du personnel",
+    "inviteTitle": "Ajouter un membre du personnel",
+    "inviteSubmit": "Enregistrer",
+    "detail": "Compte utilisateur",
+    "managedByIdCore": "Annuaire local du personnel : il alimente les listes de médecins, sans mot de passe ni compte de connexion. Les comptes et accès réels seront gérés par CERO ID CORE.",
+    "service": "Service",
+    "serviceHint": "Obligatoire pour un médecin.",
+    "specialty": "Spécialité",
+    "registration": "N° d’inscription à l’ordre",
+    "actions": "Actions",
+    "suspend": "Suspendre",
+    "suspendTitle": "Suspendre ce membre du personnel ?",
+    "suspendBody": "Il ne sera plus proposé dans les listes de médecins. Son historique est conservé.",
+    "reactivate": "Réactiver",
+    "reactivateTitle": "Réactiver ce membre du personnel ?"
+  },
+  "roles": {
+    "note": "Proposition de rôles types, à valider avec CERO ID CORE. Les codes de permission sont réels ; l'attribution aux rôles est illustrative et n'est pas appliquée.",
+    "caption": "Permissions accordées par rôle",
+    "permission": "Permission",
+    "names": {
+      "doctor": "Médecin",
+      "nurse": "Infirmier",
+      "pharmacist": "Pharmacien",
+      "labTech": "Laborantin",
+      "cashier": "Caissier",
+      "admin": "Administrateur"
+    },
+    "modules": {
+      "dashboard": "Tableau de bord",
+      "patients": "Patients",
+      "appointments": "Rendez-vous",
+      "medicalRecords": "Dossiers médicaux",
+      "consultations": "Consultations",
+      "nursing": "Soins infirmiers",
+      "prescriptions": "Prescriptions",
+      "pharmacy": "Pharmacie",
+      "laboratory": "Laboratoire",
+      "hospitalization": "Hospitalisation",
+      "billing": "Facturation",
+      "cash": "Caisse",
+      "inventory": "Stocks",
+      "reports": "Rapports",
+      "administration": "Administration",
+      "audit": "Audit"
+    }
+  },
+  "services": {
+    "name": "Service",
+    "head": "Responsable",
+    "beds": "Lits",
+    "search": "Rechercher un service",
+    "create": "Nouveau service",
+    "createTitle": "Créer un service",
+    "createSubmit": "Créer le service"
+  },
+  "serviceNames": {
+    "generalMedicine": "Médecine générale",
+    "pediatrics": "Pédiatrie",
+    "maternity": "Maternité",
+    "emergency": "Urgences",
+    "surgery": "Chirurgie"
+  }
+}

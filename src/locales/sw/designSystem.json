@@ -1,0 +1,90 @@
+{
+  "title": "Orodha ya vijenzi",
+  "subtitle": "Mfumo wa muundo wa CERO HEALTH: rangi, vijenzi na hali. Ukurasa wa uundaji pekee.",
+  "demoBanner": "Data ya mfano ya maonyesho: hakuna mgonjwa wala matokeo halisi yanayoonyeshwa kwenye ukurasa huu.",
+  "colors": {
+    "title": "Rangi",
+    "description": "Rangi hutoka kwenye vigeu vya CSS (design tokens) na hujirekebisha kulingana na mandhari nyepesi, nyeusi au ya mfumo.",
+    "brand": "Utambulisho na urambazaji",
+    "surfaces": "Nyuso na maandishi",
+    "status": "Hali"
+  },
+  "buttons": {
+    "title": "Vitufe",
+    "primary": "Kuu",
+    "secondary": "Cha pili",
+    "outline": "Mstari wa nje",
+    "ghost": "Hafifu",
+    "danger": "Hatari",
+    "loading": "Inapakia",
+    "disabled": "Imezimwa",
+    "withIcon": "Mgonjwa mpya"
+  },
+  "forms": {
+    "title": "Fomu",
+    "fullName": "Jina kamili",
+    "fullNameHint": "Mfano wa sehemu yenye maelezo ya msaada.",
+    "birthDate": "Tarehe ya kuzaliwa",
+    "service": "Idara",
+    "servicePlaceholder": "Chagua idara",
+    "notes": "Maelezo",
+    "withError": "Sehemu yenye hitilafu",
+    "serviceGeneral": "Tiba ya jumla",
+    "servicePediatrics": "Watoto",
+    "serviceMaternity": "Uzazi"
+  },
+  "badges": {
+    "title": "Vitambulisho vya hali",
+    "description": "Kila hali huunganisha ikoni na maandishi: rangi si kiashiria pekee.",
+    "validated": "Imethibitishwa",
+    "pending": "Inasubiri",
+    "critical": "Hatari kubwa",
+    "info": "Taarifa",
+    "inactive": "Haitumiki"
+  },
+  "feedback": {
+    "title": "Hali za kupakia, tupu na hitilafu",
+    "loading": "Inapakia",
+    "emptyTitle": "Hakuna wagonjwa",
+    "emptyDescription": "Hakuna mgonjwa anayelingana na utafutaji wako.",
+    "emptyAction": "Mgonjwa mpya"
+  },
+  "dialogs": {
+    "title": "Madirisha na uthibitisho",
+    "openDialog": "Fungua dirisha",
+    "dialogTitle": "Dirisha la maonyesho",
+    "dialogBody": "Kwenye simu dirisha hutokea chini ya skrini; kwenye kompyuta hutokea katikati.",
+    "openConfirm": "Omba uthibitisho",
+    "confirmTitle": "Ghairi miadi hii?",
+    "confirmBody": "Kitendo hiki kinarekodiwa kwenye kumbukumbu za ukaguzi na hakiwezi kufutwa.",
+    "confirmAction": "Ghairi miadi"
+  },
+  "tabs": {
+    "title": "Vichupo",
+    "identity": "Utambulisho",
+    "clinical": "Rekodi ya kitabibu",
+    "billing": "Ankara",
+    "identityBody": "Utambulisho wa kiutawala, tofauti na rekodi ya kitabibu.",
+    "clinicalBody": "Ufikiaji unategemea ruhusa na unarekodiwa.",
+    "billingBody": "Ankara na malipo yanayohusishwa na kipindi cha matibabu."
+  },
+  "toasts": {
+    "title": "Arifa",
+    "success": "Imehifadhiwa kwa mafanikio",
+    "warning": "Hifadhi iko chini",
+    "danger": "Kutuma kumeshindikana",
+    "info": "Toleo jipya linapatikana",
+    "details": "Ujumbe wa maonyesho."
+  },
+  "table": {
+    "title": "Jedwali lenye kurasa",
+    "caption": "Orodha ya wagonjwa wa mfano",
+    "id": "Rejea",
+    "name": "Mgonjwa",
+    "service": "Idara",
+    "status": "Hali",
+    "lastVisit": "Ziara ya mwisho",
+    "searchLabel": "Tafuta mgonjwa wa mfano",
+    "emptyFilter": "Hakuna mgonjwa wa mfano anayelingana na utafutaji."
+  }
+}

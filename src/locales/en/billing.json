@@ -1,0 +1,82 @@
+{
+  "title": "Billing",
+  "subtitle": "Invoices, payments and patient balances",
+  "search": "Search (number, patient)",
+  "columns": {
+    "number": "Invoice no.",
+    "patient": "Patient",
+    "date": "Date",
+    "amount": "Amount",
+    "balance": "Balance",
+    "status": "Status"
+  },
+  "status": {
+    "draft": "Draft",
+    "issued": "Issued",
+    "partial": "Partially paid",
+    "paid": "Paid",
+    "cancelled": "Cancelled"
+  },
+  "filters": {
+    "status": "Status",
+    "payer": "Payer"
+  },
+  "payer": {
+    "self": "Patient",
+    "insurance": "Insurance",
+    "company": "Company"
+  },
+  "create": {
+    "button": "New invoice",
+    "title": "Create an invoice",
+    "submit": "Create invoice"
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "payer": "Payer",
+    "currency": "Currency",
+    "note": "Note"
+  },
+  "detail": {
+    "invoice": "Invoice",
+    "summary": "Information",
+    "lines": "Invoice lines",
+    "item": "Service",
+    "quantity": "Qty",
+    "total": "Total",
+    "paid": "Already paid",
+    "actions": "Actions"
+  },
+  "lines": {
+    "consultation": "Consultation",
+    "laboratory": "Laboratory",
+    "pharmacy": "Pharmacy",
+    "hospitalization": "Hospital stay (day)",
+    "procedure": "Procedure"
+  },
+  "actions": {
+    "pay": "Record a payment",
+    "cancel": "Cancel invoice",
+    "cancelTitle": "Cancel this invoice?",
+    "cancelBody": "A cancelled invoice remains visible in the history and audit."
+  },
+  "summary": {
+    "invoices": "Open invoices",
+    "billed": "Total billed",
+    "collected": "Collected",
+    "outstanding": "Outstanding"
+  },
+  "pay": {
+    "title": "Record a payment",
+    "submit": "Record payment",
+    "amount": "Amount",
+    "method": "Payment method",
+    "reference": "Reference (receipt, transaction)"
+  },
+  "methods": {
+    "cash": "Cash",
+    "mobileMoney": "Mobile money",
+    "card": "Card",
+    "transfer": "Bank transfer"
+  }
+}

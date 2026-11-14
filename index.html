@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#123B5D" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>CERO HEALTH</title>
+    <!--
+      Appliqué avant le premier rendu pour éviter un flash de thème.
+      Lit uniquement les préférences d'interface (thème, densité) : aucune donnée médicale.
+      Doit rester synchronisé avec src/core/preferences/preferences-store.ts (clé de stockage).
+    -->
+    <script>
+      (function () {
+        try {
+          var raw = window.localStorage.getItem('cero-health:preferences');
+          var prefs = raw ? JSON.parse(raw) : {};
+          var mode = prefs && prefs.theme ? prefs.theme : 'system';
+          var dark =
+            mode === 'dark' ||
+            (mode === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (dark) root.classList.add('dark');
+          root.style.colorScheme = dark ? 'dark' : 'light';
+          if (prefs && prefs.density === 'compact') root.dataset.density = 'compact';
+        } catch (e) {
+          /* stockage indisponible : les valeurs par défaut s'appliquent */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "title": "Ripoti",
+  "subtitle": "Ripoti za shughuli, fedha na hifadhi kwa kipindi",
+  "apiNote": "Kutoa ripoti kunategemea API ya ripoti, ambayo bado haijawekwa: maombi hayatatoa kitu hadi ipatikane.",
+  "generate": "Tengeneza",
+  "requested": "Ripoti imeombwa",
+  "demoTitle": "Majaribio: hakuna ripoti iliyotengenezwa",
+  "demoHint": "Vigezo ni sahihi, lakini API ya ripoti haipatikani.",
+  "fields": {
+    "from": "Kuanzia",
+    "to": "Hadi",
+    "format": "Muundo"
+  },
+  "formats": {
+    "screen": "Kwenye skrini",
+    "pdf": "PDF",
+    "csv": "Lahajedwali (CSV)"
+  },
+  "items": {
+    "activity": {
+      "title": "Shughuli za kituo",
+      "description": "Wagonjwa waliohudumiwa, mashauriano na ziara kwa idara."
+    },
+    "appointments": {
+      "title": "Miadi",
+      "description": "Kiwango cha mahudhurio, kughairi na kutokuja."
+    },
+    "hospitalization": {
+      "title": "Kulazwa",
+      "description": "Matumizi ya vitanda na muda wa kukaa."
+    },
+    "laboratory": {
+      "title": "Maabara",
+      "description": "Vipimo vilivyoombwa, muda na uthibitisho."
+    },
+    "stock": {
+      "title": "Hifadhi",
+      "description": "Viwango, upungufu na tarehe za kuisha."
+    },
+    "finance": {
+      "title": "Fedha",
+      "description": "Ankara, makusanyo na madeni."
+    },
+    "cash": {
+      "title": "Kasha",
+      "description": "Jarida la kasha na tofauti za kufunga."
+    },
+    "audit": {
+      "title": "Matumizi na ukaguzi",
+      "description": "Ufikiaji wa faili na vitendo nyeti."
+    }
+  }
+}

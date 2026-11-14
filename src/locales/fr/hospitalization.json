@@ -1,0 +1,143 @@
+{
+  "title": "Hospitalisation et lits",
+  "subtitle": "Plan des lits par service, admissions et transferts — un lit, un patient",
+  "search": "Rechercher (patient, lit, numéro)",
+  "tabs": {
+    "beds": "Plan des lits",
+    "admissions": "Admissions"
+  },
+  "columns": {
+    "patient": "Patient",
+    "ward": "Service",
+    "bed": "Lit",
+    "admittedAt": "Admis le",
+    "expectedDischarge": "Sortie prévue",
+    "status": "Statut",
+    "number": "N°"
+  },
+  "admissionStatus": {
+    "admitted": "Hospitalisé",
+    "dischargePending": "Sortie en attente",
+    "discharged": "Sorti",
+    "cancelled": "Annulée"
+  },
+  "bedStatus": {
+    "free": "Libre",
+    "occupied": "Occupé",
+    "cleaning": "Nettoyage",
+    "maintenance": "Maintenance"
+  },
+  "beds": {
+    "empty": "Aucun lit configuré",
+    "occupancy": "{{occupied}} occupé(s) sur {{total}}",
+    "room": "Chambre {{room}}",
+    "bed": "Lit {{label}}",
+    "ward": "Service",
+    "roomLabel": "Chambre",
+    "status": "Statut",
+    "patient": "Patient",
+    "assign": "Assigner un patient",
+    "assignTitle": "Assigner le lit {{label}}",
+    "patientField": "Patient (nom ou numéro)",
+    "expectedDischarge": "Sortie prévue",
+    "markReady": "Marquer comme prêt",
+    "markReadyTitle": "Le lit est-il prêt à être occupé ?",
+    "open": "Ouvrir",
+    "endMaintenance": "Fin de maintenance",
+    "maintenance": "Maintenance",
+    "maintenanceTitle": "Mettre le lit en maintenance"
+  },
+  "create": {
+    "button": "Nouvelle admission",
+    "title": "Admettre un patient",
+    "submit": "Enregistrer l'admission",
+    "attending": "Médecin référent",
+    "description": "Un lit libre est obligatoire : un lit ne peut accueillir qu’un patient, et un patient n’a qu’une admission active.",
+    "choosePatient": "Choisir un patient",
+    "chooseBed": "Choisir un lit libre",
+    "bedHint": "Seuls les lits libres sont proposés.",
+    "reason": "Motif d’hospitalisation",
+    "consultation": "Consultation (optionnel)",
+    "consultationHint": "Identifiant de la consultation d’origine",
+    "notice": "La facturation des jours de chambre et la sortie sont traitées avec le compte hospitalier."
+  },
+  "detail": {
+    "summary": "Admission",
+    "attending": "Médecin référent",
+    "care": "Soins au lit du patient",
+    "careBody": "Le suivi des soins par chambre (observations, soins réalisés) sera relié à l'API d'hospitalisation. Aucune donnée clinique n'est affichée en démonstration.",
+    "actions": "Actions",
+    "discharge": "Valider la sortie",
+    "dischargeTitle": "Demander la sortie du patient ?",
+    "dischargeBody": "Le lit reste occupé jusqu’à la sortie effective.",
+    "description": "Admission, séjours successifs et demande de sortie.",
+    "stays": "Séjours (lits successifs)",
+    "ongoing": "en cours",
+    "transfer": "Changer de lit",
+    "transferTitle": "Transférer le patient",
+    "newBed": "Nouveau lit",
+    "reasonLabel": "Motif",
+    "cancel": "Annuler l’admission",
+    "cancelTitle": "Annuler cette admission ?",
+    "cancelBody": "Pour une erreur de saisie. Le lit passera en nettoyage ; le motif est tracé.",
+    "requestDischarge": "Demander la sortie",
+    "revokeDischarge": "Retirer la demande",
+    "dischargeNotice": "La sortie effective (bilan financier, libération du lit) est traitée avec le compte hospitalier.",
+    "note": "Note",
+    "dischargeRequest": "Demande de sortie",
+    "cancelled": "Annulation"
+  },
+  "common": {
+    "cancel": "Annuler"
+  },
+  "filters": {
+    "allStatuses": "Tous les statuts"
+  },
+  "empty": "Aucune admission",
+  "emptyHint": "Admettez un patient depuis un lit libre ou depuis une consultation.",
+  "roomKind": {
+    "standard": "standard",
+    "private": "privée"
+  },
+  "done": {
+    "admit": "Patient admis",
+    "transfer": "Patient transféré",
+    "cancel": "Admission annulée",
+    "dischargeRequest": "Demande de sortie enregistrée",
+    "dischargeRevoke": "Demande de sortie retirée",
+    "bedState": "État du lit mis à jour",
+    "roomDays": "Jours de chambre facturés",
+    "discharged": "Sortie enregistrée"
+  },
+  "account": {
+    "title": "Compte hospitalier",
+    "loading": "Chargement du compte…",
+    "loadFailed": "Le compte n’a pas pu être chargé.",
+    "billed": "Total facturé",
+    "patientShare": "Part patient",
+    "paid": "Encaissé",
+    "patientDue": "Reste dû par le patient",
+    "orgDue": "Reste dû par les organismes",
+    "roomDaysBilled": "Jours de chambre facturés",
+    "roomDaysPending": "Jours de chambre à facturer",
+    "noInvoices": "Aucune facture depuis l’admission.",
+    "postDays": "Facturer les jours de chambre",
+    "postDaysDischarge": "Facturer les jours jusqu’à la sortie",
+    "discharge": "Sortie effective",
+    "dischargeTitle": "Sortie effective du patient",
+    "dischargeBody": "La sortie libère le lit (nettoyage) et clôt le séjour. Elle exige que tous les jours de chambre soient facturés et que le solde patient soit réglé.",
+    "outcome": "Issue de la sortie",
+    "blockDays": "{{count}} jour(s) de chambre ne sont pas encore facturés.",
+    "blockBalance": "Solde patient dû : {{due}}. Encaissez-le, autorisez un crédit en caisse, ou saisissez une exception motivée.",
+    "exceptionReason": "Motif de l’exception",
+    "noException": "Vous n’avez pas la permission d’autoriser une sortie avec solde dû.",
+    "dischargeRecord": "Sortie",
+    "convention": "Convention : le jour d’admission compte, le jour de sortie ne compte pas, minimum un jour. La part des organismes n’empêche pas la sortie."
+  },
+  "outcome": {
+    "normal": "Sortie normale",
+    "referral": "Transfert vers un autre établissement",
+    "againstAdvice": "Sortie contre avis médical",
+    "deceased": "Décès"
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "title": "Appointments and reception",
+  "subtitle": "Consultation schedule and patient arrivals",
+  "search": "Search (patient, practitioner, number)",
+  "columns": {
+    "date": "Date and time",
+    "patient": "Patient",
+    "service": "Department",
+    "practitioner": "Practitioner",
+    "reason": "Reason",
+    "status": "Status"
+  },
+  "status": {
+    "scheduled": "Scheduled",
+    "confirmed": "Confirmed",
+    "arrived": "Arrived",
+    "inProgress": "In consultation",
+    "done": "Completed",
+    "cancelled": "Cancelled",
+    "noShow": "No-show",
+    "waiting": "Waiting"
+  },
+  "period": {
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "past": "Past"
+  },
+  "filters": {
+    "period": "Period",
+    "status": "Status",
+    "service": "Department"
+  },
+  "reason": {
+    "firstVisit": "First visit",
+    "followUp": "Follow-up",
+    "control": "Check-up",
+    "vaccination": "Vaccination",
+    "prenatal": "Prenatal visit",
+    "walkIn": "Walk-in"
+  },
+  "create": {
+    "button": "New appointment",
+    "title": "Schedule an appointment",
+    "submit": "Schedule"
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "patientHint": "Patient lookup will be linked to the patients API.",
+    "service": "Department",
+    "practitioner": "Practitioner",
+    "date": "Date",
+    "time": "Time",
+    "reason": "Reason",
+    "duration": "Duration"
+  },
+  "detail": {
+    "summary": "Appointment",
+    "reference": "Reference",
+    "duration": "Duration",
+    "minutes": "{{count}} min",
+    "actions": "Actions",
+    "arrivedAt": "Arrival time",
+    "noActions": "No action possible: this appointment is closed."
+  },
+  "actions": {
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm this appointment?",
+    "checkIn": "Check in",
+    "checkInTitle": "Check the patient in?",
+    "cancel": "Cancel appointment",
+    "cancelTitle": "Cancel this appointment?",
+    "cancelBody": "The cancellation is recorded in the audit log.",
+    "wait": "Place in waiting room",
+    "start": "Call to consultation",
+    "complete": "Complete",
+    "noShow": "Mark as no-show",
+    "reschedule": "Reschedule",
+    "edit": "Edit"
+  },
+  "tabs": {
+    "reception": "Reception",
+    "calendar": "Calendar",
+    "list": "List"
+  },
+  "confirmTitles": {
+    "confirm": "Confirm this appointment?",
+    "check-in": "Record the patient’s arrival?",
+    "wait": "Place the patient in the waiting room?",
+    "start": "Call the patient to consultation?",
+    "complete": "Mark the consultation as completed?",
+    "no-show": "Mark the patient as a no-show?"
+  },
+  "changeReason": {
+    "patientRequest": "Patient request",
+    "practitionerUnavailable": "Practitioner unavailable",
+    "facilityClosure": "Facility closure",
+    "other": "Other reason"
+  },
+  "reschedule": {
+    "title": "Reschedule the appointment",
+    "hint": "The reason and the previous slot are kept in the history.",
+    "submit": "Reschedule",
+    "reason": "Reason for rescheduling",
+    "note": "Details (optional)"
+  },
+  "cancel": {
+    "title": "Cancel the appointment",
+    "hint": "The cancellation is kept in the history with its reason.",
+    "submit": "Cancel appointment",
+    "reason": "Reason for cancellation"
+  },
+  "conflict": {
+    "title": "{{name}} already has an appointment in this slot:",
+    "suggest": "Next free slot: {{time}}.",
+    "noneLeft": "No free slot that day after the requested time."
+  },
+  "history": {
+    "title": "History",
+    "created": "Appointment created",
+    "rescheduled": "Appointment rescheduled",
+    "cancelled": "Appointment cancelled",
+    "checkedIn": "Arrival recorded",
+    "noShow": "Patient did not show",
+    "from": "Previous slot: {{date}}",
+    "reason": "Reason",
+    "serverNote": "Each reschedule or cancellation is recorded by the server with the user, date and reason. In the demo, the history shown is fictitious.",
+    "updated": "Appointment edited"
+  },
+  "calendar": {
+    "count": "{{count}} appointment(s)",
+    "openDay": "Open {{date}}",
+    "more": "+ {{count}} more",
+    "previous": "Previous period",
+    "next": "Next period",
+    "today": "Today",
+    "view": "Calendar view",
+    "views": {
+      "day": "Day (by practitioner)",
+      "week": "Week",
+      "month": "Month"
+    },
+    "allPractitioners": "All practitioners",
+    "truncated": "Display limited to the first {{count}} appointments of the period.",
+    "legend": "Status legend",
+    "legendHint": "Each event also shows its status in words. Click an event to open its details; a cancelled appointment is struck through."
+  },
+  "reception": {
+    "details": "Details",
+    "scheduledAt": "Scheduled",
+    "toWelcome": "To welcome",
+    "delay": "Delay",
+    "late": "{{count}} min late",
+    "waitingRoom": "In the waiting room",
+    "waited": "Waiting",
+    "minutes": "{{count}} min",
+    "inConsultation": "In consultation",
+    "finished": "Finished",
+    "empty": "Nobody at the moment"
+  },
+  "edit": {
+    "title": "Edit the appointment",
+    "hint": "To change only the date, prefer “Reschedule”: the reason is then kept.",
+    "submit": "Save changes"
+  },
+  "walkIn": {
+    "button": "Walk-in patient",
+    "hint": "A patient arrives without an appointment? Register them and direct them to triage or a service.",
+    "title": "Walk-in reception",
+    "description": "Identify the patient, note the reason and urgency, then choose where to send them.",
+    "submit": "Register and direct",
+    "reason": "Reason for the visit",
+    "urgency": "Urgency (reception assessment)",
+    "destination": "Direct to",
+    "toTriage": "Nursing triage",
+    "toService": "Relevant service",
+    "service": "Service",
+    "serviceHint": "Required when directing to a service.",
+    "triageRequired": "An immediate, very urgent or urgent case must go through nursing triage.",
+    "serviceRequired": "Choose the service to direct the patient to.",
+    "priority": {
+      "immediate": "Immediate",
+      "veryUrgent": "Very urgent",
+      "urgent": "Urgent",
+      "standard": "Standard",
+      "nonUrgent": "Non-urgent"
+    }
+  }
+}

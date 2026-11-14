@@ -1,0 +1,95 @@
+{
+  "title": "Triage and nursing care",
+  "subtitle": "Priority-ranked queue and vital signs entry",
+  "search": "Search (patient, number)",
+  "minutes": "{{count}} min",
+  "summary": {
+    "queue": "Waiting or in triage"
+  },
+  "priority": {
+    "immediate": "Immediate",
+    "veryUrgent": "Very urgent",
+    "urgent": "Urgent",
+    "standard": "Standard",
+    "nonUrgent": "Non-urgent"
+  },
+  "category": {
+    "injury": "Injury",
+    "fever": "Fever",
+    "pregnancy": "Pregnancy",
+    "followUp": "Follow-up",
+    "other": "Other"
+  },
+  "status": {
+    "waiting": "Waiting",
+    "inTriage": "In triage",
+    "inCare": "In care",
+    "transferred": "Transferred",
+    "discharged": "Discharged"
+  },
+  "columns": {
+    "priority": "Priority",
+    "patient": "Patient",
+    "category": "Category",
+    "arrival": "Arrival",
+    "wait": "Wait",
+    "status": "Status"
+  },
+  "filters": {
+    "priority": "Priority",
+    "status": "Status"
+  },
+  "create": {
+    "button": "Register an arrival",
+    "title": "Register a patient arrival",
+    "submit": "Register arrival"
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "priority": "Priority",
+    "category": "Category"
+  },
+  "detail": {
+    "summary": "Arrival",
+    "nurse": "Responsible nurse",
+    "vitals": "Vital signs",
+    "vitalsBody": "Entered vital signs will be attached to the care episode. No value is shown in the demo.",
+    "enterVitals": "Enter vital signs",
+    "care": "Care pathway",
+    "noActions": "No further step: this visit is finished.",
+    "noVitals": "No vital signs recorded for this visit.",
+    "vitalsBodyLocal": "Vital signs are saved on this device (local mode) and linked to this visit. They are shown as entered, without interpretation."
+  },
+  "vitals": {
+    "title": "Vital signs entry",
+    "submit": "Save vital signs",
+    "temperature": "Temperature",
+    "pulse": "Pulse",
+    "systolic": "Systolic pressure",
+    "diastolic": "Diastolic pressure",
+    "respiratoryRate": "Respiratory rate",
+    "spo2": "Oxygen saturation",
+    "weight": "Weight",
+    "note": "Note",
+    "unit": {
+      "temperature": "in °C",
+      "pulse": "beats per minute",
+      "pressure": "in mmHg",
+      "respiratory": "breaths per minute",
+      "spo2": "in %",
+      "weight": "in kg"
+    }
+  },
+  "actions": {
+    "start-triage": "Start triage",
+    "send-to-care": "Send to care",
+    "transfer": "Transfer",
+    "discharge": "Close (discharged)"
+  },
+  "confirmTitles": {
+    "start-triage": "Start triage for this patient?",
+    "send-to-care": "Send this patient to care?",
+    "transfer": "Mark this patient as transferred?",
+    "discharge": "Close this visit (discharged)?"
+  }
+}

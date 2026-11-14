@@ -1,0 +1,53 @@
+{
+  "title": "Rapports",
+  "subtitle": "Rapports d'activité, financiers et de stock sur une période",
+  "apiNote": "La génération des rapports dépend de l'API des rapports, qui n'est pas encore configurée : les demandes ne produiront rien tant qu'elle n'est pas disponible.",
+  "generate": "Générer",
+  "requested": "Rapport demandé",
+  "demoTitle": "Démonstration : aucun rapport généré",
+  "demoHint": "Les paramètres sont valides, mais l'API des rapports n'est pas disponible.",
+  "fields": {
+    "from": "Du",
+    "to": "Au",
+    "format": "Format"
+  },
+  "formats": {
+    "screen": "Affichage à l’écran",
+    "pdf": "PDF",
+    "csv": "Tableur (CSV)"
+  },
+  "items": {
+    "activity": {
+      "title": "Activité de l'établissement",
+      "description": "Patients vus, consultations et passages par service."
+    },
+    "appointments": {
+      "title": "Rendez-vous",
+      "description": "Taux de présence, annulations et absences."
+    },
+    "hospitalization": {
+      "title": "Hospitalisation",
+      "description": "Taux d'occupation des lits et durées de séjour."
+    },
+    "laboratory": {
+      "title": "Laboratoire",
+      "description": "Examens demandés, délais et validations."
+    },
+    "stock": {
+      "title": "Stocks",
+      "description": "Niveaux, ruptures et péremptions."
+    },
+    "finance": {
+      "title": "Finances",
+      "description": "Facturation, encaissements et créances."
+    },
+    "cash": {
+      "title": "Caisse",
+      "description": "Journal de caisse et écarts de clôture."
+    },
+    "audit": {
+      "title": "Utilisation et audit",
+      "description": "Accès aux dossiers et actions sensibles."
+    }
+  }
+}

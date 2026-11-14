@@ -1,0 +1,43 @@
+{
+  "title": "Dossiers médicaux",
+  "subtitle": "Dossiers des patients et suivi de leur complétude",
+  "search": "Rechercher (patient, numéro de dossier)",
+  "sensitive": "Données sensibles : chaque consultation du contenu d'un dossier est enregistrée dans le journal d'audit.",
+  "columns": {
+    "patient": "Patient",
+    "number": "N° de dossier",
+    "service": "Service",
+    "lastUpdate": "Dernière mise à jour",
+    "completeness": "Complétude",
+    "status": "Statut"
+  },
+  "status": {
+    "active": "Actif",
+    "archived": "Archivé",
+    "locked": "Verrouillé"
+  },
+  "completeness": {
+    "complete": "Complet",
+    "partial": "Partiel",
+    "incomplete": "Incomplet"
+  },
+  "filters": {
+    "status": "Statut",
+    "completeness": "Complétude",
+    "service": "Service"
+  },
+  "detail": {
+    "summary": "Informations du dossier",
+    "openedAt": "Ouvert le",
+    "contents": "Contenu (nombre d’éléments)",
+    "consultations": "Consultations",
+    "prescriptions": "Prescriptions",
+    "labOrders": "Examens de laboratoire",
+    "documents": "Documents",
+    "access": "Accès au contenu clinique",
+    "accessBody": "L'ouverture du contenu clinique exige la permission dédiée et laisse une trace nominative.",
+    "openContent": "Ouvrir le contenu du dossier",
+    "confirmTitle": "Ouvrir ce dossier ?",
+    "confirmBody": "Votre nom, la date et le motif d'accès seront enregistrés dans le journal d'audit."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "title": "Faili za matibabu",
+  "subtitle": "Faili za wagonjwa na ukamilifu wake",
+  "search": "Tafuta (mgonjwa, namba ya faili)",
+  "sensitive": "Data nyeti: kila ufikiaji wa maudhui ya faili unarekodiwa kwenye kumbukumbu za ukaguzi.",
+  "columns": {
+    "patient": "Mgonjwa",
+    "number": "Namba ya faili",
+    "service": "Idara",
+    "lastUpdate": "Imesasishwa mwisho",
+    "completeness": "Ukamilifu",
+    "status": "Hali"
+  },
+  "status": {
+    "active": "Hai",
+    "archived": "Imehifadhiwa kumbukumbu",
+    "locked": "Imefungwa"
+  },
+  "completeness": {
+    "complete": "Kamili",
+    "partial": "Sehemu",
+    "incomplete": "Haijakamilika"
+  },
+  "filters": {
+    "status": "Hali",
+    "completeness": "Ukamilifu",
+    "service": "Idara"
+  },
+  "detail": {
+    "summary": "Taarifa za faili",
+    "openedAt": "Ilifunguliwa",
+    "contents": "Maudhui (idadi)",
+    "consultations": "Mashauriano",
+    "prescriptions": "Maagizo",
+    "labOrders": "Vipimo vya maabara",
+    "documents": "Nyaraka",
+    "access": "Ufikiaji wa maudhui ya kliniki",
+    "accessBody": "Kufungua maudhui ya kliniki kunahitaji ruhusa maalum na kunaacha alama ya jina.",
+    "openContent": "Fungua maudhui ya faili",
+    "confirmTitle": "Fungua faili hii?",
+    "confirmBody": "Jina lako, tarehe na sababu ya ufikiaji vitarekodiwa kwenye kumbukumbu za ukaguzi."
+  }
+}

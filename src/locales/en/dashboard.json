@@ -1,0 +1,21 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Overview of the facility’s activity",
+  "tiles": {
+    "appointmentsToday": "Appointments today",
+    "waitingNow": "Patients waiting",
+    "beds": "Beds occupied",
+    "pendingLabOrders": "Tests in progress",
+    "toDispense": "Prescriptions to dispense",
+    "stockAlerts": "Stock alerts",
+    "unpaidInvoices": "Unpaid invoices"
+  },
+  "lists": {
+    "appointments": "Next confirmed appointments",
+    "queue": "Waiting queue",
+    "stock": "Stock to watch",
+    "seeAll": "See all",
+    "none": "Nothing to report",
+    "minutes": "{{count}} min"
+  }
+}

@@ -1,0 +1,471 @@
+{
+  "title": "Consultations",
+  "subtitle": "Consultations médicales en cours et passées",
+  "search": "Rechercher (patient, praticien, numéro)",
+  "columns": {
+    "date": "Date et heure",
+    "patient": "Patient",
+    "practitioner": "Praticien",
+    "service": "Service",
+    "reason": "Motif",
+    "status": "Statut"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "inProgress": "En cours",
+    "signed": "Signée",
+    "closed": "Clôturée",
+    "awaitingResults": "En attente de résultats",
+    "toValidate": "À valider"
+  },
+  "reason": {
+    "firstVisit": "Première visite",
+    "followUp": "Suivi",
+    "control": "Contrôle",
+    "vaccination": "Vaccination",
+    "prenatal": "Consultation prénatale"
+  },
+  "filters": {
+    "status": "Statut",
+    "service": "Service"
+  },
+  "create": {
+    "button": "Nouvelle consultation",
+    "title": "Ouvrir une consultation",
+    "submit": "Ouvrir la consultation"
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "service": "Service",
+    "practitioner": "Praticien",
+    "reason": "Motif"
+  },
+  "detail": {
+    "summary": "Consultation",
+    "reference": "Référence",
+    "clinical": "Contenu clinique",
+    "clinicalBody": "Observations, diagnostics et prescriptions seront saisis par le praticien une fois l'API des consultations disponible. Aucune donnée clinique n'est affichée en démonstration.",
+    "actions": "Actions"
+  },
+  "actions": {
+    "sign": "Signer",
+    "signTitle": "Signer cette consultation ?",
+    "signBody": "Après signature, le contenu ne peut plus être modifié sans trace.",
+    "close": "Clôturer",
+    "closeTitle": "Clôturer cette consultation ?",
+    "closeBody": "La clôture est enregistrée dans le journal d’audit."
+  },
+  "clinical": {
+    "open": "Ouvrir le dossier de consultation",
+    "you": "Vous (session en cours)",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "navigation": "Sections de la consultation",
+    "progress": "Progression de la consultation : {{percent}} %",
+    "notAssessed": "Non évalué",
+    "ageYears": "{{count}} an(s)",
+    "sex": {
+      "F": "Féminin",
+      "M": "Masculin"
+    },
+    "noMedicalAccess": "Vous n'avez pas la permission de consulter les informations médicales.",
+    "lockedNote": "Consultation signée : le contenu n'est plus modifiable. Seul un addendum tracé peut être ajouté (section Conclusion).",
+    "readOnlyNote": "Lecture seule : vous n'avez pas la permission de modifier cette consultation.",
+    "sections": {
+      "general": "Informations générales",
+      "anamnesis": "Motif et anamnèse",
+      "history": "Antécédents",
+      "exam": "Examen clinique",
+      "assessment": "Évaluation et diagnostics",
+      "plan": "Conduite à tenir",
+      "conclusion": "Conclusion et validation"
+    },
+    "targets": {
+      "general": "Informations générales",
+      "anamnesis": "Motif et anamnèse",
+      "history": "Antécédents",
+      "exam": "Examen clinique",
+      "assessment": "Évaluation et diagnostics",
+      "plan": "Conduite à tenir",
+      "conclusion": "Conclusion et validation",
+      "report": "Compte rendu complet"
+    },
+    "save": {
+      "button": "Enregistrer le brouillon",
+      "ok": "Brouillon enregistré",
+      "demoTitle": "Démonstration : rien n’a été enregistré",
+      "demoBody": "Le formulaire fonctionne mais aucune donnée n’est envoyée tant que l’API HEALTH n’est pas connectée.",
+      "failed": "Échec de l’enregistrement",
+      "failedBody": "Vos saisies restent à l’écran. Réessayez.",
+      "clean": "Aucune modification en attente",
+      "dirty": "Modifications non enregistrées",
+      "dirtyDemo": "Brouillon local, non enregistré (démonstration)",
+      "locked": "Consultation verrouillée"
+    },
+    "status": {
+      "actions": {
+        "inProgress": "Démarrer la consultation",
+        "awaitingResults": "Mettre en attente de résultats",
+        "toValidate": "Soumettre à validation",
+        "signed": "Valider et signer",
+        "closed": "Clôturer",
+        "draft": "Brouillon"
+      },
+      "confirmBody": "Le statut de la consultation sera modifié et tracé.",
+      "signBody": "Après signature, la consultation n’est plus modifiable : seul un addendum tracé pourra être ajouté.",
+      "changed": "Statut : {{status}}",
+      "previewTitle": "Aperçu local : rien n’a été enregistré",
+      "previewBody": "Le changement de statut n’est visible que sur cet écran (mode démonstration).",
+      "previewBanner": "Aperçu local du changement de statut : il n’est PAS enregistré et disparaîtra au rechargement."
+    },
+    "validation": {
+      "title": "Contrôle avant validation",
+      "ready": "Les éléments obligatoires sont renseignés.",
+      "issues": {
+        "chiefComplaint": "Motif de consultation manquant",
+        "antecedentsNotVerified": "Antécédents non vérifiés lors de cette consultation",
+        "principalDiagnosis": "Aucun diagnostic principal retenu",
+        "conclusion": "Conclusion médicale manquante"
+      }
+    },
+    "summary": {
+      "title": "Synthèse avant validation (compte rendu)",
+      "hint": "Aperçu du compte rendu tel qu’il sera imprimé. Seules les informations saisies y figurent.",
+      "print": "Imprimer / PDF"
+    },
+    "report": {
+      "title": "Compte rendu de consultation médicale",
+      "facility": "Établissement (nom fourni par CERO ID CORE)",
+      "footer": "Document généré par CERO HEALTH. Il n’a de valeur médicale que signé par le praticien.",
+      "demo": "DONNÉES FICTIVES — document de démonstration, sans valeur médicale",
+      "notSigned": "BROUILLON — non signé",
+      "signedBy": "Signé par {{by}} le {{when}}"
+    },
+    "addendum": {
+      "title": "Addendum médical",
+      "hint": "La consultation est signée : toute précision passe par un addendum daté et signé, sans modifier le contenu d’origine.",
+      "text": "Texte de l’addendum",
+      "add": "Ajouter l’addendum"
+    },
+    "revisions": {
+      "title": "Historique des modifications",
+      "none": "Aucune modification enregistrée.",
+      "serverNote": "Auteur et date définitifs : attribués par le serveur à l’enregistrement."
+    },
+    "general": {
+      "title": "Informations générales",
+      "hint": "Informations administratives récupérées du dossier patient. Les données médicales sont dans les autres sections.",
+      "fileNumber": "N° de dossier",
+      "age": "Âge",
+      "sex": "Sexe",
+      "origin": "Origine",
+      "fromAppointment": "Rendez-vous {{id}}",
+      "walkIn": "Sans rendez-vous"
+    },
+    "anamnesis": {
+      "title": "Motif et anamnèse",
+      "chiefComplaint": "Motif principal de consultation",
+      "source": "Source des informations",
+      "sources": {
+        "patient": "Patient",
+        "companion": "Accompagnant",
+        "other": "Autre"
+      },
+      "onset": "Date de début",
+      "duration": "Durée et évolution",
+      "durationHint": "Ex. : depuis 3 jours, en aggravation.",
+      "location": "Localisation des symptômes",
+      "intensity": "Intensité (si pertinente)",
+      "associated": "Symptômes associés",
+      "aggravating": "Facteurs aggravants",
+      "relieving": "Facteurs soulageants",
+      "priorTreatments": "Traitements déjà pris",
+      "history": "Histoire de la maladie actuelle",
+      "notes": "Informations complémentaires"
+    },
+    "allergy": {
+      "title": "ALLERGIES",
+      "noneKnown": "Aucune allergie connue (déclarée).",
+      "unknown": "Allergies non renseignées : à vérifier avec le patient."
+    },
+    "severity": {
+      "mild": "Légère",
+      "moderate": "Modérée",
+      "severe": "Sévère"
+    },
+    "history": {
+      "verifyTitle": "Vérification des antécédents",
+      "verify": "J’ai vérifié les antécédents",
+      "verifiedAt": "Vérifiés le {{when}} par {{by}}.",
+      "noChange": "Aucun changement.",
+      "changed": "{{count}} entrée(s) modifiée(s) ou ajoutée(s).",
+      "notVerified": "Non vérifiés lors de cette consultation.",
+      "patientLevel": "Les antécédents appartiennent au patient : ils restent visibles dans ses prochaines consultations. Chaque modification crée une nouvelle version, l’ancienne est conservée.",
+      "categories": {
+        "medical": "Antécédents médicaux personnels",
+        "surgical": "Antécédents chirurgicaux",
+        "family": "Antécédents familiaux",
+        "allergy": "Allergies et réactions",
+        "medication": "Traitements habituels",
+        "obstetric": "Gynéco-obstétrique (si pertinent)",
+        "lifestyle": "Habitudes et mode de vie"
+      },
+      "empty": "Aucune information enregistrée.",
+      "markNone": "Aucun connu",
+      "markUnknown": "Inconnu",
+      "noneLabel": "Aucun connu (déclaré)",
+      "unknownLabel": "Information inconnue",
+      "origin": {
+        "declared": "Déclaré par le patient",
+        "observed": "Observé / confirmé par un professionnel"
+      },
+      "state": {
+        "active": "Actif",
+        "resolved": "Résolu",
+        "unknown": "Inconnu",
+        "none": "Aucun"
+      },
+      "recordedBy": "Saisi par {{by}} le {{when}}",
+      "confirm": "Confirmer (observé)",
+      "resolve": "Marquer résolu",
+      "versions": "Versions",
+      "addTitle": "Ajouter une information",
+      "category": "Catégorie",
+      "label": "Libellé",
+      "detail": "Précisions",
+      "severity": "Gravité de la réaction",
+      "originLabel": "Source",
+      "stateLabel": "État",
+      "add": "Ajouter",
+      "notes": "Antécédents et observations"
+    },
+    "exam": {
+      "notDoneTitle": "Réalisation de l’examen",
+      "notDone": "Examen clinique non réalisé ou non applicable",
+      "notDoneReason": "Raison",
+      "triageTitle": "Constantes prises au triage",
+      "noTriageLink": "Aucune fiche de triage liée à cette consultation.",
+      "noTriageVitals": "Aucune constante enregistrée au triage.",
+      "triageError": "Impossible de charger les constantes du triage.",
+      "importTriage": "Reprendre ces valeurs",
+      "vitalsTitle": "Constantes",
+      "vitalsHint": "Laissez vide ce qui n’a pas été mesuré : aucune valeur n’est jamais préremplie.",
+      "vitalsSource": "Valeurs saisies par le praticien. Celles du triage gardent leur date, heure et auteur dans la liste ci-dessus.",
+      "vitals": {
+        "systolic": "Tension systolique",
+        "diastolic": "Tension diastolique",
+        "pulse": "Fréquence cardiaque",
+        "temperature": "Température",
+        "respiratoryRate": "Fréquence respiratoire",
+        "spo2": "Saturation O2",
+        "weight": "Poids",
+        "height": "Taille"
+      },
+      "bmi": "IMC",
+      "bmiNone": "non calculable (poids et taille requis)",
+      "outOfRange": "Valeur(s) peu plausible(s) : {{fields}}. Vérifiez la saisie.",
+      "generalState": "État général",
+      "states": {
+        "good": "Bon",
+        "altered": "Altéré",
+        "severe": "Sévèrement altéré"
+      },
+      "physical": "Examen physique",
+      "systems": "Examen par appareil ou système",
+      "observations": "Observations cliniques et résultats pertinents"
+    },
+    "assessment": {
+      "title": "Diagnostics",
+      "noAi": "Le médecin pose et confirme les diagnostics. L’application n’en suggère ni n’en confirme aucun.",
+      "empty": "Aucun diagnostic ajouté.",
+      "addTitle": "Ajouter un diagnostic",
+      "label": "Libellé du diagnostic",
+      "icd10": "Code CIM-10 (facultatif)",
+      "icd10Hint": "Suggestions courantes ; le référentiel complet viendra de l’API.",
+      "type": "Type",
+      "status": "Statut",
+      "comment": "Commentaire clinique",
+      "add": "Ajouter le diagnostic",
+      "evolve": "Faire évoluer",
+      "reason": "Justification du changement",
+      "reasonHint": "Ex. : confirmé après résultat de laboratoire.",
+      "recordChange": "Enregistrer le changement",
+      "evaluation": "Évaluation médicale",
+      "principalIs": "Diagnostic principal : {{label}} ({{status}}).",
+      "noPrincipal": "Aucun diagnostic principal retenu.",
+      "types": {
+        "principal": "Principal",
+        "secondary": "Secondaire",
+        "differential": "Différentiel"
+      },
+      "statuses": {
+        "presumptive": "Présomptif",
+        "investigating": "En cours d’investigation",
+        "confirmed": "Confirmé",
+        "ruledOut": "Écarté"
+      },
+      "errors": {
+        "labelRequired": "Le libellé est obligatoire.",
+        "invalidIcd10": "Code CIM-10 invalide (ex. B54 ou J18.9).",
+        "principalExists": "Un diagnostic principal actif existe déjà : écartez-le ou changez son type avant d’en choisir un autre.",
+        "differentialCannotBeConfirmed": "Un diagnostic différentiel ne peut pas être « confirmé » : changez d’abord son type (principal ou secondaire).",
+        "notFound": "Diagnostic introuvable.",
+        "noChange": "Aucun changement à enregistrer."
+      }
+    },
+    "plan": {
+      "synthesis": "Synthèse clinique",
+      "ordersTitle": "Examens et prescriptions",
+      "ordersHint": "Les demandes de laboratoire et les prescriptions se créent dans leur module, sans doublon, puis se rattachent à cette consultation (liaison par l’API).",
+      "labLink": "Laboratoire",
+      "rxLink": "Prescriptions",
+      "admissionLink": "Hospitalisation",
+      "actions": "Soins, actes et conseils au patient",
+      "orientationTitle": "Orientation et suivi",
+      "orientation": "Orientation",
+      "orientations": {
+        "none": "Aucune",
+        "service": "Vers un autre service",
+        "hospitalization": "Décision d’hospitalisation",
+        "referral": "Référence vers un autre établissement"
+      },
+      "target": {
+        "service": "Service de destination",
+        "hospitalization": "Service d’hospitalisation",
+        "referral": "Établissement de référence"
+      },
+      "followUp": "Date de suivi recommandée",
+      "admissionNote": "L’admission elle-même se fait dans le module Hospitalisation.",
+      "labOrder": "Demander des examens",
+      "rxOrder": "Prescrire",
+      "admitOrder": "Hospitaliser",
+      "targetHint": {
+        "service": "Service de l’hôpital qui prendra le patient en charge.",
+        "hospitalization": "Service où le patient sera hospitalisé.",
+        "referral": "Hôpital ou centre externe vers lequel le patient est référé."
+      }
+    },
+    "conclusion": {
+      "text": "Conclusion médicale",
+      "decision": "Décision médicale",
+      "recommendations": "Recommandations",
+      "nextAppointment": "Date du prochain rendez-vous"
+    },
+    "tpl": {
+      "title": "Modèles de rédaction",
+      "subtitle": "Chargez une trame, entièrement modifiable, ou partez d’une page vierge.",
+      "search": "Rechercher un modèle",
+      "onlySection": "Cette section uniquement",
+      "new": "Nouveau modèle",
+      "blank": "Page vierge",
+      "blankHint": "Commencer sans modèle.",
+      "clear": "Vider l’éditeur",
+      "favorite": "Favori",
+      "use": "Utiliser",
+      "replace": "Remplacer le contenu",
+      "append": "Ajouter à la suite",
+      "duplicate": "Dupliquer",
+      "edit": "Modifier",
+      "copyOf": "Copie de {{name}}",
+      "none": "Aucun modèle trouvé.",
+      "name": "Nom du modèle",
+      "target": "Section destinataire",
+      "scopeLabel": "Portée",
+      "scope": {
+        "common": "Commun (application)",
+        "facility": "Établissement",
+        "personal": "Personnel"
+      },
+      "content": "Contenu du modèle",
+      "noPatientData": "Un modèle est une trame réutilisable : n’y mettez jamais de données d’un patient.",
+      "useNow": "Utiliser sans enregistrer",
+      "save": "Enregistrer le modèle",
+      "saved": "Modèle enregistré",
+      "saveFailed": "Échec de l’enregistrement du modèle",
+      "demoNotSaved": "Démonstration : modèle non enregistré",
+      "demoNotSavedHint": "Utilisez « Utiliser sans enregistrer » pour l’insérer dans l’éditeur.",
+      "names": {
+        "anamnesis": "Modèle d'anamnèse",
+        "illnessHistory": "Modèle d'histoire de la maladie",
+        "medicalHistory": "Modèle d'antécédents médicaux",
+        "clinicalExam": "Modèle d'examen clinique",
+        "observations": "Modèle d'observations médicales",
+        "synthesis": "Modèle de synthèse clinique",
+        "conclusion": "Modèle de conclusion médicale",
+        "fullReport": "Modèle de compte rendu complet"
+      },
+      "sec": {
+        "chiefComplaint": "Motif de consultation",
+        "onset": "Début des symptômes",
+        "duration": "Durée et évolution",
+        "location": "Localisation",
+        "intensity": "Intensité",
+        "associated": "Symptômes associés",
+        "aggravating": "Facteurs aggravants",
+        "relieving": "Facteurs soulageants",
+        "priorTreatment": "Traitements déjà pris",
+        "onsetCircumstances": "Circonstances de survenue",
+        "evolution": "Évolution",
+        "previousConsultations": "Consultations et examens antérieurs",
+        "currentState": "État actuel",
+        "medical": "Antécédents médicaux",
+        "surgical": "Antécédents chirurgicaux",
+        "family": "Antécédents familiaux",
+        "allergies": "Allergies",
+        "medications": "Traitements habituels",
+        "obstetric": "Gynéco-obstétrique",
+        "lifestyle": "Mode de vie",
+        "generalState": "État général",
+        "head": "Tête et cou",
+        "cardiovascular": "Cardiovasculaire",
+        "respiratory": "Respiratoire",
+        "abdomen": "Abdomen",
+        "neurological": "Neurologique",
+        "skin": "Peau et phanères",
+        "musculoskeletal": "Locomoteur",
+        "observations": "Observations cliniques",
+        "results": "Résultats pertinents",
+        "summary": "Résumé du cas",
+        "problems": "Problèmes identifiés",
+        "hypotheses": "Hypothèses diagnostiques",
+        "conclusion": "Conclusion",
+        "decision": "Décision médicale",
+        "recommendations": "Recommandations",
+        "followUp": "Suivi",
+        "illnessHistory": "Histoire de la maladie",
+        "physicalExam": "Examen physique",
+        "plan": "Conduite à tenir"
+      }
+    }
+  },
+  "editor": {
+    "toolbar": "Outils de mise en forme",
+    "templates": "Modèles de rédaction",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "bold": "Gras",
+    "italic": "Italique",
+    "underline": "Souligné",
+    "strike": "Barré",
+    "bullets": "Liste à puces",
+    "numbered": "Liste numérotée",
+    "h2": "Titre",
+    "h3": "Sous-titre",
+    "alignLeft": "Aligner à gauche",
+    "alignCenter": "Centrer",
+    "alignRight": "Aligner à droite",
+    "alignJustify": "Justifier",
+    "table": "Insérer un tableau",
+    "addRow": "+ Ligne",
+    "addColumn": "+ Colonne",
+    "deleteTable": "Supprimer le tableau",
+    "moreTools": "Plus d’outils",
+    "print": "Imprimer / PDF",
+    "fullscreen": "Plein écran",
+    "exitFullscreen": "Quitter le plein écran",
+    "printFacility": "Rédaction clinique",
+    "printFooter": "Extrait imprimé depuis CERO HEALTH."
+  }
+}

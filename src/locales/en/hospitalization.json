@@ -1,0 +1,143 @@
+{
+  "title": "Hospitalization and beds",
+  "subtitle": "Bed map by ward, admissions and transfers — one bed, one patient",
+  "search": "Search (patient, bed, number)",
+  "tabs": {
+    "beds": "Bed map",
+    "admissions": "Admissions"
+  },
+  "columns": {
+    "patient": "Patient",
+    "ward": "Department",
+    "bed": "Bed",
+    "admittedAt": "Admitted on",
+    "expectedDischarge": "Expected discharge",
+    "status": "Status",
+    "number": "No."
+  },
+  "admissionStatus": {
+    "admitted": "Admitted",
+    "dischargePending": "Discharge pending",
+    "discharged": "Discharged",
+    "cancelled": "Cancelled"
+  },
+  "bedStatus": {
+    "free": "Free",
+    "occupied": "Occupied",
+    "cleaning": "Cleaning",
+    "maintenance": "Maintenance"
+  },
+  "beds": {
+    "empty": "No bed configured",
+    "occupancy": "{{occupied}} of {{total}} occupied",
+    "room": "Room {{room}}",
+    "bed": "Bed {{label}}",
+    "ward": "Department",
+    "roomLabel": "Room",
+    "status": "Status",
+    "patient": "Patient",
+    "assign": "Assign a patient",
+    "assignTitle": "Assign bed {{label}}",
+    "patientField": "Patient (name or number)",
+    "expectedDischarge": "Expected discharge",
+    "markReady": "Mark as ready",
+    "markReadyTitle": "Is the bed ready for use?",
+    "open": "Open",
+    "endMaintenance": "End maintenance",
+    "maintenance": "Maintenance",
+    "maintenanceTitle": "Put the bed under maintenance"
+  },
+  "create": {
+    "button": "New admission",
+    "title": "Admit a patient",
+    "submit": "Save admission",
+    "attending": "Attending physician",
+    "description": "A free bed is required: a bed holds one patient, and a patient has one active admission.",
+    "choosePatient": "Choose a patient",
+    "chooseBed": "Choose a free bed",
+    "bedHint": "Only free beds are offered.",
+    "reason": "Reason for admission",
+    "consultation": "Consultation (optional)",
+    "consultationHint": "ID of the originating consultation",
+    "notice": "Billing of room days and discharge are handled with the hospital account."
+  },
+  "detail": {
+    "summary": "Admission",
+    "attending": "Attending physician",
+    "care": "Bedside care",
+    "careBody": "Bedside care follow-up (observations, care given) will be linked to the hospitalization API. No clinical data is shown in the demo.",
+    "actions": "Actions",
+    "discharge": "Validate discharge",
+    "dischargeTitle": "Request the patient’s discharge?",
+    "dischargeBody": "The bed stays occupied until the actual discharge.",
+    "description": "Admission, successive stays and discharge request.",
+    "stays": "Stays (successive beds)",
+    "ongoing": "ongoing",
+    "transfer": "Change bed",
+    "transferTitle": "Transfer the patient",
+    "newBed": "New bed",
+    "reasonLabel": "Reason",
+    "cancel": "Cancel admission",
+    "cancelTitle": "Cancel this admission?",
+    "cancelBody": "For a data-entry error. The bed goes to cleaning; the reason is traced.",
+    "requestDischarge": "Request discharge",
+    "revokeDischarge": "Withdraw request",
+    "dischargeNotice": "Actual discharge (financial settlement, bed release) is handled with the hospital account.",
+    "note": "Note",
+    "dischargeRequest": "Discharge request",
+    "cancelled": "Cancellation"
+  },
+  "common": {
+    "cancel": "Cancel"
+  },
+  "filters": {
+    "allStatuses": "All statuses"
+  },
+  "empty": "No admissions",
+  "emptyHint": "Admit a patient from a free bed or from a consultation.",
+  "roomKind": {
+    "standard": "standard",
+    "private": "private"
+  },
+  "done": {
+    "admit": "Patient admitted",
+    "transfer": "Patient transferred",
+    "cancel": "Admission cancelled",
+    "dischargeRequest": "Discharge request recorded",
+    "dischargeRevoke": "Discharge request withdrawn",
+    "bedState": "Bed status updated",
+    "roomDays": "Room days billed",
+    "discharged": "Discharge recorded"
+  },
+  "account": {
+    "title": "Hospital account",
+    "loading": "Loading account…",
+    "loadFailed": "The account could not be loaded.",
+    "billed": "Total billed",
+    "patientShare": "Patient share",
+    "paid": "Collected",
+    "patientDue": "Patient balance due",
+    "orgDue": "Organizations balance due",
+    "roomDaysBilled": "Room days billed",
+    "roomDaysPending": "Room days to bill",
+    "noInvoices": "No invoice since admission.",
+    "postDays": "Bill room days",
+    "postDaysDischarge": "Bill days up to discharge",
+    "discharge": "Discharge",
+    "dischargeTitle": "Discharge the patient",
+    "dischargeBody": "Discharge frees the bed (cleaning) and closes the stay. All room days must be billed and the patient balance settled.",
+    "outcome": "Discharge outcome",
+    "blockDays": "{{count}} room day(s) are not billed yet.",
+    "blockBalance": "Patient balance due: {{due}}. Collect it, authorize credit at the cashier, or enter a justified exception.",
+    "exceptionReason": "Exception reason",
+    "noException": "You are not allowed to authorize a discharge with a balance due.",
+    "dischargeRecord": "Discharge",
+    "convention": "Convention: the admission day counts, the discharge day does not, minimum one day. Organizations’ share does not block discharge."
+  },
+  "outcome": {
+    "normal": "Normal discharge",
+    "referral": "Referral to another facility",
+    "againstAdvice": "Discharge against medical advice",
+    "deceased": "Death"
+  }
+}

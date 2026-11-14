@@ -1,0 +1,54 @@
+{
+  "title": "Stock and suppliers",
+  "subtitle": "Stock levels, expiry dates and receipts",
+  "search": "Search (item, supplier)",
+  "sourceNote": "Stock is managed by the existing stock application (CERO UZISHA). This page is only a view of it.",
+  "columns": {
+    "name": "Item",
+    "category": "Category",
+    "quantity": "Quantity",
+    "minLevel": "Minimum level",
+    "expiry": "Expiry",
+    "level": "Level"
+  },
+  "category": {
+    "pharmacy": "Pharmacy",
+    "consumables": "Consumables",
+    "reagents": "Reagents",
+    "equipment": "Equipment"
+  },
+  "level": {
+    "ok": "OK",
+    "low": "Low stock",
+    "out": "Out of stock",
+    "expiring": "Expiring soon"
+  },
+  "filters": {
+    "category": "Category",
+    "level": "Level"
+  },
+  "summary": {
+    "references": "Items",
+    "low": "Low stock",
+    "out": "Out of stock",
+    "expiring": "Expiring soon"
+  },
+  "create": {
+    "button": "Stock receipt",
+    "title": "Record a receipt",
+    "submit": "Record receipt"
+  },
+  "fields": {
+    "product": "Item",
+    "quantity": "Quantity received",
+    "supplier": "Supplier",
+    "batch": "Batch no.",
+    "expiry": "Expiry date"
+  },
+  "detail": {
+    "summary": "Item sheet",
+    "reference": "Reference",
+    "supplier": "Supplier",
+    "location": "Location"
+  }
+}

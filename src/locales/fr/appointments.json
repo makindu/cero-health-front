@@ -1,0 +1,188 @@
+{
+  "title": "Rendez-vous et accueil",
+  "subtitle": "Planning des consultations et arrivées des patients",
+  "search": "Rechercher (patient, praticien, numéro)",
+  "columns": {
+    "date": "Date et heure",
+    "patient": "Patient",
+    "service": "Service",
+    "practitioner": "Praticien",
+    "reason": "Motif",
+    "status": "Statut"
+  },
+  "status": {
+    "scheduled": "Planifié",
+    "confirmed": "Confirmé",
+    "arrived": "Arrivé",
+    "inProgress": "En consultation",
+    "done": "Terminé",
+    "cancelled": "Annulé",
+    "noShow": "Absent",
+    "waiting": "En attente"
+  },
+  "period": {
+    "today": "Aujourd'hui",
+    "upcoming": "À venir",
+    "past": "Passés"
+  },
+  "filters": {
+    "period": "Période",
+    "status": "Statut",
+    "service": "Service"
+  },
+  "reason": {
+    "firstVisit": "Première visite",
+    "followUp": "Suivi",
+    "control": "Contrôle",
+    "vaccination": "Vaccination",
+    "prenatal": "Consultation prénatale",
+    "walkIn": "Sans rendez-vous"
+  },
+  "create": {
+    "button": "Nouveau rendez-vous",
+    "title": "Planifier un rendez-vous",
+    "submit": "Planifier"
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "patientHint": "La recherche de patient sera reliée à l’API patients.",
+    "service": "Service",
+    "practitioner": "Praticien",
+    "date": "Date",
+    "time": "Heure",
+    "reason": "Motif",
+    "duration": "Durée"
+  },
+  "detail": {
+    "summary": "Rendez-vous",
+    "reference": "Référence",
+    "duration": "Durée",
+    "minutes": "{{count}} min",
+    "actions": "Actions",
+    "arrivedAt": "Heure d’arrivée",
+    "noActions": "Aucune action possible : ce rendez-vous est clôturé."
+  },
+  "actions": {
+    "confirm": "Confirmer",
+    "confirmTitle": "Confirmer ce rendez-vous ?",
+    "checkIn": "Enregistrer l'arrivée",
+    "checkInTitle": "Enregistrer l'arrivée du patient ?",
+    "cancel": "Annuler le rendez-vous",
+    "cancelTitle": "Annuler ce rendez-vous ?",
+    "cancelBody": "L'annulation est enregistrée dans le journal d'audit.",
+    "wait": "Mettre en attente",
+    "start": "Appeler en consultation",
+    "complete": "Terminer",
+    "noShow": "Marquer absent",
+    "reschedule": "Reporter",
+    "edit": "Modifier"
+  },
+  "tabs": {
+    "reception": "Accueil",
+    "calendar": "Calendrier",
+    "list": "Liste"
+  },
+  "confirmTitles": {
+    "confirm": "Confirmer ce rendez-vous ?",
+    "check-in": "Enregistrer l'arrivée du patient ?",
+    "wait": "Placer le patient en salle d'attente ?",
+    "start": "Appeler le patient en consultation ?",
+    "complete": "Marquer la consultation comme terminée ?",
+    "no-show": "Marquer le patient absent ?"
+  },
+  "changeReason": {
+    "patientRequest": "Demande du patient",
+    "practitionerUnavailable": "Praticien indisponible",
+    "facilityClosure": "Fermeture de l’établissement",
+    "other": "Autre motif"
+  },
+  "reschedule": {
+    "title": "Reporter le rendez-vous",
+    "hint": "Le motif et l'ancien créneau sont conservés dans l'historique.",
+    "submit": "Reporter",
+    "reason": "Motif du report",
+    "note": "Précision (facultatif)"
+  },
+  "cancel": {
+    "title": "Annuler le rendez-vous",
+    "hint": "L'annulation est conservée dans l'historique avec son motif.",
+    "submit": "Annuler le rendez-vous",
+    "reason": "Motif de l'annulation"
+  },
+  "conflict": {
+    "title": "{{name}} a déjà un rendez-vous sur ce créneau :",
+    "suggest": "Prochain créneau libre : {{time}}.",
+    "noneLeft": "Aucun créneau libre ce jour-là après l'heure demandée."
+  },
+  "history": {
+    "title": "Historique",
+    "created": "Rendez-vous créé",
+    "rescheduled": "Rendez-vous reporté",
+    "cancelled": "Rendez-vous annulé",
+    "checkedIn": "Arrivée enregistrée",
+    "noShow": "Patient absent",
+    "from": "Ancien créneau : {{date}}",
+    "reason": "Motif",
+    "serverNote": "Chaque report ou annulation est enregistré par le serveur avec l'utilisateur, la date et le motif. En démonstration, l'historique affiché est fictif.",
+    "updated": "Rendez-vous modifié"
+  },
+  "calendar": {
+    "count": "{{count}} rendez-vous",
+    "openDay": "Ouvrir le {{date}}",
+    "more": "+ {{count}} autre(s)",
+    "previous": "Période précédente",
+    "next": "Période suivante",
+    "today": "Aujourd'hui",
+    "view": "Affichage du calendrier",
+    "views": {
+      "day": "Jour (par praticien)",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "allPractitioners": "Tous les praticiens",
+    "truncated": "Affichage limité aux {{count}} premiers rendez-vous de la période.",
+    "legend": "Légende des statuts",
+    "legendHint": "Chaque événement affiche aussi son statut en toutes lettres. Cliquez sur un événement pour ouvrir ses détails ; un rendez-vous annulé est barré."
+  },
+  "reception": {
+    "details": "Détails",
+    "scheduledAt": "Heure prévue",
+    "toWelcome": "À accueillir",
+    "delay": "Retard",
+    "late": "{{count}} min de retard",
+    "waitingRoom": "En salle d'attente",
+    "waited": "Attente",
+    "minutes": "{{count}} min",
+    "inConsultation": "En consultation",
+    "finished": "Terminés",
+    "empty": "Personne pour le moment"
+  },
+  "edit": {
+    "title": "Modifier le rendez-vous",
+    "hint": "Pour changer seulement la date, préférez « Reporter » : le motif est alors conservé.",
+    "submit": "Enregistrer les modifications"
+  },
+  "walkIn": {
+    "button": "Patient sans rendez-vous",
+    "hint": "Un patient se présente sans rendez-vous ? Enregistrez-le et orientez-le vers le triage ou un service.",
+    "title": "Accueil sans rendez-vous",
+    "description": "Identifiez le patient, notez le motif et le degré d'urgence, puis choisissez l'orientation.",
+    "submit": "Enregistrer et orienter",
+    "reason": "Motif de la venue",
+    "urgency": "Degré d'urgence (évaluation d'accueil)",
+    "destination": "Orientation",
+    "toTriage": "Triage infirmier",
+    "toService": "Service concerné",
+    "service": "Service",
+    "serviceHint": "Obligatoire si l'orientation est un service.",
+    "triageRequired": "Une urgence immédiate, très urgente ou urgente doit passer par le triage infirmier.",
+    "serviceRequired": "Choisissez le service d'orientation.",
+    "priority": {
+      "immediate": "Immédiate",
+      "veryUrgent": "Très urgente",
+      "urgent": "Urgente",
+      "standard": "Standard",
+      "nonUrgent": "Non urgente"
+    }
+  }
+}

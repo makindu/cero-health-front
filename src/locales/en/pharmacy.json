@@ -1,0 +1,135 @@
+{
+  "title": "Pharmacy",
+  "subtitle": "Dispensing of validated prescriptions, billing and lot-based stock",
+  "search": "Search prescriptions",
+  "searchStock": "Search items",
+  "tabs": {
+    "queue": "To dispense",
+    "stock": "Pharmacy stock",
+    "dispensations": "Dispensations"
+  },
+  "filters": {
+    "level": "Level"
+  },
+  "level": {
+    "ok": "OK",
+    "low": "Low stock",
+    "out": "Out of stock",
+    "expiring": "Expiring soon"
+  },
+  "stock": {
+    "quantity": "Quantity",
+    "minLevel": "Minimum level",
+    "expiry": "Expiry",
+    "level": "Level",
+    "item": "Product",
+    "total": "Total in stock",
+    "usable": "Usable",
+    "lots": "Lots (no. · quantity · expiry)",
+    "expired": "Expired",
+    "adjust": "Adjust",
+    "receive": "Receive a lot",
+    "empty": "No pharmacy product in the catalogue",
+    "notice": "Expired lots are never dispensed. Issue follows first-expired, first-out.",
+    "movements": "Movement log ({{count}})",
+    "receiveTitle": "Receive a lot",
+    "chooseItem": "Choose a product",
+    "lotNumber": "Lot no.",
+    "adjustTitle": "Adjust a lot",
+    "adjustBody": "Inventory correction: reason required, movement traced, stock never negative.",
+    "delta": "Change",
+    "deltaHint": "Negative to remove"
+  },
+  "columns": {
+    "prescription": "Prescription",
+    "patient": "Patient",
+    "items": "Products (left/prescribed)",
+    "date": "Prescribed on",
+    "number": "No.",
+    "payment": "Payment",
+    "status": "Status"
+  },
+  "queue": {
+    "prepare": "Prepare",
+    "empty": "Nothing to dispense",
+    "emptyHint": "Validated prescriptions appear here."
+  },
+  "payment": {
+    "paid": "Paid",
+    "unpaid": "To pay at cashier",
+    "credit": "Credit authorised",
+    "exception": "Traced exception",
+    "invoiceCancelled": "Invoice cancelled"
+  },
+  "dispensationStatus": {
+    "prepared": "Prepared",
+    "dispensed": "Handed over",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "open": "Open"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "reason": "Reason"
+  },
+  "done": {
+    "prepare": "Dispensation prepared and invoiced",
+    "dispense": "Products handed over, stock updated",
+    "exception": "Exception recorded",
+    "cancel": "Dispensation cancelled",
+    "receive": "Lot received",
+    "adjust": "Stock adjusted"
+  },
+  "prepare": {
+    "title": "Prepare dispensation — {{number}}",
+    "description": "For each prescribed line, choose the stock product to hand over.",
+    "submit": "Prepare and invoice",
+    "remaining": "{{count}} left to dispense",
+    "product": "Stock product",
+    "skip": "Do not dispense this line",
+    "usable": "{{count}} usable",
+    "quantity": "Quantity",
+    "notice": "The invoice is created now; stock only leaves at hand-over, after payment. No product matching is done automatically.",
+    "reason": "Reason for the difference",
+    "reasonPlaceholder": "E.g. out of stock, equivalent generic, patient declined",
+    "deviation": {
+      "reduced": "Quantity lower than prescribed",
+      "substituted": "Product differs from the prescription"
+    }
+  },
+  "dispensation": {
+    "title": "Dispensation",
+    "description": "Handing products to the patient. Administration belongs to nursing.",
+    "summary": "Information",
+    "preparedBy": "Prepared by",
+    "dispensedBy": "Handed over by",
+    "lines": "Products",
+    "forLine": "for “{{label}}”",
+    "payment": "Billing and payment",
+    "invoice": "Invoice",
+    "patientShare": "Patient share",
+    "remaining": "Remaining to pay",
+    "gate": "Hand-over",
+    "noInvoice": "Invoice not found: hand-over is blocked.",
+    "exceptionBy": "Payment exception granted by {{by}}: {{reason}}",
+    "cancelledBy": "Cancelled by {{by}}: {{reason}}",
+    "refundPending": "a payment was collected, refund to be made at the cashier",
+    "actions": "Actions",
+    "dispense": "Hand over products",
+    "cancel": "Cancel",
+    "exception": "Hand over without payment",
+    "gateHint": "Hand-over is possible after payment, authorised credit or a justified exception.",
+    "exceptionTitle": "Hand over without payment?",
+    "exceptionBody": "Exception reserved for emergencies, traced with your name and the reason.",
+    "cancelTitle": "Cancel this dispensation?",
+    "cancelBody": "Possible before hand-over. An unpaid invoice is cancelled; a payment must be refunded at the cashier.",
+    "empty": "No dispensations"
+  },
+  "movementKind": {
+    "receive": "Receipt",
+    "dispense": "Dispensation",
+    "adjust": "Adjustment",
+    "dispenseCancel": "Cancellation"
+  }
+}

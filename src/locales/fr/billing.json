@@ -1,0 +1,82 @@
+{
+  "title": "Facturation",
+  "subtitle": "Factures, paiements et soldes des patients",
+  "search": "Rechercher (numéro, patient)",
+  "columns": {
+    "number": "N° de facture",
+    "patient": "Patient",
+    "date": "Date",
+    "amount": "Montant",
+    "balance": "Solde",
+    "status": "Statut"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "issued": "Émise",
+    "partial": "Partiellement payée",
+    "paid": "Payée",
+    "cancelled": "Annulée"
+  },
+  "filters": {
+    "status": "Statut",
+    "payer": "Payeur"
+  },
+  "payer": {
+    "self": "Patient",
+    "insurance": "Assurance",
+    "company": "Entreprise"
+  },
+  "create": {
+    "button": "Nouvelle facture",
+    "title": "Créer une facture",
+    "submit": "Créer la facture"
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "payer": "Payeur",
+    "currency": "Devise",
+    "note": "Remarque"
+  },
+  "detail": {
+    "invoice": "Facture",
+    "summary": "Informations",
+    "lines": "Lignes de facture",
+    "item": "Prestation",
+    "quantity": "Qté",
+    "total": "Total",
+    "paid": "Déjà payé",
+    "actions": "Actions"
+  },
+  "lines": {
+    "consultation": "Consultation",
+    "laboratory": "Laboratoire",
+    "pharmacy": "Pharmacie",
+    "hospitalization": "Hospitalisation (jour)",
+    "procedure": "Acte"
+  },
+  "actions": {
+    "pay": "Enregistrer un paiement",
+    "cancel": "Annuler la facture",
+    "cancelTitle": "Annuler cette facture ?",
+    "cancelBody": "Une facture annulée reste visible dans l'historique et l'audit."
+  },
+  "summary": {
+    "invoices": "Factures en cours",
+    "billed": "Total facturé",
+    "collected": "Encaissé",
+    "outstanding": "Reste à encaisser"
+  },
+  "pay": {
+    "title": "Enregistrer un paiement",
+    "submit": "Enregistrer le paiement",
+    "amount": "Montant",
+    "method": "Mode de paiement",
+    "reference": "Référence (reçu, transaction)"
+  },
+  "methods": {
+    "cash": "Espèces",
+    "mobileMoney": "Mobile money",
+    "card": "Carte",
+    "transfer": "Virement"
+  }
+}

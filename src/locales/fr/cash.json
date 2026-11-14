@@ -1,0 +1,49 @@
+{
+  "title": "Caisse",
+  "subtitle": "Encaissements, décaissements et clôture de caisse",
+  "search": "Rechercher (numéro, caissier)",
+  "columns": {
+    "date": "Date et heure",
+    "type": "Type",
+    "category": "Catégorie",
+    "method": "Mode",
+    "amount": "Montant",
+    "cashier": "Caissier"
+  },
+  "direction": {
+    "in": "Encaissement",
+    "out": "Décaissement"
+  },
+  "category": {
+    "patientPayment": "Paiement patient",
+    "insurancePayment": "Paiement assurance",
+    "supplies": "Achat de fournitures",
+    "salary": "Salaires",
+    "expense": "Dépense diverse"
+  },
+  "methods": {
+    "cash": "Espèces",
+    "mobileMoney": "Mobile money",
+    "card": "Carte",
+    "transfer": "Virement"
+  },
+  "summary": {
+    "in": "Encaissements",
+    "out": "Décaissements",
+    "balance": "Solde"
+  },
+  "close": {
+    "button": "Clôturer la caisse",
+    "title": "Clôturer la caisse ?",
+    "body": "La clôture fige les opérations de la période et est tracée dans le journal d’audit."
+  },
+  "create": {
+    "button": "Nouvelle opération",
+    "title": "Enregistrer une opération",
+    "submit": "Enregistrer l'opération",
+    "reference": "Référence (reçu, justificatif)"
+  },
+  "detail": {
+    "summary": "Opération"
+  }
+}

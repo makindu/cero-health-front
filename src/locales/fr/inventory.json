@@ -1,0 +1,54 @@
+{
+  "title": "Stocks et fournisseurs",
+  "subtitle": "Niveaux de stock, péremptions et réceptions",
+  "search": "Rechercher (article, fournisseur)",
+  "sourceNote": "Les stocks sont gérés par l'application de stock existante (CERO UZISHA). Cette page n'en est qu'une vue.",
+  "columns": {
+    "name": "Article",
+    "category": "Catégorie",
+    "quantity": "Quantité",
+    "minLevel": "Seuil minimal",
+    "expiry": "Péremption",
+    "level": "Niveau"
+  },
+  "category": {
+    "pharmacy": "Pharmacie",
+    "consumables": "Consommables",
+    "reagents": "Réactifs",
+    "equipment": "Équipement"
+  },
+  "level": {
+    "ok": "Normal",
+    "low": "Stock bas",
+    "out": "Rupture",
+    "expiring": "Péremption proche"
+  },
+  "filters": {
+    "category": "Catégorie",
+    "level": "Niveau"
+  },
+  "summary": {
+    "references": "Références",
+    "low": "Stock bas",
+    "out": "En rupture",
+    "expiring": "Péremption proche"
+  },
+  "create": {
+    "button": "Réception de stock",
+    "title": "Enregistrer une réception",
+    "submit": "Enregistrer la réception"
+  },
+  "fields": {
+    "product": "Article",
+    "quantity": "Quantité reçue",
+    "supplier": "Fournisseur",
+    "batch": "N° de lot",
+    "expiry": "Date de péremption"
+  },
+  "detail": {
+    "summary": "Fiche article",
+    "reference": "Référence",
+    "supplier": "Fournisseur",
+    "location": "Emplacement"
+  }
+}

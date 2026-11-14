@@ -1,0 +1,142 @@
+{
+  "title": "Maabara",
+  "subtitle": "Maombi ya vipimo, kuchukua sampuli na kuthibitisha matokeo",
+  "search": "Tafuta (mgonjwa, namba)",
+  "columns": {
+    "requestedAt": "Ilioombwa",
+    "patient": "Mgonjwa",
+    "tests": "Vipimo",
+    "priority": "Kipaumbele",
+    "status": "Hali",
+    "number": "Na.",
+    "payment": "Malipo"
+  },
+  "status": {
+    "requested": "Imeombwa",
+    "collected": "Sampuli imechukuliwa",
+    "inProgress": "Inachambuliwa",
+    "resultEntered": "Matokeo yameingizwa",
+    "validated": "Imethibitishwa",
+    "cancelled": "Imeghairiwa"
+  },
+  "priority": {
+    "routine": "Kawaida",
+    "urgent": "Haraka"
+  },
+  "tests": {
+    "cbc": "Hesabu kamili ya damu",
+    "glucose": "Sukari ya damu",
+    "malaria": "Kipimo cha malaria",
+    "creatinine": "Kreatini",
+    "pregnancy": "Kipimo cha ujauzito",
+    "urinalysis": "Uchunguzi wa mkojo"
+  },
+  "filters": {
+    "status": "Hali",
+    "priority": "Kipaumbele",
+    "allStatuses": "Hali zote"
+  },
+  "create": {
+    "button": "Ombi jipya",
+    "title": "Omba kipimo",
+    "submit": "Tuma ombi",
+    "description": "Vipimo vinatozwa kiotomatiki na vinaonekana kwa mhasibu.",
+    "cancel": "Ghairi",
+    "choosePatient": "Chagua mgonjwa",
+    "tests": "Vipimo vilivyoombwa",
+    "noCatalog": "Hakuna kipimo hai kwenye orodha.",
+    "consultation": "Mashauriano (hiari)",
+    "consultationHint": "Kitambulisho cha mashauriano asili",
+    "note": "Taarifa za kitabibu",
+    "invoiceNotice": "Ankara hutengenezwa pamoja na ombi, kwa bei na bima husika. Kuchukua sampuli kunawezekana baada ya sehemu ya mgonjwa kulipwa."
+  },
+  "fields": {
+    "patient": "Mgonjwa (jina au namba)",
+    "test": "Kipimo",
+    "priority": "Kipaumbele"
+  },
+  "detail": {
+    "order": "Ombi",
+    "summary": "Taarifa",
+    "requestedBy": "Imeombwa na",
+    "progress": "Maendeleo",
+    "stepDone": "(hatua imefikiwa)",
+    "stepPending": "(hatua inayokuja)",
+    "results": "Matokeo",
+    "resultsBody": "Kuingiza na kuthibitisha matokeo kutapatikana na API ya maabara. Hakuna thamani inayoonyeshwa kwenye majaribio.",
+    "actions": "Vitendo",
+    "description": "Ombi la vipimo na matokeo yaliyoingizwa na maabara.",
+    "consultation": "Mashauriano",
+    "tests": "Vipimo",
+    "payment": "Ankara na malipo",
+    "invoice": "Ankara",
+    "patientShare": "Sehemu ya mgonjwa",
+    "remaining": "Kiasi kilichobaki",
+    "collectGate": "Kuchukua sampuli",
+    "noInvoice": "Ankara haipatikani: kuchukua sampuli kumezuiwa.",
+    "exceptionBy": "Ubaguzi wa malipo umetolewa na {{by}}: {{reason}}",
+    "refundPending": "Malipo yalipokelewa: marejesho yanabaki kufanywa kwa mhasibu.",
+    "collectedBy": "Sampuli imechukuliwa na {{by}} tarehe {{at}}",
+    "enteredBy": "Imeingizwa na {{by}} tarehe {{at}}",
+    "validatedBy": "Imethibitishwa na {{by}} tarehe {{at}}",
+    "amendments": "Historia ya marekebisho ({{count}})",
+    "previous": "Matokeo ya awali",
+    "cancelledBy": "Imeghairiwa na {{by}}: {{reason}}",
+    "gateHint": "Kuchukua sampuli kunawezekana baada ya malipo, mkopo ulioidhinishwa au ubaguzi wenye sababu.",
+    "test": "Kipimo",
+    "value": "Thamani",
+    "unit": "Kizio",
+    "reference": "Thamani za rejea",
+    "flag": "Tafsiri",
+    "comment": "Maoni"
+  },
+  "actions": {
+    "collect": "Weka kama imechukuliwa",
+    "collectTitle": "Thibitisha kuchukua sampuli?",
+    "validate": "Thibitisha matokeo",
+    "validateTitle": "Thibitisha matokeo haya?",
+    "validateBody": "Uthibitisho unarekodiwa kwa jina lako na unafanya matokeo yaonekane.",
+    "open": "Fungua",
+    "start": "Anza uchambuzi",
+    "enter": "Ingiza matokeo",
+    "save": "Hifadhi",
+    "reopen": "Fungua tena uingizaji",
+    "amend": "Rekebisha",
+    "amendTitle": "Rekebisha matokeo yaliyothibitishwa",
+    "enterTitle": "Uingizaji wa matokeo",
+    "enterBody": "Ingiza thamani zilizopimwa pekee. Hakuna kinachojazwa au kukokotolewa.",
+    "sampleNote": "Maelezo ya sampuli (hiari)",
+    "reason": "Sababu",
+    "exception": "Ruhusu bila malipo",
+    "exceptionTitle": "Ruhusu kuchukua sampuli bila malipo?",
+    "exceptionBody": "Ubaguzi kwa dharura pekee. Unarekodiwa na jina lako na sababu.",
+    "cancel": "Ghairi ombi",
+    "cancelTitle": "Ghairi ombi hili?",
+    "cancelBody": "Inawezekana kabla ya kuchukua sampuli tu. Ankara isiyolipwa inaghairiwa; malipo yaliyopokelewa yanarejeshwa kwa mhasibu."
+  },
+  "empty": "Hakuna ombi la kipimo",
+  "emptyHint": "Tengeneza ombi kutoka skrini hii au kutoka kwa mashauriano.",
+  "done": {
+    "order": "Ombi limehifadhiwa na kutozwa",
+    "exception": "Ubaguzi umerekodiwa",
+    "collect": "Uchukuaji sampuli umerekodiwa",
+    "start": "Uchambuzi umeanza",
+    "results": "Matokeo yamehifadhiwa",
+    "reopen": "Uingizaji umefunguliwa tena",
+    "validate": "Matokeo yamethibitishwa",
+    "amend": "Marekebisho yamerekodiwa",
+    "cancel": "Ombi limeghairiwa"
+  },
+  "payment": {
+    "paid": "Imelipwa",
+    "unpaid": "Ilipwe kwa mhasibu",
+    "credit": "Mkopo umeidhinishwa",
+    "exception": "Ubaguzi umerekodiwa",
+    "invoiceCancelled": "Ankara imeghairiwa"
+  },
+  "flag": {
+    "unspecified": "Haijabainishwa",
+    "normal": "Kawaida",
+    "abnormal": "Si kawaida"
+  }
+}

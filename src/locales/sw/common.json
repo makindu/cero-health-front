@@ -1,0 +1,470 @@
+{
+  "meta": {
+    "nativeName": "Kiswahili",
+    "direction": "ltr"
+  },
+  "app": {
+    "name": "CERO HEALTH",
+    "skipToContent": "Ruka hadi maudhui makuu"
+  },
+  "nav": {
+    "main": "Urambazaji mkuu",
+    "open": "Fungua menyu ya urambazaji",
+    "close": "Funga menyu ya urambazaji",
+    "collapse": "Punguza menyu",
+    "expand": "Panua menyu",
+    "groups": {
+      "overview": "Muhtasari",
+      "patientFlow": "Safari ya mgonjwa",
+      "care": "Huduma na tiba",
+      "resources": "Rasilimali na fedha",
+      "management": "Usimamizi na utawala"
+    },
+    "dashboard": "Dashibodi",
+    "patients": "Wagonjwa",
+    "appointments": "Miadi na mapokezi",
+    "medicalRecords": "Rekodi za matibabu",
+    "consultations": "Mashauriano ya daktari",
+    "nursing": "Upangaji wa wagonjwa na uuguzi",
+    "prescriptions": "Maagizo ya dawa",
+    "pharmacy": "Famasia",
+    "laboratory": "Maabara",
+    "hospitalization": "Kulazwa hospitalini na vitanda",
+    "billing": "Ankara",
+    "cash": "Kaunta ya malipo",
+    "inventory": "Hifadhi ya bidhaa na wasambazaji",
+    "reports": "Ripoti",
+    "administration": "Utawala",
+    "audit": "Ukaguzi",
+    "insurance": "Bima na bei"
+  },
+  "actions": {
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "confirm": "Thibitisha",
+    "close": "Funga",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "create": "Unda",
+    "search": "Tafuta",
+    "clear": "Safisha",
+    "retry": "Jaribu tena",
+    "back": "Rudi",
+    "next": "Inayofuata",
+    "previous": "Iliyotangulia",
+    "apply": "Tumia",
+    "reset": "Weka upya",
+    "export": "Hamisha",
+    "print": "Chapisha",
+    "view": "Tazama"
+  },
+  "theme": {
+    "label": "Mandhari",
+    "light": "Nyepesi",
+    "dark": "Nyeusi",
+    "system": "Mfumo"
+  },
+  "language": {
+    "label": "Lugha"
+  },
+  "density": {
+    "label": "Msongamano wa majedwali",
+    "comfortable": "Wa kawaida",
+    "compact": "Mfinyu"
+  },
+  "facility": {
+    "label": "Kituo kinachotumika",
+    "none": "Hakuna kituo",
+    "notConnected": "Hujaingia",
+    "select": "Chagua kituo"
+  },
+  "notifications": {
+    "title": "Arifa",
+    "empty": "Hakuna arifa",
+    "emptyHint": "Arifa za miadi, matokeo na hifadhi zitaonekana hapa."
+  },
+  "user": {
+    "menu": "Menyu ya mtumiaji",
+    "guest": "Mtumiaji ambaye hajaingia",
+    "authPending": "Kuingia kupitia CERO ID CORE kutawezeshwa katika awamu ya 2."
+  },
+  "preview": {
+    "badge": "Onyesho",
+    "hint": "Onyesho la muundo: hakuna kuingia, ruhusa hazitekelezwi, data ni ya mfano tu."
+  },
+  "states": {
+    "loading": "Inapakia…",
+    "empty": "Hakuna data",
+    "emptyHint": "Hakuna cha kuonyesha kwa sasa."
+  },
+  "errors": {
+    "reference": "Rejea: {{id}}",
+    "generic": {
+      "title": "Hitilafu imetokea",
+      "description": "Tatizo lisilotarajiwa limetokea. Jaribu tena au wasiliana na msaada."
+    },
+    "kind": {
+      "config": {
+        "title": "Huduma haijasanidiwa",
+        "description": "Anwani ya API haijasanidiwa kwa mazingira haya."
+      },
+      "network": {
+        "title": "Imeshindwa kuunganisha",
+        "description": "Angalia muunganisho wako wa intaneti, kisha jaribu tena."
+      },
+      "timeout": {
+        "title": "Seva inachukua muda mrefu kujibu",
+        "description": "Ombi limekwisha muda. Jaribu tena baada ya muda mfupi."
+      },
+      "unauthorized": {
+        "title": "Kikao kimeisha",
+        "description": "Kikao chako hakitumiki tena. Tafadhali ingia tena."
+      },
+      "forbidden": {
+        "title": "Ufikiaji umekataliwa",
+        "description": "Huna haki zinazohitajika kwa kitendo hiki."
+      },
+      "not_found": {
+        "title": "Kipengee hakijapatikana",
+        "description": "Rasilimali iliyoombwa haipo au haipatikani tena."
+      },
+      "csrf": {
+        "title": "Kikao cha usalama kimeisha",
+        "description": "Pakia ukurasa upya au ingia tena ili kuendelea."
+      },
+      "validation": {
+        "title": "Data si sahihi",
+        "description": "Sahihisha sehemu zilizoonyeshwa kisha jaribu tena."
+      },
+      "conflict": {
+        "title": "Mgongano wa data",
+        "description": "Kipengee hiki kimebadilishwa kwa wakati huo. Kipakie upya kabla ya kuendelea."
+      },
+      "rate_limited": {
+        "title": "Majaribio mengi mno",
+        "description": "Subiri kidogo kabla ya kujaribu tena."
+      },
+      "server": {
+        "title": "Hitilafu ya seva",
+        "description": "Seva imekumbana na tatizo. Tafadhali jaribu tena baadaye."
+      },
+      "unknown": {
+        "title": "Hitilafu imetokea",
+        "description": "Tatizo lisilotarajiwa limetokea. Jaribu tena au wasiliana na msaada."
+      }
+    }
+  },
+  "validation": {
+    "required": "Sehemu hii inahitajika.",
+    "email": "Anwani ya barua pepe si sahihi.",
+    "min": "Angalau herufi {{count}}.",
+    "max": "Zisizidi herufi {{count}}.",
+    "invalidDate": "Tarehe si sahihi.",
+    "number": "Nambari si sahihi.",
+    "fileNumber": "Namba ya faili si sahihi: herufi 3 hadi 30 (herufi, tarakimu, . _ / -).",
+    "invalidFormat": "Muundo si sahihi."
+  },
+  "table": {
+    "rowsRange": "{{from}}–{{to}} kati ya {{total}}",
+    "page": "Ukurasa {{page}} kati ya {{pages}}",
+    "sortBy": "Panga kwa {{column}}",
+    "noResults": "Hakuna matokeo"
+  },
+  "search": {
+    "label": "Utafutaji",
+    "placeholder": "Tafuta…"
+  },
+  "pagination": {
+    "label": "Kurasa",
+    "previous": "Ukurasa uliotangulia",
+    "next": "Ukurasa unaofuata"
+  },
+  "dialog": {
+    "close": "Funga dirisha"
+  },
+  "toast": {
+    "region": "Arifa",
+    "dismiss": "Funga arifa"
+  },
+  "breadcrumb": {
+    "label": "Njia ya kurasa"
+  },
+  "notFound": {
+    "title": "Ukurasa haujapatikana",
+    "description": "Ukurasa ulioombwa haupo au umehamishwa.",
+    "backHome": "Rudi kwenye dashibodi"
+  },
+  "placeholder": {
+    "title": "Moduli inaandaliwa",
+    "description": "“{{module}}” itatengenezwa katika awamu ya {{phase}}.",
+    "apiHint": "Itategemea mikataba ya API ya HEALTH iliyoelezwa katika docs/API_CONTRACTS_NEEDED.md.",
+    "phase": "Awamu ya {{phase}}"
+  },
+  "module": {
+    "actions": "Vitendo",
+    "all": "Wote",
+    "choose": "Chagua…",
+    "requiredHint": "* sehemu ya lazima",
+    "demo": {
+      "title": "Data za majaribio",
+      "body": "Data hizi ni za kubuni na hazihusu mtu halisi. Hakuna mabadiliko yanayohifadhiwa.",
+      "endpoint": "Mkataba lengwa wa API:"
+    },
+    "demoNotSaved": "Majaribio: hakuna kilichohifadhiwa",
+    "demoNotSavedHint": "Fomu ni sahihi, lakini API husika haipatikani.",
+    "saved": "Imehifadhiwa",
+    "saveFailed": "Imeshindwa kuhifadhi",
+    "saveFailedHint": "Kagua taarifa kisha ujaribu tena.",
+    "sensitive": "Data nyeti: kila ufikiaji wa taarifa hizi unarekodiwa kwenye kumbukumbu za ukaguzi.",
+    "noAccessHint": "Huna ruhusa ya kuona sehemu hii.",
+    "back": "Rudi kwenye orodha",
+    "notAvailable": "Haipatikani",
+    "conflict": "Kitendo kinakinzana na data nyingine (mf. muda umeshachukuliwa). Onyesha upya na ujaribu tena.",
+    "proceedAnyway": "Endelea hata hivyo",
+    "patientNoMatch": "Hakuna mgonjwa aliyepatikana. Angalia tahajia au namba ya faili.",
+    "patientSearchPlaceholder": "Andika jina au namba ya faili…",
+    "itemNoMatch": "Hakuna matokeo. Angalia tahajia au msimbo.",
+    "itemSearchPlaceholder": "Andika jina au msimbo…",
+    "remove": "Ondoa"
+  },
+  "sex": {
+    "F": "Mwanamke",
+    "M": "Mwanamume"
+  },
+  "services": {
+    "generalMedicine": "Tiba ya jumla",
+    "pediatrics": "Watoto",
+    "maternity": "Uzazi",
+    "emergency": "Dharura",
+    "surgery": "Upasuaji"
+  },
+  "status": {
+    "active": "Hai",
+    "inactive": "Haifanyi kazi"
+  },
+  "age": {
+    "years": "miaka {{count}}"
+  },
+  "common": {
+    "yes": "Ndiyo",
+    "no": "Hapana"
+  },
+  "export": {
+    "menu": "Hamisha",
+    "excel": "Excel (.xlsx)",
+    "pdf": "PDF",
+    "generatedAt": "Imetengenezwa",
+    "rows": "safu {{count}}",
+    "demoMark": "DATA ZA KIFIKRA — majaribio, hakuna data halisi.",
+    "truncated": "Uhamishaji umepunguzwa kwa safu {{count}} za kwanza: punguza vichujio kupata zilizobaki.",
+    "done": "Faili imetengenezwa",
+    "failed": "Kuhamisha kumeshindwa",
+    "confirmTitle": "Hamisha data hizi?",
+    "confirmBody": "Faili itakuwa na data binafsi za wagonjwa, kulingana na utafutaji na vichujio vilivyoonyeshwa. Ihifadhi kama siri na uishiriki na watu walioidhinishwa tu.",
+    "confirm": "Tengeneza faili"
+  },
+  "local": {
+    "banner": "HALI YA NDANI — Data huhifadhiwa kwenye kifaa hiki pekee. Hakuna ulandanishi na seva.",
+    "roleLabel": "Jukumu la majaribio",
+    "manage": "Data ya ndani",
+    "page": {
+      "title": "Data ya ndani",
+      "description": "Hifadhi nakala, rejesha na weka upya data ya hali hii ya ndani (kwenye kifaa hiki pekee).",
+      "fallback": "Hifadhi ya kudumu ya kivinjari haipatikani: data iko kwenye kumbukumbu na itapotea ukifunga kichupo. Hamisha nakala rudufu.",
+      "backupTitle": "Nakala rudufu",
+      "backupHelp": "Hupakua data yote ya ndani kama faili la JSON. Lihifadhi mahali salama.",
+      "export": "Hamisha nakala rudufu",
+      "exported": "Nakala rudufu imehamishwa",
+      "counts": "Rekodi {{records}}, kumbukumbu {{audit}}.",
+      "restoreTitle": "Rejesha",
+      "restoreHelp": "Hubadilisha data yote ya ndani kwa faili la nakala rudufu. Faili hukaguliwa kabla ya mabadiliko.",
+      "restore": "Rejesha",
+      "restoreConfirmTitle": "Rejesha nakala hii?",
+      "restoreConfirm": "Data yote ya sasa ya ndani itabadilishwa. Haiwezi kutenduliwa.",
+      "resetTitle": "Weka upya majaribio",
+      "resetHelp": "Hufuta data yote ya ndani na kupakia upya data ya majaribio.",
+      "reset": "Weka upya",
+      "resetConfirmTitle": "Weka upya data ya ndani?",
+      "resetConfirm": "Kila kitu kilichoingizwa kwenye kifaa hiki kitafutwa kabisa, kisha data ya majaribio ipakiwe upya.",
+      "failed": "Operesheni imeshindwa"
+    },
+    "roles": {
+      "receptionist": "Mpokeaji wageni (jaribio)",
+      "cashier": "Mhasibu wa malipo (jaribio)",
+      "doctor": "Daktari (jaribio)",
+      "nurse": "Muuguzi (jaribio)",
+      "labTech": "Fundi wa maabara (jaribio)",
+      "pharmacist": "Mfamasia (jaribio)",
+      "wardManager": "Msimamizi wa wodi (jaribio)",
+      "admin": "Msimamizi mkuu (jaribio)"
+    }
+  },
+  "business": {
+    "rejected": "Operesheni imekataliwa",
+    "patientRequired": "Weka mgonjwa (kitambulisho, nambari ya faili au jina kamili).",
+    "patientNotFound": "Hakuna mgonjwa hai anayelingana. Weka kitambulisho au nambari ya faili.",
+    "patientAmbiguous": "Wagonjwa {{count}} wanalingana. Weka kitambulisho au nambari ya faili.",
+    "patientInactive": "Faili la {{name}} si hai au limeunganishwa: huduma haiwezi kusajiliwa.",
+    "patientNameRequired": "Jina kamili linahitajika (angalau herufi 2).",
+    "patientSexRequired": "Jinsia inahitajika.",
+    "patientBirthInvalid": "Tarehe ya kuzaliwa si sahihi.",
+    "patientBirthFuture": "Tarehe ya kuzaliwa haiwezi kuwa ya baadaye.",
+    "patientFileNumberFormat": "Muundo wa nambari ya faili si sahihi (herufi 3–30).",
+    "patientFileNumberTaken": "Nambari ya faili {{fileNumber}} tayari ni ya {{name}}.",
+    "patientMerged": "Faili hili liliunganishwa na jingine; haliwezi kubadilishwa tena.",
+    "mergeReasonRequired": "Sababu ya kuunganisha inahitajika.",
+    "mergeNothing": "Hakuna faili la kuunganisha.",
+    "mergeSelf": "Faili linalobaki haliwezi kuunganishwa na lenyewe.",
+    "mergeKeepInactive": "Faili linalobaki lazima liwe hai.",
+    "serviceRequired": "Huduma inahitajika.",
+    "practitionerRequired": "Mtaalamu anahitajika.",
+    "reasonRequired": "Sababu inahitajika.",
+    "durationInvalid": "Muda lazima uwe kati ya dakika 5 na 240.",
+    "slotInvalid": "Muda si sahihi.",
+    "appointmentPast": "Miadi haiwezi kupangwa kabla ya leo.",
+    "slotTaken": "Muda tayari umechukuliwa kwa {{practitioner}}.",
+    "patientBusy": "Mgonjwa huyu tayari ana miadi inayopishana.",
+    "urgencyInvalid": "Kiwango cha dharura si sahihi.",
+    "triageRequired": "Kiwango hiki cha dharura kinahitaji uchunguzi wa awali wa muuguzi.",
+    "patientAlreadyInQueue": "Mgonjwa huyu tayari yuko kwenye foleni.",
+    "checkInWrongDay": "Kuwasili kunaweza kusajiliwa siku ya miadi pekee. Ahirisha miadi.",
+    "invalidTransition": "Kitendo hiki hakiwezekani kutoka hali ya sasa ({{status}}).",
+    "unknownAction": "Kitendo kisichojulikana: {{action}}.",
+    "categoryInvalid": "Kategoria si sahihi.",
+    "vitalOutOfRange": "Thamani isiyowezekana kwa \"{{field}}\" (inatarajiwa kati ya {{min}} na {{max}}). Kagua.",
+    "vitalsEmpty": "Weka angalau kipimo kimoja.",
+    "vitalPressureOrder": "Shinikizo la chini lazima liwe chini ya la juu.",
+    "billing": {
+      "alreadyInvoiced": "Huduma hii tayari imetozwa ({{source}}).",
+      "alreadyReversed": "Muamala huu tayari umebatilishwa.",
+      "amountInvalid": "Kiasi si sahihi.",
+      "cannotReverseReversal": "Kubatilisha hakubatilishwi.",
+      "duplicatePayment": "Operesheni hii tayari imerekodiwa (kutuma mara mbili kumeepukwa).",
+      "hasPayments": "Ankara ina malipo: yabatilishe kwanza.",
+      "hasSettlements": "Ankara ina malipo au kukataliwa kwa walipaji: haiwezi kughairiwa.",
+      "invoiceCancelled": "Ankara imeghairiwa.",
+      "invoiceDraft": "Ankara bado ni rasimu.",
+      "invoiceEmpty": "Ongeza angalau huduma moja.",
+      "nothingDue": "Hakuna kilichobaki kulipwa kwenye ankara hii.",
+      "organizationNotOnInvoice": "Shirika hili halina sehemu kwenye ankara hii.",
+      "overpayment": "Kiasi kinazidi salio linalodaiwa ({{due}}).",
+      "reasonRequired": "Sababu inahitajika.",
+      "referenceRequired": "Kumbukumbu inahitajika isipokuwa pesa taslimu.",
+      "refundExceedsPaid": "Marejesho yanazidi kiasi kilichokusanywa ({{paid}}).",
+      "rejectionExceedsDue": "Kukataliwa kunazidi sehemu iliyobaki ya mlipaji ({{due}}).",
+      "settlementExceedsDue": "Malipo yanazidi sehemu iliyobaki ya mlipaji ({{due}}).",
+      "totalsMismatch": "Jumla za ankara hazilingani: ankara imekataliwa.",
+      "configDateTaken": "Tayari kuna mpangilio kwa tarehe hiyo.",
+      "configRetroactive": "Muda mpya hauwezi kutumika kwa tarehe iliyopita.",
+      "coverageNotFound": "Bima haijapatikana kwa mgonjwa huyu.",
+      "coverageSame": "Bima kuu na ya nyongeza lazima zitofautiane.",
+      "currencyMismatch": "Huduma hazina sarafu moja.",
+      "entryNotFound": "Muamala haujapatikana.",
+      "feeStillValid": "Ada ya mashauriano ni halali hadi {{until}}: hakuna malipo mapya.",
+      "invoiceNotFound": "Ankara haijapatikana.",
+      "itemInactive": "Huduma « {{item}} » haifanyi kazi tena.",
+      "itemNotFound": "Huduma haipo kwenye orodha.",
+      "patientMerged": "Faili hili liliunganishwa: tumia faili lililohifadhiwa.",
+      "patientNotFound": "Mgonjwa hajapatikana.",
+      "periodInvalid": "Kipindi si sahihi (mwisho kabla ya mwanzo).",
+      "quantityInvalid": "Idadi lazima iwe nambari kamili chanya.",
+      "rateInvalid": "Kiwango lazima kiwe kati ya 0 na 100%.",
+      "validityInvalid": "Muda wa uhalali si sahihi (miezi 1 hadi 120)."
+    },
+    "lab": {
+      "testsRequired": "Chagua angalau kipimo kimoja.",
+      "duplicateTest": "Kipimo kinaombwa mara moja tu kwa kila ombi.",
+      "wrongStatus": "Kitendo hiki hakiwezekani katika hatua hii ya ombi.",
+      "reasonRequired": "Sababu inahitajika.",
+      "exceptionExists": "Ubaguzi tayari umetolewa.",
+      "paymentRequired": "Kuchukua sampuli hakuwezekani: sehemu ya mgonjwa haijalipwa (hakuna mkopo wala ubaguzi).",
+      "unknownTest": "Kipimo hiki hakimo kwenye ombi.",
+      "incompleteResults": "Thamani zote lazima zijazwe ili kurekebisha.",
+      "alreadyCancelled": "Ombi tayari limeghairiwa.",
+      "cannotCancelAfterCollect": "Haiwezekani kughairi baada ya kuchukua sampuli.",
+      "notFound": "Ombi halipatikani.",
+      "patientNotFound": "Mgonjwa hapatikani.",
+      "patientMerged": "Faili hili liliunganishwa: tumia faili lililobaki.",
+      "testNotInCatalog": "Kipimo hakimo kwenye orodha.",
+      "testInactive": "Kipimo si hai kwenye orodha."
+    },
+    "rx": {
+      "itemsRequired": "Ongeza angalau mstari mmoja.",
+      "labelRequired": "Mstari {{line}}: bidhaa inahitajika.",
+      "quantityInvalid": "Mstari {{line}}: kiasi kiwe nambari chanya (desimali 2 kwa kiwango cha juu, mf. 0,5).",
+      "posologyRequired": "Mstari {{line}}: kipimo na mzunguko vinahitajika.",
+      "textTooLong": "Mstari {{line}}: maandishi ni marefu mno.",
+      "wrongStatus": "Kitendo hiki hakiwezekani katika hatua hii ya agizo.",
+      "reasonRequired": "Sababu inahitajika.",
+      "alreadyCancelled": "Agizo tayari limeghairiwa.",
+      "notFound": "Agizo halipatikani.",
+      "patientNotFound": "Mgonjwa hapatikani.",
+      "patientMerged": "Faili hili liliunganishwa: tumia faili lililobaki.",
+      "hasDispensation": "Haiwezekani kughairi: utoaji tayari upo kwa agizo hili.",
+      "cannotCancelDispensed": "Haiwezekani kughairi: agizo tayari limetolewa."
+    },
+    "pharmacy": {
+      "quantityInvalid": "Kiasi kiwe nambari chanya (desimali 2 kwa kiwango cha juu).",
+      "insufficientStock": "Hisa inayotumika haitoshi (iliyopo: {{available}}).",
+      "lotRequired": "Namba ya kundi inahitajika.",
+      "dateInvalid": "Tarehe ya kuisha muda si sahihi.",
+      "alreadyExpired": "Kundi hili tayari limeisha muda.",
+      "reasonRequired": "Sababu inahitajika.",
+      "negativeStock": "Hisa haiwezi kuwa hasi.",
+      "linesRequired": "Chagua angalau bidhaa moja.",
+      "unknownLine": "Mstari wa agizo haujulikani.",
+      "overDispense": "«{{label}}»: zimebaki {{remaining}} tu za kutoa.",
+      "wrongStatus": "Kitendo hakiwezekani katika hatua hii ya utoaji.",
+      "exceptionExists": "Ubaguzi tayari umetolewa.",
+      "paymentRequired": "Kukabidhi hakuwezekani: sehemu ya mgonjwa haijalipwa (hakuna mkopo wala ubaguzi).",
+      "alreadyCancelled": "Utoaji tayari umeghairiwa.",
+      "cannotCancelDispensed": "Haiwezekani kughairi: bidhaa zimekabidhiwa.",
+      "prescriptionNotFound": "Agizo halipatikani.",
+      "prescriptionNotValidated": "Agizo lazima lithibitishwe kabla ya kutoa.",
+      "itemNotInCatalog": "Bidhaa haimo kwenye orodha ya famasia.",
+      "itemInactive": "Bidhaa si hai kwenye orodha.",
+      "notFound": "Utoaji haupatikani.",
+      "lotExists": "Namba hii ya kundi tayari ipo kwa bidhaa hii.",
+      "lotNotFound": "Kundi halipatikani.",
+      "deviationReasonRequired": "Sababu inahitajika kiasi kinapokuwa kidogo kuliko kilichoagizwa au bidhaa ikiwa tofauti.",
+      "deviationReasonTooLong": "Sababu ni ndefu mno (herufi {{max}} kwa kiwango cha juu)."
+    },
+    "hospital": {
+      "alreadyAdmitted": "Mgonjwa huyu tayari amelazwa ({{number}}).",
+      "reasonRequired": "Sababu inahitajika.",
+      "attendingRequired": "Daktari msimamizi anahitajika.",
+      "dischargeInPast": "Tarehe ya kuruhusiwa haiwezi kuwa ya zamani.",
+      "bedNotFound": "Kitanda hakipatikani.",
+      "bedNotFree": "Kitanda hiki si wazi (hali: {{status}}).",
+      "notActive": "Kulazwa huku hakuendelei tena.",
+      "noStay": "Makazi ya sasa hayapatikani.",
+      "sameBed": "Mgonjwa tayari yuko kwenye kitanda hiki.",
+      "wrongStatus": "Kitendo hakiwezekani katika hatua hii.",
+      "bedOccupied": "Kitanda kilichokaliwa hakibadilishwi kwa mkono.",
+      "patientNotFound": "Mgonjwa hapatikani.",
+      "patientMerged": "Faili hili liliunganishwa: tumia faili lililobaki.",
+      "admissionNotFound": "Kulazwa hakupatikani.",
+      "hasBilledDays": "Siku za chumba tayari zimetozwa: kulazwa hakuwezi kughairiwa tena.",
+      "nothingToPost": "Hakuna siku ya chumba ya kutoza.",
+      "roomDaysUnbilled": "Siku {{count}} za chumba hazijatozwa: zitoze kabla ya kuruhusu.",
+      "balanceDue": "Deni la mgonjwa ({{due}} {{currency}}): lipisha, ruhusu mkopo au andika ruhusa maalum yenye sababu.",
+      "outcomeInvalid": "Matokeo ya kuruhusiwa si sahihi.",
+      "dateInvalid": "Tarehe si sahihi."
+    },
+    "consultationFeeRequired": "Hakuna malipo ya mashauriano (ya jumla au ya kitaalamu) kwa {{name}}: yatoze na yalipishwe kwa mtunza fedha (au msamaha wenye sababu) kabla ya kufungua mashauriano.",
+    "consultationServiceInvalid": "Huduma si sahihi.",
+    "consultationReasonInvalid": "Sababu si sahihi.",
+    "consultationTransitionInvalid": "Mabadiliko haya ya hali hayaruhusiwi katika hatua hii.",
+    "staffNameRequired": "Jina linahitajika.",
+    "staffRoleInvalid": "Kundi si sahihi.",
+    "staffEmailInvalid": "Barua pepe si sahihi.",
+    "staffEmailTaken": "Barua pepe hii tayari inatumika.",
+    "staffServiceInvalid": "Idara si sahihi.",
+    "staffServiceRequired": "Daktari anahitaji idara.",
+    "staffRegistrationTaken": "Namba hii ya usajili tayari inatumika.",
+    "staffAlreadySuspended": "Mfanyakazi huyu tayari amesimamishwa.",
+    "staffAlreadyActive": "Mfanyakazi huyu tayari yuko kazini.",
+    "consultationPractitionerInvalid": "Chagua daktari aliye kazini kutoka kwenye orodha (Utawala → Wafanyakazi).",
+    "consultationFeeExpired": "Muda wa ada ya mashauriano ya {{name}} umekwisha: mashauriano mapya lazima yatozwe na kulipwa (au msamaha wenye sababu)."
+  }
+}

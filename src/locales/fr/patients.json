@@ -1,0 +1,112 @@
+{
+  "title": "Patients",
+  "subtitle": "Registre des patients de l'établissement",
+  "search": "Rechercher (nom, numéro, téléphone)",
+  "noVisit": "Aucune visite",
+  "columns": {
+    "name": "Patient",
+    "id": "Numéro",
+    "sex": "Sexe",
+    "age": "Âge",
+    "phone": "Téléphone",
+    "service": "Service",
+    "status": "Statut",
+    "lastVisit": "Dernière visite",
+    "fileNumber": "N° de dossier",
+    "registeredAt": "Inscrit le"
+  },
+  "filters": {
+    "sex": "Sexe",
+    "status": "Statut",
+    "service": "Service",
+    "registeredFrom": "Inscrit à partir du",
+    "registeredTo": "Inscrit jusqu'au"
+  },
+  "create": {
+    "button": "Nouveau patient",
+    "title": "Enregistrer un patient",
+    "submit": "Enregistrer le patient"
+  },
+  "fields": {
+    "fullName": "Nom complet",
+    "sex": "Sexe",
+    "birthDate": "Date de naissance",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "service": "Service de rattachement",
+    "insurer": "Assureur / convention",
+    "emergencyContact": "Personne à prévenir",
+    "fileNumber": "N° de dossier",
+    "fileNumberHint": "Numéro du dossier papier ou de l’ancien système, s’il existe (3 à 30 caractères : lettres, chiffres, . _ / -)."
+  },
+  "detail": {
+    "tabs": {
+      "identity": "Administratif",
+      "appointments": "Rendez-vous",
+      "billing": "Facturation",
+      "record": "Dossier médical (clinique)",
+      "consultations": "Consultations",
+      "prescriptions": "Prescriptions",
+      "hospitalizations": "Hospitalisations"
+    },
+    "section": {
+      "civil": "État civil",
+      "contact": "Coordonnées",
+      "admin": "Administratif"
+    },
+    "registeredAt": "Enregistré le",
+    "record": {
+      "noAccess": "Vous n'avez pas la permission de consulter le dossier médical.",
+      "body": "Le dossier médical regroupe les informations cliniques du patient. Il est distinct de l'identité administrative.",
+      "sensitive": "Données sensibles : chaque consultation du dossier est enregistrée dans le journal d'audit.",
+      "open": "Aller aux dossiers médicaux"
+    },
+    "adminOnly": "Informations administratives. Aucune donnée clinique n'apparaît ici : le dossier médical est séparé et protégé par une permission dédiée.",
+    "techId": "Identifiant technique",
+    "history": {
+      "noAccess": "Vous n'avez pas la permission de consulter cet historique."
+    }
+  },
+  "duplicates": {
+    "button": "Doublons",
+    "title": "Doublons probables",
+    "subtitle": "Dossiers partageant le même numéro de dossier ou le même téléphone.",
+    "none": "Aucun doublon détecté",
+    "truncated": "Analyse limitée aux {{count}} premiers dossiers.",
+    "found": "{{count}} dossier(s) existant(s) ressemblent à celui-ci :",
+    "reason": {
+      "phone": "Même téléphone",
+      "fileNumber": "Même numéro de dossier",
+      "label": "Motif de la fusion"
+    },
+    "createAnyway": "Créer quand même",
+    "saveAnyway": "Enregistrer quand même",
+    "merge": "Fusionner",
+    "mergeTitle": "Fusionner les dossiers",
+    "mergeHint": "Les autres dossiers du groupe seront rattachés au dossier conservé. Opération sensible, tracée par le serveur.",
+    "mergeSubmit": "Fusionner les dossiers",
+    "keep": "Dossier à conserver",
+    "fileIssues": "Numéros de dossier à corriger ({{count}})",
+    "issue": {
+      "missing": "numéro de dossier absent",
+      "format": "format non conforme"
+    }
+  },
+  "edit": {
+    "button": "Modifier",
+    "title": "Modifier les informations administratives",
+    "hint": "Les données cliniques ne se modifient pas ici.",
+    "submit": "Enregistrer les modifications"
+  },
+  "sheet": {
+    "button": "Exporter la fiche",
+    "title": "Fiche administrative",
+    "adminOnly": "Informations administratives uniquement, sans donnée clinique",
+    "demoMark": "DONNÉES FICTIVES — démonstration",
+    "field": "Champ",
+    "value": "Valeur",
+    "done": "Fiche générée",
+    "confirmTitle": "Exporter la fiche du patient ?",
+    "confirmBody": "Le PDF contient des données personnelles. Conservez-le comme une donnée confidentielle."
+  }
+}

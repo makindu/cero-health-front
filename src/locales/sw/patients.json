@@ -1,0 +1,112 @@
+{
+  "title": "Wagonjwa",
+  "subtitle": "Rejista ya wagonjwa wa kituo",
+  "search": "Tafuta (jina, namba, simu)",
+  "noVisit": "Hakuna ziara",
+  "columns": {
+    "name": "Mgonjwa",
+    "id": "Namba",
+    "sex": "Jinsia",
+    "age": "Umri",
+    "phone": "Simu",
+    "service": "Idara",
+    "status": "Hali",
+    "lastVisit": "Ziara ya mwisho",
+    "fileNumber": "Namba ya faili",
+    "registeredAt": "Alisajiliwa"
+  },
+  "filters": {
+    "sex": "Jinsia",
+    "status": "Hali",
+    "service": "Idara",
+    "registeredFrom": "Alisajiliwa kuanzia",
+    "registeredTo": "Alisajiliwa hadi"
+  },
+  "create": {
+    "button": "Mgonjwa mpya",
+    "title": "Sajili mgonjwa",
+    "submit": "Sajili mgonjwa"
+  },
+  "fields": {
+    "fullName": "Jina kamili",
+    "sex": "Jinsia",
+    "birthDate": "Tarehe ya kuzaliwa",
+    "phone": "Simu",
+    "address": "Anwani",
+    "service": "Idara husika",
+    "insurer": "Bima / makubaliano",
+    "emergencyContact": "Mtu wa kuarifiwa",
+    "fileNumber": "Namba ya faili",
+    "fileNumberHint": "Namba ya faili la karatasi au mfumo wa zamani, ikiwa ipo (herufi 3 hadi 30: herufi, tarakimu, . _ / -)."
+  },
+  "detail": {
+    "tabs": {
+      "identity": "Kiutawala",
+      "appointments": "Miadi",
+      "billing": "Malipo",
+      "record": "Faili la matibabu (kliniki)",
+      "consultations": "Mashauriano",
+      "prescriptions": "Maagizo",
+      "hospitalizations": "Kulazwa"
+    },
+    "section": {
+      "civil": "Taarifa binafsi",
+      "contact": "Mawasiliano",
+      "admin": "Utawala"
+    },
+    "registeredAt": "Alisajiliwa tarehe",
+    "record": {
+      "noAccess": "Huna ruhusa ya kuona faili ya matibabu.",
+      "body": "Faili ya matibabu ina taarifa za kliniki za mgonjwa. Ni tofauti na utambulisho wa kiutawala.",
+      "sensitive": "Data nyeti: kila ufikiaji wa faili unarekodiwa kwenye kumbukumbu za ukaguzi.",
+      "open": "Nenda kwenye faili za matibabu"
+    },
+    "adminOnly": "Taarifa za kiutawala. Hakuna data ya kliniki hapa: faili la matibabu ni tofauti na linalindwa na ruhusa maalum.",
+    "techId": "Kitambulisho cha kiufundi",
+    "history": {
+      "noAccess": "Huna ruhusa ya kuona historia hii."
+    }
+  },
+  "duplicates": {
+    "button": "Nakala mbili",
+    "title": "Nakala zinazowezekana",
+    "subtitle": "Faili zenye namba ya faili au simu ileile.",
+    "none": "Hakuna nakala mbili zilizopatikana",
+    "truncated": "Uchambuzi umepunguzwa kwa faili {{count}} za kwanza.",
+    "found": "Faili {{count}} zilizopo zinafanana na hii:",
+    "reason": {
+      "phone": "Simu ileile",
+      "fileNumber": "Namba ya faili ileile",
+      "label": "Sababu ya kuunganisha"
+    },
+    "createAnyway": "Unda hata hivyo",
+    "saveAnyway": "Hifadhi hata hivyo",
+    "merge": "Unganisha",
+    "mergeTitle": "Unganisha faili",
+    "mergeHint": "Faili nyingine za kundi zitaunganishwa na ile itakayobaki. Kitendo nyeti, kinarekodiwa na seva.",
+    "mergeSubmit": "Unganisha faili",
+    "keep": "Faili itakayobaki",
+    "fileIssues": "Namba za faili za kurekebisha ({{count}})",
+    "issue": {
+      "missing": "namba ya faili haipo",
+      "format": "muundo si sahihi"
+    }
+  },
+  "edit": {
+    "button": "Hariri",
+    "title": "Hariri taarifa za kiutawala",
+    "hint": "Data za kliniki hazibadilishwi hapa.",
+    "submit": "Hifadhi mabadiliko"
+  },
+  "sheet": {
+    "button": "Hamisha karatasi",
+    "title": "Karatasi ya kiutawala",
+    "adminOnly": "Taarifa za kiutawala pekee, bila data ya kliniki",
+    "demoMark": "DATA ZA KIFIKRA — majaribio",
+    "field": "Sehemu",
+    "value": "Thamani",
+    "done": "Karatasi imetengenezwa",
+    "confirmTitle": "Hamisha karatasi ya mgonjwa?",
+    "confirmBody": "PDF ina data binafsi. Ihifadhi kama siri."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "title": "Maagizo ya dawa",
+  "subtitle": "Maagizo ya kuthibitisha, kutoa na historia",
+  "search": "Tafuta (mgonjwa, daktari, namba)",
+  "itemsCount": "bidhaa {{count}}",
+  "columns": {
+    "date": "Tarehe",
+    "patient": "Mgonjwa",
+    "practitioner": "Mwandishi",
+    "items": "Maudhui",
+    "status": "Hali",
+    "number": "Na."
+  },
+  "status": {
+    "toValidate": "Ya kuthibitisha",
+    "validated": "Imethibitishwa",
+    "dispensed": "Imetolewa",
+    "cancelled": "Imeghairiwa"
+  },
+  "filters": {
+    "status": "Hali",
+    "allStatuses": "Hali zote"
+  },
+  "create": {
+    "button": "Agizo jipya",
+    "title": "Andika agizo",
+    "submit": "Hifadhi agizo",
+    "description": "Kipimo, mzunguko na muda huingizwa na mwandikaji.",
+    "cancel": "Ghairi",
+    "choosePatient": "Chagua mgonjwa",
+    "notice": "Programu haipendekezi wala kukagua kipimo chochote: wajibu wa agizo unabaki kwa mwandikaji.",
+    "line": "Mstari {{n}}",
+    "removeLine": "Ondoa mstari",
+    "addLine": "Ongeza mstari",
+    "consultation": "Mashauriano (hiari)",
+    "consultationHint": "Kitambulisho cha mashauriano asili",
+    "note": "Maelezo",
+    "drugPlaceholder": "Andika jina la dawa…"
+  },
+  "fields": {
+    "patient": "Mgonjwa (jina au namba)",
+    "product": "Bidhaa",
+    "quantity": "Kiasi",
+    "instructions": "Maelekezo",
+    "dosage": "Kipimo cha dawa",
+    "frequency": "Mzunguko",
+    "duration": "Muda"
+  },
+  "detail": {
+    "prescription": "Agizo",
+    "summary": "Taarifa",
+    "reference": "Rejea",
+    "items": "Bidhaa zilizoagizwa",
+    "actions": "Vitendo",
+    "description": "Kuandika agizo si kutoa dawa: utoaji hurekodiwa tofauti na famasia.",
+    "validatedBy": "Imethibitishwa na",
+    "cancelledBy": "Imeghairiwa na",
+    "dispenseNotice": "Utoaji wa dawa bado haupatikani katika hali ya ndani (awamu ya famasia)."
+  },
+  "actions": {
+    "validate": "Thibitisha",
+    "validateTitle": "Thibitisha agizo hili?",
+    "validateBody": "Uthibitisho unarekodiwa kwa jina lako.",
+    "dispense": "Toa dawa",
+    "dispenseTitle": "Toa agizo hili?",
+    "dispenseBody": "Hifadhi itasasishwa na utoaji utarekodiwa.",
+    "cancel": "Ghairi",
+    "cancelTitle": "Ghairi agizo hili?",
+    "cancelBody": "Kughairi kunarekodiwa kwenye kumbukumbu za ukaguzi.",
+    "open": "Fungua",
+    "reason": "Sababu"
+  },
+  "empty": "Hakuna agizo la dawa",
+  "emptyHint": "Andika agizo kutoka skrini hii au kutoka kwa mashauriano.",
+  "done": {
+    "create": "Agizo limehifadhiwa",
+    "validate": "Agizo limethibitishwa",
+    "cancel": "Agizo limeghairiwa"
+  }
+}

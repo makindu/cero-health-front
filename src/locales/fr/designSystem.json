@@ -1,0 +1,90 @@
+{
+  "title": "Catalogue des composants",
+  "subtitle": "Design system de CERO HEALTH : couleurs, composants et états. Page réservée au développement.",
+  "demoBanner": "Données fictives de démonstration : aucun patient ni résultat réel n'est affiché sur cette page.",
+  "colors": {
+    "title": "Couleurs",
+    "description": "Les couleurs viennent de variables CSS (design tokens) et s'adaptent au thème clair, sombre ou système.",
+    "brand": "Identité et navigation",
+    "surfaces": "Surfaces et texte",
+    "status": "Statuts"
+  },
+  "buttons": {
+    "title": "Boutons",
+    "primary": "Principal",
+    "secondary": "Secondaire",
+    "outline": "Contour",
+    "ghost": "Discret",
+    "danger": "Danger",
+    "loading": "Chargement",
+    "disabled": "Désactivé",
+    "withIcon": "Nouveau patient"
+  },
+  "forms": {
+    "title": "Formulaires",
+    "fullName": "Nom complet",
+    "fullNameHint": "Exemple de champ avec aide.",
+    "birthDate": "Date de naissance",
+    "service": "Service",
+    "servicePlaceholder": "Choisir un service",
+    "notes": "Observations",
+    "withError": "Champ en erreur",
+    "serviceGeneral": "Médecine générale",
+    "servicePediatrics": "Pédiatrie",
+    "serviceMaternity": "Maternité"
+  },
+  "badges": {
+    "title": "Badges de statut",
+    "description": "Chaque statut combine une icône et un libellé : la couleur n'est jamais le seul indicateur.",
+    "validated": "Validé",
+    "pending": "En attente",
+    "critical": "Critique",
+    "info": "Information",
+    "inactive": "Inactif"
+  },
+  "feedback": {
+    "title": "États de chargement, vide et erreur",
+    "loading": "Chargement en cours",
+    "emptyTitle": "Aucun patient",
+    "emptyDescription": "Aucun patient ne correspond à votre recherche.",
+    "emptyAction": "Nouveau patient"
+  },
+  "dialogs": {
+    "title": "Fenêtres et confirmations",
+    "openDialog": "Ouvrir une fenêtre",
+    "dialogTitle": "Fenêtre de démonstration",
+    "dialogBody": "Sur mobile, la fenêtre s'affiche en bas de l'écran ; sur ordinateur, au centre.",
+    "openConfirm": "Demander une confirmation",
+    "confirmTitle": "Annuler ce rendez-vous ?",
+    "confirmBody": "Cette action est enregistrée dans le journal d'audit et ne peut pas être effacée.",
+    "confirmAction": "Annuler le rendez-vous"
+  },
+  "tabs": {
+    "title": "Onglets",
+    "identity": "Identité",
+    "clinical": "Dossier clinique",
+    "billing": "Facturation",
+    "identityBody": "Identité administrative, distincte du dossier clinique.",
+    "clinicalBody": "Accès soumis aux permissions et journalisé.",
+    "billingBody": "Factures et paiements rattachés à l'épisode de soins."
+  },
+  "toasts": {
+    "title": "Notifications",
+    "success": "Enregistrement réussi",
+    "warning": "Stock bas",
+    "danger": "Échec de l'envoi",
+    "info": "Nouvelle version disponible",
+    "details": "Message de démonstration."
+  },
+  "table": {
+    "title": "Tableau avec pagination",
+    "caption": "Liste de patients fictifs",
+    "id": "Référence",
+    "name": "Patient",
+    "service": "Service",
+    "status": "Statut",
+    "lastVisit": "Dernière visite",
+    "searchLabel": "Rechercher un patient fictif",
+    "emptyFilter": "Aucun patient fictif ne correspond à la recherche."
+  }
+}

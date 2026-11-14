@@ -1,0 +1,95 @@
+{
+  "title": "Uchambuzi na huduma za uuguzi",
+  "subtitle": "Foleni kwa kipaumbele na uingizaji wa vipimo vya msingi",
+  "search": "Tafuta (mgonjwa, namba)",
+  "minutes": "dakika {{count}}",
+  "summary": {
+    "queue": "Wanasubiri au uchambuzi"
+  },
+  "priority": {
+    "immediate": "Papo hapo",
+    "veryUrgent": "Dharura sana",
+    "urgent": "Dharura",
+    "standard": "Kawaida",
+    "nonUrgent": "Si dharura"
+  },
+  "category": {
+    "injury": "Jeraha",
+    "fever": "Homa",
+    "pregnancy": "Ujauzito",
+    "followUp": "Ufuatiliaji",
+    "other": "Nyingine"
+  },
+  "status": {
+    "waiting": "Anasubiri",
+    "inTriage": "Kwenye uchambuzi",
+    "inCare": "Anahudumiwa",
+    "transferred": "Amehamishwa",
+    "discharged": "Ametoka"
+  },
+  "columns": {
+    "priority": "Kipaumbele",
+    "patient": "Mgonjwa",
+    "category": "Aina",
+    "arrival": "Kuwasili",
+    "wait": "Kusubiri",
+    "status": "Hali"
+  },
+  "filters": {
+    "priority": "Kipaumbele",
+    "status": "Hali"
+  },
+  "create": {
+    "button": "Sajili mgonjwa aliyewasili",
+    "title": "Sajili kuwasili kwa mgonjwa",
+    "submit": "Sajili kuwasili"
+  },
+  "fields": {
+    "patient": "Mgonjwa (jina au namba)",
+    "priority": "Kipaumbele",
+    "category": "Aina"
+  },
+  "detail": {
+    "summary": "Kuwasili",
+    "nurse": "Muuguzi anayehusika",
+    "vitals": "Vipimo vya msingi",
+    "vitalsBody": "Vipimo vilivyoingizwa vitaambatanishwa na kipindi cha huduma. Hakuna thamani inayoonyeshwa kwenye majaribio.",
+    "enterVitals": "Ingiza vipimo",
+    "care": "Mkondo wa huduma",
+    "noActions": "Hakuna hatua nyingine: ziara hii imekwisha.",
+    "noVitals": "Hakuna vipimo vilivyorekodiwa kwa ziara hii.",
+    "vitalsBodyLocal": "Vipimo huhifadhiwa kwenye kifaa hiki (hali ya ndani) na kuunganishwa na ziara hii. Huonyeshwa kama vilivyoingizwa, bila tafsiri."
+  },
+  "vitals": {
+    "title": "Uingizaji wa vipimo vya msingi",
+    "submit": "Hifadhi vipimo",
+    "temperature": "Joto la mwili",
+    "pulse": "Mapigo ya moyo",
+    "systolic": "Shinikizo la juu",
+    "diastolic": "Shinikizo la chini",
+    "respiratoryRate": "Kasi ya kupumua",
+    "spo2": "Kiwango cha oksijeni",
+    "weight": "Uzito",
+    "note": "Maelezo",
+    "unit": {
+      "temperature": "kwa °C",
+      "pulse": "mapigo kwa dakika",
+      "pressure": "kwa mmHg",
+      "respiratory": "pumzi kwa dakika",
+      "spo2": "kwa %",
+      "weight": "kwa kg"
+    }
+  },
+  "actions": {
+    "start-triage": "Anza uchunguzi wa awali",
+    "send-to-care": "Peleka kwenye huduma",
+    "transfer": "Hamisha",
+    "discharge": "Funga (ameruhusiwa)"
+  },
+  "confirmTitles": {
+    "start-triage": "Kuanza uchunguzi wa awali wa mgonjwa huyu?",
+    "send-to-care": "Kumpeleka mgonjwa huyu kwenye huduma?",
+    "transfer": "Kumweka mgonjwa huyu kama amehamishwa?",
+    "discharge": "Kufunga ziara hii (ameruhusiwa)?"
+  }
+}

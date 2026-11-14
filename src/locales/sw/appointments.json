@@ -1,0 +1,188 @@
+{
+  "title": "Miadi na mapokezi",
+  "subtitle": "Ratiba ya mashauriano na kuwasili kwa wagonjwa",
+  "search": "Tafuta (mgonjwa, daktari, namba)",
+  "columns": {
+    "date": "Tarehe na saa",
+    "patient": "Mgonjwa",
+    "service": "Idara",
+    "practitioner": "Daktari",
+    "reason": "Sababu",
+    "status": "Hali"
+  },
+  "status": {
+    "scheduled": "Imepangwa",
+    "confirmed": "Imethibitishwa",
+    "arrived": "Amewasili",
+    "inProgress": "Kwenye mashauriano",
+    "done": "Imekamilika",
+    "cancelled": "Imeghairiwa",
+    "noShow": "Hakuja",
+    "waiting": "Anasubiri"
+  },
+  "period": {
+    "today": "Leo",
+    "upcoming": "Zijazo",
+    "past": "Zilizopita"
+  },
+  "filters": {
+    "period": "Kipindi",
+    "status": "Hali",
+    "service": "Idara"
+  },
+  "reason": {
+    "firstVisit": "Ziara ya kwanza",
+    "followUp": "Ufuatiliaji",
+    "control": "Ukaguzi",
+    "vaccination": "Chanjo",
+    "prenatal": "Kliniki ya wajawazito",
+    "walkIn": "Bila miadi"
+  },
+  "create": {
+    "button": "Miadi mipya",
+    "title": "Panga miadi",
+    "submit": "Panga"
+  },
+  "fields": {
+    "patient": "Mgonjwa (jina au namba)",
+    "patientHint": "Utafutaji wa mgonjwa utaunganishwa na API ya wagonjwa.",
+    "service": "Idara",
+    "practitioner": "Daktari",
+    "date": "Tarehe",
+    "time": "Saa",
+    "reason": "Sababu",
+    "duration": "Muda"
+  },
+  "detail": {
+    "summary": "Miadi",
+    "reference": "Rejea",
+    "duration": "Muda",
+    "minutes": "dakika {{count}}",
+    "actions": "Vitendo",
+    "arrivedAt": "Saa ya kufika",
+    "noActions": "Hakuna kitendo kinachowezekana: miadi hii imefungwa."
+  },
+  "actions": {
+    "confirm": "Thibitisha",
+    "confirmTitle": "Thibitisha miadi hii?",
+    "checkIn": "Rekodi kuwasili",
+    "checkInTitle": "Rekodi kuwasili kwa mgonjwa?",
+    "cancel": "Ghairi miadi",
+    "cancelTitle": "Ghairi miadi hii?",
+    "cancelBody": "Kughairi kunarekodiwa kwenye kumbukumbu za ukaguzi.",
+    "wait": "Weka kusubiri",
+    "start": "Ita kwenye mashauriano",
+    "complete": "Maliza",
+    "noShow": "Weka hajaja",
+    "reschedule": "Ahirisha",
+    "edit": "Hariri"
+  },
+  "tabs": {
+    "reception": "Mapokezi",
+    "calendar": "Kalenda",
+    "list": "Orodha"
+  },
+  "confirmTitles": {
+    "confirm": "Thibitisha miadi hii?",
+    "check-in": "Rekodi kufika kwa mgonjwa?",
+    "wait": "Mweke mgonjwa chumba cha kusubiri?",
+    "start": "Mwite mgonjwa kwenye mashauriano?",
+    "complete": "Weka mashauriano kuwa yamekamilika?",
+    "no-show": "Weka mgonjwa kuwa hajaja?"
+  },
+  "changeReason": {
+    "patientRequest": "Ombi la mgonjwa",
+    "practitionerUnavailable": "Mtaalamu hapatikani",
+    "facilityClosure": "Kituo kimefungwa",
+    "other": "Sababu nyingine"
+  },
+  "reschedule": {
+    "title": "Ahirisha miadi",
+    "hint": "Sababu na muda wa awali vinahifadhiwa kwenye historia.",
+    "submit": "Ahirisha",
+    "reason": "Sababu ya kuahirisha",
+    "note": "Maelezo (hiari)"
+  },
+  "cancel": {
+    "title": "Ghairi miadi",
+    "hint": "Kughairi kunahifadhiwa kwenye historia pamoja na sababu.",
+    "submit": "Ghairi miadi",
+    "reason": "Sababu ya kughairi"
+  },
+  "conflict": {
+    "title": "{{name}} ana miadi tayari katika muda huu:",
+    "suggest": "Muda wa karibu usio na mtu: {{time}}.",
+    "noneLeft": "Hakuna muda wazi siku hiyo baada ya saa iliyoombwa."
+  },
+  "history": {
+    "title": "Historia",
+    "created": "Miadi imeundwa",
+    "rescheduled": "Miadi imeahirishwa",
+    "cancelled": "Miadi imeghairiwa",
+    "checkedIn": "Kufika kumerekodiwa",
+    "noShow": "Mgonjwa hakuja",
+    "from": "Muda wa awali: {{date}}",
+    "reason": "Sababu",
+    "serverNote": "Kila kuahirisha au kughairi kunarekodiwa na seva pamoja na mtumiaji, tarehe na sababu. Kwenye majaribio, historia inayoonyeshwa ni ya kifikra.",
+    "updated": "Miadi imehaririwa"
+  },
+  "calendar": {
+    "count": "miadi {{count}}",
+    "openDay": "Fungua {{date}}",
+    "more": "+ {{count}} zaidi",
+    "previous": "Kipindi kilichopita",
+    "next": "Kipindi kijacho",
+    "today": "Leo",
+    "view": "Mwonekano wa kalenda",
+    "views": {
+      "day": "Siku (kwa mtaalamu)",
+      "week": "Wiki",
+      "month": "Mwezi"
+    },
+    "allPractitioners": "Wataalamu wote",
+    "truncated": "Onyesho limepunguzwa kwa miadi {{count}} ya kwanza ya kipindi.",
+    "legend": "Maelezo ya hali",
+    "legendHint": "Kila tukio pia linaonyesha hali kwa maneno. Bofya tukio kufungua maelezo; miadi iliyoghairiwa imekatwa mstari."
+  },
+  "reception": {
+    "details": "Maelezo",
+    "scheduledAt": "Saa iliyopangwa",
+    "toWelcome": "Wa kupokea",
+    "delay": "Kuchelewa",
+    "late": "dakika {{count}} za kuchelewa",
+    "waitingRoom": "Chumba cha kusubiri",
+    "waited": "Kusubiri",
+    "minutes": "dakika {{count}}",
+    "inConsultation": "Kwenye mashauriano",
+    "finished": "Waliomaliza",
+    "empty": "Hakuna mtu kwa sasa"
+  },
+  "edit": {
+    "title": "Hariri miadi",
+    "hint": "Kubadilisha tarehe pekee, tumia “Ahirisha”: sababu itahifadhiwa.",
+    "submit": "Hifadhi mabadiliko"
+  },
+  "walkIn": {
+    "button": "Mgonjwa bila miadi",
+    "hint": "Mgonjwa amefika bila miadi? Msajili na umpeleke kwenye triage au huduma.",
+    "title": "Mapokezi bila miadi",
+    "description": "Mtambue mgonjwa, andika sababu na kiwango cha dharura, kisha chagua anapoelekezwa.",
+    "submit": "Sajili na uelekeze",
+    "reason": "Sababu ya kuja",
+    "urgency": "Kiwango cha dharura (tathmini ya mapokezi)",
+    "destination": "Elekeza kwa",
+    "toTriage": "Triage ya wauguzi",
+    "toService": "Huduma husika",
+    "service": "Huduma",
+    "serviceHint": "Inahitajika ikiwa unaelekeza kwenye huduma.",
+    "triageRequired": "Dharura ya papo hapo, ya haraka sana au ya haraka lazima ipitie triage ya wauguzi.",
+    "serviceRequired": "Chagua huduma ya kumpeleka mgonjwa.",
+    "priority": {
+      "immediate": "Ya papo hapo",
+      "veryUrgent": "Ya haraka sana",
+      "urgent": "Ya haraka",
+      "standard": "Kawaida",
+      "nonUrgent": "Si ya haraka"
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "title": "Laboratory",
+  "subtitle": "Test requests, sample collection and result validation",
+  "search": "Search (patient, number)",
+  "columns": {
+    "requestedAt": "Requested on",
+    "patient": "Patient",
+    "tests": "Tests",
+    "priority": "Priority",
+    "status": "Status",
+    "number": "No.",
+    "payment": "Payment"
+  },
+  "status": {
+    "requested": "Requested",
+    "collected": "Collected",
+    "inProgress": "In analysis",
+    "resultEntered": "Result entered",
+    "validated": "Validated",
+    "cancelled": "Cancelled"
+  },
+  "priority": {
+    "routine": "Routine",
+    "urgent": "Urgent"
+  },
+  "tests": {
+    "cbc": "Complete blood count",
+    "glucose": "Blood glucose",
+    "malaria": "Malaria test",
+    "creatinine": "Creatinine",
+    "pregnancy": "Pregnancy test",
+    "urinalysis": "Urinalysis"
+  },
+  "filters": {
+    "status": "Status",
+    "priority": "Priority",
+    "allStatuses": "All statuses"
+  },
+  "create": {
+    "button": "New request",
+    "title": "Request a test",
+    "submit": "Send request",
+    "description": "Tests are billed automatically and appear at the cashier.",
+    "cancel": "Cancel",
+    "choosePatient": "Choose a patient",
+    "tests": "Requested tests",
+    "noCatalog": "No active test in the catalogue.",
+    "consultation": "Consultation (optional)",
+    "consultationHint": "ID of the originating consultation",
+    "note": "Clinical information",
+    "invoiceNotice": "The invoice is created with the order using the applicable tariff and coverage. Sampling is only possible once the patient share is paid."
+  },
+  "fields": {
+    "patient": "Patient (name or number)",
+    "test": "Test",
+    "priority": "Priority"
+  },
+  "detail": {
+    "order": "Request",
+    "summary": "Information",
+    "requestedBy": "Requested by",
+    "progress": "Progress",
+    "stepDone": "(step reached)",
+    "stepPending": "(step pending)",
+    "results": "Results",
+    "resultsBody": "Result entry and validation will be available with the laboratory API. No value is shown in the demo.",
+    "actions": "Actions",
+    "description": "Lab order and results entered by the laboratory.",
+    "consultation": "Consultation",
+    "tests": "Tests",
+    "payment": "Billing and payment",
+    "invoice": "Invoice",
+    "patientShare": "Patient share",
+    "remaining": "Remaining to pay",
+    "collectGate": "Sampling",
+    "noInvoice": "Invoice not found: sampling is blocked.",
+    "exceptionBy": "Payment exception granted by {{by}}: {{reason}}",
+    "refundPending": "A payment was collected: the refund still has to be made at the cashier.",
+    "collectedBy": "Sampled by {{by}} on {{at}}",
+    "enteredBy": "Entered by {{by}} on {{at}}",
+    "validatedBy": "Validated by {{by}} on {{at}}",
+    "amendments": "Amendment history ({{count}})",
+    "previous": "Previous result",
+    "cancelledBy": "Cancelled by {{by}}: {{reason}}",
+    "gateHint": "Sampling is possible after payment, authorised credit or a justified exception.",
+    "test": "Test",
+    "value": "Value",
+    "unit": "Unit",
+    "reference": "Reference range",
+    "flag": "Interpretation",
+    "comment": "Comment"
+  },
+  "actions": {
+    "collect": "Mark as collected",
+    "collectTitle": "Confirm sample collection?",
+    "validate": "Validate results",
+    "validateTitle": "Validate these results?",
+    "validateBody": "Validation is recorded under your name and makes results viewable.",
+    "open": "Open",
+    "start": "Start analysis",
+    "enter": "Enter results",
+    "save": "Save",
+    "reopen": "Reopen entry",
+    "amend": "Amend",
+    "amendTitle": "Amend a validated result",
+    "enterTitle": "Result entry",
+    "enterBody": "Enter measured values only. Nothing is prefilled or computed.",
+    "sampleNote": "Sample note (optional)",
+    "reason": "Reason",
+    "exception": "Allow without payment",
+    "exceptionTitle": "Allow sampling without payment?",
+    "exceptionBody": "Exception reserved for emergencies. It is traced with your name and the reason.",
+    "cancel": "Cancel order",
+    "cancelTitle": "Cancel this order?",
+    "cancelBody": "Only possible before sampling. An unpaid invoice is cancelled; a payment already collected must be refunded at the cashier."
+  },
+  "empty": "No lab orders",
+  "emptyHint": "Create an order from this screen or from a consultation.",
+  "done": {
+    "order": "Order saved and invoiced",
+    "exception": "Exception recorded",
+    "collect": "Sampling recorded",
+    "start": "Analysis started",
+    "results": "Results saved",
+    "reopen": "Entry reopened",
+    "validate": "Results validated",
+    "amend": "Amendment recorded",
+    "cancel": "Order cancelled"
+  },
+  "payment": {
+    "paid": "Paid",
+    "unpaid": "To pay at cashier",
+    "credit": "Credit authorised",
+    "exception": "Traced exception",
+    "invoiceCancelled": "Invoice cancelled"
+  },
+  "flag": {
+    "unspecified": "Not specified",
+    "normal": "Normal",
+    "abnormal": "Abnormal"
+  }
+}

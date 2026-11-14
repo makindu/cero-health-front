@@ -1,0 +1,419 @@
+{
+  "common": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "loading": "Chargement…"
+  },
+  "localOnly": {
+    "title": "Disponible en mode local ou avec le serveur",
+    "description": "La facturation et la caisse enregistrent des écritures comptables : elles ne sont pas simulées. Activez le mode local (VITE_LOCAL_MODE=true) ou raccordez le serveur CERO HEALTH."
+  },
+  "billing": {
+    "title": "Facturation",
+    "subtitle": "Factures, parts patient et organismes, paiements",
+    "search": "Rechercher (numéro, patient)",
+    "empty": "Aucune facture",
+    "emptyHint": "Créez une facture : le prix est calculé par le moteur de tarification (assurance, mutuelle, abonnement)."
+  },
+  "cash": {
+    "title": "Caisse",
+    "subtitle": "Encaissements des patients par mode de paiement",
+    "day": "Jour",
+    "allCashiers": "Tous les caissiers",
+    "patientNet": "Encaissé net (patients)",
+    "drawerHint": "Espèces à retrouver en caisse",
+    "cardTransferHint": "Carte et virement",
+    "orgReceipts": "Règlements d'organismes",
+    "orgReceiptsHint": "Suivis à part : jamais mélangés à la caisse patient",
+    "empty": "Aucune écriture ce jour",
+    "emptyHint": "Choisissez un autre jour ou un autre caissier.",
+    "closureNotice": "La clôture de caisse (comptage, écart, signature) n'est pas encore disponible : seules les écritures et les totaux du jour sont fournis."
+  },
+  "columns": {
+    "number": "N° de facture",
+    "patient": "Patient",
+    "date": "Date",
+    "dateTime": "Date et heure",
+    "status": "Statut",
+    "patientBalance": "Reste patient",
+    "orgBalance": "Reste organismes",
+    "method": "Mode",
+    "amount": "Montant",
+    "cashier": "Caissier",
+    "type": "Type"
+  },
+  "summary": {
+    "invoices": "Factures actives",
+    "billed": "Facturé",
+    "collected": "Encaissé (patients)",
+    "receivables": "À recouvrer",
+    "receivablesHint": "Patients {{patient}} · organismes {{orgs}}"
+  },
+  "filters": {
+    "allStatuses": "Tous les statuts"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "awaitingPayment": "En attente de paiement",
+    "partiallyPaid": "Partiellement payée",
+    "paid": "Payée",
+    "creditAuthorized": "Crédit autorisé",
+    "cancelled": "Annulée"
+  },
+  "methods": {
+    "cash": "Espèces",
+    "mobileMoney": "Mobile money",
+    "card": "Carte",
+    "transfer": "Virement"
+  },
+  "category": {
+    "consultation": "Consultation",
+    "laboratory": "Laboratoire",
+    "pharmacy": "Pharmacie",
+    "hospitalization": "Hospitalisation",
+    "room": "Chambre",
+    "procedure": "Acte",
+    "nursing": "Soins infirmiers",
+    "consumable": "Consommable"
+  },
+  "ledger": {
+    "payment": "Paiement",
+    "refund": "Remboursement",
+    "reversal": "Contrepassation",
+    "insurerSettlement": "Règlement d'organisme",
+    "insurerRejection": "Rejet d'organisme",
+    "reversedMark": "contrepassé"
+  },
+  "coordination": {
+    "none": "Aucune couverture appliquée",
+    "primary": "Couverture principale seule",
+    "primary+complementary": "Couverture principale + complémentaire",
+    "subscription": "Abonnement"
+  },
+  "validation": {
+    "pending": "En attente de validation",
+    "validated": "Validée",
+    "rejected": "Rejetée",
+    "suspended": "Suspendue"
+  },
+  "actions": {
+    "open": "Ouvrir",
+    "pay": "Encaisser",
+    "refund": "Rembourser",
+    "cancel": "Annuler la facture",
+    "credit": "Autoriser un crédit",
+    "reverse": "Contrepasser",
+    "settle": "Enregistrer un règlement",
+    "reject": "Enregistrer un rejet",
+    "printInvoice": "Imprimer la facture",
+    "printReceipt": "Reçu",
+    "balanceHint": "Reste dû par le patient : {{amount}}"
+  },
+  "form": {
+    "amount": "Montant ({{currency}})",
+    "reason": "Motif",
+    "referenceHint": "Numéro de transaction, de carte ou de virement (obligatoire hors espèces).",
+    "rejectTransfer": "Sort de la somme rejetée",
+    "rejectDispute": "Litige à suivre avec l'organisme",
+    "rejectToPatient": "Reportée sur le patient",
+    "cancelHint": "Une facture avec paiement ne s'annule pas : contrepassez d'abord les paiements. L'annulation est tracée et définitive."
+  },
+  "detail": {
+    "title": "Facture",
+    "summary": "Résumé",
+    "createdBy": "Créée par",
+    "item": "Prestation",
+    "qty": "Qté",
+    "billable": "Facturable",
+    "insurer": "Organisme",
+    "subscription": "Abonnement",
+    "patientShare": "Patient",
+    "total": "Total",
+    "paid": "Payé",
+    "balance": "Reste dû",
+    "credit": "Crédit autorisé",
+    "cancellation": "Annulation",
+    "lines": "Lignes et justification",
+    "justification": "Pourquoi ce prix ?",
+    "needsAuthorization": "Autorisation préalable requise : non appliquée, à la charge du patient",
+    "rulesSnapshot": "Règles figées : {{org}} · {{contract}} · police {{policy}}",
+    "organizations": "Organismes payeurs",
+    "orgDue": "Dû",
+    "orgSettled": "Réglé",
+    "orgTransferred": "Reporté patient",
+    "orgDisputed": "En litige",
+    "orgOutstanding": "Reste à recouvrer",
+    "ledger": "Écritures (grand livre)",
+    "noLedger": "Aucune écriture",
+    "actions": "Actions",
+    "reference": "Référence"
+  },
+  "done": {
+    "invoice": "Facture créée",
+    "payment": "Paiement enregistré",
+    "refund": "Remboursement enregistré",
+    "cancel": "Facture annulée",
+    "credit": "Crédit autorisé",
+    "reverse": "Écriture contrepassée",
+    "settle": "Règlement enregistré",
+    "reject": "Rejet enregistré",
+    "saved": "Enregistré",
+    "coverageCreated": "Couverture créée, en attente de validation",
+    "coverageUpdated": "Couverture mise à jour",
+    "authorization": "Autorisation préalable enregistrée",
+    "exempted": "Exemption enregistrée"
+  },
+  "new": {
+    "button": "Nouvelle facture",
+    "title": "Nouvelle facture",
+    "description": "Le prix est calculé à la date du jour avec les droits validés du patient.",
+    "submit": "Créer la facture",
+    "choosePatient": "Choisir un patient",
+    "primaryCoverage": "Couverture principale",
+    "secondaryCoverage": "Couverture complémentaire",
+    "primaryHint": "Une seule couverture principale par épisode de soins.",
+    "secondaryHint": "Appliquée seulement si les deux contrats l'autorisent.",
+    "autoCoverage": "Automatique (la plus prioritaire éligible)",
+    "noCoverage": "Aucune",
+    "lines": "Prestations",
+    "chooseItem": "Choisir une prestation",
+    "addLine": "Ajouter une ligne",
+    "removeLine": "Retirer la ligne",
+    "episode": "Épisode de soins",
+    "episodeHint": "Les plafonds et franchises se cumulent dans un même épisode.",
+    "forcePrivate": "Imposer le tarif privé (exception tracée)"
+  },
+  "preview": {
+    "title": "Aperçu du prix",
+    "failed": "Le prix n'a pas pu être calculé.",
+    "patientPays": "À payer par le patient",
+    "notConfirmed": "Aperçu non enregistré. Seule une couverture validée de façon tracée est appliquée."
+  },
+  "fee": {
+    "valid": "Frais de consultation valides",
+    "until": "jusqu'au {{date}} inclus ({{days}} j restants)",
+    "exempted": "exemption",
+    "expired": "Frais expirés",
+    "expiredOn": "échus le {{date}} : nouveau paiement requis",
+    "none": "Aucun frais payé",
+    "noneHint": "Les frais de consultation sont à payer."
+  },
+  "patient": {
+    "coverages": "Couvertures",
+    "noCoverage": "Aucune couverture enregistrée : tarif privé."
+  },
+  "print": {
+    "facility": "CERO HEALTH — établissement (mode local)",
+    "localNotice": "MODE LOCAL — Données enregistrées uniquement sur cet appareil. Aucune synchronisation serveur. Document non fiscal.",
+    "invoice": "Facture",
+    "receipt": "Reçu de paiement",
+    "number": "N°",
+    "organizationsDue": "Parts à régler par les organismes :",
+    "thanks": "Merci"
+  },
+  "reason": {
+    "authorization.required": "Autorisation préalable requise et non accordée : prestation à la charge du patient.",
+    "ceiling.reached": "Plafond atteint : prise en charge limitée à {{cap}} au lieu de {{wanted}}.",
+    "complement.applied": "Couverture complémentaire {{organization}} : {{bp}} du reste à charge dans son contrat.",
+    "complement.notAllowed": "Couverture complémentaire non appliquée : les deux contrats ne l'autorisent pas.",
+    "complement.sameCoverage": "La couverture complémentaire est la même que la principale : ignorée.",
+    "coverage.contractOutOfPeriod": "Contrat hors période ou inactif : couverture non appliquée.",
+    "coverage.currencyMismatch": "Devise du contrat différente : couverture non appliquée.",
+    "coverage.designatedMissing": "La couverture désignée n'existe pas pour ce patient.",
+    "coverage.expired": "Couverture expirée le {{to}} : non appliquée.",
+    "coverage.notBeneficiary": "Le patient n'est pas bénéficiaire de cette couverture.",
+    "coverage.notStarted": "Couverture valable à partir du {{from}} seulement : non appliquée.",
+    "coverage.organizationInactive": "Organisme inactif ou hors période : couverture non appliquée.",
+    "coverage.pending": "Couverture non validée (en attente) : non appliquée.",
+    "coverage.rejected": "Couverture rejetée : non appliquée.",
+    "coverage.suspended": "Couverture suspendue : non appliquée.",
+    "coverage.rate": "Taux de prise en charge {{bp}} sur le tarif négocié.",
+    "franchise.applied": "Franchise de {{amount}} laissée au patient.",
+    "private.forced": "Tarif privé imposé par une personne autorisée (exception tracée).",
+    "private.noCoverage": "Aucune couverture applicable : tarif privé.",
+    "quota.exceeded": "Quota dépassé : {{covered}} unité(s) couverte(s) sur {{requested}}, le reste au tarif privé.",
+    "rule.excluded": "Prestation exclue du contrat : à la charge du patient.",
+    "rule.none": "Aucune règle du contrat pour cette prestation.",
+    "subscription.discount": "Réduction d'abonnement de {{bp}}.",
+    "subscription.free": "Consultation gratuite grâce à l'abonnement.",
+    "subscription.freeExhausted": "Consultations gratuites de l'abonnement épuisées.",
+    "subscription.included": "Catégorie incluse dans l'abonnement.",
+    "subscription.notBeneficiary": "Le patient n'est pas couvert par cet abonnement.",
+    "subscription.notStacked": "Abonnement non cumulé avec une prise en charge d'assurance.",
+    "subscription.cancelled": "Abonnement résilié.",
+    "subscription.suspended": "Abonnement suspendu.",
+    "subscription.expired": "Abonnement expiré.",
+    "subscription.notStarted": "Abonnement pas encore en vigueur.",
+    "tariff.negotiated": "Tarif négocié de {{unit}} par unité."
+  },
+  "insurance": {
+    "title": "Assurances et tarifs",
+    "subtitle": "Organismes, contrats, couvertures des patients, abonnements, catalogue et validité des frais",
+    "tabs": {
+      "coverages": "Couvertures",
+      "organizations": "Organismes",
+      "contracts": "Contrats",
+      "subscriptions": "Abonnements",
+      "catalog": "Catalogue",
+      "validity": "Validité des frais"
+    },
+    "kpi": {
+      "insured": "Assurés actifs",
+      "mutuelle": "Membres de mutuelle",
+      "subscriptions": "Abonnements actifs",
+      "pending": "Validations en attente",
+      "rejections": "Rejets d'organismes",
+      "rejectionsHint": "{{count}} rejet(s)",
+      "receivables": "Créances organismes"
+    },
+    "receivablesTitle": "Créances par organisme",
+    "receivablesHint": "Une créance d'organisme n'est jamais une recette de caisse.",
+    "noReceivables": "Aucune créance.",
+    "orgLine": "dû {{due}} · réglé {{settled}} · reste {{outstanding}} · litige {{disputed}}",
+    "orgKind": {
+      "insurer": "Assureur",
+      "mutuelle": "Mutuelle",
+      "company": "Entreprise",
+      "institution": "Institution",
+      "other": "Autre"
+    },
+    "orgStatus": {
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "inactive": "Inactif"
+    },
+    "org": {
+      "name": "Nom",
+      "code": "Code",
+      "kind": "Type",
+      "contact": "Contact",
+      "phone": "Téléphone",
+      "add": "Ajouter un organisme",
+      "edit": "Modifier l'organisme"
+    },
+    "contractStatus": {
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "terminated": "Résilié"
+    },
+    "contract": {
+      "label": "Intitulé",
+      "organization": "Organisme",
+      "period": "Période",
+      "from": "Début",
+      "to": "Fin",
+      "generalRate": "Taux général",
+      "limits": "Franchise · plafond",
+      "franchise": "Franchise par épisode",
+      "ceiling": "Plafond par épisode",
+      "coordination": "Coordination",
+      "allowsComplementary": "Accepte un complémentaire",
+      "canBeComplementary": "Peut être complémentaire",
+      "exclusive": "Exclusif",
+      "add": "Ajouter un contrat",
+      "edit": "Modifier le contrat",
+      "editHint": "Modifier un contrat n'affecte JAMAIS les factures déjà émises : elles gardent l'instantané des règles appliquées.",
+      "rules": "Règles de prise en charge",
+      "rulesHint": "La règle la plus précise l'emporte : prestation > catégorie > générale. Le taux s'applique au tarif négocié.",
+      "scope": "S'applique à",
+      "scopeGeneral": "Toutes les prestations",
+      "rate": "Taux %",
+      "negotiated": "Tarif négocié",
+      "ceilingLine": "Plafond par ligne",
+      "quota": "Quota (unités)",
+      "excluded": "Exclu",
+      "requiresAuth": "Autorisation préalable",
+      "addRule": "Ajouter une règle",
+      "removeRule": "Retirer la règle"
+    },
+    "covKind": {
+      "insurance": "Assurance",
+      "mutuelle": "Mutuelle"
+    },
+    "cov": {
+      "kind": "Type",
+      "policy": "N° de police",
+      "card": "N° de carte",
+      "member": "N° d'adhérent",
+      "contract": "Contrat",
+      "priority": "Priorité",
+      "priorityHint": "1 = la plus prioritaire (désignation automatique de la principale).",
+      "spent": "Consommé",
+      "add": "Ajouter une couverture",
+      "createHint": "La couverture est créée « en attente » : elle n'ouvre aucun droit tant qu'une validation tracée n'a pas eu lieu.",
+      "validate": "Valider",
+      "reject": "Rejeter",
+      "suspend": "Suspendre",
+      "validateHint": "La décision est enregistrée avec votre nom et l'heure.",
+      "authorize": "Autorisation préalable",
+      "authReference": "Référence de l'autorisation",
+      "authHint": "Numéro fourni par l'organisme. Sans référence, aucune autorisation n'est enregistrée.",
+      "noAuthItems": "Ce contrat n'exige d'autorisation préalable pour aucune prestation précise.",
+      "neverConfirmed": "Une couverture n'est jamais considérée comme confirmée sans validation tracée."
+    },
+    "subStatus": {
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "cancelled": "Résilié"
+    },
+    "subType": {
+      "individual": "Individuel",
+      "family": "Famille",
+      "company": "Entreprise"
+    },
+    "sub": {
+      "holder": "Titulaire",
+      "type": "Type",
+      "members": "Bénéficiaires",
+      "membersHint": "Maintenez Ctrl (ou Cmd) pour en choisir plusieurs.",
+      "price": "Prix",
+      "free": "Consultations gratuites",
+      "labDiscount": "Réduction laboratoire %",
+      "included": "Catégories incluses",
+      "add": "Ajouter un abonnement",
+      "edit": "Modifier l'abonnement",
+      "notFullCover": "Un abonné n'est PAS couvert à 100 % d'office : seules les gratuités, catégories incluses et réductions du contrat d'abonnement s'appliquent."
+    },
+    "catalog": {
+      "code": "Code",
+      "category": "Catégorie",
+      "price": "Tarif privé",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "add": "Ajouter une prestation",
+      "edit": "Modifier la prestation",
+      "codeHint": "Le code ne change pas : les contrats y font référence.",
+      "hint": "Le tarif privé sert de référence. Les tarifs négociés se règlent dans les contrats. Une modification n'affecte pas les factures existantes."
+    }
+  },
+  "validity": {
+    "currentTitle": "Durée de validité des frais de consultation",
+    "rule": "Calculée en mois calendaires, sur les jours civils de l'établissement, échéance incluse.",
+    "currentLine": "Actuellement : {{months}} mois — {{mode}}.",
+    "noConfig": "Aucune durée configurée.",
+    "change": "Changer la durée",
+    "history": "Historique des configurations",
+    "effectiveFrom": "Applicable à partir du",
+    "months": "Mois",
+    "mode": "Fin de mois",
+    "changedBy": "Modifié par",
+    "modes": {
+      "clamp": "Même quantième, ramené au dernier jour du mois si besoin",
+      "endOfMonth": "Jusqu'à la fin du mois d'arrivée"
+    },
+    "modesHelp": "Exemples pour 1 mois. « Même quantième » : du 31 janvier → dernier jour de février ; du 15 janvier → 15 février. « Fin du mois d'arrivée » : du 15 janvier → dernier jour de février.",
+    "nonRetroactive": "Un changement n'est jamais rétroactif : les paiements déjà enregistrés gardent leur échéance.",
+    "paymentsTitle": "Frais payés et exemptions",
+    "noPayments": "Aucun paiement de frais",
+    "until": "Valable jusqu'au",
+    "source": {
+      "payment": "Paiement",
+      "exemption": "Exemption"
+    },
+    "voided": "Annulé",
+    "exempt": "Exempter un patient",
+    "exemptHint": "Réservé aux personnes autorisées. Le motif et l'auteur sont conservés."
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "title": "Laboratoire",
+  "subtitle": "Demandes d'examens, prélèvements et validation des résultats",
+  "search": "Rechercher (patient, numéro)",
+  "columns": {
+    "requestedAt": "Demandé le",
+    "patient": "Patient",
+    "tests": "Examens",
+    "priority": "Priorité",
+    "status": "Statut",
+    "number": "N°",
+    "payment": "Paiement"
+  },
+  "status": {
+    "requested": "Demandé",
+    "collected": "Prélevé",
+    "inProgress": "En analyse",
+    "resultEntered": "Résultat saisi",
+    "validated": "Validé",
+    "cancelled": "Annulé"
+  },
+  "priority": {
+    "routine": "Routine",
+    "urgent": "Urgent"
+  },
+  "tests": {
+    "cbc": "Numération formule sanguine",
+    "glucose": "Glycémie",
+    "malaria": "Test de paludisme",
+    "creatinine": "Créatinine",
+    "pregnancy": "Test de grossesse",
+    "urinalysis": "Analyse d’urine"
+  },
+  "filters": {
+    "status": "Statut",
+    "priority": "Priorité",
+    "allStatuses": "Tous les statuts"
+  },
+  "create": {
+    "button": "Nouvelle demande",
+    "title": "Demander un examen",
+    "submit": "Envoyer la demande",
+    "description": "Les examens sont facturés automatiquement et apparaissent à la caisse.",
+    "cancel": "Annuler",
+    "choosePatient": "Choisir un patient",
+    "tests": "Examens demandés",
+    "noCatalog": "Aucun examen actif dans le catalogue.",
+    "consultation": "Consultation (optionnel)",
+    "consultationHint": "Identifiant de la consultation d’origine",
+    "note": "Renseignements cliniques",
+    "invoiceNotice": "La facture est créée avec la demande, avec le tarif et la couverture applicables. Le prélèvement n’est possible qu’une fois la part patient payée."
+  },
+  "fields": {
+    "patient": "Patient (nom ou numéro)",
+    "test": "Examen",
+    "priority": "Priorité"
+  },
+  "detail": {
+    "order": "Demande",
+    "summary": "Informations",
+    "requestedBy": "Demandé par",
+    "progress": "Avancement",
+    "stepDone": "(étape atteinte)",
+    "stepPending": "(étape à venir)",
+    "results": "Résultats",
+    "resultsBody": "La saisie et la validation des résultats seront disponibles avec l'API du laboratoire. Aucune valeur n'est affichée en démonstration.",
+    "actions": "Actions",
+    "description": "Demande d’examens et résultats saisis par le laboratoire.",
+    "consultation": "Consultation",
+    "tests": "Examens",
+    "payment": "Facturation et paiement",
+    "invoice": "Facture",
+    "patientShare": "Part patient",
+    "remaining": "Reste à payer",
+    "collectGate": "Prélèvement",
+    "noInvoice": "Facture introuvable : le prélèvement est bloqué.",
+    "exceptionBy": "Exception de paiement accordée par {{by}} : {{reason}}",
+    "refundPending": "Un paiement a été encaissé : le remboursement reste à faire en caisse.",
+    "collectedBy": "Prélevé par {{by}} le {{at}}",
+    "enteredBy": "Saisi par {{by}} le {{at}}",
+    "validatedBy": "Validé par {{by}} le {{at}}",
+    "amendments": "Historique des rectifications ({{count}})",
+    "previous": "Ancien résultat",
+    "cancelledBy": "Annulée par {{by}} : {{reason}}",
+    "gateHint": "Le prélèvement est possible après paiement, crédit autorisé ou exception motivée.",
+    "test": "Examen",
+    "value": "Valeur",
+    "unit": "Unité",
+    "reference": "Valeurs de référence",
+    "flag": "Interprétation",
+    "comment": "Commentaire"
+  },
+  "actions": {
+    "collect": "Marquer comme prélevé",
+    "collectTitle": "Confirmer le prélèvement ?",
+    "validate": "Valider les résultats",
+    "validateTitle": "Valider ces résultats ?",
+    "validateBody": "La validation est tracée avec votre nom et rend les résultats consultables.",
+    "open": "Ouvrir",
+    "start": "Démarrer l’analyse",
+    "enter": "Saisir les résultats",
+    "save": "Enregistrer",
+    "reopen": "Rouvrir la saisie",
+    "amend": "Rectifier",
+    "amendTitle": "Rectifier un résultat validé",
+    "enterTitle": "Saisie des résultats",
+    "enterBody": "Saisissez uniquement les valeurs mesurées. Rien n’est prérempli ni calculé.",
+    "sampleNote": "Note sur l’échantillon (optionnel)",
+    "reason": "Motif",
+    "exception": "Autoriser sans paiement",
+    "exceptionTitle": "Autoriser le prélèvement sans paiement ?",
+    "exceptionBody": "Exception réservée aux urgences. Elle est tracée avec votre nom et le motif.",
+    "cancel": "Annuler la demande",
+    "cancelTitle": "Annuler cette demande ?",
+    "cancelBody": "Possible avant le prélèvement uniquement. La facture non payée est annulée ; un paiement encaissé reste à rembourser en caisse."
+  },
+  "empty": "Aucune demande d’examen",
+  "emptyHint": "Créez une demande depuis cet écran ou depuis une consultation.",
+  "done": {
+    "order": "Demande enregistrée et facturée",
+    "exception": "Exception enregistrée",
+    "collect": "Prélèvement enregistré",
+    "start": "Analyse démarrée",
+    "results": "Résultats enregistrés",
+    "reopen": "Saisie rouverte",
+    "validate": "Résultats validés",
+    "amend": "Rectification enregistrée",
+    "cancel": "Demande annulée"
+  },
+  "payment": {
+    "paid": "Payé",
+    "unpaid": "À payer en caisse",
+    "credit": "Crédit autorisé",
+    "exception": "Exception tracée",
+    "invoiceCancelled": "Facture annulée"
+  },
+  "flag": {
+    "unspecified": "Non précisé",
+    "normal": "Normal",
+    "abnormal": "Anormal"
+  }
+}

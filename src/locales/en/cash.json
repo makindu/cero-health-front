@@ -1,0 +1,49 @@
+{
+  "title": "Cash desk",
+  "subtitle": "Receipts, disbursements and cash closing",
+  "search": "Search (number, cashier)",
+  "columns": {
+    "date": "Date and time",
+    "type": "Type",
+    "category": "Category",
+    "method": "Method",
+    "amount": "Amount",
+    "cashier": "Cashier"
+  },
+  "direction": {
+    "in": "Receipt",
+    "out": "Disbursement"
+  },
+  "category": {
+    "patientPayment": "Patient payment",
+    "insurancePayment": "Insurance payment",
+    "supplies": "Supplies purchase",
+    "salary": "Salaries",
+    "expense": "Other expense"
+  },
+  "methods": {
+    "cash": "Cash",
+    "mobileMoney": "Mobile money",
+    "card": "Card",
+    "transfer": "Bank transfer"
+  },
+  "summary": {
+    "in": "Receipts",
+    "out": "Disbursements",
+    "balance": "Balance"
+  },
+  "close": {
+    "button": "Close the cash desk",
+    "title": "Close the cash desk?",
+    "body": "Closing freezes the period’s operations and is recorded in the audit log."
+  },
+  "create": {
+    "button": "New transaction",
+    "title": "Record a transaction",
+    "submit": "Record transaction",
+    "reference": "Reference (receipt, voucher)"
+  },
+  "detail": {
+    "summary": "Transaction"
+  }
+}
