@@ -37,7 +37,8 @@
     "administration": "Utawala",
     "audit": "Ukaguzi",
     "insurance": "Bima na bei",
-    "patientFlowBoard": "Ufuatiliaji wa wagonjwa"
+    "patientFlowBoard": "Ufuatiliaji wa wagonjwa",
+    "messages": "Ujumbe"
   },
   "actions": {
     "save": "Hifadhi",
@@ -477,6 +478,15 @@
     "staffAlreadySuspended": "Mfanyakazi huyu tayari amesimamishwa.",
     "staffAlreadyActive": "Mfanyakazi huyu tayari yuko kazini.",
     "consultationPractitionerInvalid": "Chagua daktari aliye kazini kutoka kwenye orodha (Utawala → Wafanyakazi).",
-    "consultationFeeExpired": "Muda wa ada ya mashauriano ya {{name}} umekwisha: mashauriano mapya lazima yatozwe na kulipwa (au msamaha wenye sababu)."
+    "consultationFeeExpired": "Muda wa ada ya mashauriano ya {{name}} umekwisha: mashauriano mapya lazima yatozwe na kulipwa (au msamaha wenye sababu).",
+    "messaging": {
+      "contactRequired": "Chagua mwasiliani.",
+      "selfConversation": "Huwezi kujiandikia mwenyewe.",
+      "notMember": "Wewe si mshiriki wa mazungumzo haya.",
+      "bodyRequired": "Ujumbe ni tupu.",
+      "bodyTooLong": "Ujumbe ni mrefu sana (herufi {{max}} kwa juu).",
+      "notFound": "Mazungumzo hayajapatikana.",
+      "contactUnknown": "Mwasiliani huyu hayupo."
+    }
   }
 }

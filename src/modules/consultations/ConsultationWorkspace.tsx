@@ -1,7 +1,10 @@
 import { Check, ChevronRight, CircleDot, FilePen, Lock, PenLine, Printer, Save } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useBlocker, useParams } from 'react-router';
+import { queryKeys } from '@/core/api/query-client';
+import { usePreferences } from '@/core/preferences/preferences-store';
 import { ErrorState } from '@/components/feedback/error-state';
 import { Skeleton } from '@/components/feedback/spinner';
 import { useToast } from '@/components/feedback/toast';
@@ -63,6 +66,8 @@ function restoreDraft(raw: ConsultationDraft | undefined, id: string, status: Cl
     evaluation: sanitizeDoc(raw.evaluation),
     plan: { ...base.plan, ...raw.plan, synthesis: sanitizeDoc(raw.plan?.synthesis), actions: sanitizeDoc(raw.plan?.actions) },
     conclusion: { ...base.conclusion, ...raw.conclusion, text: sanitizeDoc(raw.conclusion?.text), recommendations: sanitizeDoc(raw.conclusion?.recommendations) },
+    // Le statut de la consultation fait foi (il change sans réenregistrer le brouillon) ; le brouillon ne peut pas le contredire.
+    status,
   };
 }
 
@@ -70,11 +75,12 @@ export default function ConsultationWorkspace() {
   const { id } = useParams();
   const consultation = useResourceItem('consultations', consultationService, id);
   const patient = useResourceItem('patients', patientService, consultation.data?.item.patientId);
-  const record = useResourceItem('consultation-records', recordService, id);
+  const record = useResourceItem('consultation-records', recordService, id, { fresh: true });
 
   if (consultation.isPending) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
   if (consultation.error || !consultation.data) return <ErrorState error={consultation.error} onRetry={() => void consultation.refetch()} />;
-  if (record.isPending) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
+  // Tant que le dossier est relu (et qu'on n'en a pas), on n'affiche pas un formulaire vide : il ne se mettrait pas à jour ensuite.
+  if (record.isPending || (record.fetchStatus === 'fetching' && !record.data)) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
   const kind = (record.error as { kind?: string } | null)?.kind;
   if (record.error && kind !== 'not_found' && kind !== 'config') return <ErrorState error={record.error} onRetry={() => void record.refetch()} />;
 
@@ -104,6 +110,11 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
   const [section, setSection] = useState<SectionId>('general');
   const [confirm, setConfirm] = useState<ClinicalStatus | null>(null);
   const [addendumText, setAddendumText] = useState('');
+  const [recordExists, setRecordExists] = useState(hasRecord);
+  const queryClient = useQueryClient();
+  const { activeFacilityId } = usePreferences();
+  // Quitter l'écran avec des modifications non enregistrées : on demande confirmation (le navigateur ne le fait que pour la fermeture de l'onglet).
+  const blocker = useBlocker(dirty);
 
   const author = t('clinical.you');
   const locked = isLocked(draft.status);
@@ -124,14 +135,25 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
     setDirty(true);
   };
 
+  /** Enregistre le dossier ET met à jour les copies en mémoire (sinon, en revenant sur l'écran, on relirait l'ancienne version). */
+  async function persist(next: ConsultationDraft): Promise<{ isDemo: boolean; logged: ConsultationDraft }> {
+    const logged = logRevision(baseline, next, newCtx(author));
+    const result = recordExists
+      ? await recordService.update(consultation.id, { draft: JSON.stringify(logged) })
+      : await recordService.create({ id: consultation.id, draft: JSON.stringify(logged) });
+    if (!result.isDemo) {
+      setRecordExists(true);
+      queryClient.setQueryData(queryKeys.scoped(activeFacilityId, 'consultation-records', 'item', consultation.id), { item: { id: consultation.id, draft: logged }, isDemo: false });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, 'consultations') });
+    }
+    return { isDemo: result.isDemo, logged };
+  }
+
   async function saveDraft() {
     setSaving(true);
     try {
-      const logged = logRevision(baseline, draft, newCtx(author));
-      const result = hasRecord
-        ? await recordService.update(consultation.id, { draft: JSON.stringify(logged) })
-        : await recordService.create({ id: consultation.id, draft: JSON.stringify(logged) });
-      if (result.isDemo) {
+      const { isDemo: demo, logged } = await persist(draft);
+      if (demo) {
         toast({ tone: 'warning', title: t('clinical.save.demoTitle'), description: t('clinical.save.demoBody') });
       } else {
         setDraft(logged);
@@ -157,7 +179,12 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
         setDraft((d) => ({ ...d, ...patch, status: to }));
         toast({ tone: 'warning', title: t('clinical.status.previewTitle'), description: t('clinical.status.previewBody') });
       } else {
-        setDraft((d) => ({ ...d, ...patch, status: to }));
+        // Le changement d'état et la signature doivent survivre à un rechargement : on enregistre aussi le dossier (avec ce qui a été saisi).
+        const next = { ...draft, ...patch, status: to };
+        const { logged } = await persist(next);
+        setDraft(logged);
+        setBaseline(logged);
+        setDirty(false);
         toast({ tone: 'success', title: t('clinical.status.changed', { status: t(`status.${to}`) }) });
       }
     } catch {
@@ -306,6 +333,14 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={blocker.state === 'blocked'}
+        onCancel={() => blocker.reset?.()}
+        title={t('clinical.leave.title')}
+        description={t('clinical.leave.body')}
+        confirmLabel={t('clinical.leave.confirm')}
+        onConfirm={() => blocker.proceed?.()}
+      />
       <ConfirmDialog
         open={confirm !== null}
         onCancel={() => setConfirm(null)}

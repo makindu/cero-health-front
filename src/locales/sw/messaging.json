@@ -1,0 +1,37 @@
+{
+  "note": "Hali ya ndani: ujumbe unabaki kwenye kifaa hiki na unasomwa tu na majukumu ya majaribio yanayoingia hapa. Hii si faili ya matibabu: mtaje mgonjwa kwa nambari ya faili, bila maelezo ya kitabibu.",
+  "conversations": "Mazungumzo",
+  "new": "Mpya",
+  "pickContact": "Chagua mwasiliani",
+  "channel": "Kituo",
+  "unknownContact": "Mwasiliani asiyejulikana",
+  "noMessage": "Hakuna ujumbe",
+  "unread": "{{count}} haujasomwa",
+  "selectTitle": "Hakuna mazungumzo",
+  "selectBody": "Chagua mazungumzo au anza mapya.",
+  "empty": "Hakuna ujumbe bado. Andika wa kwanza.",
+  "composer": "Ujumbe wako",
+  "placeholder": "Andika ujumbe…",
+  "send": "Tuma",
+  "open": "Fungua ujumbe",
+  "minimize": "Punguza",
+  "expand": "Panua",
+  "close": "Funga ujumbe",
+  "back": "Rudi kwenye mazungumzo",
+  "dock": "Ujumbe wa ndani",
+  "title": "Ujumbe wa ndani",
+  "presence": {
+    "online": "Mtandaoni",
+    "never": "Nje ya mtandao",
+    "minutes": "Alionekana dakika {{count}} zilizopita",
+    "hours": "Alionekana saa {{count}} zilizopita",
+    "date": "Alionekana {{date}}",
+    "channel": "{{count}} mtandaoni"
+  },
+  "receipt": {
+    "sent": "Imetumwa",
+    "read": "Imesomwa",
+    "readBy": "Imesomwa na {{count}}"
+  },
+  "you": "Wewe"
+}

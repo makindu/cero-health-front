@@ -438,6 +438,11 @@
         "physicalExam": "Physical examination",
         "plan": "Management plan"
       }
+    },
+    "leave": {
+      "title": "Leave without saving?",
+      "body": "Changes to this record have not been saved. If you leave now they will be lost.",
+      "confirm": "Leave without saving"
     }
   },
   "editor": {

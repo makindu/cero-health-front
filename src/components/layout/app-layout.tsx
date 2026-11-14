@@ -13,6 +13,7 @@ import { FacilitySwitcher, NotificationCenter } from './header-widgets';
 import { Sidebar, SidebarNav } from './sidebar';
 import { ThemeSwitcher } from './theme-switcher';
 import { UserMenu } from './user-menu';
+import { ChatDock } from '@/modules/messaging/ChatDock';
 
 export function AppLayout() {
   const { t } = useTranslation();
@@ -74,6 +75,7 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <ChatDock />
     </div>
   );
 }

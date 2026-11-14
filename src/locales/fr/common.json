@@ -37,7 +37,8 @@
     "administration": "Administration",
     "audit": "Audit",
     "insurance": "Assurances et tarifs",
-    "patientFlowBoard": "Suivi des patients"
+    "patientFlowBoard": "Suivi des patients",
+    "messages": "Messagerie"
   },
   "actions": {
     "save": "Enregistrer",
@@ -477,6 +478,15 @@
     "staffAlreadySuspended": "Ce membre est déjà suspendu.",
     "staffAlreadyActive": "Ce membre est déjà actif.",
     "consultationPractitionerInvalid": "Choisissez un médecin actif dans la liste (Administration → Personnel).",
-    "consultationFeeExpired": "La validité des frais de consultation de {{name}} est expirée : une nouvelle consultation doit être facturée et encaissée (ou exemption motivée)."
+    "consultationFeeExpired": "La validité des frais de consultation de {{name}} est expirée : une nouvelle consultation doit être facturée et encaissée (ou exemption motivée).",
+    "messaging": {
+      "contactRequired": "Choisissez un contact.",
+      "selfConversation": "Vous ne pouvez pas écrire à vous-même.",
+      "notMember": "Vous ne faites pas partie de cette conversation.",
+      "bodyRequired": "Le message est vide.",
+      "bodyTooLong": "Le message est trop long ({{max}} caractères au plus).",
+      "notFound": "Conversation introuvable.",
+      "contactUnknown": "Ce contact n’existe pas."
+    }
   }
 }

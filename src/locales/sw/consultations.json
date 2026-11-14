@@ -438,6 +438,11 @@
         "physicalExam": "Uchunguzi wa mwili",
         "plan": "Mpango wa matibabu"
       }
+    },
+    "leave": {
+      "title": "Toka bila kuhifadhi?",
+      "body": "Mabadiliko ya faili hii hayajahifadhiwa. Ukitoka sasa yatapotea.",
+      "confirm": "Toka bila kuhifadhi"
     }
   },
   "editor": {

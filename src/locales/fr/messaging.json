@@ -1,0 +1,36 @@
+{
+  "note": "Mode local : les messages restent sur cet appareil et ne sont lus que par les rôles de démonstration qui s’y connectent. Ce n’est pas un dossier médical : désignez un patient par son numéro de dossier, sans détail clinique.",
+  "conversations": "Conversations",
+  "new": "Nouvelle",
+  "pickContact": "Choisir un contact",
+  "channel": "Canal",
+  "unknownContact": "Contact inconnu",
+  "noMessage": "Aucun message",
+  "unread": "{{count}} non lu(s)",
+  "selectTitle": "Aucune conversation",
+  "selectBody": "Choisissez une conversation ou démarrez-en une nouvelle.",
+  "empty": "Aucun message pour l’instant. Écrivez le premier.",
+  "composer": "Votre message",
+  "placeholder": "Écrire un message…",
+  "send": "Envoyer",
+  "open": "Ouvrir la messagerie",
+  "minimize": "Réduire",
+  "expand": "Agrandir",
+  "close": "Fermer la messagerie",
+  "back": "Retour aux conversations",
+  "dock": "Messagerie interne",
+  "title": "Messagerie interne",
+  "presence": {
+    "online": "En ligne",
+    "never": "Hors ligne",
+    "minutes": "Vu il y a {{count}} min",
+    "hours": "Vu il y a {{count}} h",
+    "date": "Vu le {{date}}",
+    "channel": "{{count}} en ligne"
+  },
+  "receipt": {
+    "sent": "Envoyé",
+    "read": "Lu",
+    "readBy": "Lu par {{count}}"
+  }
+}

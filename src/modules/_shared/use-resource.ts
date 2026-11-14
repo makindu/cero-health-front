@@ -25,12 +25,15 @@ export function useResourceItem<T extends { id: string }>(
   name: string,
   service: ResourceService<T>,
   id: string | undefined,
+  /** `fresh` : relit toujours à l'ouverture (jamais de copie en cache périmée) — pour les écrans de saisie qui partent de la donnée lue. */
+  options: { fresh?: boolean } = {},
 ) {
   const { activeFacilityId } = usePreferences();
   return useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, name, 'item', id),
     queryFn: () => service.get(id ?? ''),
     enabled: Boolean(id),
+    ...(options.fresh ? { staleTime: 0, refetchOnMount: 'always' as const } : {}),
   });
 }
 

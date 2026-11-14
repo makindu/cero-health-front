@@ -438,6 +438,11 @@
         "physicalExam": "Examen physique",
         "plan": "Conduite à tenir"
       }
+    },
+    "leave": {
+      "title": "Quitter sans enregistrer ?",
+      "body": "Des modifications de ce dossier n’ont pas été enregistrées. Si vous quittez maintenant, elles seront perdues.",
+      "confirm": "Quitter sans enregistrer"
     }
   },
   "editor": {
