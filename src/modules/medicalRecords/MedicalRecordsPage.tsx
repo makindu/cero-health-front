@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Ban, CircleCheck, Hourglass, KeyRound, Lock, Archive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
@@ -11,6 +12,8 @@ import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { recordService, type Completeness, type MedicalRecord, type RecordStatus } from './data';
 import { PersonName } from '@/components/ui/avatar';
+import { RecordContentDialog, RecordCounts } from './RecordContentDialog';
+import { actionsFor } from './record-rules';
 
 const STATUS: Record<RecordStatus, { tone: StatusTone; icon: typeof Ban }> = {
   active: { tone: 'success', icon: CircleCheck },
@@ -27,6 +30,7 @@ export default function MedicalRecordsPage() {
   const { t } = useTranslation('medicalRecords');
   const f = useFormatters();
   const [params] = useSearchParams();
+  const [viewing, setViewing] = useState<MedicalRecord | null>(null);
   const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
 
   const columns: Column<MedicalRecord>[] = [
@@ -55,6 +59,7 @@ export default function MedicalRecordsPage() {
   ];
 
   return (
+    <>
     <ResourcePage<MedicalRecord>
       name="medicalRecords"
       service={recordService}
@@ -64,6 +69,13 @@ export default function MedicalRecordsPage() {
       columns={columns}
       initialSearch={params.get('search') ?? undefined}
       defaultSort={{ columnId: 'lastUpdate', direction: 'desc' }}
+      create={{
+        permission: PERMISSIONS.medicalRecords.manage,
+        buttonLabel: t('create.button'),
+        title: t('create.title'),
+        submitLabel: t('create.submit'),
+        fields: [{ name: 'patient', label: t('create.patient'), type: 'patient', required: true, hint: t('create.hint'), span: 2 }],
+      }}
       filters={[
         { id: 'status', label: t('filters.status'), options: (Object.keys(STATUS) as RecordStatus[]).map((s) => ({ value: s, label: t(`status.${s}`) })) },
         { id: 'completeness', label: t('filters.completeness'), options: (Object.keys(COMPLETENESS) as Completeness[]).map((c) => ({ value: c, label: t(`completeness.${c}`) })) },
@@ -89,16 +101,7 @@ export default function MedicalRecordsPage() {
               ]}
             />
           </DetailSection>
-          <DetailSection title={t('detail.contents')}>
-            <DescriptionList
-              items={[
-                { label: t('detail.consultations'), value: r.counts.consultations },
-                { label: t('detail.prescriptions'), value: r.counts.prescriptions },
-                { label: t('detail.labOrders'), value: r.counts.labOrders },
-                { label: t('detail.documents'), value: r.counts.documents },
-              ]}
-            />
-          </DetailSection>
+          <RecordCounts record={r} />
           <DetailSection title={t('detail.access')}>
             <p className="text-sm text-muted-foreground">{t('detail.accessBody')}</p>
             <CommandButton
@@ -112,10 +115,19 @@ export default function MedicalRecordsPage() {
               confirmDescription={t('detail.confirmBody')}
               icon={<KeyRound className="size-4" />}
               variant="primary"
+              onDone={() => setViewing(r)}
             />
+            <div className="flex flex-wrap gap-2 pt-2">
+              {actionsFor(r.status).map((action) => (
+                <CommandButton key={action} name="medicalRecords" service={recordService} id={r.id} action={action} label={t(`manage.${action}`)} permission={PERMISSIONS.medicalRecords.manage}
+                  confirmTitle={t(`manage.${action}Title`)} confirmDescription={t(`manage.${action}Body`)} />
+              ))}
+            </div>
           </DetailSection>
         </div>
       )}
     />
+    {viewing && <RecordContentDialog record={viewing} onClose={() => setViewing(null)} />}
+    </>
   );
 }

@@ -38,6 +38,61 @@
     "accessBody": "L'ouverture du contenu clinique exige la permission dédiée et laisse une trace nominative.",
     "openContent": "Ouvrir le contenu du dossier",
     "confirmTitle": "Ouvrir ce dossier ?",
-    "confirmBody": "Votre nom, la date et le motif d'accès seront enregistrés dans le journal d'audit."
+    "confirmBody": "Votre nom et la date seront enregistrés dans le journal d'audit."
+  },
+  "content": {
+    "title": "Dossier de {{name}}",
+    "note": "Contenu relevé en direct dans les modules cliniques. Cet accès est enregistré dans le journal d’audit.",
+    "loading": "Chargement du dossier…",
+    "failed": "Le contenu du dossier n’a pas pu être chargé.",
+    "none": "Aucun élément.",
+    "denied": "Section non accessible avec vos droits.",
+    "hospitalizations": "Hospitalisations",
+    "lastDiagnosis": "Dernier diagnostic",
+    "lastAccess": "Dernier accès : {{by}}, le {{at}}",
+    "close": "Fermer",
+    "back": "Retour à la liste",
+    "open": "Voir le détail",
+    "noClinical": "Aucun contenu clinique saisi.",
+    "noResults": "Aucun résultat saisi.",
+    "visitsTitle": "Visites du séjour ({{count}})"
+  },
+  "manage": {
+    "archive": "Archiver",
+    "archiveTitle": "Archiver ce dossier ?",
+    "archiveBody": "Le dossier est clos, rien n’est supprimé. Vous pourrez le rouvrir.",
+    "lock": "Verrouiller",
+    "lockTitle": "Verrouiller ce dossier ?",
+    "lockBody": "L’accès est restreint (dossier sensible). Vous pourrez le rouvrir.",
+    "reopen": "Rouvrir",
+    "reopenTitle": "Rouvrir ce dossier ?",
+    "reopenBody": "Le dossier redevient actif."
+  },
+  "create": {
+    "button": "Ouvrir un dossier",
+    "title": "Ouvrir un dossier médical",
+    "submit": "Ouvrir le dossier",
+    "patient": "Patient",
+    "hint": "Un patient n’a qu’un seul dossier, permanent. Les dossiers s’ouvrent aussi seuls pour chaque patient actif."
+  },
+  "export": {
+    "print": "Imprimer / PDF",
+    "xlsx": "Exporter (Excel)",
+    "failed": "L’impression ou l’export a échoué.",
+    "reportTitle": "Dossier médical de {{name}}",
+    "facility": "CERO HEALTH — Dossier médical",
+    "printedBy": "Imprimé par : {{by}}",
+    "printedAt": "Le {{at}}",
+    "footer": "Document confidentiel, extrait de CERO HEALTH. Chaque impression ou export est enregistré dans le journal d’audit.",
+    "empty": "Aucun élément dans ce dossier.",
+    "sheet": "Dossier",
+    "cols": {
+      "category": "Catégorie",
+      "reference": "Référence",
+      "date": "Date",
+      "status": "Statut",
+      "title": "Intitulé",
+      "detail": "Détail"
+    }
   }
 }

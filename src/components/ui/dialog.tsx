@@ -17,6 +17,8 @@ interface DialogProps {
   description?: string;
   children?: ReactNode;
   footer?: ReactNode;
+  /** Actions (boutons-icônes) placées dans l'en-tête, avant le bouton de fermeture. */
+  headerActions?: ReactNode;
   /** « drawer » : menu mobile ; « detail » : fiche en volet droit. Par défaut : fenêtre centrée, feuille basse sur mobile. */
   variant?: DialogVariant;
   /** Affiche le bouton de fermeture dans le coin. */
@@ -44,6 +46,7 @@ export function Dialog({
   description,
   children,
   footer,
+  headerActions,
   variant = 'center',
   showClose = true,
 }: DialogProps) {
@@ -106,16 +109,15 @@ export function Dialog({
                 )}
               </div>
             </div>
-            {showClose && (
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={t('dialog.close')}
-                onClick={onClose}
-                className="-mr-2 -mt-1"
-              >
-                <X aria-hidden className="size-5" />
-              </Button>
+            {(showClose || headerActions) && (
+              <div className="-mr-2 -mt-1 flex shrink-0 items-center gap-1">
+                {headerActions}
+                {showClose && (
+                  <Button variant="ghost" size="icon" aria-label={t('dialog.close')} onClick={onClose}>
+                    <X aria-hidden className="size-5" />
+                  </Button>
+                )}
+              </div>
             )}
           </header>
         )}

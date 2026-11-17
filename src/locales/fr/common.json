@@ -520,6 +520,12 @@
       "planNeedsDiagnosis": "Pas de plan sans diagnostic : renseignez d’abord le diagnostic.",
       "treatmentInvalid": "Décision de traitement invalide.",
       "planEmpty": "Le plan doit contenir au moins une décision (traitement, examens ou sortie)."
+    },
+    "record": {
+      "wrongStatus": "Cette action n’est pas possible dans l’état actuel du dossier.",
+      "alreadyExists": "Ce patient a déjà un dossier : il n’y en a qu’un par patient.",
+      "patientInactive": "Impossible d’ouvrir un dossier pour un patient inactif ou fusionné.",
+      "formatInvalid": "Format d’export invalide."
     }
   }
 }

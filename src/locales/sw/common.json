@@ -520,6 +520,12 @@
       "planNeedsDiagnosis": "Hakuna mpango bila utambuzi: jaza utambuzi kwanza.",
       "treatmentInvalid": "Uamuzi wa matibabu si sahihi.",
       "planEmpty": "Mpango lazima uwe na uamuzi mmoja angalau (matibabu, vipimo au kuruhusiwa)."
+    },
+    "record": {
+      "wrongStatus": "Kitendo hiki hakiwezekani katika hali ya sasa ya faili.",
+      "alreadyExists": "Mgonjwa huyu tayari ana faili: kuna moja tu kwa kila mgonjwa.",
+      "patientInactive": "Haiwezekani kufungua faili kwa mgonjwa asiye hai au aliyeunganishwa.",
+      "formatInvalid": "Muundo wa uhamishaji si sahihi."
     }
   }
 }

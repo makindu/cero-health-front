@@ -24,7 +24,7 @@ export const PERMISSIONS = {
     cancel: 'health.appointments.cancel',
     checkIn: 'health.appointments.check-in',
   },
-  medicalRecords: { view: 'health.medical-records.view' },
+  medicalRecords: { view: 'health.medical-records.view', manage: 'health.medical-records.manage', export: 'health.medical-records.export' },
   consultations: {
     view: 'health.consultations.view',
     create: 'health.consultations.create',

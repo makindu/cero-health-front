@@ -520,6 +520,12 @@
       "planNeedsDiagnosis": "No plan without a diagnosis: fill in the diagnosis first.",
       "treatmentInvalid": "Invalid treatment decision.",
       "planEmpty": "The plan must contain at least one decision (treatment, tests or discharge)."
+    },
+    "record": {
+      "wrongStatus": "This action is not possible in the record’s current state.",
+      "alreadyExists": "This patient already has a record: there is only one per patient.",
+      "patientInactive": "Cannot open a record for an inactive or merged patient.",
+      "formatInvalid": "Invalid export format."
     }
   }
 }

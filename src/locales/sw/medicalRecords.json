@@ -38,6 +38,61 @@
     "accessBody": "Kufungua maudhui ya kliniki kunahitaji ruhusa maalum na kunaacha alama ya jina.",
     "openContent": "Fungua maudhui ya faili",
     "confirmTitle": "Fungua faili hii?",
-    "confirmBody": "Jina lako, tarehe na sababu ya ufikiaji vitarekodiwa kwenye kumbukumbu za ukaguzi."
+    "confirmBody": "Jina lako na tarehe vitarekodiwa kwenye kumbukumbu za ukaguzi."
+  },
+  "content": {
+    "title": "Faili ya {{name}}",
+    "note": "Maudhui yamekusanywa moja kwa moja kutoka kwenye moduli za kitabibu. Ufikiaji huu umerekodiwa kwenye kumbukumbu za ukaguzi.",
+    "loading": "Inapakia faili…",
+    "failed": "Maudhui ya faili hayakuweza kupakiwa.",
+    "none": "Hakuna vipengee.",
+    "denied": "Sehemu hii haipatikani kwa ruhusa zako.",
+    "hospitalizations": "Kulazwa hospitalini",
+    "lastDiagnosis": "Utambuzi wa mwisho",
+    "lastAccess": "Ufikiaji wa mwisho: {{by}}, {{at}}",
+    "close": "Funga",
+    "back": "Rudi kwenye orodha",
+    "open": "Tazama maelezo",
+    "noClinical": "Hakuna maudhui ya kitabibu yaliyoingizwa.",
+    "noResults": "Hakuna matokeo yaliyoingizwa.",
+    "visitsTitle": "Ziara wakati wa kulazwa ({{count}})"
+  },
+  "manage": {
+    "archive": "Hifadhi kwenye kumbukumbu",
+    "archiveTitle": "Kuhifadhi faili hii kwenye kumbukumbu?",
+    "archiveBody": "Faili inafungwa, hakuna kinachofutwa. Unaweza kuifungua tena.",
+    "lock": "Funga kwa ufunguo",
+    "lockTitle": "Kufunga faili hii kwa ufunguo?",
+    "lockBody": "Ufikiaji unazuiwa (faili nyeti). Unaweza kuifungua tena.",
+    "reopen": "Fungua tena",
+    "reopenTitle": "Kufungua faili hii tena?",
+    "reopenBody": "Faili inakuwa hai tena."
+  },
+  "create": {
+    "button": "Fungua faili",
+    "title": "Kufungua faili ya matibabu",
+    "submit": "Fungua faili",
+    "patient": "Mgonjwa",
+    "hint": "Mgonjwa ana faili moja ya kudumu. Faili pia hufunguliwa zenyewe kwa kila mgonjwa aliye hai."
+  },
+  "export": {
+    "print": "Chapisha / PDF",
+    "xlsx": "Hamisha (Excel)",
+    "failed": "Kuchapisha au kuhamisha kumeshindwa.",
+    "reportTitle": "Faili ya matibabu ya {{name}}",
+    "facility": "CERO HEALTH — Faili ya matibabu",
+    "printedBy": "Imechapishwa na: {{by}}",
+    "printedAt": "Tarehe {{at}}",
+    "footer": "Hati ya siri, dondoo kutoka CERO HEALTH. Kila uchapishaji au uhamishaji hurekodiwa kwenye kumbukumbu za ukaguzi.",
+    "empty": "Hakuna vipengee kwenye faili hii.",
+    "sheet": "Faili",
+    "cols": {
+      "category": "Kategoria",
+      "reference": "Marejeleo",
+      "date": "Tarehe",
+      "status": "Hali",
+      "title": "Kichwa",
+      "detail": "Maelezo"
+    }
   }
 }

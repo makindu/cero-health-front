@@ -38,6 +38,61 @@
     "accessBody": "Opening clinical content requires the dedicated permission and leaves a named trace.",
     "openContent": "Open record content",
     "confirmTitle": "Open this record?",
-    "confirmBody": "Your name, the date and the access reason will be recorded in the audit log."
+    "confirmBody": "Your name and the date will be recorded in the audit log."
+  },
+  "content": {
+    "title": "{{name}}’s record",
+    "note": "Content gathered live from the clinical modules. This access is recorded in the audit log.",
+    "loading": "Loading the record…",
+    "failed": "The record content could not be loaded.",
+    "none": "No items.",
+    "denied": "Section not accessible with your permissions.",
+    "hospitalizations": "Hospitalizations",
+    "lastDiagnosis": "Latest diagnosis",
+    "lastAccess": "Last access: {{by}}, {{at}}",
+    "close": "Close",
+    "back": "Back to the list",
+    "open": "View details",
+    "noClinical": "No clinical content entered.",
+    "noResults": "No results entered.",
+    "visitsTitle": "Visits during the stay ({{count}})"
+  },
+  "manage": {
+    "archive": "Archive",
+    "archiveTitle": "Archive this record?",
+    "archiveBody": "The record is closed, nothing is deleted. You can reopen it.",
+    "lock": "Lock",
+    "lockTitle": "Lock this record?",
+    "lockBody": "Access is restricted (sensitive record). You can reopen it.",
+    "reopen": "Reopen",
+    "reopenTitle": "Reopen this record?",
+    "reopenBody": "The record becomes active again."
+  },
+  "create": {
+    "button": "Open a record",
+    "title": "Open a medical record",
+    "submit": "Open the record",
+    "patient": "Patient",
+    "hint": "A patient has a single, permanent record. Records also open automatically for every active patient."
+  },
+  "export": {
+    "print": "Print / PDF",
+    "xlsx": "Export (Excel)",
+    "failed": "Printing or export failed.",
+    "reportTitle": "Medical record of {{name}}",
+    "facility": "CERO HEALTH — Medical record",
+    "printedBy": "Printed by: {{by}}",
+    "printedAt": "On {{at}}",
+    "footer": "Confidential document, extract from CERO HEALTH. Every print or export is recorded in the audit log.",
+    "empty": "No items in this record.",
+    "sheet": "Record",
+    "cols": {
+      "category": "Category",
+      "reference": "Reference",
+      "date": "Date",
+      "status": "Status",
+      "title": "Title",
+      "detail": "Details"
+    }
   }
 }
