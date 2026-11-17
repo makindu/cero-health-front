@@ -382,7 +382,8 @@
       "periodInvalid": "La période est invalide (fin avant début).",
       "quantityInvalid": "La quantité doit être un nombre positif (2 décimales au plus).",
       "rateInvalid": "Un taux doit être compris entre 0 et 100 %.",
-      "validityInvalid": "La durée de validité est invalide (1 à 120 mois)."
+      "validityInvalid": "La durée de validité est invalide (1 à 120 mois).",
+      "discountInvalid": "Réduction invalide."
     },
     "lab": {
       "testsRequired": "Choisissez au moins un examen.",
@@ -487,6 +488,38 @@
       "bodyTooLong": "Le message est trop long ({{max}} caractères au plus).",
       "notFound": "Conversation introuvable.",
       "contactUnknown": "Ce contact n’existe pas."
+    },
+    "visit": {
+      "admissionNotFound": "Admission introuvable.",
+      "notActive": "Cette admission n’est plus active.",
+      "typeInvalid": "Type de visite invalide.",
+      "quantityInvalid": "La quantité doit être un entier entre 1 et {{max}}.",
+      "tooManyLines": "Une visite ne peut pas dépasser {{max}} lignes.",
+      "lineDuplicate": "Une prestation ne peut figurer qu’une fois par visite.",
+      "itemInvalid": "Prestation introuvable, inactive ou non consommable (chambre, consultation).",
+      "consumptionNotFound": "Consommation introuvable.",
+      "reasonRequired": "Le motif est obligatoire.",
+      "reasonTooLong": "Le motif est trop long ({{max}} caractères au maximum).",
+      "alreadyBilled": "Cette consommation est déjà facturée : annulez d’abord la facture.",
+      "alreadyReversed": "Cette consommation est déjà entièrement contre-passée.",
+      "overReversal": "La quantité dépasse le reste à contre-passer ({{net}}).",
+      "nothingToBill": "Aucune consommation à facturer.",
+      "insufficientStock": "Stock insuffisant pour {{item}} (disponible : {{available}}). Rien n’a été facturé.",
+      "discountInvalid": "Réduction invalide.",
+      "discountForbidden": "Vous n’avez pas la permission d’accorder une réduction.",
+      "discountTooHigh": "La réduction ne peut pas dépasser {{max}} %.",
+      "discountReasonRequired": "Le motif de la réduction est obligatoire.",
+      "hasConsumptions": "Des consommations sont enregistrées : contre-passez-les avant d’annuler l’admission.",
+      "complaintsRequired": "Notez les plaintes ou indiquez « aucune plainte ».",
+      "textTooLong": "Le texte est trop long ({{max}} caractères au maximum).",
+      "clinicalForbidden": "L’examen, le diagnostic et le plan sont réservés au médecin.",
+      "evolutionInvalid": "Évolution de l’examen invalide.",
+      "examinationRequired": "Les observations de l’examen sont obligatoires.",
+      "diagnosisRequired": "Le diagnostic est obligatoire.",
+      "diagnosisNeedsExamination": "Pas de diagnostic sans examen : renseignez d’abord l’examen.",
+      "planNeedsDiagnosis": "Pas de plan sans diagnostic : renseignez d’abord le diagnostic.",
+      "treatmentInvalid": "Décision de traitement invalide.",
+      "planEmpty": "Le plan doit contenir au moins une décision (traitement, examens ou sortie)."
     }
   }
 }

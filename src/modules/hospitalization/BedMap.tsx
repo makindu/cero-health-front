@@ -129,7 +129,7 @@ export function BedMap() {
                     </StatusBadge>
                   ),
                 },
-                { label: t('beds.patient'), value: <PersonName name={selected.patientName} size="sm" /> },
+                { label: t('beds.patient'), value: selected.patientName ? <PersonName name={selected.patientName} size="sm" /> : null },
               ]}
             />
             <div className="flex flex-wrap gap-2 border-t border-border pt-4">

@@ -382,7 +382,8 @@
       "periodInvalid": "Kipindi si sahihi (mwisho kabla ya mwanzo).",
       "quantityInvalid": "Idadi lazima iwe nambari kamili chanya.",
       "rateInvalid": "Kiwango lazima kiwe kati ya 0 na 100%.",
-      "validityInvalid": "Muda wa uhalali si sahihi (miezi 1 hadi 120)."
+      "validityInvalid": "Muda wa uhalali si sahihi (miezi 1 hadi 120).",
+      "discountInvalid": "Punguzo si sahihi."
     },
     "lab": {
       "testsRequired": "Chagua angalau kipimo kimoja.",
@@ -487,6 +488,38 @@
       "bodyTooLong": "Ujumbe ni mrefu sana (herufi {{max}} kwa juu).",
       "notFound": "Mazungumzo hayajapatikana.",
       "contactUnknown": "Mwasiliani huyu hayupo."
+    },
+    "visit": {
+      "admissionNotFound": "Kulazwa hakupatikani.",
+      "notActive": "Kulazwa huku hakuendelei tena.",
+      "typeInvalid": "Aina ya ziara si sahihi.",
+      "quantityInvalid": "Idadi lazima iwe nambari kamili kati ya 1 na {{max}}.",
+      "tooManyLines": "Ziara haiwezi kuzidi mistari {{max}}.",
+      "lineDuplicate": "Huduma inaweza kuonekana mara moja tu kwa ziara.",
+      "itemInvalid": "Huduma haipatikani, haitumiki au haiwezi kutumiwa (chumba, mashauriano).",
+      "consumptionNotFound": "Matumizi hayapatikani.",
+      "reasonRequired": "Sababu inahitajika.",
+      "reasonTooLong": "Sababu ni ndefu mno (herufi {{max}} juu).",
+      "alreadyBilled": "Matumizi haya yametozwa tayari: futa ankara kwanza.",
+      "alreadyReversed": "Matumizi haya yamerekebishwa kikamilifu tayari.",
+      "overReversal": "Idadi inazidi iliyobaki ya kurekebisha ({{net}}).",
+      "nothingToBill": "Hakuna matumizi ya kutozwa.",
+      "insufficientStock": "Stoo haitoshi kwa {{item}} (iliyopo: {{available}}). Hakuna kilichotozwa.",
+      "discountInvalid": "Punguzo si sahihi.",
+      "discountForbidden": "Huna ruhusa ya kutoa punguzo.",
+      "discountTooHigh": "Punguzo haliwezi kuzidi {{max}} %.",
+      "discountReasonRequired": "Sababu ya punguzo inahitajika.",
+      "hasConsumptions": "Kuna matumizi yaliyorekodiwa: yarekebishe kabla ya kufuta kulazwa.",
+      "complaintsRequired": "Andika malalamiko au onyesha “hakuna malalamiko”.",
+      "textTooLong": "Maandishi ni marefu mno (herufi {{max}} kwa kiwango cha juu).",
+      "clinicalForbidden": "Uchunguzi, utambuzi na mpango ni kwa daktari pekee.",
+      "evolutionInvalid": "Mabadiliko ya uchunguzi si sahihi.",
+      "examinationRequired": "Matokeo ya uchunguzi yanahitajika.",
+      "diagnosisRequired": "Utambuzi unahitajika.",
+      "diagnosisNeedsExamination": "Hakuna utambuzi bila uchunguzi: jaza uchunguzi kwanza.",
+      "planNeedsDiagnosis": "Hakuna mpango bila utambuzi: jaza utambuzi kwanza.",
+      "treatmentInvalid": "Uamuzi wa matibabu si sahihi.",
+      "planEmpty": "Mpango lazima uwe na uamuzi mmoja angalau (matibabu, vipimo au kuruhusiwa)."
     }
   }
 }

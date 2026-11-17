@@ -32,5 +32,6 @@
     "sent": "Envoyé",
     "read": "Lu",
     "readBy": "Lu par {{count}}"
-  }
+  },
+  "you": "Vous"
 }

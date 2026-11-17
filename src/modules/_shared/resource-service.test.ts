@@ -11,6 +11,8 @@ vi.mock('@/core/config/env', async (importOriginal) => {
   const env = {
     ...original.env,
     api: mockEnv.api,
+    // Ce test vérifie les modes aperçu/API : le mode local d'un .env.local de développeur ne doit pas le fausser.
+    localMode: false,
     get previewMode() {
       return mockEnv.previewMode;
     },

@@ -139,5 +139,96 @@
     "referral": "Transfert vers un autre établissement",
     "againstAdvice": "Sortie contre avis médical",
     "deceased": "Décès"
+  },
+  "visits": {
+    "title": "Visites et consommations",
+    "loading": "Chargement des visites…",
+    "loadFailed": "Les visites n’ont pas pu être chargées.",
+    "summary": {
+      "visits": "Visites",
+      "pending": "Lignes à facturer",
+      "pendingValue": "Estimation à facturer (tarif privé)",
+      "invoices": "Factures de consommations"
+    },
+    "empty": "Aucune consommation enregistrée pour ce séjour.",
+    "newVisit": "Nouvelle visite",
+    "billNow": "Facturer maintenant",
+    "recordTitle": "Enregistrer une visite",
+    "recordBody": "Les consommations sont facturées automatiquement à la demande de sortie et à la sortie. Aucun prix n’est saisi ici : il vient du catalogue.",
+    "visitType": "Type de visite",
+    "types": {
+      "round": "Tour de salle",
+      "care": "Soins"
+    },
+    "item": "Produit ou prestation",
+    "chooseItem": "Choisir…",
+    "product": "produit (stock)",
+    "quantity": "Qté",
+    "addLine": "Ajouter une consommation",
+    "removeLine": "Retirer",
+    "emptyVisitHint": "Une tournée sans consommation est valide.",
+    "status": {
+      "pending": "À facturer",
+      "billed": "Facturé",
+      "reversed": "Contre-passé",
+      "reversal": "Contre-écriture"
+    },
+    "net": "reste {{count}}",
+    "reverse": "Contre-passer",
+    "reverseTitle": "Contre-passer cette consommation ?",
+    "reverseBody": "La ligne d’origine est conservée : une écriture inverse motivée est ajoutée. Impossible sur une consommation déjà facturée (annulez d’abord la facture).",
+    "reverseQty": "Quantité à contre-passer",
+    "reason": "Motif",
+    "billTitle": "Facturer les consommations",
+    "billBody": "Une facture est créée pour les consommations en attente ; les produits sortent du stock (premier périmé, premier sorti).",
+    "discount": "Réduction en % (maximum {{max}} %)",
+    "discountReason": "Motif de la réduction",
+    "discountTooHigh": "La réduction ne peut pas dépasser {{max}} %.",
+    "noDiscountRight": "Vous n’avez pas la permission d’accorder une réduction.",
+    "note": "Facturation automatique à la demande de sortie et à la sortie. Si elle échoue (stock insuffisant, par exemple), la sortie n’est pas bloquée : facturez ici dès que possible. Une contre-écriture ne remet pas le produit en stock.",
+    "done": {
+      "recorded": "Visite enregistrée",
+      "reversed": "Contre-écriture enregistrée",
+      "billed": "Consommations facturées"
+    },
+    "clinical": {
+      "step1": "1. Plaintes du malade",
+      "step2": "2. Examen et observations",
+      "step3": "3. Conclusion : diagnostic",
+      "step4": "4. Plan",
+      "complaints": "Plaintes du jour",
+      "notRecorded": "Non renseigné",
+      "noComplaint": "Aucune plainte aujourd’hui",
+      "hasComplaints": "Plaintes à noter",
+      "complaintsText": "Plaintes",
+      "complaintsHint": "Nouveaux symptômes ou évolution par rapport aux symptômes précédents.",
+      "noClinicalRight": "L’examen, le diagnostic et le plan sont réservés au médecin.",
+      "evolution": "Évolution par rapport à l’examen précédent",
+      "evolutions": {
+        "improved": "Amélioration",
+        "stable": "Stable",
+        "worsened": "Aggravation",
+        "newFindings": "Éléments nouveaux"
+      },
+      "examination": "Observations de l’examen",
+      "examinationHint": "Constats du médecin en rapport avec les plaintes.",
+      "diagnosis": "Diagnostic",
+      "treatment": "Traitement en cours",
+      "treatments": {
+        "continue": "Maintenir le même traitement",
+        "modify": "Modifier ou ajouter un traitement",
+        "stop": "Arrêter le traitement"
+      },
+      "planLabs": "Refaire des examens de laboratoire",
+      "planDischarge": "Envisager la sortie du patient",
+      "planNote": "Précisions sur le plan",
+      "planHint": "Le plan est une décision : après l’enregistrement, utilisez « Demander des examens » ou « Prescrire » sur la visite. La sortie se demande dans la section dédiée.",
+      "consumptions": "Consommations de la visite",
+      "historyTitle": "Dossier clinique des visites",
+      "labsRequested": "Examens demandés ({{count}}) : {{numbers}}",
+      "rxIssued": "Ordonnances ({{count}}) : {{numbers}}",
+      "orderLabs": "Demander des examens",
+      "prescribe": "Prescrire"
+    }
   }
 }

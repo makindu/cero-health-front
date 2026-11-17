@@ -5,7 +5,7 @@ import { queryKeys } from '@/core/api/query-client';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { describeBusinessError } from '../_shared/business-error';
 import { FINANCE_AVAILABLE } from '../finance/use-finance';
-import { hospital, hospitalAccount } from './hospital';
+import { hospital, hospitalAccount, visits } from './hospital';
 
 export const HOSPITAL_AVAILABLE = FINANCE_AVAILABLE;
 
@@ -20,6 +20,16 @@ export function useAdmissionAccount(admissionId: string | undefined) {
   return useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'finance', 'admission-account', admissionId),
     queryFn: () => hospitalAccount.account(admissionId ?? ''),
+    enabled: HOSPITAL_AVAILABLE && Boolean(admissionId),
+  });
+}
+
+/** Registre des visites et consommations d'une admission ; sous la portée `finance` pour suivre les factures (annulation, paiement). */
+export function useVisitLedger(admissionId: string | undefined) {
+  const { activeFacilityId } = usePreferences();
+  return useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'finance', 'visit-ledger', admissionId),
+    queryFn: () => visits.ledger(admissionId ?? ''),
     enabled: HOSPITAL_AVAILABLE && Boolean(admissionId),
   });
 }

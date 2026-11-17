@@ -382,7 +382,8 @@
       "periodInvalid": "The period is invalid (end before start).",
       "quantityInvalid": "The quantity must be a positive whole number.",
       "rateInvalid": "A rate must be between 0 and 100%.",
-      "validityInvalid": "The validity period is invalid (1 to 120 months)."
+      "validityInvalid": "The validity period is invalid (1 to 120 months).",
+      "discountInvalid": "Invalid discount."
     },
     "lab": {
       "testsRequired": "Choose at least one test.",
@@ -487,6 +488,38 @@
       "bodyTooLong": "The message is too long (max {{max}} characters).",
       "notFound": "Conversation not found.",
       "contactUnknown": "This contact does not exist."
+    },
+    "visit": {
+      "admissionNotFound": "Admission not found.",
+      "notActive": "This admission is no longer active.",
+      "typeInvalid": "Invalid visit type.",
+      "quantityInvalid": "Quantity must be a whole number between 1 and {{max}}.",
+      "tooManyLines": "A visit cannot exceed {{max}} lines.",
+      "lineDuplicate": "A service can appear only once per visit.",
+      "itemInvalid": "Service not found, inactive or not consumable (room, consultation).",
+      "consumptionNotFound": "Consumption not found.",
+      "reasonRequired": "The reason is required.",
+      "reasonTooLong": "The reason is too long ({{max}} characters maximum).",
+      "alreadyBilled": "This consumption is already billed: cancel the invoice first.",
+      "alreadyReversed": "This consumption is already fully reversed.",
+      "overReversal": "The quantity exceeds what is left to reverse ({{net}}).",
+      "nothingToBill": "No consumption to bill.",
+      "insufficientStock": "Not enough stock for {{item}} (available: {{available}}). Nothing was billed.",
+      "discountInvalid": "Invalid discount.",
+      "discountForbidden": "You do not have permission to grant a discount.",
+      "discountTooHigh": "The discount cannot exceed {{max}} %.",
+      "discountReasonRequired": "The discount reason is required.",
+      "hasConsumptions": "Consumption is recorded: reverse it before cancelling the admission.",
+      "complaintsRequired": "Enter the complaints or state “no complaint”.",
+      "textTooLong": "The text is too long (maximum {{max}} characters).",
+      "clinicalForbidden": "Examination, diagnosis and plan are reserved for the doctor.",
+      "evolutionInvalid": "Invalid examination change.",
+      "examinationRequired": "The examination findings are required.",
+      "diagnosisRequired": "The diagnosis is required.",
+      "diagnosisNeedsExamination": "No diagnosis without an examination: fill in the examination first.",
+      "planNeedsDiagnosis": "No plan without a diagnosis: fill in the diagnosis first.",
+      "treatmentInvalid": "Invalid treatment decision.",
+      "planEmpty": "The plan must contain at least one decision (treatment, tests or discharge)."
     }
   }
 }

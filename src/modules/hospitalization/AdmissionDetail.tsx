@@ -13,6 +13,7 @@ import { hospital } from './hospital';
 import { currentStay, isActive, type Admission } from './hospital-rules';
 import type { BedView } from './hospital-service';
 import { AccountSection } from './AccountSection';
+import { VisitsSection } from './VisitsSection';
 import { AdmissionStatusBadge } from './StatusBadges';
 import { useHospitalBoard, useHospitalMutation } from './use-hospital';
 import { Avatar } from '@/components/ui/avatar';
@@ -59,6 +60,7 @@ export function AdmissionDetail({ admission, onClose }: { admission: Admission |
             ))}
           </ol>
         </DetailSection>
+        {a.status !== 'cancelled' && <Can permission={P.hospitalization.visitView}><VisitsSection admissionId={a.id} /></Can>}
         {a.status !== 'cancelled' && <AccountSection admissionId={a.id} />}
         {a.discharge && (
           <DetailSection title={t('account.dischargeRecord')}>

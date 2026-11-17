@@ -139,5 +139,96 @@
     "referral": "Referral to another facility",
     "againstAdvice": "Discharge against medical advice",
     "deceased": "Death"
+  },
+  "visits": {
+    "title": "Visits and consumption",
+    "loading": "Loading visits…",
+    "loadFailed": "Visits could not be loaded.",
+    "summary": {
+      "visits": "Visits",
+      "pending": "Lines to bill",
+      "pendingValue": "Estimate to bill (private rate)",
+      "invoices": "Consumption invoices"
+    },
+    "empty": "No consumption recorded for this stay.",
+    "newVisit": "New visit",
+    "billNow": "Bill now",
+    "recordTitle": "Record a visit",
+    "recordBody": "Consumption is billed automatically when discharge is requested and at discharge. No price is entered here: it comes from the catalogue.",
+    "visitType": "Visit type",
+    "types": {
+      "round": "Ward round",
+      "care": "Care"
+    },
+    "item": "Product or service",
+    "chooseItem": "Choose…",
+    "product": "product (stock)",
+    "quantity": "Qty",
+    "addLine": "Add consumption",
+    "removeLine": "Remove",
+    "emptyVisitHint": "A round without consumption is valid.",
+    "status": {
+      "pending": "To bill",
+      "billed": "Billed",
+      "reversed": "Reversed",
+      "reversal": "Reversal"
+    },
+    "net": "{{count}} left",
+    "reverse": "Reverse",
+    "reverseTitle": "Reverse this consumption?",
+    "reverseBody": "The original line is kept: a reasoned counter-entry is added. Not possible on an already billed line (cancel the invoice first).",
+    "reverseQty": "Quantity to reverse",
+    "reason": "Reason",
+    "billTitle": "Bill consumption",
+    "billBody": "One invoice is created for the pending consumption; products leave stock (first expired, first out).",
+    "discount": "Discount in % (maximum {{max}} %)",
+    "discountReason": "Discount reason",
+    "discountTooHigh": "The discount cannot exceed {{max}} %.",
+    "noDiscountRight": "You do not have permission to grant a discount.",
+    "note": "Billing is automatic when discharge is requested and at discharge. If it fails (e.g. not enough stock), discharge is not blocked: bill here as soon as possible. A reversal does not put the product back in stock.",
+    "done": {
+      "recorded": "Visit recorded",
+      "reversed": "Counter-entry recorded",
+      "billed": "Consumption billed"
+    },
+    "clinical": {
+      "step1": "1. Patient complaints",
+      "step2": "2. Examination and findings",
+      "step3": "3. Conclusion: diagnosis",
+      "step4": "4. Plan",
+      "complaints": "Today’s complaints",
+      "notRecorded": "Not recorded",
+      "noComplaint": "No complaint today",
+      "hasComplaints": "Complaints to record",
+      "complaintsText": "Complaints",
+      "complaintsHint": "New symptoms or change compared with the previous symptoms.",
+      "noClinicalRight": "Examination, diagnosis and plan are reserved for the doctor.",
+      "evolution": "Change since the previous examination",
+      "evolutions": {
+        "improved": "Improved",
+        "stable": "Stable",
+        "worsened": "Worsened",
+        "newFindings": "New findings"
+      },
+      "examination": "Examination findings",
+      "examinationHint": "The doctor’s findings related to the complaints.",
+      "diagnosis": "Diagnosis",
+      "treatment": "Current treatment",
+      "treatments": {
+        "continue": "Keep the same treatment",
+        "modify": "Change or add a treatment",
+        "stop": "Stop the treatment"
+      },
+      "planLabs": "Repeat laboratory tests",
+      "planDischarge": "Consider discharging the patient",
+      "planNote": "Plan details",
+      "planHint": "The plan is a decision: after saving, use “Request tests” or “Prescribe” on the visit. Discharge is requested in its own section.",
+      "consumptions": "Visit consumptions",
+      "historyTitle": "Clinical record of visits",
+      "labsRequested": "Tests requested ({{count}}): {{numbers}}",
+      "rxIssued": "Prescriptions ({{count}}): {{numbers}}",
+      "orderLabs": "Request tests",
+      "prescribe": "Prescribe"
+    }
   }
 }

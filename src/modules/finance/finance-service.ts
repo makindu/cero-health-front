@@ -5,6 +5,7 @@ import {
 import { buildExemption, buildFeePayment, feeStatus, type FeePayment, type FeeStatus, type ValidityConfig, type ValidityMode, addCalendarMonths } from '@/core/billing/validity';
 import type { Unit } from '@/core/local/unit-of-work';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
+import { money } from '@/core/money/money';
 import { priceLines } from '@/core/pricing/engine';
 import { emptyUsage, type CatalogItem, type Contract, type CoverageBundle, type Organization, type PatientCoverage, type PricingContext, type PricingResult, type Subscription, type UsageDelta, type ValidationStatus } from '@/core/pricing/types';
 import { applyUsage } from '@/core/pricing/engine';
@@ -38,6 +39,11 @@ export interface PriceRequest {
   forcePrivate?: boolean;
   /** Prestation d'origine de chaque ligne (anti double facturation), même ordre que `lines`. */
   sources?: ({ module: string; ref: string } | undefined)[];
+  /**
+   * Réduction commerciale en points de base appliquée au tarif PRIVÉ unitaire (arrondi demi vers le haut). Le droit et le motif sont
+   * contrôlés par le service appelant ; une tarification négociée par un contrat reste prioritaire sur cette réduction.
+   */
+  unitDiscountBp?: number;
 }
 
 export interface PricePreview {
@@ -118,7 +124,9 @@ export function createFinanceService(deps: FinanceDeps) {
       if (!item) refuse('itemNotFound', { item: l.itemId });
       if (!item!.active) refuse('itemInactive', { item: item!.label });
       if (!(l.quantity > 0) || !Number.isInteger(l.quantity)) refuse('quantityInvalid');
-      return item as CatalogItem;
+      const bp = req.unitDiscountBp ?? 0;
+      if (!Number.isInteger(bp) || bp < 0 || bp > 10000) refuse('discountInvalid');
+      return (bp > 0 ? { ...item!, price: money(Math.floor((item!.price.minor * (10000 - bp) + 5000) / 10000), item!.price.currency) } : item) as CatalogItem;
     });
     const currency = items[0]!.price.currency;
     if (items.some((i) => i.price.currency !== currency)) refuse('currencyMismatch');

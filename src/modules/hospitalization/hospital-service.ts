@@ -1,3 +1,4 @@
+import type { Unit } from '@/core/local/unit-of-work';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
 import { BusinessRuleError } from '../_shared/business-error';
 import type { FinanceDeps } from '../finance/finance-service';
@@ -19,7 +20,15 @@ const refuse = (code: string): never => {
 
 export interface BedView { bed: Bed; room: Room; admission?: Admission }
 
-export function createHospitalService(deps: FinanceDeps) {
+/** Points d'extension (visites et consommations) : branchés dans `hospital.ts`, absents des tests du seul plan des lits. */
+export interface HospitalHooks {
+  /** Dans l'unité d'annulation : peut refuser (ex. des consommations existent). */
+  beforeCancel?: (u: Unit, admission: Admission) => Promise<void>;
+  /** Après l'enregistrement de la demande de sortie, dans une unité séparée ; ne bloque jamais la demande. */
+  afterDischargeRequest?: (admissionId: string) => Promise<unknown>;
+}
+
+export function createHospitalService(deps: FinanceDeps, hooks: HospitalHooks = {}) {
   const view = (beds: Bed[], rooms: Room[], adms: Admission[]): BedView[] =>
     beds.map((bed) => ({ bed, room: rooms.find((r) => r.id === bed.roomId)!, admission: bed.admissionId ? adms.find((a) => a.id === bed.admissionId) : undefined }))
       .sort((a, b) => a.bed.label.localeCompare(b.bed.label));
@@ -70,6 +79,7 @@ export function createHospitalService(deps: FinanceDeps) {
       deps.require(P.hospitalization.create);
       const adm = await u.get(admissionsRef, input.admissionId);
       if (!adm) return refuse('admissionNotFound');
+      await hooks.beforeCancel?.(u, adm);
       const bedId = R.currentStay(adm)?.bedId;
       const next = wrap(() => R.cancelAdmission(adm, { by: u.ctx.actor.name, now: u.now.toISOString(), reason: input.reason }));
       await u.update(admissionsRef, adm.id, () => next, { action: 'admission:cancel', reason: input.reason });
@@ -78,14 +88,19 @@ export function createHospitalService(deps: FinanceDeps) {
     }),
 
     /** Demande de sortie (le lit reste occupé). La sortie effective et le bilan financier sont traités avec le compte hospitalier. */
-    requestDischarge: (input: { admissionId: string; note: string }): Promise<Admission> => deps.run(async (u) => {
-      deps.require(P.hospitalization.discharge);
-      const adm = await u.get(admissionsRef, input.admissionId);
-      if (!adm) return refuse('admissionNotFound');
-      const next = wrap(() => R.requestDischarge(adm, { by: u.ctx.actor.name, now: u.now.toISOString(), note: input.note }));
-      await u.update(admissionsRef, adm.id, () => next, { action: 'admission:discharge-request' });
+    requestDischarge: async (input: { admissionId: string; note: string }): Promise<Admission> => {
+      const next = await deps.run(async (u) => {
+        deps.require(P.hospitalization.discharge);
+        const adm = await u.get(admissionsRef, input.admissionId);
+        if (!adm) return refuse('admissionNotFound');
+        const changed = wrap(() => R.requestDischarge(adm, { by: u.ctx.actor.name, now: u.now.toISOString(), note: input.note }));
+        await u.update(admissionsRef, adm.id, () => changed, { action: 'admission:discharge-request' });
+        return changed;
+      });
+      // Facturation automatique des consommations : dans une unité à part, la demande de sortie est déjà enregistrée quoi qu'il arrive.
+      await hooks.afterDischargeRequest?.(input.admissionId);
       return next;
-    }),
+    },
     revokeDischarge: (input: { admissionId: string }): Promise<Admission> => deps.run(async (u) => {
       deps.require(P.hospitalization.discharge);
       const adm = await u.get(admissionsRef, input.admissionId);

@@ -56,6 +56,13 @@ export const PERMISSIONS = {
     discharge: 'health.discharges.validate',
     /** Sortie malgré un solde patient dû (exception motivée, tracée). */
     dischargeException: 'health.discharges.exception',
+    /** Visites (tour de salle) et consommations du patient hospitalisé. */
+    visitView: 'health.visits.view',
+    visitRecord: 'health.visits.record',
+    /** Volet clinique de la visite : examen, diagnostic et plan (les plaintes restent saisissables par tout soignant). */
+    visitClinical: 'health.visits.clinical',
+    /** Contre-écriture d'une consommation saisie par erreur (motif obligatoire). */
+    consumptionReverse: 'health.consumptions.reverse',
   },
   billing: {
     view: 'health.billing.view',
@@ -73,6 +80,8 @@ export const PERMISSIONS = {
     settle: 'health.billing.settle',
     /** Durée de validité des frais, catalogue de tarifs. */
     configure: 'health.billing.configure',
+    /** Accorder une réduction sur la facture des consommations (motif obligatoire, plafonnée). */
+    discount: 'health.billing.discount',
   },
   insurance: {
     view: 'health.insurance.view',

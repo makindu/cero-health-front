@@ -31,7 +31,12 @@ export interface AccountView {
   patientCleared: boolean;
 }
 
-export function createAccountService(deps: FinanceDeps, finance: FinanceService) {
+export interface AccountHooks {
+  /** Avant la sortie, dans une unité séparée : facture les consommations en attente (jamais bloquant). */
+  beforeDischarge?: (admissionId: string) => Promise<unknown>;
+}
+
+export function createAccountService(deps: FinanceDeps, finance: FinanceService, hooks: AccountHooks = {}) {
   async function build(u: Parameters<Parameters<FinanceDeps['run']>[0]>[0], adm: Admission): Promise<AccountView> {
     const today = deps.day(u.now);
     const dayOf = (iso: string) => deps.day(new Date(iso));
@@ -91,8 +96,11 @@ export function createAccountService(deps: FinanceDeps, finance: FinanceService)
      * Sortie effective, atomique : jours de chambre tous facturés, solde patient nul (ou crédit autorisé, ou exception motivée
      * et permissionnée), puis séjour fermé et lit en nettoyage. Le reste dû par les organismes ne bloque pas la sortie.
      */
-    discharge: (input: { admissionId: string; outcome: DischargeOutcome; note: string; exceptionReason?: string }): Promise<AccountView> => deps.run(async (u) => {
+    discharge: async (input: { admissionId: string; outcome: DischargeOutcome; note: string; exceptionReason?: string }): Promise<AccountView> => {
       deps.require(P.hospitalization.discharge);
+      // Les consommations sont facturées AVANT la sortie, dans leur propre unité : la facture reste au compte même si la sortie est refusée (solde dû).
+      await hooks.beforeDischarge?.(input.admissionId);
+      return deps.run(async (u) => {
       const adm = await u.get(admissionsRef, input.admissionId);
       if (!adm) return refuse('admissionNotFound');
       if (!R.isActive(adm)) return refuse('notActive', {}, 'conflict');
@@ -108,7 +116,8 @@ export function createAccountService(deps: FinanceDeps, finance: FinanceService)
       await u.update(admissionsRef, adm.id, () => next, { action: 'admission:discharge', reason: account.patientCleared ? undefined : reason });
       if (bedId) await u.update(bedsRef, bedId, (b) => R.release(b), { action: 'bed:release' });
       return build(u, next);
-    }),
+      });
+    },
   };
 }
 export type AccountService = ReturnType<typeof createAccountService>;

@@ -139,5 +139,96 @@
     "referral": "Rufaa kwa kituo kingine",
     "againstAdvice": "Kuondoka kinyume na ushauri wa daktari",
     "deceased": "Kifo"
+  },
+  "visits": {
+    "title": "Ziara na matumizi",
+    "loading": "Inapakia ziara…",
+    "loadFailed": "Ziara hazikuweza kupakiwa.",
+    "summary": {
+      "visits": "Ziara",
+      "pending": "Mistari ya kutozwa",
+      "pendingValue": "Makadirio ya kutozwa (bei ya kibinafsi)",
+      "invoices": "Ankara za matumizi"
+    },
+    "empty": "Hakuna matumizi yaliyorekodiwa kwa kulazwa huku.",
+    "newVisit": "Ziara mpya",
+    "billNow": "Toza sasa",
+    "recordTitle": "Rekodi ziara",
+    "recordBody": "Matumizi hutozwa kiotomatiki ruhusa ya kutoka inapoombwa na wakati wa kutoka. Hakuna bei inayoingizwa hapa: inatoka kwenye katalogi.",
+    "visitType": "Aina ya ziara",
+    "types": {
+      "round": "Mzunguko wa wodi",
+      "care": "Huduma"
+    },
+    "item": "Bidhaa au huduma",
+    "chooseItem": "Chagua…",
+    "product": "bidhaa (stoo)",
+    "quantity": "Idadi",
+    "addLine": "Ongeza matumizi",
+    "removeLine": "Ondoa",
+    "emptyVisitHint": "Mzunguko usio na matumizi ni halali.",
+    "status": {
+      "pending": "Itatozwa",
+      "billed": "Imetozwa",
+      "reversed": "Imerekebishwa",
+      "reversal": "Marekebisho"
+    },
+    "net": "zimebaki {{count}}",
+    "reverse": "Rekebisha",
+    "reverseTitle": "Kurekebisha matumizi haya?",
+    "reverseBody": "Mstari wa awali unabaki: ingizo la kurekebisha lenye sababu linaongezwa. Haiwezekani kwa mstari uliotozwa tayari (futa ankara kwanza).",
+    "reverseQty": "Idadi ya kurekebisha",
+    "reason": "Sababu",
+    "billTitle": "Toza matumizi",
+    "billBody": "Ankara moja huundwa kwa matumizi yanayosubiri; bidhaa hutoka stoo (inayoisha kwanza hutoka kwanza).",
+    "discount": "Punguzo kwa % (juu {{max}} %)",
+    "discountReason": "Sababu ya punguzo",
+    "discountTooHigh": "Punguzo haliwezi kuzidi {{max}} %.",
+    "noDiscountRight": "Huna ruhusa ya kutoa punguzo.",
+    "note": "Kutoza ni kiotomatiki ruhusa ya kutoka inapoombwa na wakati wa kutoka. Ikishindwa (mfano stoo haitoshi), kutoka hakuzuiwi: toza hapa mapema iwezekanavyo. Marekebisho hayarudishi bidhaa stooni.",
+    "done": {
+      "recorded": "Ziara imerekodiwa",
+      "reversed": "Marekebisho yamerekodiwa",
+      "billed": "Matumizi yametozwa"
+    },
+    "clinical": {
+      "step1": "1. Malalamiko ya mgonjwa",
+      "step2": "2. Uchunguzi na matokeo",
+      "step3": "3. Hitimisho: utambuzi",
+      "step4": "4. Mpango",
+      "complaints": "Malalamiko ya leo",
+      "notRecorded": "Haijajazwa",
+      "noComplaint": "Hakuna malalamiko leo",
+      "hasComplaints": "Malalamiko ya kurekodi",
+      "complaintsText": "Malalamiko",
+      "complaintsHint": "Dalili mpya au mabadiliko ukilinganisha na dalili za awali.",
+      "noClinicalRight": "Uchunguzi, utambuzi na mpango ni kwa daktari pekee.",
+      "evolution": "Mabadiliko tangu uchunguzi uliopita",
+      "evolutions": {
+        "improved": "Ameimarika",
+        "stable": "Hali imetulia",
+        "worsened": "Hali imezidi kuwa mbaya",
+        "newFindings": "Matokeo mapya"
+      },
+      "examination": "Matokeo ya uchunguzi",
+      "examinationHint": "Matokeo ya daktari yanayohusiana na malalamiko.",
+      "diagnosis": "Utambuzi",
+      "treatment": "Matibabu yanayoendelea",
+      "treatments": {
+        "continue": "Endelea na matibabu yale yale",
+        "modify": "Badilisha au ongeza matibabu",
+        "stop": "Acha matibabu"
+      },
+      "planLabs": "Rudia vipimo vya maabara",
+      "planDischarge": "Fikiria kumruhusu mgonjwa kuondoka",
+      "planNote": "Maelezo ya mpango",
+      "planHint": "Mpango ni uamuzi: baada ya kuhifadhi, tumia “Omba vipimo” au “Andika dawa” kwenye ziara. Kuruhusiwa kuondoka huombwa katika sehemu yake.",
+      "consumptions": "Matumizi ya ziara",
+      "historyTitle": "Kumbukumbu ya kitabibu ya ziara",
+      "labsRequested": "Vipimo vilivyoombwa ({{count}}): {{numbers}}",
+      "rxIssued": "Maagizo ya dawa ({{count}}): {{numbers}}",
+      "orderLabs": "Omba vipimo",
+      "prescribe": "Andika dawa"
+    }
   }
 }
