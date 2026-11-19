@@ -29,8 +29,15 @@ export interface FeeGate {
  * Ouvre une consultation : patient actif résolu, service et motif valides, frais de consultation valides.
  * Sans frais valides, la consultation est refusée (l'exemption se fait en caisse, avec permission et motif tracés).
  */
+/** Fin de validité d'une consultation : `days` jours après son ouverture (même heure). */
+export function expiryOf(from: Date, days: number): string {
+  const d = new Date(from.getTime());
+  d.setDate(d.getDate() + days);
+  return d.toISOString();
+}
+
 export function buildConsultation(
-  input: Record<string, string>, patients: readonly Patient[], fee: FeeGate, now: Date, id: string, staff: readonly UserAccount[],
+  input: Record<string, string>, patients: readonly Patient[], fee: FeeGate, now: Date, id: string, staff: readonly UserAccount[], defaultDays = 20,
 ): Consultation {
   const patient = resolvePatient(input.patient ?? '', patients);
   const service = input.service as Consultation['service'];
@@ -39,11 +46,14 @@ export function buildConsultation(
   if (!REASONS.includes(reason)) throw new BusinessRuleError('consultationReasonInvalid');
   const doctor = findDoctor(input.practitioner ?? '', staff);
   if (!doctor) throw new BusinessRuleError('consultationPractitionerInvalid');
+  const asked = (input.durationDays ?? '').trim();
+  const durationDays = asked === '' ? defaultDays : Number(asked);
+  if (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 365) throw new BusinessRuleError('consultationDurationInvalid');
   if (fee.state === 'expired') throw new BusinessRuleError('consultationFeeExpired', { name: patient.fullName }, 'conflict');
   if (fee.state !== 'valid') throw new BusinessRuleError('consultationFeeRequired', { name: patient.fullName }, 'conflict');
   return {
     id, patientId: patient.id, patientName: patient.fullName, practitioner: doctor.name, practitionerId: doctor.id,
-    service, date: now.toISOString(), reason, status: 'draft', origin: 'walkIn',
+    service, date: now.toISOString(), reason, status: 'draft', origin: 'walkIn', durationDays, expiresAt: expiryOf(now, durationDays),
   };
 }
 

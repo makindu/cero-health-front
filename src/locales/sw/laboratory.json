@@ -132,11 +132,16 @@
     "unpaid": "Ilipwe kwa mhasibu",
     "credit": "Mkopo umeidhinishwa",
     "exception": "Ubaguzi umerekodiwa",
-    "invoiceCancelled": "Ankara imeghairiwa"
+    "invoiceCancelled": "Ankara imeghairiwa",
+    "waived": "Malipo yameahirishwa"
   },
   "flag": {
     "unspecified": "Haijabainishwa",
     "normal": "Kawaida",
     "abnormal": "Si kawaida"
+  },
+  "tabs": {
+    "orders": "Maagizo",
+    "catalog": "Orodha na bei"
   }
 }

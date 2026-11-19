@@ -155,7 +155,39 @@
     "minutes": "dakika {{count}}",
     "inConsultation": "Kwenye mashauriano",
     "finished": "Waliomaliza",
-    "empty": "Hakuna mtu kwa sasa"
+    "empty": "Hakuna mtu kwa sasa",
+    "atTriage": "Kwenye triage",
+    "fee": {
+      "header": "Ada ya mashauriano",
+      "valid": "Halali",
+      "validSoon": "Halali (siku {{count}})",
+      "expired": "Imeisha muda",
+      "none": "Inalipwa",
+      "category": "Bila malipo ya awali ({{category}})"
+    },
+    "origin": {
+      "appointment": "Na miadi",
+      "walkIn": "Bila miadi"
+    },
+    "orientation": {
+      "consultation": "Mashauriano",
+      "triage": "Triage ya muuguzi",
+      "service": "Huduma: {{service}}"
+    },
+    "stage": {
+      "waiting": "Anasubiri",
+      "inTriage": "Kwenye triage",
+      "inCare": "Anahudumiwa",
+      "inConsultation": "Kwenye mashauriano"
+    },
+    "present": {
+      "title": "Wagonjwa waliopo leo",
+      "hint": "Wagonjwa wote waliopo, na miadi au bila: wa dharura kwanza, kisha kwa saa ya kufika.",
+      "priority": "Dharura",
+      "origin": "Asili",
+      "orientation": "Mwelekeo",
+      "nurseNote": "Anafuatiliwa na muuguzi"
+    }
   },
   "edit": {
     "title": "Hariri miadi",
@@ -183,6 +215,11 @@
       "urgent": "Ya haraka",
       "standard": "Kawaida",
       "nonUrgent": "Si ya haraka"
-    }
+    },
+    "practitioner": "Mtaalamu (hiari)",
+    "practitionerHint": "Ikiwa unamjua; vinginevyo huduma itampangia.",
+    "feeNone": "{{name}} hana ada halali ya mashauriano: lazima apite kwa mhasibu kabla ya mashauriano.",
+    "feeExpired": "Ada ya mashauriano ya {{name}} imeisha muda: lazima apite kwa mhasibu kabla ya mashauriano.",
+    "feeProceed": "Sajili kuwasili hata hivyo"
   }
 }

@@ -155,7 +155,39 @@
     "minutes": "{{count}} min",
     "inConsultation": "En consultation",
     "finished": "Terminés",
-    "empty": "Personne pour le moment"
+    "empty": "Personne pour le moment",
+    "atTriage": "Au triage",
+    "fee": {
+      "header": "Frais de consultation",
+      "valid": "Valides",
+      "validSoon": "Valides ({{count}} j)",
+      "expired": "Expirés",
+      "none": "À payer",
+      "category": "Sans paiement préalable ({{category}})"
+    },
+    "origin": {
+      "appointment": "Avec rendez-vous",
+      "walkIn": "Sans rendez-vous"
+    },
+    "orientation": {
+      "consultation": "Consultation",
+      "triage": "Triage infirmier",
+      "service": "Service : {{service}}"
+    },
+    "stage": {
+      "waiting": "En attente",
+      "inTriage": "En triage",
+      "inCare": "Pris en charge",
+      "inConsultation": "En consultation"
+    },
+    "present": {
+      "title": "Patients présents aujourd'hui",
+      "hint": "Tous les patients présents, avec ou sans rendez-vous : urgents d'abord, puis par heure d'arrivée.",
+      "priority": "Urgence",
+      "origin": "Origine",
+      "orientation": "Orientation",
+      "nurseNote": "Suivi par l'infirmier"
+    }
   },
   "edit": {
     "title": "Modifier le rendez-vous",
@@ -183,6 +215,11 @@
       "urgent": "Urgente",
       "standard": "Standard",
       "nonUrgent": "Non urgente"
-    }
+    },
+    "practitioner": "Praticien (facultatif)",
+    "practitionerHint": "Si vous le connaissez ; sinon le service attribuera le praticien.",
+    "feeNone": "{{name}} n'a aucun frais de consultation valide : il doit passer à la caisse avant la consultation.",
+    "feeExpired": "Les frais de consultation de {{name}} ont expiré : il doit passer à la caisse avant la consultation.",
+    "feeProceed": "Enregistrer quand même l'arrivée"
   }
 }

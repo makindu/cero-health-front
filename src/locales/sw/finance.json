@@ -257,7 +257,8 @@
       "contracts": "Mikataba",
       "subscriptions": "Usajili",
       "catalog": "Orodha ya huduma",
-      "validity": "Muda wa ada"
+      "validity": "Muda wa ada",
+      "statement": "Hali ya shirika"
     },
     "kpi": {
       "insured": "Wenye bima hai",
@@ -386,6 +387,32 @@
       "edit": "Hariri huduma",
       "codeHint": "Msimbo haubadiliki: mikataba huutaja.",
       "hint": "Bei ya kibinafsi ndiyo rejea. Bei zilizojadiliwa huwekwa kwenye mikataba. Mabadiliko hayaathiri ankara zilizopo."
+    },
+    "statement": {
+      "title": "Hali — {{name}}",
+      "organization": "Shirika",
+      "from": "Kuanzia",
+      "to": "Hadi",
+      "period": "Kipindi",
+      "allTime": "Tarehe zote",
+      "export": "Taarifa",
+      "filename": "hali-ya-shirika",
+      "invoices": "Ankara",
+      "due": "Kiasi kinachodaiwa",
+      "settled": "Kilicholipwa",
+      "disputed": "Kilikataliwa / mzozo",
+      "outstanding": "Kinachobaki",
+      "patients": "Wagonjwa waliofunikwa",
+      "patientsValue": "{{active}} hai / {{total}}",
+      "total": "Jumla",
+      "contracts": "Mikataba",
+      "noContracts": "Hakuna mkataba kwa shirika hili.",
+      "invoicesTitle": "Ankara husika",
+      "entriesTitle": "Malipo na kukataliwa",
+      "empty": "Hakuna ankara kwa shirika hili kwa kipindi hiki.",
+      "noEntries": "Hakuna malipo wala kukataliwa.",
+      "kind": "Operesheni",
+      "amount": "Kiasi"
     }
   },
   "validity": {
@@ -415,5 +442,145 @@
     "voided": "Imebatilishwa",
     "exempt": "Msamehe mgonjwa",
     "exemptHint": "Kwa watu walioidhinishwa pekee. Sababu na mhusika huhifadhiwa."
+  },
+  "catalogManager": {
+    "price": "Bei",
+    "priceWithCurrency": "Bei ({{currency}})",
+    "codeHint": "Hupendekezwa kiotomatiki; herufi, tarakimu na vistari.",
+    "pharmacy": {
+      "title": "Dawa",
+      "add": "Ongeza dawa",
+      "edit": "Hariri dawa",
+      "label": "Jina la dawa",
+      "empty": "Hakuna dawa kwenye orodha.",
+      "hint": "Dawa zinazopatikana kwa maagizo na utoaji, pamoja na bei yake."
+    },
+    "laboratory": {
+      "title": "Vipimo",
+      "add": "Ongeza kipimo",
+      "edit": "Hariri kipimo",
+      "label": "Jina la kipimo",
+      "empty": "Hakuna kipimo kwenye orodha.",
+      "hint": "Vipimo vya maabara vinavyopatikana kwa kuagizwa, pamoja na bei yake."
+    },
+    "problem": {
+      "codeInvalid": "Msimbo si sahihi: herufi, tarakimu au vistari 2 hadi 20.",
+      "codeTaken": "Msimbo huu tayari upo.",
+      "labelLength": "Jina lazima liwe na herufi 2 hadi 120.",
+      "labelTaken": "Jina hili tayari lipo.",
+      "priceInvalid": "Weka bei kubwa kuliko 0 (desimali 2 kwa juu)."
+    },
+    "search": "Tafuta kwa jina au msimbo",
+    "packaging": {
+      "column": "Ufungashaji",
+      "title": "Ufungashaji na vipimo vya mauzo",
+      "hint": "Kipimo kikuu = unachopokea na kuuza kizima (boksi, chupa). Kipimo cha msingi = kipimo kidogo zaidi unachohesabu kwenye akiba (kidonge, ml). Akiba hutunzwa kwa kipimo cha msingi, hivyo unaweza kutoza boksi 1, vidonge 3, sacheti 1…",
+      "perPack": "Kilichomo kwenye kipimo kimoja kikuu",
+      "perPackHint": "Idadi ya vipimo vya msingi kwenye kipimo kimoja kikuu (mf. vidonge 100 kwenye boksi 1). Acha 1 kama bidhaa inauzwa kipande kimoja.",
+      "unit": "Kipimo kikuu (mf. boksi)",
+      "unitExample": "boksi",
+      "baseUnit": "Kipimo cha msingi (mf. kidonge)",
+      "baseExample": "kidonge",
+      "extras": "Vipimo vingine vya mauzo (sacheti, kadi, kidonge…)",
+      "extraLabel": "Jina",
+      "extraContent": "Kilichomo ({{unit}})",
+      "extraPrice": "Bei ({{currency}})",
+      "remove": "Ondoa",
+      "addExtra": "Ongeza kipimo cha mauzo",
+      "derived": "Kipimo “{{unit}}” = {{perUnit}} ya {{product}}",
+      "editViaProduct": "Hariri kupitia bidhaa kuu"
+    }
+  },
+  "group": {
+    "title": "Malipo ya pamoja ya ankara",
+    "submit": "Pokea malipo",
+    "open": "Lipa ankara zote zisizolipwa",
+    "summary": "Ankara {{count}} hazijalipwa — jumla inayodaiwa: {{amount}}",
+    "description": "Ankara {{count}} hazijalipwa, jumla {{amount}}. Kiasi hugawanywa kwa kila ankara, ya zamani kwanza.",
+    "amountHint": "Malipo ya sehemu yanaruhusiwa: hulipa ankara za zamani kwanza.",
+    "allocation": "Mgawanyo kwa kila ankara",
+    "done": "Malipo ya pamoja yamerekodiwa"
+  },
+  "orgPay": {
+    "open": "Lipa ankara kadhaa",
+    "title": "Malipo ya pamoja — {{name}}",
+    "description": "Wanachama {{members}}, ankara {{invoices}} zilizo wazi. Kilichobaki kukusanywa: {{amount}}. Kila ankara ina rekodi yake ya malipo: unaweza kulipa kidogo, kuacha wanachama sifuri au kulipa kwa awamu.",
+    "submit": "Hifadhi malipo",
+    "search": "Tafuta mwanachama au ankara",
+    "empty": "Hakuna ankara inayosubiri malipo kwa shirika hili.",
+    "noMatch": "Hakuna mwanachama anayelingana na utafutaji.",
+    "lump": {
+      "label": "Kiasi kilichopokelewa kutoka shirika",
+      "hint": "Weka jumla iliyopokelewa, chagua jinsi ya kuigawanya, kisha rekebisha kila mstari.",
+      "strategy": "Ugawaji",
+      "oldest": "Ankara za zamani kwanza",
+      "member": "Mwanachama kwa mwanachama (kialfabeti)",
+      "proportional": "Sawia na deni la kila mwanachama",
+      "apply": "Gawanya",
+      "tooBig": "Kiasi hiki kinazidi jumla ya deni la wanachama walioonyeshwa ({{due}})."
+    },
+    "payAll": "Maliza yote",
+    "clear": "Futa yote",
+    "payMember": "Maliza",
+    "columns": {
+      "member": "Mwanachama",
+      "invoices": "Ankara",
+      "due": "Jumla ya deni",
+      "pay": "Kiasi cha kulipa",
+      "rest": "Salio"
+    },
+    "invoiceCount": "Ankara {{count}}",
+    "expand": "Onyesha ankara za {{name}}",
+    "collapse": "Ficha ankara za {{name}}",
+    "amountFor": "Kiasi cha kulipa kwa {{name}}",
+    "amountError": "Kiasi si sahihi au kinazidi deni ({{due}}).",
+    "summary": "Za kuhifadhi: {{amount}} kwa wanachama {{members}} na ankara {{invoices}}. Deni litakalobaki: {{rest}}.",
+    "done": "Malipo ya pamoja yamehifadhiwa"
+  },
+  "catalogImport": {
+    "open": "Ingiza kutoka Excel",
+    "title": "Ingiza vipimo na bei zake",
+    "help": "Ongeza vipimo vipya na usasishe bei, majina na hali ya vilivyopo. Kila kitu hukaguliwa na kuonyeshwa kabla ya kuhifadhi: kosa moja huzuia uingizaji.",
+    "file": "Faili la Excel (.xlsx)",
+    "template": "Pakua kiolezo",
+    "templateFile": "kiolezo-vipimo",
+    "templateSheet": "Vipimo",
+    "columns": "Safu: Msimbo (hiari — huundwa ikikosekana), Kipimo, Bei (lazima kwa kipimo kipya) na Hai (ndiyo/hapana, hiari). Mstari wenye msimbo au jina lililopo husasisha kipimo hicho.",
+    "summary": "{{file}}: {{created}} vya kuunda, {{updated}} vya kusasisha, {{unchanged}} bila mabadiliko, makosa {{errors}}.",
+    "errorsTitle": "Makosa ya kurekebisha kwenye faili",
+    "moreErrors": "… na makosa {{count}} mengine.",
+    "moreRows": "… na mistari {{count}} mingine haionyeshwi.",
+    "preview": "Hakikisho",
+    "fixFirst": "Rekebisha faili kisha liipakie tena: hakuna kinachohifadhiwa kukiwa na kosa.",
+    "submit": "Ingiza ({{count}})",
+    "done": "Orodha ya vipimo imesasishwa",
+    "action": {
+      "create": "Mpya",
+      "update": "Sasisha",
+      "unchanged": "Haijabadilika"
+    },
+    "read": {
+      "notXlsx": "Faili hili si Excel (.xlsx) inayosomeka.",
+      "unsupported": "Kivinjari hiki hakiwezi kusoma faili hili lililobanwa. Lihifadhi tena kama .xlsx ya kawaida au tumia kivinjari kipya.",
+      "empty": "Faili halina data.",
+      "tooLarge": "Faili ni kubwa mno."
+    },
+    "fatal": {
+      "missingColumns": "Safu hazipatikani: angalau “Kipimo” (au “Msimbo”) na “Bei” zinahitajika. Tumia kiolezo.",
+      "empty": "Faili halina mstari wa kuingiza.",
+      "tooMany": "Mistari mingi mno: {{max}} kwa kila uingizaji."
+    },
+    "problem": {
+      "itemMissing": "Mstari {{row}}: jina halipo.",
+      "codeInvalid": "Mstari {{row}}: msimbo “{{value}}” si sahihi (herufi kubwa, tarakimu au vistari 2–20).",
+      "codeTaken": "Mstari {{row}}: msimbo “{{value}}” ni wa bidhaa ya kundi jingine.",
+      "codeMismatch": "Mstari {{row}}: jina hili lipo tayari kwa msimbo tofauti na “{{value}}”.",
+      "labelLength": "Mstari {{row}}: jina lazima liwe na herufi 2 hadi 120.",
+      "labelTaken": "Mstari {{row}}: “{{value}}” linatumiwa na kipimo kingine.",
+      "priceRequired": "Mstari {{row}}: bei inahitajika kwa kipimo kipya (“{{value}}”).",
+      "priceInvalid": "Mstari {{row}}: bei “{{value}}” si sahihi (nambari chanya, desimali 2 kwa juu).",
+      "activeInvalid": "Mstari {{row}}: hali “{{value}}” haieleweki (ndiyo / hapana).",
+      "duplicateInFile": "Mstari {{row}}: “{{value}}” tayari limeonekana juu kwenye faili."
+    }
   }
 }

@@ -6,7 +6,8 @@
   "tabs": {
     "queue": "À dispenser",
     "stock": "Stock pharmacie",
-    "dispensations": "Dispensations"
+    "dispensations": "Dispensations",
+    "catalog": "Catalogue et prix"
   },
   "filters": {
     "level": "Niveau"
@@ -38,7 +39,68 @@
     "adjustTitle": "Ajuster un lot",
     "adjustBody": "Correction d’inventaire : motif obligatoire, mouvement tracé, jamais de stock négatif.",
     "delta": "Variation",
-    "deltaHint": "Négatif pour retirer"
+    "deltaHint": "Négatif pour retirer · Variation exprimée en unité de base (ex. comprimés) pour un produit conditionné",
+    "exportMenu": "Exporter la fiche",
+    "sheet": {
+      "title": "Fiche de stock — Pharmacie",
+      "filename": "fiche-stock-pharmacie",
+      "code": "Code",
+      "status": "Statut",
+      "ok": "Valide",
+      "out": "Rupture"
+    },
+    "import": {
+      "button": "Importer (Excel)",
+      "title": "Importer des lots depuis Excel",
+      "help": "Chaque ligne du fichier est la réception d'un lot. Un produit absent du catalogue est ajouté automatiquement (avec son prix) puis approvisionné. Tout est vérifié avant l'écriture : si une ligne est en erreur, rien n'est importé.",
+      "file": "Fichier Excel (.xlsx)",
+      "template": "Télécharger le modèle",
+      "templateFile": "modele-import-lots",
+      "templateSheet": "Lots",
+      "columns": "Colonnes : Code (facultatif) et/ou Produit, Prix (obligatoire pour un nouveau produit, ignoré pour un produit existant), N° de lot, Péremption (facultative), Quantité (entier positif). La première feuille est lue ; la première ligne contient les en-têtes.",
+      "summary": "{{file}} : {{ok}} ligne(s) valide(s), {{errors}} erreur(s), {{created}} produit(s) à créer au catalogue.",
+      "errorsTitle": "Corrigez le fichier puis choisissez-le à nouveau :",
+      "moreErrors": "… et {{count}} autre(s) erreur(s).",
+      "fixFirst": "Aucun lot n'est importé tant que le fichier contient des erreurs.",
+      "preview": "Aperçu des lots à importer",
+      "submit": "Importer {{count}} lot(s)",
+      "done": "Lots importés et catalogue mis à jour",
+      "fatal": {
+        "missingColumns": "Colonnes introuvables : il faut au moins Code (ou Produit), N° de lot et Quantité.",
+        "empty": "Le fichier ne contient aucune ligne à importer.",
+        "tooMany": "Le fichier contient trop de lignes (maximum {{max}})."
+      },
+      "read": {
+        "notXlsx": "Ce fichier n'est pas un classeur Excel (.xlsx) lisible.",
+        "unsupported": "Ce navigateur ne peut pas lire ce classeur compressé. Enregistrez-le à nouveau au format .xlsx standard ou utilisez un navigateur récent.",
+        "empty": "Le classeur est vide.",
+        "tooLarge": "Le fichier est trop volumineux."
+      },
+      "problem": {
+        "itemUnknown": "Ligne {{row}} : produit inconnu dans le catalogue pharmacie (« {{value}} »).",
+        "lotRequired": "Ligne {{row}} : le numéro de lot est obligatoire.",
+        "quantityInvalid": "Ligne {{row}} : quantité invalide (« {{value}} ») — entier positif attendu.",
+        "dateInvalid": "Ligne {{row}} : date de péremption illisible (« {{value}} »).",
+        "alreadyExpired": "Ligne {{row}} : le lot est déjà périmé ({{value}}).",
+        "duplicateInFile": "Ligne {{row}} : le lot « {{value}} » apparaît deux fois pour ce produit dans le fichier.",
+        "lotExists": "Ligne {{row}} : le lot « {{value}} » existe déjà pour ce produit.",
+        "codeMismatch": "Ligne {{row}} : le code « {{value}} » ne correspond pas à ce produit déjà présent au catalogue.",
+        "codeInvalid": "Ligne {{row}} : code invalide ou déjà utilisé dans le fichier (« {{value}} ») — 2 à 20 lettres, chiffres ou tirets.",
+        "labelLength": "Ligne {{row}} : la désignation doit contenir de 2 à 120 caractères (« {{value}} »).",
+        "priceRequired": "Ligne {{row}} : « {{value}} » n'est pas au catalogue : indiquez son prix pour l'ajouter.",
+        "priceInvalid": "Ligne {{row}} : prix invalide (« {{value}} ») — nombre supérieur à 0, 2 décimales au plus."
+      },
+      "price": "Prix",
+      "newBadge": "Nouveau — {{price}}"
+    },
+    "search": "Rechercher un produit, un code ou un n° de lot",
+    "filter": {
+      "label": "Filtre",
+      "all": "Tous les produits",
+      "out": "En rupture",
+      "expired": "Avec lot périmé"
+    },
+    "quantityIn": "Quantité en {{unit}}"
   },
   "columns": {
     "prescription": "Prescription",
@@ -59,7 +121,8 @@
     "unpaid": "À payer en caisse",
     "credit": "Crédit autorisé",
     "exception": "Exception tracée",
-    "invoiceCancelled": "Facture annulée"
+    "invoiceCancelled": "Facture annulée",
+    "waived": "Paiement différé"
   },
   "dispensationStatus": {
     "prepared": "Préparée",

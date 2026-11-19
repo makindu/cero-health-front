@@ -15,6 +15,7 @@ import type { DispensationView, QueueRow } from './pharmacy-service';
 import { PrepareDialog } from './PrepareDialog';
 import { DispensationStatusBadge } from './StatusBadges';
 import { StockTab } from './StockTab';
+import { CatalogManager } from '../catalog/CatalogManager';
 import { PHARMACY_AVAILABLE, useDispensations, usePharmacyQueue, usePharmacyStock } from './use-pharmacy';
 import { PersonName } from '@/components/ui/avatar';
 
@@ -61,6 +62,7 @@ function PharmacyScreen() {
           <Card><DataTable caption={t('tabs.dispensations')} columns={dispColumns} rows={disp.data ?? []} getRowId={(v) => v.dispensation.id} loading={disp.isPending} error={disp.error} onRetry={() => void disp.refetch()} emptyTitle={t('dispensation.empty')} /></Card>
         ) },
         { id: 'stock', label: t('tabs.stock'), content: <StockTab /> },
+        { id: 'catalog', label: t('tabs.catalog'), content: <CatalogManager category="pharmacy" /> },
       ]} />
       {row && stock.data && <PrepareDialog row={row} items={stock.data.items} onClose={() => setPreparing(null)} onDone={(v) => { setPreparing(null); setOpenId(v.dispensation.id); }} />}
       {openId && <DispensationDetail view={disp.data?.find((v) => v.dispensation.id === openId)} onClose={() => setOpenId(null)} />}

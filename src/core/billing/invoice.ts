@@ -83,6 +83,8 @@ export interface LedgerEntry {
   reason?: string;
   reversalOf?: string;
   organizationId?: string;
+  /** Règlement groupé : même identifiant sur toutes les écritures d'un paiement réparti entre plusieurs factures. */
+  groupId?: string;
   /** Rejet : la somme est reportée sur le patient (sinon elle reste un litige à suivre). */
   transferToPatient?: boolean;
 }

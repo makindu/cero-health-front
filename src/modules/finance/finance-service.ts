@@ -2,6 +2,8 @@ import {
   authorizeCredit, balances, buildInvoice, buildPayment, buildRefund, buildRejection, buildReversal, buildSettlement, BillingError,
   cancelInvoice, deriveStatus, nextInvoiceNumber, toInvoiceLine, type Balances, type Invoice, type InvoiceStatus, type LedgerEntry, type PaymentMethod,
 } from '@/core/billing/invoice';
+import { allocateGroupPayment, unpaidDues, type GroupShare } from '@/core/billing/group-payment';
+import { organizationDues, validateAllocations, type Allocation } from '@/core/billing/org-settlement';
 import { buildExemption, buildFeePayment, feeStatus, type FeePayment, type FeeStatus, type ValidityConfig, type ValidityMode, addCalendarMonths } from '@/core/billing/validity';
 import type { Unit } from '@/core/local/unit-of-work';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
@@ -9,6 +11,7 @@ import { money } from '@/core/money/money';
 import { priceLines } from '@/core/pricing/engine';
 import { emptyUsage, type CatalogItem, type Contract, type CoverageBundle, type Organization, type PatientCoverage, type PricingContext, type PricingResult, type Subscription, type UsageDelta, type ValidationStatus } from '@/core/pricing/types';
 import { applyUsage } from '@/core/pricing/engine';
+import { labelKey } from '../catalog/catalog-rules';
 import { BusinessRuleError } from '../_shared/business-error';
 import {
   authorizationsRef, catalogRef, contractsRef, coveragesRef, feeConfigRef, feePaymentsRef, invoicesRef, ledgerRef, organizationsRef, subscriptionsRef,
@@ -253,6 +256,41 @@ export function createFinanceService(deps: FinanceDeps) {
       return view(invoice, next);
     }),
 
+    /** Dettes patient de toutes ses factures impayées, vues comme UN solde (ordre : la plus ancienne d'abord). */
+    unpaidSummary: (patientId: string) => deps.run(async (u) => {
+      const [all, ledger] = await Promise.all([u.list(invoicesRef), u.list(ledgerRef)]);
+      const mine = all.filter((i) => i.patientId === patientId);
+      const dues = unpaidDues(mine, ledger);
+      return { dues, total: dues.reduce((sum, d) => sum + d.due, 0), currency: mine[0]?.currency ?? '' };
+    }),
+
+    /**
+     * Règlement groupé : un seul montant, réparti entre les factures impayées du patient. Chaque facture reçoit SA propre écriture
+     * de paiement (reçu, solde, statut et droits de consultation se calculent facture par facture) ; les écritures partagent `groupId`.
+     */
+    recordGroupPayment: (input: { patientId: string; amount: number; method: PaymentMethod; reference?: string; submissionId: string }): Promise<{ groupId: string; shares: GroupShare[]; views: InvoiceView[] }> => deps.run(async (u) => {
+      deps.require(P.billing.pay);
+      const groupId = `grp-${input.submissionId}`;
+      const [invoices, all] = await Promise.all([u.list(invoicesRef), u.list(ledgerRef)]);
+      if (all.some((e) => e.groupId === groupId)) throw new BusinessRuleError('billing.duplicatePayment', {}, 'conflict');
+      const mine = invoices.filter((i) => i.patientId === input.patientId);
+      const shares = wrap(() => allocateGroupPayment(unpaidDues(mine, all), input.amount));
+      let ledger = all;
+      const views: InvoiceView[] = [];
+      let n = 0;
+      for (const share of shares) {
+        const invoice = mine.find((i) => i.id === share.invoiceId)!;
+        const current = ledger;
+        const entry = { ...wrap(() => buildPayment({ id: `pay-${input.submissionId}-${n}`, invoice, ledger: current, amount: share.amount, method: input.method, reference: input.reference, cashier: u.ctx.actor.name, now: u.now.toISOString() })), groupId };
+        n += 1;
+        await u.insert(ledgerRef, entry, { action: 'payment:record' });
+        ledger = [...ledger, entry];
+        await syncFee(u, invoice, ledger.filter((e) => e.invoiceId === invoice.id));
+        views.push(view(invoice, ledger));
+      }
+      return { groupId, shares, views };
+    }),
+
     reversePayment: (input: { entryId: string; reason: string; submissionId: string }): Promise<InvoiceView> => deps.run(async (u) => {
       deps.require(P.billing.reverse);
       const original = await u.get(ledgerRef, input.entryId);
@@ -294,6 +332,33 @@ export function createFinanceService(deps: FinanceDeps) {
       const entry = wrap(() => buildSettlement({ id: `set-${input.submissionId}`, invoice, ledger, organizationId: input.organizationId, amount: input.amount, method: input.method, reference: input.reference, cashier: u.ctx.actor.name, now: u.now.toISOString() }));
       await u.insert(ledgerRef, entry, { action: 'settlement:record' });
       return view(invoice, [...ledger, entry]);
+    }),
+
+    /**
+     * Règlement en lot d'un organisme : une seule opération pour plusieurs membres / factures. Chaque facture reçoit SA propre écriture de
+     * règlement (reçu, solde et statut calculés facture par facture), toutes liées par `groupId`. Tout ou rien : un seul refus annule le lot.
+     */
+    settleOrganizationBatch: (input: { organizationId: string; allocations: Allocation[]; method: PaymentMethod; reference?: string; submissionId: string }): Promise<{ groupId: string; count: number; total: number; views: InvoiceView[] }> => deps.run(async (u) => {
+      deps.require(P.billing.settle);
+      const groupId = `ogrp-${input.submissionId}`;
+      const [invoices, all] = await Promise.all([u.list(invoicesRef), u.list(ledgerRef)]);
+      if (all.some((e) => e.groupId === groupId)) throw new BusinessRuleError('billing.duplicatePayment', {}, 'conflict');
+      const dues = organizationDues(invoices.map((invoice) => ({ invoice, ledger: all.filter((e) => e.invoiceId === invoice.id) })), input.organizationId);
+      const picked = wrap(() => validateAllocations(dues, input.allocations));
+      const chosen = picked.map((p) => ({ ...p, invoice: invoices.find((i) => i.id === p.invoiceId)! }));
+      if (new Set(chosen.map((c) => c.invoice.currency)).size > 1) refuse('currencyMismatch');
+      let ledger = all;
+      const views: InvoiceView[] = [];
+      let n = 0;
+      for (const c of chosen) {
+        const current = ledger.filter((e) => e.invoiceId === c.invoice.id);
+        const entry = { ...wrap(() => buildSettlement({ id: `set-${input.submissionId}-${n}`, invoice: c.invoice, ledger: current, organizationId: input.organizationId, amount: c.amount, method: input.method, reference: input.reference, cashier: u.ctx.actor.name, now: u.now.toISOString() })), groupId };
+        n += 1;
+        await u.insert(ledgerRef, entry, { action: 'settlement:record' });
+        ledger = [...ledger, entry];
+        views.push(view(c.invoice, ledger));
+      }
+      return { groupId, count: chosen.length, total: chosen.reduce((s, c) => s + c.amount, 0), views };
     }),
 
     rejectOrganization: (input: { invoiceId: string; organizationId: string; amount: number; reason: string; transferToPatient: boolean; submissionId: string }): Promise<InvoiceView> => deps.run(async (u) => {
@@ -367,9 +432,48 @@ export function createFinanceService(deps: FinanceDeps) {
     }),
     saveSubscription: (row: Subscription): Promise<Subscription> => deps.run(async (u) => { deps.require(P.insurance.manage); return u.put(subscriptionsRef, row, { action: 'subscription:save' }); }),
     saveCatalogItem: (row: CatalogItem): Promise<CatalogItem> => deps.run(async (u) => {
-      deps.require(P.billing.configure);
+      // Médicaments et examens : droit propre au service concerné ; le reste du catalogue : configuration de la facturation.
+      deps.require(row.category === 'pharmacy' ? P.pharmacy.catalog : row.category === 'laboratory' ? P.laboratory.catalog : P.billing.configure);
       if (!(row.price.minor >= 0)) refuse('amountInvalid');
-      return u.put(catalogRef, row, { action: 'catalog:save' });
+      const label = row.label.trim().replace(/\s+/g, ' ');
+      if (label.length < 2 || label.length > 120) refuse('catalogLabelLength');
+      if (!/^[A-Z0-9-]{2,20}$/.test(row.code)) refuse('catalogCodeInvalid');
+      const others = (await u.list(catalogRef)).filter((i) => i.id !== row.id);
+      if (others.some((i) => i.code.toUpperCase() === row.code.toUpperCase())) refuse('catalogCodeTaken', { code: row.code }, 'conflict');
+      if (others.some((i) => i.category === row.category && labelKey(i.label) === labelKey(label))) refuse('catalogLabelTaken', { label }, 'conflict');
+      return u.put(catalogRef, { ...row, label }, { action: 'catalog:save' });
+    }),
+
+    /**
+     * Importation en lot du catalogue et des prix des EXAMENS de laboratoire (création et mise à jour). Mêmes contrôles que la saisie manuelle,
+     * appliqués ligne par ligne ; tout ou rien : un seul refus annule l'ensemble. Les lignes sont des unités mineures de la devise du catalogue.
+     */
+    importLabCatalog: (input: { items: { id?: string; code: string; label: string; price: number; active: boolean }[] }): Promise<{ created: number; updated: number }> => deps.run(async (u) => {
+      deps.require(P.laboratory.catalog);
+      if (input.items.length === 0 || input.items.length > 500) refuse('catalogImportSize');
+      const rows = [...(await u.list(catalogRef))];
+      const currency = rows[0]?.price.currency ?? 'USD';
+      let created = 0;
+      let updated = 0;
+      for (const it of input.items) {
+        if (!(Number.isSafeInteger(it.price) && it.price > 0)) refuse('amountInvalid');
+        const label = it.label.trim().replace(/\s+/g, ' ');
+        const code = it.code.trim().toUpperCase();
+        if (label.length < 2 || label.length > 120) refuse('catalogLabelLength');
+        if (!/^[A-Z0-9-]{2,20}$/.test(code)) refuse('catalogCodeInvalid');
+        const current = it.id ? rows.find((r) => r.id === it.id) : undefined;
+        if (it.id && (!current || current.category !== 'laboratory')) refuse('itemNotFound', { item: it.id });
+        const others = rows.filter((r) => r.id !== current?.id);
+        if (others.some((r) => r.code.toUpperCase() === code)) refuse('catalogCodeTaken', { code }, 'conflict');
+        if (others.some((r) => r.category === 'laboratory' && labelKey(r.label) === labelKey(label))) refuse('catalogLabelTaken', { label }, 'conflict');
+        if (current && current.code.toUpperCase() !== code) refuse('catalogCodeInvalid');
+        const next: CatalogItem = current
+          ? { ...current, label, price: money(it.price, current.price.currency), active: it.active }
+          : { id: deps.newId('cat'), code, label, category: 'laboratory', price: money(it.price, currency), active: it.active };
+        await u.put(catalogRef, next, { action: current ? 'catalog:import:update' : 'catalog:import:create' });
+        if (current) { updated += 1; rows[rows.indexOf(current)] = next; } else { created += 1; rows.push(next); }
+      }
+      return { created, updated };
     }),
 
     /** Tout ce dont les écrans ont besoin, en une seule lecture cohérente. */

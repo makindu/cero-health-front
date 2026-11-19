@@ -81,7 +81,7 @@ export function nextNumber(existing: readonly { number: string }[], year: number
 export function checkAdmit(input: { reason: string; attending: string; expectedDischarge?: string }, bed: Bed | undefined, activeForPatient: Admission | undefined, today: string): void {
   if (activeForPatient) fail('alreadyAdmitted', { number: activeForPatient.number });
   if (!input.reason.trim()) fail('reasonRequired');
-  if (!input.attending.trim()) fail('attendingRequired');
+  // Le médecin référent est facultatif (décision métier).
   if (input.expectedDischarge && input.expectedDischarge < today) fail('dischargeInPast');
   if (!bed) fail('bedNotFound');
   if (bed!.status !== 'free') fail('bedNotFree', { status: bed!.status });

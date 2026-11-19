@@ -8,7 +8,9 @@
     "practitioner": "Daktari",
     "service": "Idara",
     "reason": "Sababu",
-    "status": "Hali"
+    "status": "Hali",
+    "duration": "Muda",
+    "expiresAt": "Halali hadi"
   },
   "status": {
     "draft": "Rasimu",
@@ -38,7 +40,8 @@
     "patient": "Mgonjwa (jina au namba)",
     "service": "Idara",
     "practitioner": "Daktari",
-    "reason": "Sababu"
+    "reason": "Sababu",
+    "durationDays": "Muda uliopangwa (siku, tupu = chaguo-msingi)"
   },
   "detail": {
     "summary": "Mashauriano",
@@ -75,10 +78,10 @@
     "readOnlyNote": "Kusoma tu: huna ruhusa ya kubadilisha mashauriano haya.",
     "sections": {
       "general": "Taarifa za jumla",
-      "anamnesis": "Sababu na historia ya ugonjwa",
+      "anamnesis": "Dalili kuu",
       "history": "Historia ya kitabibu",
       "exam": "Uchunguzi wa kitabibu",
-      "assessment": "Tathmini na utambuzi",
+      "assessment": "Uchunguzi wa ugonjwa",
       "plan": "Mpango wa matibabu",
       "conclusion": "Hitimisho na uthibitisho"
     },
@@ -102,7 +105,9 @@
       "clean": "Hakuna mabadiliko yanayosubiri",
       "dirty": "Mabadiliko ambayo hayajahifadhiwa",
       "dirtyDemo": "Rasimu ya ndani, haijahifadhiwa (onyesho)",
-      "locked": "Mashauriano yamefungwa"
+      "locked": "Mashauriano yamefungwa",
+      "autoPending": "Inahifadhi kiotomatiki…",
+      "autoDone": "Imehifadhiwa kiotomatiki ({{when}})"
     },
     "status": {
       "actions": {
@@ -124,10 +129,10 @@
       "title": "Ukaguzi kabla ya uthibitisho",
       "ready": "Vipengele vinavyohitajika vimejazwa.",
       "issues": {
-        "chiefComplaint": "Sababu ya mashauriano haipo",
+        "chiefComplaint": "Dalili kuu hazijajazwa",
         "antecedentsNotVerified": "Historia ya kitabibu haijakaguliwa katika mashauriano haya",
         "principalDiagnosis": "Hakuna utambuzi mkuu uliorekodiwa",
-        "conclusion": "Hitimisho la kitabibu halipo"
+        "decision": "Uamuzi wa daktari haujajazwa"
       }
     },
     "summary": {
@@ -165,8 +170,8 @@
       "walkIn": "Bila miadi"
     },
     "anamnesis": {
-      "title": "Sababu na historia ya ugonjwa",
-      "chiefComplaint": "Sababu kuu ya mashauriano",
+      "title": "Dalili kuu",
+      "chiefComplaint": "Dalili kuu",
       "source": "Chanzo cha taarifa",
       "sources": {
         "patient": "Mgonjwa",
@@ -174,15 +179,11 @@
         "other": "Nyingine"
       },
       "onset": "Tarehe ya kuanza",
-      "duration": "Muda na mwenendo",
-      "durationHint": "Mf. siku 3, inazidi.",
-      "location": "Mahali pa dalili",
-      "intensity": "Ukali (ikihusika)",
       "associated": "Dalili zinazoambatana",
       "aggravating": "Vitu vinavyozidisha",
       "relieving": "Vitu vinavyopunguza",
       "priorTreatments": "Matibabu yaliyokwisha chukuliwa",
-      "history": "Historia ya ugonjwa wa sasa",
+      "history": "Hali ya sasa ya ugonjwa",
       "notes": "Taarifa za ziada"
     },
     "allergy": {
@@ -210,7 +211,8 @@
         "allergy": "Mzio na athari",
         "medication": "Dawa za kawaida",
         "obstetric": "Uzazi na magonjwa ya wanawake (ikihusika)",
-        "lifestyle": "Mazoea na mtindo wa maisha"
+        "lifestyle": "Mazoea na mtindo wa maisha",
+        "vaccination": "Chanjo"
       },
       "empty": "Hakuna taarifa iliyorekodiwa.",
       "markNone": "Hakuna anayejulikana",
@@ -219,7 +221,9 @@
       "unknownLabel": "Taarifa haijulikani",
       "origin": {
         "declared": "Imetangazwa na mgonjwa",
-        "observed": "Imeonekana / imethibitishwa na mtaalamu"
+        "observed": "Imeonekana / imethibitishwa na mtaalamu",
+        "companion": "Imeelezwa na msindikizaji",
+        "other": "Chanzo kingine"
       },
       "state": {
         "active": "Inaendelea",
@@ -239,7 +243,9 @@
       "originLabel": "Chanzo",
       "stateLabel": "Hali",
       "add": "Ongeza",
-      "notes": "Historia na uchunguzi"
+      "notes": "Historia na uchunguzi",
+      "carriedFrom": "Historia imechukuliwa kutoka kwa mashauriano ya {{when}}. Ihakiki kisha uthibitishe.",
+      "originDetail": "Bainisha chanzo"
     },
     "exam": {
       "notDoneTitle": "Uchunguzi uliofanywa",
@@ -251,7 +257,7 @@
       "triageError": "Imeshindikana kupakia vipimo vya triage.",
       "importTriage": "Tumia thamani hizi",
       "vitalsTitle": "Vipimo muhimu",
-      "vitalsHint": "Acha wazi kisichopimwa: hakuna thamani inayojazwa mapema.",
+      "vitalsHint": "Vipimo vilivyochukuliwa triage leo hujazwa kiotomatiki: vihakiki na uvirekebishe vikibadilika. Acha wazi kisichopimwa.",
       "vitalsSource": "Thamani zilizoingizwa na mtaalamu. Za triage zinabaki na tarehe, saa na mwandishi katika orodha hapo juu.",
       "vitals": {
         "systolic": "Shinikizo la juu",
@@ -261,7 +267,9 @@
         "respiratoryRate": "Kasi ya kupumua",
         "spo2": "Kiwango cha oksijeni",
         "weight": "Uzito",
-        "height": "Urefu"
+        "height": "Urefu",
+        "brachialPerimeter": "Mzingo wa mkono",
+        "headCircumference": "Mzingo wa kichwa"
       },
       "bmi": "BMI",
       "bmiNone": "haiwezi kukokotolewa (uzito na urefu vinahitajika)",
@@ -274,7 +282,8 @@
       },
       "physical": "Uchunguzi wa mwili",
       "systems": "Uchunguzi kwa mfumo",
-      "observations": "Uchunguzi wa kitabibu na matokeo muhimu"
+      "observations": "Uchunguzi wa kitabibu na matokeo muhimu",
+      "prefilled": "Vipimo vilivyochukuliwa triage {{when}} ({{author}}). Vinaweza kubadilishwa."
     },
     "assessment": {
       "title": "Utambuzi",
@@ -329,7 +338,8 @@
         "none": "Hakuna",
         "service": "Kwenda huduma nyingine",
         "hospitalization": "Uamuzi wa kulazwa",
-        "referral": "Rufaa kwenda kituo kingine"
+        "referral": "Rufaa kwenda kituo kingine",
+        "ambulatory": "Wagonjwa wa nje (huduma bila kulazwa)"
       },
       "target": {
         "service": "Idara inayopokea",
@@ -345,13 +355,35 @@
         "service": "Idara ya hospitali itakayomhudumia mgonjwa.",
         "hospitalization": "Idara atakayolazwa mgonjwa.",
         "referral": "Hospitali au kituo cha nje anachopelekwa mgonjwa."
+      },
+      "ambulatoryNote": "Mgonjwa atarudi tu kupata huduma, bila kulazwa.",
+      "recapTitle": "Muhtasari wa kliniki wa kiotomatiki",
+      "recapHint": "Imechukuliwa kutoka sehemu zilizotangulia. Ongeza maoni hapa chini ikihitajika.",
+      "autoHint": "Muhtasari hapa chini umejazwa kutoka sehemu zilizotangulia: ukamilishe au ukirekebishe moja kwa moja.",
+      "regenerate": "Tengeneza upya kutoka sehemu zilizotangulia (hubadilisha maandishi)",
+      "linked": {
+        "title": "Vipimo na dawa za mashauriano haya",
+        "hint": "Kila kinachoombwa kutoka faili hili kinabaki kimeambatanishwa: hali ya vipimo, matokeo tayari na dawa.",
+        "labs": "Vipimo vya maabara",
+        "rx": "Dawa zilizoandikwa",
+        "noLabs": "Hakuna kipimo kilichoombwa kutoka mashauriano haya.",
+        "noRx": "Hakuna dawa kutoka mashauriano haya.",
+        "resultReady": "Matokeo yaliyothibitishwa yapo",
+        "validatedBy": "imethibitishwa na {{by}}, {{at}}",
+        "test": "Kipimo",
+        "value": "Thamani",
+        "range": "Kiwango cha rejea",
+        "flag": "Tafsiri",
+        "flags": {
+          "normal": "Kawaida",
+          "abnormal": "Si kawaida"
+        }
       }
     },
     "conclusion": {
-      "text": "Hitimisho la kitabibu",
       "decision": "Uamuzi wa kitabibu",
       "recommendations": "Mapendekezo",
-      "nextAppointment": "Tarehe ya miadi ijayo"
+      "nextAppointment": "Miadi ijayo"
     },
     "tpl": {
       "title": "Violezo vya uandishi",
@@ -443,6 +475,23 @@
       "title": "Toka bila kuhifadhi?",
       "body": "Mabadiliko ya faili hii hayajahifadhiwa. Ukitoka sasa yatapotea.",
       "confirm": "Toka bila kuhifadhi"
+    },
+    "followUp": {
+      "title": "Miadi ijayo",
+      "none": "Hakuna miadi ya ufuatiliaji iliyopangwa.",
+      "duration": "Dakika {{count}}",
+      "cancelled": "Miadi ya {{when}} ilighairiwa au haikuhudhuriwa: unaweza kupanga mpya.",
+      "legacy": "Tarehe iliyoandikwa awali: {{date}} (hakuna miadi iliyopangwa kwenye kalenda).",
+      "schedule": "Panga miadi",
+      "reschedule": "Panga upya",
+      "openCalendar": "Tazama kalenda",
+      "hint": "Miadi huundwa kwenye kalenda kwa tarehe na saa iliyochaguliwa; nafasi ya daktari na ya mgonjwa hukaguliwa.",
+      "noPermission": "Huna ruhusa ya kupanga miadi.",
+      "dialogTitle": "Panga miadi ijayo",
+      "dialogHint": "Tarehe na saa vinahitajika. Miadi huonekana mara moja kwenye kalenda, na mapokezi siku husika.",
+      "submit": "Panga",
+      "dateTimeRequired": "Weka tarehe na saa ya miadi.",
+      "pastSlot": "Miadi lazima iwe siku za usoni."
     }
   },
   "editor": {
@@ -472,5 +521,14 @@
     "exitFullscreen": "Toka skrini nzima",
     "printFacility": "Uandishi wa kitabibu",
     "printFooter": "Dondoo lililochapishwa kutoka CERO HEALTH."
-  }
+  },
+  "duration": {
+    "button": "Muda wa mashauriano: siku {{count}}",
+    "title": "Muda wa mashauriano",
+    "hint": "Inatumika kwa mashauriano yajayo. Yaliyopo yanabaki na muda wake wa awali.",
+    "field": "Muda (idadi ya siku, 1 hadi 365)",
+    "submit": "Hifadhi",
+    "days": "siku {{count}}"
+  },
+  "expired": "Imeisha"
 }

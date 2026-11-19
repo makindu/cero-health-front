@@ -2,7 +2,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { PatientPicker } from '../_shared/pickers';
 import { Autocomplete } from '@/components/forms/autocomplete';
 import type { CatalogItem } from '@/core/pricing/types';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,8 @@ import { reasonText } from './reasons';
 import { useBusinessMessage, useFinanceMutation, useFinanceSnapshot, useMoney } from './use-finance';
 import { FeeStatusLine } from './FeeStatusLine';
 import { NumberInput } from '@/components/forms/number-input';
+import { DraftNotice } from '@/components/feedback/draft-notice';
+import { usePersistentState } from '@/core/drafts/use-persistent-state';
 
 interface Row { key: number; itemId: string; quantity: string }
 
@@ -30,12 +32,17 @@ export function NewInvoiceDialog({ onClose, onCreated, initialPatientId }: { onC
   const { can } = usePermissions();
   const { activeFacilityId } = usePreferences();
   const snap = useFinanceSnapshot();
-  const [patientId, setPatientId] = useState(initialPatientId ?? '');
-  const [rows, setRows] = useState<Row[]>([{ key: 1, itemId: '', quantity: '1' }]);
-  const [primary, setPrimary] = useState('');
-  const [secondary, setSecondary] = useState('');
-  const [episodeId, setEpisodeId] = useState('');
-  const [forcePrivate, setForcePrivate] = useState(false);
+  // Brouillon automatique : la facture en cours de saisie survit à une fermeture involontaire ou à une coupure.
+  const [form, setForm, draft] = usePersistentState(`invoice:new:${initialPatientId ?? ''}`, {
+    patientId: initialPatientId ?? '', rows: [{ key: 1, itemId: '', quantity: '1' }] as Row[], primary: '', secondary: '', episodeId: '', forcePrivate: false,
+  });
+  const { patientId, rows, primary, secondary, episodeId, forcePrivate } = form;
+  const setPatientId = (patientId: string): void => setForm((f) => ({ ...f, patientId }));
+  const setRows = (rows: Row[]): void => setForm((f) => ({ ...f, rows }));
+  const setPrimary = (primary: string): void => setForm((f) => ({ ...f, primary }));
+  const setSecondary = (secondary: string): void => setForm((f) => ({ ...f, secondary }));
+  const setEpisodeId = (episodeId: string): void => setForm((f) => ({ ...f, episodeId }));
+  const setForcePrivate = (forcePrivate: boolean): void => setForm((f) => ({ ...f, forcePrivate }));
 
   const catalog = snap.data?.catalog.filter((c) => c.active) ?? [];
   const mine = useMemo(() => (snap.data?.coverages ?? []).filter((c) => c.patientId === patientId || c.beneficiaryIds.includes(patientId)), [snap.data, patientId]);
@@ -51,16 +58,17 @@ export function NewInvoiceDialog({ onClose, onCreated, initialPatientId }: { onC
     enabled: request !== null,
     retry: false,
   });
-  const create = useFinanceMutation(finance.createInvoice, { successTitle: t('done.invoice'), onDone: onCreated });
+  const create = useFinanceMutation(finance.createInvoice, { successTitle: t('done.invoice'), onDone: (view) => { draft.clear(); onCreated(view); } });
   const previewError = preview.error ? (describe(preview.error) ?? t('preview.failed')) : null;
 
   return (
     <Dialog open onClose={onClose} title={t('new.title')} description={t('new.description')}
       footer={<>
-        <Button variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+        <Button variant="outline" onClick={() => { draft.clear(); onClose(); }}>{t('common.cancel')}</Button>
         <Button loading={create.isPending} disabled={!request || !preview.data || Boolean(previewError)} onClick={() => request && create.mutate(request)}>{t('new.submit')}</Button>
       </>}>
       <div className="space-y-4">
+        {draft.restored && <DraftNotice onDiscard={draft.discard} />}
         <FormField label={t('columns.patient')} required>
           {(c) => (
             <PatientPicker {...c} value={patientId} onChange={(id) => { setPatientId(id); setPrimary(''); setSecondary(''); }} />

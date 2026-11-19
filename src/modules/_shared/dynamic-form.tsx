@@ -1,10 +1,13 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, type FieldErrors, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { DateField, Input, Select, Textarea } from '@/components/forms/controls';
 import { FormField } from '@/components/forms/form-field';
+import { DraftNotice } from '@/components/feedback/draft-notice';
 import { Button } from '@/components/ui/button';
+import { clearDraft, fingerprint, loadDraft, saveDraft } from '@/core/drafts/draft-store';
+import { useDirtySource } from '@/core/unsaved/use-dirty-source';
 import { PatientCombobox } from './patient-combobox';
 import { PractitionerCombobox } from './practitioner-combobox';
 
@@ -79,6 +82,10 @@ interface DynamicFormProps {
   submitting?: boolean;
   onSubmit: (values: Values) => void | Promise<void>;
   onCancel?: () => void;
+  /** Identifiant du brouillon automatique (par défaut : page + champs + valeurs de départ). */
+  draftKey?: string;
+  /** `false` pour désactiver le brouillon automatique (ex. champ sensible). */
+  autosave?: boolean;
 }
 
 /** Formulaire généré depuis une définition de champs : validation Zod, erreurs traduites, accessible. */
@@ -89,23 +96,85 @@ export function DynamicForm({
   submitting,
   onSubmit,
   onCancel,
+  draftKey,
+  autosave = true,
 }: DynamicFormProps) {
   const { t } = useTranslation();
   const resolver = useMemo(() => buildResolver(fields), [fields]);
+  // Valeurs de départ figées à l'ouverture ; le brouillon (saisie précédente non enregistrée) les remplace s'il existe.
+  const [base] = useState<Values>(() =>
+    Object.fromEntries(fields.map((field) => [field.name, defaultValues?.[field.name] ?? ''])),
+  );
+  const storageKey = useMemo(
+    () =>
+      draftKey ??
+      `form:${globalThis.location?.pathname ?? ''}:${fields.map((f) => f.name).join('|')}:${fingerprint(base)}`,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [draftKey, base],
+  );
+  const [draft] = useState<Values | null>(() => (autosave ? loadDraft<Values>(storageKey) : null));
+  const [restored, setRestored] = useState(draft !== null);
+  const [initial] = useState<Values>(() => {
+    const merged: Values = { ...base };
+    if (draft) for (const field of fields) if (typeof draft[field.name] === 'string') merged[field.name] = draft[field.name] ?? '';
+    return merged;
+  });
   const {
     register,
     setValue,
     handleSubmit,
+    reset,
+    watch,
+    getValues,
     formState: { errors },
-  } = useForm<Values>({
-    resolver,
-    defaultValues: Object.fromEntries(
-      fields.map((field) => [field.name, defaultValues?.[field.name] ?? '']),
-    ),
+  } = useForm<Values>({ resolver, defaultValues: initial });
+
+  const current = watch();
+  const [submitted, setSubmitted] = useState(false);
+  const changed = (values: Values) => fields.some((f) => (values[f.name] ?? '') !== (base[f.name] ?? ''));
+  const dirty = changed(current) && !submitted;
+  useDirtySource(dirty);
+
+  // Sauvegarde automatique (légèrement différée) + dernière sauvegarde à la fermeture.
+  const stopped = useRef(false);
+  useEffect(() => {
+    if (!autosave) return;
+    const persist = () => {
+      if (stopped.current) return;
+      const values = getValues();
+      if (changed(values)) saveDraft(storageKey, values);
+      else clearDraft(storageKey);
+    };
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const subscription = watch(() => {
+      clearTimeout(timer);
+      timer = setTimeout(persist, 400);
+    });
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+      persist();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autosave, storageKey]);
+
+  const discardDraft = () => {
+    clearDraft(storageKey);
+    reset(base);
+    setRestored(false);
+  };
+
+  const submit = handleSubmit(async (values) => {
+    await onSubmit(values);
+    // Enregistré : le brouillon n'a plus lieu d'être.
+    stopped.current = true;
+    clearDraft(storageKey);
+    setSubmitted(true);
   });
 
   return (
-    <form onSubmit={handleSubmit((values) => onSubmit(values))} noValidate className="space-y-5">
+    <form onSubmit={submit} noValidate className="space-y-5">
+      {restored && <DraftNotice onDiscard={discardDraft} />}
       <div className="grid gap-4 md:grid-cols-2">
         {fields.map((field) => (
           <FormField
@@ -137,7 +206,7 @@ export function DynamicForm({
                 return (
                   <>
                     <input type="hidden" {...bound} />
-                    <PatientCombobox {...control} placeholder={field.placeholder} defaultValue={defaultValues?.[field.name] ?? ''} onValueChange={(v) => setValue(field.name, v, { shouldValidate: true })} />
+                    <PatientCombobox {...control} placeholder={field.placeholder} defaultValue={initial[field.name] ?? ''} onValueChange={(v) => setValue(field.name, v, { shouldValidate: true })} />
                   </>
                 );
               }
@@ -145,7 +214,7 @@ export function DynamicForm({
                 return (
                   <>
                     <input type="hidden" {...bound} />
-                    <PractitionerCombobox {...control} placeholder={field.placeholder} defaultValue={defaultValues?.[field.name] ?? ''} onValueChange={(v) => setValue(field.name, v, { shouldValidate: true })} />
+                    <PractitionerCombobox {...control} placeholder={field.placeholder} defaultValue={initial[field.name] ?? ''} onValueChange={(v) => setValue(field.name, v, { shouldValidate: true })} />
                   </>
                 );
               }
@@ -167,7 +236,15 @@ export function DynamicForm({
       <p className="text-xs text-muted-foreground">{t('module.requiredHint')}</p>
       <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-4">
         {onCancel && (
-          <Button variant="outline" onClick={onCancel} disabled={submitting}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              stopped.current = true;
+              clearDraft(storageKey);
+              onCancel();
+            }}
+            disabled={submitting}
+          >
             {t('actions.cancel')}
           </Button>
         )}

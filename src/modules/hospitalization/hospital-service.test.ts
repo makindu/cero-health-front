@@ -95,7 +95,6 @@ describe('hospitalisation locale', () => {
   it('valide les saisies : motif, médecin, date de sortie passée, patient inconnu ou fusionné, lit inconnu', async () => {
     const { svc, ok } = setup();
     await expect(svc.admit({ patientId: 'DEMO-P-001', bedId: 'bed-1-1-1', reason: ' ', attending: 'x' })).rejects.toThrow('hospital.reasonRequired');
-    await expect(svc.admit({ patientId: 'DEMO-P-001', bedId: 'bed-1-1-1', reason: 'x', attending: ' ' })).rejects.toThrow('hospital.attendingRequired');
     await expect(svc.admit({ patientId: 'DEMO-P-001', bedId: 'bed-1-1-1', ...base, expectedDischarge: '2026-11-01' })).rejects.toThrow('hospital.dischargeInPast');
     await expect(svc.admit({ patientId: 'Z', bedId: 'bed-1-1-1', ...base })).rejects.toThrow('hospital.patientNotFound');
     await expect(svc.admit({ patientId: 'MERGED', bedId: 'bed-1-1-1', ...base })).rejects.toThrow('hospital.patientMerged');

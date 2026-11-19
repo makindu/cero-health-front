@@ -1,8 +1,9 @@
 import { Check, ChevronRight, CircleDot, FilePen, Lock, PenLine, Printer, Save } from 'lucide-react';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { useBlocker, useParams } from 'react-router';
+import { useParams } from 'react-router';
+import { useDirtySource } from '@/core/unsaved/use-dirty-source';
 import { queryKeys } from '@/core/api/query-client';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { ErrorState } from '@/components/feedback/error-state';
@@ -15,41 +16,22 @@ import { ConfirmDialog } from '@/components/ui/dialog';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { Can, usePermissions } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
-import { createResourceService } from '../_shared/resource-service';
 import { DemoNotice } from '../_shared/demo-notice';
 import { useResourceItem } from '../_shared/use-resource';
+import { usePreviousHistory } from './previous-history';
+import { recordService } from './record-service';
 import { patientService, type Patient } from '../patients/data';
-import { AreaField, Panel, RichField, TextField } from './clinical/fields';
+import { AreaField, Panel, RichField } from './clinical/fields';
 import { addAddendum, canTransition, emptyDraft, isLocked, logRevision, nextStatuses, progress, signatureIssues } from './clinical/logic';
 import { SECTIONS, type ClinicalStatus, type ConsultationDraft, type SectionId } from './clinical/model';
 import { consultationService, type Consultation } from './data';
 import { buildConsultationReport } from './report';
 import { buildReportHtml, printHtml } from './print';
+import { FollowUpScheduler } from './FollowUpScheduler';
 import { AllergyAlert, AnamnesisSection, GeneralSection, HistorySection, newCtx } from './sections-a';
 import { AssessmentSection, ExamSection, PlanSection } from './sections-b';
 import { sanitizeDoc } from './richtext/doc';
 import { Avatar } from '@/components/ui/avatar';
-
-interface ClinicalRecord {
-  id: string;
-  draft: ConsultationDraft;
-}
-/** Contrat proposé : GET/PUT /health/consultation-records/{consultationId} (voir docs/API_CONTRACTS_NEEDED.md). */
-const parseDraft = (raw: string | undefined): ConsultationDraft => {
-  const parsed: unknown = JSON.parse(raw ?? '');
-  if (typeof parsed !== 'object' || parsed === null) throw new Error('draft');
-  return parsed as ConsultationDraft;
-};
-/** Mode local : le brouillon clinique est conservé sur l'appareil ; permission vérifiée dans le service. */
-const recordService = createResourceService<ClinicalRecord>({
-  source: 'health', endpoint: '/health/consultation-records', demoRows: [],
-  local: {
-    seed: false,
-    create: (input) => ({ id: input.id ?? '', draft: parseDraft(input.draft) }),
-    update: (row, input) => ({ ...row, draft: parseDraft(input.draft) }),
-    permissions: { create: PERMISSIONS.consultations.update, update: PERMISSIONS.consultations.update },
-  },
-});
 
 const STATUS_TONE: Record<ClinicalStatus, StatusTone> = { draft: 'neutral', inProgress: 'info', awaitingResults: 'warning', toValidate: 'warning', signed: 'success', closed: 'success' };
 const STATUS_ACTION: Partial<Record<ClinicalStatus, string>> = { inProgress: 'start', awaitingResults: 'await-results', toValidate: 'submit', signed: 'sign', closed: 'close' };
@@ -62,10 +44,10 @@ function restoreDraft(raw: ConsultationDraft | undefined, id: string, status: Cl
     ...base, ...raw,
     anamnesis: { ...base.anamnesis, ...raw.anamnesis, history: sanitizeDoc(raw.anamnesis?.history), notes: sanitizeDoc(raw.anamnesis?.notes) },
     antecedentNotes: sanitizeDoc(raw.antecedentNotes),
-    exam: { ...base.exam, ...raw.exam, vitals: { ...base.exam.vitals, ...raw.exam?.vitals }, physical: sanitizeDoc(raw.exam?.physical), systems: sanitizeDoc(raw.exam?.systems), observations: sanitizeDoc(raw.exam?.observations) },
+    exam: { ...base.exam, ...raw.exam, vitals: { ...base.exam.vitals, ...raw.exam?.vitals }, physical: sanitizeDoc(raw.exam?.physical) },
     evaluation: sanitizeDoc(raw.evaluation),
     plan: { ...base.plan, ...raw.plan, synthesis: sanitizeDoc(raw.plan?.synthesis), actions: sanitizeDoc(raw.plan?.actions) },
-    conclusion: { ...base.conclusion, ...raw.conclusion, text: sanitizeDoc(raw.conclusion?.text), recommendations: sanitizeDoc(raw.conclusion?.recommendations) },
+    conclusion: { ...base.conclusion, ...raw.conclusion, recommendations: sanitizeDoc(raw.conclusion?.recommendations) },
     // Le statut de la consultation fait foi (il change sans réenregistrer le brouillon) ; le brouillon ne peut pas le contredire.
     status,
   };
@@ -76,6 +58,8 @@ export default function ConsultationWorkspace() {
   const consultation = useResourceItem('consultations', consultationService, id);
   const patient = useResourceItem('patients', patientService, consultation.data?.item.patientId);
   const record = useResourceItem('consultation-records', recordService, id, { fresh: true });
+  // Nouvelle consultation d'un patient déjà suivi : on reprend ses antécédents connus (à revérifier par le médecin).
+  const carried = usePreviousHistory(consultation.data?.item.patientId, id, consultation.data?.item.date);
 
   if (consultation.isPending) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
   if (consultation.error || !consultation.data) return <ErrorState error={consultation.error} onRetry={() => void consultation.refetch()} />;
@@ -83,6 +67,9 @@ export default function ConsultationWorkspace() {
   if (record.isPending || (record.fetchStatus === 'fetching' && !record.data)) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
   const kind = (record.error as { kind?: string } | null)?.kind;
   if (record.error && kind !== 'not_found' && kind !== 'config') return <ErrorState error={record.error} onRetry={() => void record.refetch()} />;
+  if (!record.data && carried.pending) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-96" /></div>;
+  const restored = restoreDraft(record.data?.item.draft, consultation.data.item.id, consultation.data.item.status);
+  const initial = !record.data && carried.antecedents.length > 0 ? { ...restored, antecedents: carried.antecedents, antecedentNotes: carried.notes } : restored;
 
   return (
     <Workspace
@@ -90,14 +77,15 @@ export default function ConsultationWorkspace() {
       consultation={consultation.data.item}
       isDemo={consultation.data.isDemo}
       patient={patient.data?.item ?? null}
-      initial={restoreDraft(record.data?.item.draft, consultation.data.item.id, consultation.data.item.status)}
+      initial={initial}
       hasRecord={Boolean(record.data)}
+      carriedFrom={!record.data && carried.antecedents.length > 0 ? carried.from : undefined}
     />
   );
 }
 
-function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
-  consultation: Consultation; isDemo: boolean; patient: Patient | null; initial: ConsultationDraft; hasRecord: boolean;
+function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedFrom }: {
+  consultation: Consultation; isDemo: boolean; patient: Patient | null; initial: ConsultationDraft; hasRecord: boolean; carriedFrom?: string;
 }) {
   const { t } = useTranslation('consultations');
   const f = useFormatters();
@@ -113,8 +101,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
   const [recordExists, setRecordExists] = useState(hasRecord);
   const queryClient = useQueryClient();
   const { activeFacilityId } = usePreferences();
-  // Quitter l'écran avec des modifications non enregistrées : on demande confirmation (le navigateur ne le fait que pour la fermeture de l'onglet).
-  const blocker = useBlocker(dirty);
+  // Quitter l'écran avec des modifications non enregistrées : confirmation par la garde globale.
 
   const author = t('clinical.you');
   const locked = isLocked(draft.status);
@@ -122,13 +109,6 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
   const readOnly = locked || !canEditClinical;
   const { done, percent } = progress(draft);
   const issues = signatureIssues(draft);
-
-  useEffect(() => {
-    if (!dirty) return;
-    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
-    window.addEventListener('beforeunload', warn);
-    return () => window.removeEventListener('beforeunload', warn);
-  }, [dirty]);
 
   const update = (fn: (d: ConsultationDraft) => ConsultationDraft) => {
     setDraft((d) => fn(d));
@@ -148,6 +128,56 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
     }
     return { isDemo: result.isDemo, logged };
   }
+
+  // Enregistrement automatique : la saisie est sauvegardée seule peu après chaque modification (coupure de courant, onglet fermé…).
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
+  const autoBusy = useRef(false);
+  const [autoFailed, setAutoFailed] = useState(false);
+  const [lastAuto, setLastAuto] = useState<Date | null>(null);
+  const [tick, setTick] = useState(0);
+  const autoCapable = !readOnly && !isDemo;
+  const autoSaveRef = useRef<() => Promise<void>>(async () => undefined);
+  autoSaveRef.current = async () => {
+    if (autoBusy.current || !dirtyRef.current || !autoCapable) return;
+    autoBusy.current = true;
+    const snapshot = draftRef.current;
+    try {
+      const { isDemo: demo, logged } = await persist(snapshot);
+      if (!demo) {
+        setAutoFailed(false);
+        setLastAuto(new Date());
+        // Si l'utilisateur a continué à écrire pendant l'enregistrement, on ne touche pas à sa saisie : la suite sera enregistrée au tour suivant.
+        if (draftRef.current === snapshot) {
+          setDraft(logged);
+          setBaseline(logged);
+          setDirty(false);
+        }
+      }
+    } catch {
+      setAutoFailed(true);
+    } finally {
+      autoBusy.current = false;
+      setTick((n) => n + 1);
+    }
+  };
+  useEffect(() => {
+    if (!dirty || !autoCapable) return;
+    const id = setTimeout(() => void autoSaveRef.current(), 1500);
+    return () => clearTimeout(id);
+  }, [draft, dirty, autoCapable, tick]);
+  useEffect(() => {
+    const flush = () => void autoSaveRef.current();
+    window.addEventListener('pagehide', flush);
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      flush(); // en quittant l'écran, on enregistre ce qui reste
+    };
+  }, []);
+  // On n'interrompt l'utilisateur que si l'enregistrement automatique ne peut pas protéger sa saisie.
+  useDirtySource(dirty && (!autoCapable || autoFailed));
 
   async function saveDraft() {
     setSaving(true);
@@ -192,6 +222,23 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
     }
   }
 
+  /** Le rendez-vous vient d'être créé au calendrier : on garde le lien dans le dossier tout de suite (sinon il serait perdu si l'écran est quitté). */
+  async function scheduleFollowUp(next: { startsAt: string; appointmentId: string }) {
+    const nextDraft = { ...draft, conclusion: { ...draft.conclusion, nextAppointment: next.startsAt, nextAppointmentId: next.appointmentId } };
+    setDraft(nextDraft);
+    try {
+      const { isDemo: demo, logged } = await persist(nextDraft);
+      if (!demo) {
+        setDraft(logged);
+        setBaseline(logged);
+        setDirty(false);
+      }
+    } catch {
+      setDirty(true);
+      toast({ tone: 'danger', title: t('clinical.save.failed'), description: t('clinical.save.failedBody') });
+    }
+  }
+
   function addendum() {
     const next = addAddendum(draft, addendumText, newCtx(author));
     if (!next) return;
@@ -218,16 +265,15 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
   const content = {
     general: <GeneralSection consultation={consultation} patient={patient} />,
     anamnesis: clinicalGate(<AnamnesisSection draft={draft} update={update} readOnly={readOnly} />),
-    history: clinicalGate(<HistorySection draft={draft} update={update} readOnly={readOnly} author={author} since={consultation.date} />),
-    exam: clinicalGate(<ExamSection draft={draft} update={update} readOnly={readOnly} triageEntryId={consultation.triageEntryId} />),
+    history: clinicalGate(<HistorySection draft={draft} update={update} readOnly={readOnly} author={author} since={consultation.date} carriedFrom={carriedFrom} />),
+    exam: clinicalGate(<ExamSection draft={draft} update={update} readOnly={readOnly} triageEntryId={consultation.triageEntryId} patientId={consultation.patientId} day={consultation.date} />),
     assessment: clinicalGate(<AssessmentSection draft={draft} update={update} readOnly={readOnly} author={author} />),
     plan: clinicalGate(<PlanSection draft={draft} update={update} readOnly={readOnly} patientId={consultation.patientId} consultationId={consultation.id} />),
     conclusion: clinicalGate(
       <div className="space-y-4">
-        <RichField label={t('clinical.conclusion.text')} target="conclusion" value={draft.conclusion.text} onChange={(v) => update((d) => ({ ...d, conclusion: { ...d.conclusion, text: v } }))} disabled={readOnly} />
         <AreaField label={t('clinical.conclusion.decision')} rows={2} value={draft.conclusion.decision} onChange={(v) => update((d) => ({ ...d, conclusion: { ...d.conclusion, decision: v } }))} disabled={readOnly} />
         <RichField label={t('clinical.conclusion.recommendations')} target="conclusion" value={draft.conclusion.recommendations} onChange={(v) => update((d) => ({ ...d, conclusion: { ...d.conclusion, recommendations: v } }))} disabled={readOnly} />
-        <TextField type="date" label={t('clinical.conclusion.nextAppointment')} value={draft.conclusion.nextAppointment} onChange={(v) => update((d) => ({ ...d, conclusion: { ...d.conclusion, nextAppointment: v } }))} disabled={readOnly} />
+        <FollowUpScheduler consultation={consultation} readOnly={readOnly} value={{ startsAt: draft.conclusion.nextAppointment, appointmentId: draft.conclusion.nextAppointmentId ?? '' }} onScheduled={scheduleFollowUp} />
 
         <Panel title={t('clinical.validation.title')}>
           {issues.length > 0 && !locked ? (
@@ -306,7 +352,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
         <AllergyAlert antecedents={draft.antecedents} />
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <span className={dirty ? 'font-medium text-warning-ink' : 'text-muted-foreground'} role="status">
-            {locked ? t('clinical.save.locked') : dirty ? (isDemo ? t('clinical.save.dirtyDemo') : t('clinical.save.dirty')) : t('clinical.save.clean')}
+            {locked ? t('clinical.save.locked') : dirty ? (isDemo ? t('clinical.save.dirtyDemo') : autoCapable && !autoFailed ? t('clinical.save.autoPending') : t('clinical.save.dirty')) : lastAuto ? t('clinical.save.autoDone', { when: f.dateTime(lastAuto.toISOString()) }) : t('clinical.save.clean')}
           </span>
           <div className="flex min-w-40 flex-1 items-center gap-2" aria-label={t('clinical.progress', { percent })}>
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted"><div className="h-full bg-primary transition-all" style={{ width: `${percent}%` }} /></div>
@@ -333,14 +379,6 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord }: {
           </div>
         </div>
       </div>
-      <ConfirmDialog
-        open={blocker.state === 'blocked'}
-        onCancel={() => blocker.reset?.()}
-        title={t('clinical.leave.title')}
-        description={t('clinical.leave.body')}
-        confirmLabel={t('clinical.leave.confirm')}
-        onConfirm={() => blocker.proceed?.()}
-      />
       <ConfirmDialog
         open={confirm !== null}
         onCancel={() => setConfirm(null)}

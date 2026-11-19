@@ -12,6 +12,7 @@ import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { consultationService, type Consultation, type ConsultationStatus } from './data';
 import { PersonName } from '@/components/ui/avatar';
+import { DurationSettings } from './DurationSettings';
 
 const STATUS: Record<ConsultationStatus, { tone: StatusTone; icon: typeof Lock }> = {
   draft: { tone: 'neutral', icon: FilePen },
@@ -26,6 +27,9 @@ const REASONS = ['firstVisit', 'followUp', 'control', 'vaccination', 'prenatal']
 export default function ConsultationsPage() {
   const { t } = useTranslation('consultations');
   const f = useFormatters();
+  const validity = (c: Consultation) => (c.expiresAt ? (
+    <span className="flex flex-wrap items-center gap-2">{f.date(c.expiresAt)}{c.expiresAt < new Date().toISOString() && <StatusBadge tone="neutral">{t('expired')}</StatusBadge>}</span>
+  ) : '—');
   const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
   const statusBadge = (s: ConsultationStatus) => (
     <StatusBadge tone={STATUS[s].tone} icon={STATUS[s].icon}>
@@ -39,6 +43,8 @@ export default function ConsultationsPage() {
     { id: 'practitioner', header: t('columns.practitioner'), cell: (c) => <PersonName name={c.practitioner} size="sm" strong={false} /> },
     { id: 'service', header: t('columns.service'), cell: (c) => t(`services.${c.service}`) },
     { id: 'reason', header: t('columns.reason'), cell: (c) => t(`reason.${c.reason}`) },
+    { id: 'durationDays', header: t('columns.duration'), cell: (c) => (c.durationDays ? t('duration.days', { count: c.durationDays }) : '—') },
+    { id: 'expiresAt', header: t('columns.expiresAt'), cell: (c) => validity(c) },
     { id: 'status', header: t('columns.status'), cell: (c) => statusBadge(c.status) },
   ];
 
@@ -49,6 +55,7 @@ export default function ConsultationsPage() {
       title={t('title')}
       description={t('subtitle')}
       searchLabel={t('search')}
+      actions={<DurationSettings />}
       columns={columns}
       defaultSort={{ columnId: 'date', direction: 'desc' }}
       filters={[
@@ -65,6 +72,7 @@ export default function ConsultationsPage() {
           { name: 'service', label: t('fields.service'), type: 'select', required: true, options: serviceOptions },
           { name: 'practitioner', label: t('fields.practitioner'), type: 'practitioner', required: true },
           { name: 'reason', label: t('fields.reason'), type: 'select', required: true, options: REASONS.map((r) => ({ value: r, label: t(`reason.${r}`) })) },
+          { name: 'durationDays', label: t('fields.durationDays'), type: 'number' },
         ],
       }}
       detailTitle={(c) => `${c.patientName} · ${f.date(c.date)}`}
@@ -80,6 +88,8 @@ export default function ConsultationsPage() {
                 { label: t('columns.practitioner'), value: c.practitioner },
                 { label: t('columns.service'), value: t(`services.${c.service}`) },
                 { label: t('columns.reason'), value: t(`reason.${c.reason}`) },
+                { label: t('columns.duration'), value: c.durationDays ? t('duration.days', { count: c.durationDays }) : '—' },
+                { label: t('columns.expiresAt'), value: validity(c) },
                 { label: t('columns.status'), value: statusBadge(c.status) },
               ]}
             />

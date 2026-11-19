@@ -202,6 +202,22 @@
   "breadcrumb": {
     "label": "Fil d'Ariane"
   },
+  "routeError": {
+    "reload": "Recharger la page",
+    "reloading": "Mise à jour de la page…",
+    "chunk": {
+      "title": "Cette page doit être rechargée",
+      "description": "L'application a été mise à jour ou redémarrée pendant que cette page était ouverte. Rechargez la page pour continuer."
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "description": "La page demandée n'existe pas ou a été déplacée."
+    },
+    "generic": {
+      "title": "Cette page a rencontré une erreur",
+      "description": "Vos données enregistrées ne sont pas perdues. Rechargez la page ou revenez au tableau de bord."
+    }
+  },
   "notFound": {
     "title": "Page introuvable",
     "description": "La page demandée n'existe pas ou a été déplacée.",
@@ -256,7 +272,10 @@
     "inactive": "Inactif"
   },
   "age": {
-    "years": "{{count}} ans"
+    "years": "{{count}} ans",
+    "days": "{{count}} j",
+    "months": "{{count}} mois",
+    "yearsMonths": "{{years}} an(s) et {{months}} mois"
   },
   "common": {
     "yes": "Oui",
@@ -352,38 +371,43 @@
       "alreadyReversed": "Cette écriture a déjà été contrepassée.",
       "amountInvalid": "Le montant est invalide.",
       "cannotReverseReversal": "Une contrepassation ne se contrepasse pas.",
+      "catalogCodeInvalid": "Le code est invalide (2 à 20 lettres, chiffres ou tirets).",
+      "catalogCodeTaken": "Le code « {{code}} » existe déjà.",
+      "catalogLabelLength": "La désignation doit contenir de 2 à 120 caractères.",
+      "catalogLabelTaken": "« {{label}} » existe déjà dans cette catégorie.",
+      "configDateTaken": "Une configuration existe déjà à cette date.",
+      "configRetroactive": "Une nouvelle durée ne peut pas s'appliquer à une date passée.",
+      "coverageNotFound": "Couverture introuvable pour ce patient.",
+      "coverageSame": "Les couvertures principale et complémentaire doivent différer.",
+      "currencyMismatch": "Les prestations n'ont pas la même devise.",
+      "discountInvalid": "Réduction invalide.",
       "duplicatePayment": "Cette opération est déjà enregistrée (double envoi évité).",
+      "entryNotFound": "Écriture introuvable.",
+      "feeStillValid": "Les frais de consultation sont valides jusqu'au {{until}} : aucun nouveau paiement.",
       "hasPayments": "La facture a des paiements : contrepassez-les d'abord.",
       "hasSettlements": "La facture a des règlements ou rejets d'organismes : annulation impossible.",
       "invoiceCancelled": "La facture est annulée.",
       "invoiceDraft": "La facture est encore un brouillon.",
       "invoiceEmpty": "Ajoutez au moins une prestation.",
+      "invoiceNotFound": "Facture introuvable.",
+      "itemInactive": "La prestation « {{item}} » n'est plus active.",
+      "itemNotFound": "Prestation introuvable au catalogue.",
       "nothingDue": "Il ne reste rien à payer sur cette facture.",
       "organizationNotOnInvoice": "Cet organisme n'a pas de part sur cette facture.",
       "overpayment": "Le montant dépasse le reste dû ({{due}}).",
+      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
+      "patientNotFound": "Patient introuvable.",
+      "periodInvalid": "La période est invalide (fin avant début).",
+      "quantityInvalid": "La quantité doit être un nombre positif (2 décimales au plus).",
+      "rateInvalid": "Un taux doit être compris entre 0 et 100 %.",
       "reasonRequired": "Le motif est obligatoire.",
       "referenceRequired": "La référence est obligatoire hors espèces.",
       "refundExceedsPaid": "Le remboursement dépasse le montant encaissé ({{paid}}).",
       "rejectionExceedsDue": "Le rejet dépasse la part restante de l'organisme ({{due}}).",
       "settlementExceedsDue": "Le règlement dépasse la part restante de l'organisme ({{due}}).",
       "totalsMismatch": "Les totaux de la facture sont incohérents : facture refusée.",
-      "configDateTaken": "Une configuration existe déjà à cette date.",
-      "configRetroactive": "Une nouvelle durée ne peut pas s'appliquer à une date passée.",
-      "coverageNotFound": "Couverture introuvable pour ce patient.",
-      "coverageSame": "Les couvertures principale et complémentaire doivent différer.",
-      "currencyMismatch": "Les prestations n'ont pas la même devise.",
-      "entryNotFound": "Écriture introuvable.",
-      "feeStillValid": "Les frais de consultation sont valides jusqu'au {{until}} : aucun nouveau paiement.",
-      "invoiceNotFound": "Facture introuvable.",
-      "itemInactive": "La prestation « {{item}} » n'est plus active.",
-      "itemNotFound": "Prestation introuvable au catalogue.",
-      "patientMerged": "Ce dossier a été fusionné : utilisez le dossier conservé.",
-      "patientNotFound": "Patient introuvable.",
-      "periodInvalid": "La période est invalide (fin avant début).",
-      "quantityInvalid": "La quantité doit être un nombre positif (2 décimales au plus).",
-      "rateInvalid": "Un taux doit être compris entre 0 et 100 %.",
       "validityInvalid": "La durée de validité est invalide (1 à 120 mois).",
-      "discountInvalid": "Réduction invalide."
+      "catalogImportSize": "Un fichier d'importation doit contenir entre 1 et 500 lignes."
     },
     "lab": {
       "testsRequired": "Choisissez au moins un examen.",
@@ -441,7 +465,17 @@
       "lotExists": "Ce numéro de lot existe déjà pour ce produit.",
       "lotNotFound": "Lot introuvable.",
       "deviationReasonRequired": "Un motif est obligatoire quand la quantité servie est inférieure à la prescription ou que le produit diffère.",
-      "deviationReasonTooLong": "Le motif est trop long ({{max}} caractères au plus)."
+      "deviationReasonTooLong": "Le motif est trop long ({{max}} caractères au plus).",
+      "importEmpty": "Aucun lot à importer.",
+      "importTooMany": "Trop de lots à importer en une fois (500 au maximum).",
+      "catalogItemInvalid": "Produit à créer invalide (désignation, code ou prix).",
+      "catalogCodeTaken": "Ce code est déjà utilisé.",
+      "catalogLabelTaken": "Un produit porte déjà ce nom.",
+      "itemIsDerived": "Ce produit est une unité dérivée : la réception se fait sur le produit principal.",
+      "packagingLocked": "Le contenu d'une boîte ne peut pas changer tant qu'il reste du stock : videz d'abord le stock (ajustement).",
+      "catalogLabelLength": "Le nom doit avoir entre 2 et 120 caractères.",
+      "catalogCodeInvalid": "Code invalide (2 à 20 caractères : lettres, chiffres, tirets).",
+      "amountInvalid": "Montant invalide."
     },
     "hospital": {
       "alreadyAdmitted": "Ce patient est déjà hospitalisé ({{number}}).",
@@ -526,6 +560,34 @@
       "alreadyExists": "Ce patient a déjà un dossier : il n’y en a qu’un par patient.",
       "patientInactive": "Impossible d’ouvrir un dossier pour un patient inactif ou fusionné.",
       "formatInvalid": "Format d’export invalide."
+    },
+    "consultationDurationInvalid": "Durée invalide : nombre entier de jours, de 1 à 365.",
+    "patientEmailInvalid": "Adresse e-mail invalide.",
+    "patientBirthWeightInvalid": "Poids de naissance invalide (entre 200 et 8000 g).",
+    "categoryLabelRequired": "Indiquez le nom de la catégorie.",
+    "categoryExists": "La catégorie « {{label}} » existe déjà.",
+    "categoryDefaultLocked": "La catégorie par défaut ne peut pas être désactivée.",
+    "packagingPerPackInvalid": "Contenu invalide : nombre entier d'au moins 1.",
+    "packagingLabelsRequired": "Indiquez le nom de l'unité principale (boîte) et de l'unité de base (comprimé).",
+    "packagingLabelsDifferent": "L'unité principale et l'unité de base doivent avoir des noms différents.",
+    "packagingExtraInvalid": "Unité « {{label}} » invalide : nom requis et contenu entier plus petit que l'unité principale.",
+    "packagingExtraPrice": "Indiquez le prix de l'unité « {{label}} ».",
+    "packagingExtraDuplicate": "L'unité « {{label}} » existe déjà (même nom ou même contenu).",
+    "mail": {
+      "recipientInvalid": "L'adresse e-mail du destinataire n'est pas valide.",
+      "subjectRequired": "L'objet est obligatoire (200 caractères maximum).",
+      "bodyRequired": "Le message est obligatoire (5000 caractères maximum).",
+      "alreadyQueued": "Ce rappel est déjà en boîte d'envoi."
     }
+  },
+  "unsaved": {
+    "title": "Quitter sans enregistrer ?",
+    "body": "Vous avez des modifications non enregistrées. Si vous quittez maintenant, elles risquent d’être perdues.",
+    "stay": "Continuer la saisie",
+    "leave": "Quitter quand même"
+  },
+  "draft": {
+    "restored": "Brouillon retrouvé : votre saisie précédente a été restaurée.",
+    "discard": "Repartir de zéro"
   }
 }

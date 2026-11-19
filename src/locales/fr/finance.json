@@ -257,7 +257,8 @@
       "contracts": "Contrats",
       "subscriptions": "Abonnements",
       "catalog": "Catalogue",
-      "validity": "Validité des frais"
+      "validity": "Validité des frais",
+      "statement": "Situation d'un organisme"
     },
     "kpi": {
       "insured": "Assurés actifs",
@@ -386,6 +387,32 @@
       "edit": "Modifier la prestation",
       "codeHint": "Le code ne change pas : les contrats y font référence.",
       "hint": "Le tarif privé sert de référence. Les tarifs négociés se règlent dans les contrats. Une modification n'affecte pas les factures existantes."
+    },
+    "statement": {
+      "title": "Situation — {{name}}",
+      "organization": "Organisme",
+      "from": "Du",
+      "to": "Au",
+      "period": "Période",
+      "allTime": "Toutes les dates",
+      "export": "Relevé",
+      "filename": "situation-organisme",
+      "invoices": "Factures",
+      "due": "Part due",
+      "settled": "Réglé",
+      "disputed": "Rejeté / litige",
+      "outstanding": "Reste à recouvrer",
+      "patients": "Patients couverts",
+      "patientsValue": "{{active}} actifs / {{total}}",
+      "total": "Total",
+      "contracts": "Contrats",
+      "noContracts": "Aucun contrat pour cet organisme.",
+      "invoicesTitle": "Factures concernées",
+      "entriesTitle": "Règlements et rejets",
+      "empty": "Aucune facture pour cet organisme sur cette période.",
+      "noEntries": "Aucun règlement ni rejet.",
+      "kind": "Opération",
+      "amount": "Montant"
     }
   },
   "validity": {
@@ -415,5 +442,145 @@
     "voided": "Annulé",
     "exempt": "Exempter un patient",
     "exemptHint": "Réservé aux personnes autorisées. Le motif et l'auteur sont conservés."
+  },
+  "catalogManager": {
+    "price": "Prix",
+    "priceWithCurrency": "Prix ({{currency}})",
+    "codeHint": "Proposé automatiquement ; lettres, chiffres et tirets.",
+    "pharmacy": {
+      "title": "Médicaments",
+      "add": "Ajouter un médicament",
+      "edit": "Modifier le médicament",
+      "label": "Désignation du médicament",
+      "empty": "Aucun médicament au catalogue.",
+      "hint": "Les médicaments proposés à la prescription et à la dispensation, avec leur prix."
+    },
+    "laboratory": {
+      "title": "Examens",
+      "add": "Ajouter un examen",
+      "edit": "Modifier l'examen",
+      "label": "Désignation de l'examen",
+      "empty": "Aucun examen au catalogue.",
+      "hint": "Les examens de laboratoire proposés à la prescription, avec leur prix."
+    },
+    "problem": {
+      "codeInvalid": "Code invalide : 2 à 20 lettres, chiffres ou tirets.",
+      "codeTaken": "Ce code existe déjà.",
+      "labelLength": "La désignation doit contenir de 2 à 120 caractères.",
+      "labelTaken": "Cette désignation existe déjà.",
+      "priceInvalid": "Saisissez un prix supérieur à 0 (2 décimales au plus)."
+    },
+    "search": "Rechercher par désignation ou code",
+    "packaging": {
+      "column": "Conditionnement",
+      "title": "Conditionnement et unités de vente",
+      "hint": "Unité principale = ce que vous recevez et vendez entier (la boîte, le flacon). Unité de base = la plus petite unité que vous comptez en stock (le comprimé, le ml). Le stock est tenu en unité de base : on peut donc facturer 1 boîte, 3 comprimés, 1 sachet…",
+      "perPack": "Contenu d'une unité principale",
+      "perPackHint": "Nombre d'unités de base dans une unité principale (ex. 100 comprimés dans 1 boîte). Laissez 1 si le produit se vend à l'unité.",
+      "unit": "Unité principale (ex. boîte)",
+      "unitExample": "boîte",
+      "baseUnit": "Unité de base (ex. comprimé)",
+      "baseExample": "comprimé",
+      "extras": "Autres unités de vente (sachet, plaquette, comprimé…)",
+      "extraLabel": "Libellé",
+      "extraContent": "Contenu ({{unit}})",
+      "extraPrice": "Prix ({{currency}})",
+      "remove": "Retirer",
+      "addExtra": "Ajouter une unité de vente",
+      "derived": "Unité « {{unit}} » = {{perUnit}} de {{product}}",
+      "editViaProduct": "Modifier via le produit principal"
+    }
+  },
+  "group": {
+    "title": "Règlement groupé des factures",
+    "submit": "Encaisser",
+    "open": "Payer toutes les factures impayées",
+    "summary": "{{count}} facture(s) impayée(s) — total dû : {{amount}}",
+    "description": "{{count}} facture(s) impayée(s), total dû {{amount}}. Le montant est réparti sur chaque facture, la plus ancienne d'abord.",
+    "amountHint": "Un paiement partiel est possible : il solde les plus anciennes factures d'abord.",
+    "allocation": "Ventilation par facture",
+    "done": "Règlement groupé enregistré"
+  },
+  "orgPay": {
+    "open": "Payer plusieurs factures",
+    "title": "Paiement groupé — {{name}}",
+    "description": "{{members}} membre(s), {{invoices}} facture(s) ouverte(s). Reste à encaisser : {{amount}}. Chaque facture reçoit sa propre écriture de règlement : vous pouvez payer en partie, laisser des membres à zéro ou régler en plusieurs fois.",
+    "submit": "Enregistrer le paiement",
+    "search": "Rechercher un membre ou une facture",
+    "empty": "Aucune facture en attente de règlement pour cet organisme.",
+    "noMatch": "Aucun membre ne correspond à la recherche.",
+    "lump": {
+      "label": "Somme reçue de l'organisme",
+      "hint": "Saisissez le total reçu puis choisissez comment le répartir ; vous pouvez ensuite ajuster chaque ligne.",
+      "strategy": "Répartition",
+      "oldest": "Factures les plus anciennes d'abord",
+      "member": "Membre par membre (ordre alphabétique)",
+      "proportional": "Proportionnelle au dû de chaque membre",
+      "apply": "Répartir",
+      "tooBig": "Cette somme dépasse le total dû pour les membres affichés ({{due}})."
+    },
+    "payAll": "Tout solder",
+    "clear": "Tout vider",
+    "payMember": "Solder",
+    "columns": {
+      "member": "Membre",
+      "invoices": "Factures",
+      "due": "Total dû",
+      "pay": "Montant à payer",
+      "rest": "Reste"
+    },
+    "invoiceCount": "{{count}} facture(s)",
+    "expand": "Détailler les factures de {{name}}",
+    "collapse": "Masquer les factures de {{name}}",
+    "amountFor": "Montant à payer pour {{name}}",
+    "amountError": "Montant invalide ou supérieur au dû ({{due}}).",
+    "summary": "À enregistrer : {{amount}} pour {{members}} membre(s) et {{invoices}} facture(s). Reste dû après : {{rest}}.",
+    "done": "Paiement groupé enregistré"
+  },
+  "catalogImport": {
+    "open": "Importer depuis Excel",
+    "title": "Importer les examens et leurs prix",
+    "help": "Ajoutez de nouveaux examens et mettez à jour les prix, les désignations et l'état de ceux qui existent déjà. Tout est vérifié et prévisualisé avant l'enregistrement : une seule erreur bloque l'importation.",
+    "file": "Fichier Excel (.xlsx)",
+    "template": "Télécharger le modèle",
+    "templateFile": "modele-import-examens",
+    "templateSheet": "Examens",
+    "columns": "Colonnes : Code (facultatif — un code est créé si absent), Examen, Prix (obligatoire pour un nouvel examen) et Actif (oui/non, facultatif). Une ligne dont le code ou la désignation existe déjà met à jour l'examen.",
+    "summary": "{{file}} : {{created}} à créer, {{updated}} à mettre à jour, {{unchanged}} inchangé(s), {{errors}} erreur(s).",
+    "errorsTitle": "Erreurs à corriger dans le fichier",
+    "moreErrors": "… et {{count}} autre(s) erreur(s).",
+    "moreRows": "… et {{count}} autre(s) ligne(s) non affichée(s).",
+    "preview": "Aperçu",
+    "fixFirst": "Corrigez le fichier puis rechargez-le : rien n'est enregistré tant qu'il reste une erreur.",
+    "submit": "Importer ({{count}})",
+    "done": "Catalogue des examens mis à jour",
+    "action": {
+      "create": "Nouveau",
+      "update": "Mise à jour",
+      "unchanged": "Inchangé"
+    },
+    "read": {
+      "notXlsx": "Ce fichier n'est pas un classeur Excel (.xlsx) lisible.",
+      "unsupported": "Ce navigateur ne peut pas lire ce classeur compressé. Enregistrez-le à nouveau au format .xlsx standard ou utilisez un navigateur récent.",
+      "empty": "Le classeur est vide.",
+      "tooLarge": "Le fichier est trop volumineux."
+    },
+    "fatal": {
+      "missingColumns": "Colonnes introuvables : il faut au moins « Examen » (ou « Code ») et « Prix ». Utilisez le modèle.",
+      "empty": "Le fichier ne contient aucune ligne à importer.",
+      "tooMany": "Trop de lignes : {{max}} au maximum par importation."
+    },
+    "problem": {
+      "itemMissing": "Ligne {{row}} : désignation manquante.",
+      "codeInvalid": "Ligne {{row}} : code « {{value}} » invalide (2 à 20 lettres majuscules, chiffres ou tirets).",
+      "codeTaken": "Ligne {{row}} : le code « {{value}} » appartient à un produit d'une autre catégorie.",
+      "codeMismatch": "Ligne {{row}} : cette désignation existe déjà sous un autre code que « {{value}} ».",
+      "labelLength": "Ligne {{row}} : la désignation doit avoir entre 2 et 120 caractères.",
+      "labelTaken": "Ligne {{row}} : « {{value}} » est déjà utilisé par un autre examen.",
+      "priceRequired": "Ligne {{row}} : le prix est obligatoire pour un nouvel examen (« {{value}} »).",
+      "priceInvalid": "Ligne {{row}} : prix « {{value}} » invalide (nombre positif, 2 décimales au plus).",
+      "activeInvalid": "Ligne {{row}} : état « {{value}} » illisible (oui / non).",
+      "duplicateInFile": "Ligne {{row}} : « {{value}} » apparaît déjà plus haut dans le fichier."
+    }
   }
 }

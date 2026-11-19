@@ -202,6 +202,22 @@
   "breadcrumb": {
     "label": "Njia ya kurasa"
   },
+  "routeError": {
+    "reload": "Pakia ukurasa upya",
+    "reloading": "Inasasisha ukurasa…",
+    "chunk": {
+      "title": "Ukurasa huu unahitaji kupakiwa upya",
+      "description": "Programu ilisasishwa au ilianzishwa upya wakati ukurasa huu ulikuwa wazi. Pakia ukurasa upya ili kuendelea."
+    },
+    "notFound": {
+      "title": "Ukurasa haujapatikana",
+      "description": "Ukurasa ulioombwa haupo au umehamishwa."
+    },
+    "generic": {
+      "title": "Ukurasa huu umekumbwa na hitilafu",
+      "description": "Data yako iliyohifadhiwa haijapotea. Pakia ukurasa upya au rudi kwenye dashibodi."
+    }
+  },
   "notFound": {
     "title": "Ukurasa haujapatikana",
     "description": "Ukurasa ulioombwa haupo au umehamishwa.",
@@ -256,7 +272,10 @@
     "inactive": "Haifanyi kazi"
   },
   "age": {
-    "years": "miaka {{count}}"
+    "years": "miaka {{count}}",
+    "days": "Siku {{count}}",
+    "months": "Miezi {{count}}",
+    "yearsMonths": "Miaka {{years}} na miezi {{months}}"
   },
   "common": {
     "yes": "Ndiyo",
@@ -352,38 +371,43 @@
       "alreadyReversed": "Muamala huu tayari umebatilishwa.",
       "amountInvalid": "Kiasi si sahihi.",
       "cannotReverseReversal": "Kubatilisha hakubatilishwi.",
+      "catalogCodeInvalid": "Msimbo si sahihi (herufi, tarakimu au vistari 2 hadi 20).",
+      "catalogCodeTaken": "Msimbo « {{code}} » tayari upo.",
+      "catalogLabelLength": "Jina lazima liwe na herufi 2 hadi 120.",
+      "catalogLabelTaken": "« {{label}} » tayari ipo katika kategoria hii.",
+      "configDateTaken": "Tayari kuna mpangilio kwa tarehe hiyo.",
+      "configRetroactive": "Muda mpya hauwezi kutumika kwa tarehe iliyopita.",
+      "coverageNotFound": "Bima haijapatikana kwa mgonjwa huyu.",
+      "coverageSame": "Bima kuu na ya nyongeza lazima zitofautiane.",
+      "currencyMismatch": "Huduma hazina sarafu moja.",
+      "discountInvalid": "Punguzo si sahihi.",
       "duplicatePayment": "Operesheni hii tayari imerekodiwa (kutuma mara mbili kumeepukwa).",
+      "entryNotFound": "Muamala haujapatikana.",
+      "feeStillValid": "Ada ya mashauriano ni halali hadi {{until}}: hakuna malipo mapya.",
       "hasPayments": "Ankara ina malipo: yabatilishe kwanza.",
       "hasSettlements": "Ankara ina malipo au kukataliwa kwa walipaji: haiwezi kughairiwa.",
       "invoiceCancelled": "Ankara imeghairiwa.",
       "invoiceDraft": "Ankara bado ni rasimu.",
       "invoiceEmpty": "Ongeza angalau huduma moja.",
+      "invoiceNotFound": "Ankara haijapatikana.",
+      "itemInactive": "Huduma « {{item}} » haifanyi kazi tena.",
+      "itemNotFound": "Huduma haipo kwenye orodha.",
       "nothingDue": "Hakuna kilichobaki kulipwa kwenye ankara hii.",
       "organizationNotOnInvoice": "Shirika hili halina sehemu kwenye ankara hii.",
       "overpayment": "Kiasi kinazidi salio linalodaiwa ({{due}}).",
+      "patientMerged": "Faili hili liliunganishwa: tumia faili lililohifadhiwa.",
+      "patientNotFound": "Mgonjwa hajapatikana.",
+      "periodInvalid": "Kipindi si sahihi (mwisho kabla ya mwanzo).",
+      "quantityInvalid": "Idadi lazima iwe nambari kamili chanya.",
+      "rateInvalid": "Kiwango lazima kiwe kati ya 0 na 100%.",
       "reasonRequired": "Sababu inahitajika.",
       "referenceRequired": "Kumbukumbu inahitajika isipokuwa pesa taslimu.",
       "refundExceedsPaid": "Marejesho yanazidi kiasi kilichokusanywa ({{paid}}).",
       "rejectionExceedsDue": "Kukataliwa kunazidi sehemu iliyobaki ya mlipaji ({{due}}).",
       "settlementExceedsDue": "Malipo yanazidi sehemu iliyobaki ya mlipaji ({{due}}).",
       "totalsMismatch": "Jumla za ankara hazilingani: ankara imekataliwa.",
-      "configDateTaken": "Tayari kuna mpangilio kwa tarehe hiyo.",
-      "configRetroactive": "Muda mpya hauwezi kutumika kwa tarehe iliyopita.",
-      "coverageNotFound": "Bima haijapatikana kwa mgonjwa huyu.",
-      "coverageSame": "Bima kuu na ya nyongeza lazima zitofautiane.",
-      "currencyMismatch": "Huduma hazina sarafu moja.",
-      "entryNotFound": "Muamala haujapatikana.",
-      "feeStillValid": "Ada ya mashauriano ni halali hadi {{until}}: hakuna malipo mapya.",
-      "invoiceNotFound": "Ankara haijapatikana.",
-      "itemInactive": "Huduma « {{item}} » haifanyi kazi tena.",
-      "itemNotFound": "Huduma haipo kwenye orodha.",
-      "patientMerged": "Faili hili liliunganishwa: tumia faili lililohifadhiwa.",
-      "patientNotFound": "Mgonjwa hajapatikana.",
-      "periodInvalid": "Kipindi si sahihi (mwisho kabla ya mwanzo).",
-      "quantityInvalid": "Idadi lazima iwe nambari kamili chanya.",
-      "rateInvalid": "Kiwango lazima kiwe kati ya 0 na 100%.",
       "validityInvalid": "Muda wa uhalali si sahihi (miezi 1 hadi 120).",
-      "discountInvalid": "Punguzo si sahihi."
+      "catalogImportSize": "Faili la kuingiza lazima liwe na mistari 1 hadi 500."
     },
     "lab": {
       "testsRequired": "Chagua angalau kipimo kimoja.",
@@ -441,7 +465,17 @@
       "lotExists": "Namba hii ya kundi tayari ipo kwa bidhaa hii.",
       "lotNotFound": "Kundi halipatikani.",
       "deviationReasonRequired": "Sababu inahitajika kiasi kinapokuwa kidogo kuliko kilichoagizwa au bidhaa ikiwa tofauti.",
-      "deviationReasonTooLong": "Sababu ni ndefu mno (herufi {{max}} kwa kiwango cha juu)."
+      "deviationReasonTooLong": "Sababu ni ndefu mno (herufi {{max}} kwa kiwango cha juu).",
+      "importEmpty": "Hakuna bechi ya kuleta.",
+      "importTooMany": "Bechi nyingi mno kuletwa kwa mara moja (juu zaidi 500).",
+      "catalogItemInvalid": "Bidhaa ya kuunda si sahihi (jina, msimbo au bei).",
+      "catalogCodeTaken": "Msimbo huu unatumika tayari.",
+      "catalogLabelTaken": "Bidhaa ina jina hili tayari.",
+      "itemIsDerived": "Hii ni kipimo kinachotokana: pokea hisa kwenye bidhaa kuu.",
+      "packagingLocked": "Idadi ndani ya boksi haiwezi kubadilika hisa ikiwepo: futa hisa kwanza (marekebisho).",
+      "catalogLabelLength": "Jina liwe na herufi 2 hadi 120.",
+      "catalogCodeInvalid": "Msimbo si sahihi (herufi 2-20: herufi, tarakimu, vistari).",
+      "amountInvalid": "Kiasi si sahihi."
     },
     "hospital": {
       "alreadyAdmitted": "Mgonjwa huyu tayari amelazwa ({{number}}).",
@@ -526,6 +560,34 @@
       "alreadyExists": "Mgonjwa huyu tayari ana faili: kuna moja tu kwa kila mgonjwa.",
       "patientInactive": "Haiwezekani kufungua faili kwa mgonjwa asiye hai au aliyeunganishwa.",
       "formatInvalid": "Muundo wa uhamishaji si sahihi."
+    },
+    "consultationDurationInvalid": "Muda si sahihi: idadi kamili ya siku, 1 hadi 365.",
+    "patientEmailInvalid": "Anwani ya barua pepe si sahihi.",
+    "patientBirthWeightInvalid": "Uzito wa kuzaliwa si sahihi (g 200 hadi 8000).",
+    "categoryLabelRequired": "Weka jina la kundi.",
+    "categoryExists": "Kundi “{{label}}” tayari lipo.",
+    "categoryDefaultLocked": "Kundi la msingi haliwezi kuzimwa.",
+    "packagingPerPackInvalid": "Idadi si sahihi: nambari kamili isiyopungua 1.",
+    "packagingLabelsRequired": "Weka jina la kipimo kikuu (boksi) na kipimo cha msingi (kidonge).",
+    "packagingLabelsDifferent": "Kipimo kikuu na cha msingi lazima viwe na majina tofauti.",
+    "packagingExtraInvalid": "Kipimo “{{label}}” si sahihi: jina linahitajika na idadi iwe ndogo kuliko kipimo kikuu.",
+    "packagingExtraPrice": "Weka bei ya kipimo “{{label}}”.",
+    "packagingExtraDuplicate": "Kipimo “{{label}}” tayari kipo (jina au idadi sawa).",
+    "mail": {
+      "recipientInvalid": "Barua pepe ya mpokeaji si halali.",
+      "subjectRequired": "Mada inahitajika (herufi 200 juu).",
+      "bodyRequired": "Ujumbe unahitajika (herufi 5000 juu).",
+      "alreadyQueued": "Kikumbusho hiki tayari kiko kwenye foleni."
     }
+  },
+  "unsaved": {
+    "title": "Kuondoka bila kuhifadhi?",
+    "body": "Una mabadiliko ambayo hayajahifadhiwa. Ukiondoka sasa yanaweza kupotea.",
+    "stay": "Endelea kuandika",
+    "leave": "Ondoka hata hivyo"
+  },
+  "draft": {
+    "restored": "Rasimu imepatikana: ulichoandika awali kimerejeshwa.",
+    "discard": "Anza upya"
   }
 }

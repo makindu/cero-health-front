@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
+import { RouteError } from '@/components/feedback/route-error';
 import { Spinner } from '@/components/feedback/spinner';
 import { AppLayout } from '@/components/layout/app-layout';
 import { env } from '@/core/config/env';
@@ -40,32 +41,39 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <AppLayout />,
+    errorElement: <RouteError />, // erreur du cadre lui-même (rare) : page claire au lieu de l'écran d'erreur par défaut
     children: [
-      ...(dashboardItem ? [{ index: true, element: moduleElement(dashboardItem) }] : []),
-      ...moduleRoutes,
       {
-        path: 'patients/:id',
-        element: lazyElement(
-          <ModuleRoute permission={PERMISSIONS.patients.view}>
-            <PatientDetailPage />
-          </ModuleRoute>,
-        ),
+        // Erreurs de page (fichier introuvable après redémarrage, plantage) : le menu reste affiché
+        errorElement: <RouteError />,
+        children: [
+          ...(dashboardItem ? [{ index: true, element: moduleElement(dashboardItem) }] : []),
+          ...moduleRoutes,
+          {
+            path: 'patients/:id',
+            element: lazyElement(
+              <ModuleRoute permission={PERMISSIONS.patients.view}>
+                <PatientDetailPage />
+              </ModuleRoute>,
+            ),
+          },
+          {
+            path: 'consultations/:id',
+            element: lazyElement(
+              <ModuleRoute permission={PERMISSIONS.consultations.view}>
+                <ConsultationWorkspace />
+              </ModuleRoute>,
+            ),
+          },
+          ...(env.localMode
+            ? [{ path: 'local-data', element: lazyElement(<LocalDataPage />) }]
+            : []),
+          ...(env.designSystemEnabled
+            ? [{ path: 'design-system', element: lazyElement(<DesignSystemPage />) }]
+            : []),
+          { path: '*', element: lazyElement(<NotFoundPage />) },
+        ],
       },
-      {
-        path: 'consultations/:id',
-        element: lazyElement(
-          <ModuleRoute permission={PERMISSIONS.consultations.view}>
-            <ConsultationWorkspace />
-          </ModuleRoute>,
-        ),
-      },
-      ...(env.localMode
-        ? [{ path: 'local-data', element: lazyElement(<LocalDataPage />) }]
-        : []),
-      ...(env.designSystemEnabled
-        ? [{ path: 'design-system', element: lazyElement(<DesignSystemPage />) }]
-        : []),
-      { path: '*', element: lazyElement(<NotFoundPage />) },
     ],
   },
   { path: '/index.html', element: <Navigate to="/" replace /> },

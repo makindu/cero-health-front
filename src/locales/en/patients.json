@@ -13,7 +13,8 @@
     "status": "Status",
     "lastVisit": "Last visit",
     "fileNumber": "File no.",
-    "registeredAt": "Registered on"
+    "registeredAt": "Registered on",
+    "category": "Category"
   },
   "filters": {
     "sex": "Sex",
@@ -37,7 +38,13 @@
     "insurer": "Insurer / agreement",
     "emergencyContact": "Emergency contact",
     "fileNumber": "File number",
-    "fileNumberHint": "Number of the paper file or old system, if any (3 to 30 characters: letters, digits, . _ / -)."
+    "fileNumberHint": "Number of the paper file or old system, if any (3 to 30 characters: letters, digits, . _ / -).",
+    "email": "Email address",
+    "emailHint": "To send appointments, invoices and results (optional).",
+    "birthWeight": "Birth weight (g)",
+    "birthWeightHint": "In grams, for example 3200 (optional).",
+    "category": "Patient category",
+    "categoryHint": "Sets what must be paid before consumption."
   },
   "detail": {
     "tabs": {
@@ -48,7 +55,8 @@
       "consultations": "Consultations",
       "prescriptions": "Prescriptions",
       "hospitalizations": "Hospitalizations",
-      "position": "Position"
+      "position": "Position",
+      "mail": "Emails"
     },
     "section": {
       "civil": "Personal details",
@@ -109,5 +117,98 @@
     "done": "Sheet generated",
     "confirmTitle": "Export the patient sheet?",
     "confirmBody": "The PDF contains personal data. Keep it confidential."
+  },
+  "categories": {
+    "button": "Patient categories",
+    "title": "Patient categories",
+    "hint": "Define each category's obligations. Add a new category here, no code change needed.",
+    "yes": "Yes",
+    "no": "No",
+    "label": "Category name",
+    "description": "Description",
+    "payConsultation": "Must pay for the consultation first",
+    "payLab": "Lab payment required first",
+    "payMedication": "Medication payment required first",
+    "active": "Category active",
+    "consultation": "Consultation",
+    "lab": "Laboratory",
+    "medication": "Medication",
+    "mustPay": "Pays first",
+    "deferred": "Deferred",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "add": "Add a category",
+    "addTitle": "New category",
+    "editTitle": "Edit “{{name}}”",
+    "save": "Save",
+    "hospitalizedNote": "Admitted patients never pay before lab or medication use: their bill is settled once."
+  },
+  "mail": {
+    "title": "Emails to the patient",
+    "compose": "Write an email",
+    "recipient": "Recipient: {{email}}",
+    "noEmail": "No valid email address for this patient: add it in the record (Edit).",
+    "localNotice": "Local mode: the message is queued, then opened in your mail client. Scheduled reminders will be sent automatically once the server is connected.",
+    "empty": "No emails for this patient.",
+    "send": "Send",
+    "cancel": "Cancel",
+    "queue": "Add to outbox",
+    "schedule": "Schedule reminder",
+    "body": "Message",
+    "privacy": "For confidentiality, the results themselves are never attached to the email.",
+    "col": {
+      "kind": "Type",
+      "subject": "Subject",
+      "when": "Date / due",
+      "status": "Status"
+    },
+    "kind": {
+      "appointment": "Appointment reminder",
+      "unpaidInvoices": "Unpaid invoices",
+      "labResult": "Lab results ready",
+      "free": "Free message"
+    },
+    "status": {
+      "queued": "To send",
+      "scheduled": "Scheduled",
+      "handedOff": "Handed to mail client",
+      "cancelled": "Cancelled"
+    },
+    "source": {
+      "appointment": "Appointment",
+      "labResult": "Lab request"
+    },
+    "noSource": {
+      "appointment": "No upcoming appointment for this patient.",
+      "labResult": "No validated result for this patient.",
+      "unpaidInvoices": "This patient has no unpaid invoice."
+    },
+    "lead": {
+      "label": "When to send",
+      "hint": "Pick a reminder scheduled before the appointment, or “now”.",
+      "now": "Now",
+      "2h": "2 hours before",
+      "3h": "3 hours before",
+      "1d": "1 day before",
+      "2d": "2 days before",
+      "3d": "3 days before",
+      "7d": "7 days before"
+    },
+    "tpl": {
+      "greeting": "Hello {{name}},",
+      "signature": "Kind regards,\nThe care team",
+      "appointment": {
+        "subject": "Reminder of your appointment — {{when}}",
+        "body": "This is a reminder of your appointment on {{when}} with {{practitioner}}. Please arrive a few minutes early. If you cannot come, contact us to reschedule."
+      },
+      "unpaid": {
+        "subject": "Invoices awaiting payment",
+        "body": "Our records show unpaid invoices totalling {{total}}:"
+      },
+      "lab": {
+        "subject": "Your test results are available",
+        "body": "The results of your lab request {{number}} are available. For confidentiality they are not attached: please come to collect them or discuss them with your doctor."
+      }
+    }
   }
 }

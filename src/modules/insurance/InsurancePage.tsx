@@ -12,6 +12,7 @@ import { FINANCE_AVAILABLE, useFinanceSnapshot, useMoney } from '../finance/use-
 import { CatalogTab } from './CatalogTab';
 import { ContractsTab } from './ContractsTab';
 import { CoveragesTab } from './CoveragesTab';
+import { InsurerStatementTab } from './InsurerStatementTab';
 import { OrganizationsTab } from './OrganizationsTab';
 import { SubscriptionsTab } from './SubscriptionsTab';
 import { ValidityTab } from './ValidityTab';
@@ -60,6 +61,7 @@ function InsuranceScreen() {
           </Card>
           <Tabs ariaLabel={t('insurance.title')} tabs={[
             { id: 'coverages', label: t('insurance.tabs.coverages'), content: <CoveragesTab data={data!} spent={ind.spentByCoverage} /> },
+            { id: 'statement', label: t('insurance.tabs.statement'), content: <InsurerStatementTab data={data!} /> },
             { id: 'organizations', label: t('insurance.tabs.organizations'), content: <OrganizationsTab data={data!} canManage={manage} /> },
             { id: 'contracts', label: t('insurance.tabs.contracts'), content: <ContractsTab data={data!} canManage={manage} /> },
             { id: 'subscriptions', label: t('insurance.tabs.subscriptions'), content: <SubscriptionsTab data={data!} canManage={manage} /> },

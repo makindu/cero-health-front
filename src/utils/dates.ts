@@ -42,3 +42,17 @@ export function isoAt(offset: number, hour: number, minute = 0, reference: Date 
   date.setHours(hour, minute, 0, 0);
   return date.toISOString();
 }
+
+export interface AgeParts { years: number; months: number; days: number }
+/** Âge exact en années, mois et jours (null si date absente, invalide ou future). */
+export function ageBreakdown(birthDate: string | null | undefined, reference: Date = LOADED_AT): AgeParts | null {
+  if (!birthDate) return null;
+  const civil = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthDate);
+  const birth = civil ? new Date(Number(civil[1]), Number(civil[2]) - 1, Number(civil[3])) : new Date(birthDate);
+  if (Number.isNaN(birth.getTime()) || birth.getTime() > reference.getTime()) return null;
+  let months = (reference.getFullYear() - birth.getFullYear()) * 12 + (reference.getMonth() - birth.getMonth());
+  if (reference.getDate() < birth.getDate()) months -= 1;
+  const anchor = new Date(birth.getFullYear(), birth.getMonth() + months, birth.getDate());
+  const days = Math.max(0, Math.floor((reference.getTime() - anchor.getTime()) / 86_400_000));
+  return { years: Math.floor(months / 12), months: months % 12, days };
+}

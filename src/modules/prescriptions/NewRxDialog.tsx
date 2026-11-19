@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { PatientPicker } from '../_shared/pickers';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -13,31 +13,39 @@ import type { Rx, RxItem } from './rx-rules';
 import { useRxMutation } from './use-rx';
 import { NumberInput } from '@/components/forms/number-input';
 import { isQuantity, parseNumberText } from '@/utils/numbers';
+import { DraftNotice } from '@/components/feedback/draft-notice';
+import { usePersistentState } from '@/core/drafts/use-persistent-state';
 
 interface Row extends Omit<RxItem, 'quantity'> { key: number; quantity: string }
 const empty = (key: number): Row => ({ key, label: '', dosage: '', frequency: '', duration: '', quantity: '1', instructions: '' });
 
 export function NewRxDialog({ onClose, onCreated, initialPatientId, consultationId }: { onClose: () => void; onCreated: (r: Rx) => void; initialPatientId?: string; consultationId?: string }) {
   const { t } = useTranslation('prescriptions');
-  const [patientId, setPatientId] = useState(initialPatientId ?? '');
-  const [rows, setRows] = useState<Row[]>([empty(1)]);
-  const [note, setNote] = useState('');
-  const [consult, setConsult] = useState(consultationId ?? '');
+  // Brouillon automatique : la saisie survit à une fermeture involontaire ou à une coupure (clé : patient + consultation d'origine).
+  const [form, setForm, draft] = usePersistentState(`rx:new:${initialPatientId ?? ''}:${consultationId ?? ''}`, {
+    patientId: initialPatientId ?? '', rows: [empty(1)] as Row[], note: '', consult: consultationId ?? '',
+  });
+  const { patientId, rows, note, consult } = form;
+  const setPatientId = (patientId: string): void => setForm((f) => ({ ...f, patientId }));
+  const setRows = (rows: Row[]): void => setForm((f) => ({ ...f, rows }));
+  const setNote = (note: string): void => setForm((f) => ({ ...f, note }));
+  const setConsult = (consult: string): void => setForm((f) => ({ ...f, consult }));
   const snap = useFinanceSnapshot();
   const money = useMoney();
   // Suggestions : produits de la pharmacie du catalogue. La saisie libre reste possible (produit hors catalogue).
   const drugs = useMemo(() => (snap.data?.catalog ?? []).filter((c) => c.category === 'pharmacy').map((c) => ({ value: c.label, hint: `${c.code} · ${money(c.price.minor, c.price.currency)}` })), [snap.data, money]);
-  const create = useRxMutation(rx.create, { successTitle: t('done.create'), onDone: onCreated });
+  const create = useRxMutation(rx.create, { successTitle: t('done.create'), onDone: (created) => { draft.clear(); onCreated(created); } });
   const set = (key: number, patch: Partial<Row>): void => setRows(rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
   const items: RxItem[] = rows.map(({ key: _k, quantity, ...rest }) => { void _k; return { ...rest, quantity: parseNumberText(quantity) }; });
   const ready = patientId !== '' && rows.every((r) => r.label.trim() && r.dosage.trim() && r.frequency.trim() && isQuantity(parseNumberText(r.quantity)));
   return (
     <Dialog open onClose={onClose} title={t('create.title')} description={t('create.description')}
       footer={<>
-        <Button variant="outline" onClick={onClose}>{t('create.cancel')}</Button>
+        <Button variant="outline" onClick={() => { draft.clear(); onClose(); }}>{t('create.cancel')}</Button>
         <Button loading={create.isPending} disabled={!ready} onClick={() => create.mutate({ patientId, items, note, consultationId: consult.trim() || undefined })}>{t('create.submit')}</Button>
       </>}>
       <div className="space-y-4">
+        {draft.restored && <DraftNotice onDiscard={draft.discard} />}
         <FormField label={t('columns.patient')} required>
           {(c) => (
             <PatientPicker {...c} value={patientId} onChange={setPatientId} disabled={Boolean(initialPatientId)} />

@@ -132,11 +132,16 @@
     "unpaid": "À payer en caisse",
     "credit": "Crédit autorisé",
     "exception": "Exception tracée",
-    "invoiceCancelled": "Facture annulée"
+    "invoiceCancelled": "Facture annulée",
+    "waived": "Paiement différé"
   },
   "flag": {
     "unspecified": "Non précisé",
     "normal": "Normal",
     "abnormal": "Anormal"
+  },
+  "tabs": {
+    "orders": "Demandes",
+    "catalog": "Catalogue et prix"
   }
 }

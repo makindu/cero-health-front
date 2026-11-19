@@ -13,7 +13,8 @@
     "status": "Statut",
     "lastVisit": "Dernière visite",
     "fileNumber": "N° de dossier",
-    "registeredAt": "Inscrit le"
+    "registeredAt": "Inscrit le",
+    "category": "Catégorie"
   },
   "filters": {
     "sex": "Sexe",
@@ -37,7 +38,13 @@
     "insurer": "Assureur / convention",
     "emergencyContact": "Personne à prévenir",
     "fileNumber": "N° de dossier",
-    "fileNumberHint": "Numéro du dossier papier ou de l’ancien système, s’il existe (3 à 30 caractères : lettres, chiffres, . _ / -)."
+    "fileNumberHint": "Numéro du dossier papier ou de l’ancien système, s’il existe (3 à 30 caractères : lettres, chiffres, . _ / -).",
+    "email": "Adresse e-mail",
+    "emailHint": "Pour envoyer rendez-vous, factures et résultats (facultatif).",
+    "birthWeight": "Poids de naissance (g)",
+    "birthWeightHint": "En grammes, par exemple 3200 (facultatif).",
+    "category": "Catégorie du patient",
+    "categoryHint": "Détermine ce qui doit être payé avant consommation."
   },
   "detail": {
     "tabs": {
@@ -48,7 +55,8 @@
       "consultations": "Consultations",
       "prescriptions": "Prescriptions",
       "hospitalizations": "Hospitalisations",
-      "position": "Position"
+      "position": "Position",
+      "mail": "E-mails"
     },
     "section": {
       "civil": "État civil",
@@ -109,5 +117,98 @@
     "done": "Fiche générée",
     "confirmTitle": "Exporter la fiche du patient ?",
     "confirmBody": "Le PDF contient des données personnelles. Conservez-le comme une donnée confidentielle."
+  },
+  "categories": {
+    "button": "Catégories de patients",
+    "title": "Catégories de patients",
+    "hint": "Définissez les obligations de chaque catégorie. Une nouvelle catégorie s'ajoute ici, sans modifier le code.",
+    "yes": "Oui",
+    "no": "Non",
+    "label": "Nom de la catégorie",
+    "description": "Description",
+    "payConsultation": "Doit payer la consultation avant",
+    "payLab": "Paiement du laboratoire obligatoire avant",
+    "payMedication": "Paiement des médicaments obligatoire avant",
+    "active": "Catégorie active",
+    "consultation": "Consultation",
+    "lab": "Laboratoire",
+    "medication": "Médicaments",
+    "mustPay": "Paie avant",
+    "deferred": "Paiement différé",
+    "inactive": "Inactive",
+    "edit": "Modifier",
+    "add": "Ajouter une catégorie",
+    "addTitle": "Nouvelle catégorie",
+    "editTitle": "Modifier « {{name}} »",
+    "save": "Enregistrer",
+    "hospitalizedNote": "Les patients hospitalisés ne paient jamais avant consommation du laboratoire ou des médicaments : leur facture est réglée en une fois."
+  },
+  "mail": {
+    "title": "E-mails au patient",
+    "compose": "Écrire un e-mail",
+    "recipient": "Destinataire : {{email}}",
+    "noEmail": "Aucune adresse e-mail valide pour ce patient : renseignez-la dans la fiche (Modifier).",
+    "localNotice": "Mode local : le message est mis en boîte d'envoi puis ouvert dans votre messagerie. Les rappels programmés seront envoyés automatiquement avec le serveur.",
+    "empty": "Aucun e-mail pour ce patient.",
+    "send": "Envoyer",
+    "cancel": "Annuler",
+    "queue": "Mettre en boîte d'envoi",
+    "schedule": "Programmer le rappel",
+    "body": "Message",
+    "privacy": "Pour la confidentialité, les résultats eux-mêmes ne sont jamais joints à l'e-mail.",
+    "col": {
+      "kind": "Type",
+      "subject": "Objet",
+      "when": "Date / échéance",
+      "status": "Statut"
+    },
+    "kind": {
+      "appointment": "Rappel de rendez-vous",
+      "unpaidInvoices": "Factures impayées",
+      "labResult": "Résultats de laboratoire prêts",
+      "free": "Message libre"
+    },
+    "status": {
+      "queued": "À envoyer",
+      "scheduled": "Programmé",
+      "handedOff": "Remis à la messagerie",
+      "cancelled": "Annulé"
+    },
+    "source": {
+      "appointment": "Rendez-vous",
+      "labResult": "Demande d'examen"
+    },
+    "noSource": {
+      "appointment": "Aucun rendez-vous à venir pour ce patient.",
+      "labResult": "Aucun résultat validé pour ce patient.",
+      "unpaidInvoices": "Ce patient n'a aucune facture impayée."
+    },
+    "lead": {
+      "label": "Moment de l'envoi",
+      "hint": "Choisissez un rappel programmé avant le rendez-vous, ou « maintenant ».",
+      "now": "Maintenant",
+      "2h": "2 heures avant",
+      "3h": "3 heures avant",
+      "1d": "1 jour avant",
+      "2d": "2 jours avant",
+      "3d": "3 jours avant",
+      "7d": "7 jours avant"
+    },
+    "tpl": {
+      "greeting": "Bonjour {{name}},",
+      "signature": "Cordialement,\nL'équipe soignante",
+      "appointment": {
+        "subject": "Rappel de votre rendez-vous — {{when}}",
+        "body": "Nous vous rappelons votre rendez-vous le {{when}} avec {{practitioner}}. Merci d'arriver quelques minutes à l'avance. En cas d'empêchement, contactez-nous pour le reporter."
+      },
+      "unpaid": {
+        "subject": "Factures en attente de paiement",
+        "body": "Sauf erreur de notre part, vous avez des factures impayées pour un total de {{total}} :"
+      },
+      "lab": {
+        "subject": "Vos résultats d'examens sont disponibles",
+        "body": "Les résultats de votre demande d'examens {{number}} sont disponibles. Par confidentialité, ils ne sont pas joints à ce message : merci de passer les retirer ou d'en parler avec votre médecin."
+      }
+    }
   }
 }

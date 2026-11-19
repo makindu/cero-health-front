@@ -8,7 +8,9 @@ import { Can } from '@/core/permissions/PermissionsProvider';
 import type { Column } from '@/components/tables/data-table';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { PERMISSIONS } from '@/core/permissions/permissions';
-import { ageFromBirthDate } from '@/utils/dates';
+import { useAgeLabel } from '@/utils/age';
+import { PatientCategoriesButton } from './PatientCategoriesDialog';
+import { usePatientCategories } from './category-data';
 import { SERVICE_KEYS } from '../_shared/demo-people';
 import { ExportMenu } from '../_shared/export/ExportMenu';
 import { ResourcePage } from '../_shared/ResourcePage';
@@ -29,6 +31,8 @@ export default function PatientsPage() {
   const { t } = useTranslation('patients');
   const f = useFormatters();
   const navigate = useNavigate();
+  const ageLabel = useAgeLabel();
+  const categories = usePatientCategories();
   const [creating, setCreating] = useState(false);
   const [showDuplicates, setShowDuplicates] = useState(false);
   const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
@@ -41,11 +45,9 @@ export default function PatientsPage() {
       id: 'age',
       header: t('columns.age'),
       sortable: true,
-      cell: (p) => {
-        const age = ageFromBirthDate(p.birthDate);
-        return age === null ? '—' : t('age.years', { count: age });
-      },
+      cell: (p) => ageLabel(p.birthDate),
     },
+    { id: 'category', header: t('columns.category'), cell: (p) => categories.byId.get(p.categoryId ?? 'PRIVATE')?.label ?? '—', className: HIDE_BELOW_XL },
     { id: 'phone', header: t('columns.phone'), cell: (p) => p.phone },
     { id: 'service', header: t('columns.service'), cell: (p) => t(`services.${p.service}`), className: HIDE_BELOW_XL },
     {
@@ -86,6 +88,7 @@ export default function PatientsPage() {
                 { header: t('columns.registeredAt'), value: (p) => f.date(p.registeredAt) },
               ]}
             />
+            <PatientCategoriesButton />
             <Can permission={PERMISSIONS.patients.merge}>
               <Button variant="outline" leftIcon={<Copy className="size-4" />} onClick={() => setShowDuplicates(true)}>
                 {t('duplicates.button')}

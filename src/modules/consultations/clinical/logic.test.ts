@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { docOf, para } from '../richtext/doc';
 import {
   activeAllergies, addAddendum, addAntecedent, addDiagnosis, antecedentHistory, canTransition, changedSections,
   computeBmi, currentAntecedents, emptyDraft, isLocked, logRevision, progress, recordVerification, reviseAntecedent,
@@ -104,13 +103,13 @@ describe('diagnostics', () => {
 describe('validation, signature, addendum et traçabilité', () => {
   const complete = () => {
     let d = emptyDraft('C', 'toValidate');
-    d = { ...d, anamnesis: { ...d.anamnesis, chiefComplaint: 'Fièvre' }, conclusion: { ...d.conclusion, text: docOf(para('Conclusion')) } };
+    d = { ...d, anamnesis: { ...d.anamnesis, chiefComplaint: 'Fièvre' }, conclusion: { ...d.conclusion, decision: 'Traitement ambulatoire' } };
     d = { ...d, verifications: recordVerification(d, ctx('v'), '2026-01-01T00:00:00.000Z') };
     const r = addDiagnosis([], { label: 'A', type: 'principal', status: 'presumptive', comment: '' }, ctx('D1'));
     return { ...d, diagnoses: r.ok ? r.list : [] };
   };
   it('liste ce qui manque avant la signature', () => {
-    expect(signatureIssues(emptyDraft('C'))).toEqual(['chiefComplaint', 'antecedentsNotVerified', 'principalDiagnosis', 'conclusion']);
+    expect(signatureIssues(emptyDraft('C'))).toEqual(['chiefComplaint', 'antecedentsNotVerified', 'principalDiagnosis', 'decision']);
     expect(signatureIssues(complete())).toEqual([]);
   });
   it('calcule la progression à partir des seules données saisies', () => {

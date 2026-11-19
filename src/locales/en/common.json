@@ -202,6 +202,22 @@
   "breadcrumb": {
     "label": "Breadcrumb"
   },
+  "routeError": {
+    "reload": "Reload the page",
+    "reloading": "Updating the page…",
+    "chunk": {
+      "title": "This page needs to be reloaded",
+      "description": "The app was updated or restarted while this page was open. Reload the page to continue."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you requested does not exist or has been moved."
+    },
+    "generic": {
+      "title": "This page ran into an error",
+      "description": "Your saved data is not lost. Reload the page or go back to the dashboard."
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "description": "The page you requested does not exist or has been moved.",
@@ -256,7 +272,10 @@
     "inactive": "Inactive"
   },
   "age": {
-    "years": "{{count}} yrs"
+    "years": "{{count}} yrs",
+    "days": "{{count}} d",
+    "months": "{{count}} month(s)",
+    "yearsMonths": "{{years}} year(s) and {{months}} month(s)"
   },
   "common": {
     "yes": "Yes",
@@ -352,38 +371,43 @@
       "alreadyReversed": "This entry has already been reversed.",
       "amountInvalid": "The amount is invalid.",
       "cannotReverseReversal": "A reversal cannot be reversed.",
+      "catalogCodeInvalid": "The code is invalid (2 to 20 letters, digits or hyphens).",
+      "catalogCodeTaken": "The code “{{code}}” already exists.",
+      "catalogLabelLength": "The name must be 2 to 120 characters long.",
+      "catalogLabelTaken": "“{{label}}” already exists in this category.",
+      "configDateTaken": "A configuration already exists for that date.",
+      "configRetroactive": "A new period cannot apply to a past date.",
+      "coverageNotFound": "Coverage not found for this patient.",
+      "coverageSame": "Primary and complementary coverages must differ.",
+      "currencyMismatch": "The services do not share the same currency.",
+      "discountInvalid": "Invalid discount.",
       "duplicatePayment": "This operation is already recorded (double submission avoided).",
+      "entryNotFound": "Entry not found.",
+      "feeStillValid": "The consultation fee is valid until {{until}}: no new payment.",
       "hasPayments": "The invoice has payments: reverse them first.",
       "hasSettlements": "The invoice has payer settlements or rejections: it cannot be cancelled.",
       "invoiceCancelled": "The invoice is cancelled.",
       "invoiceDraft": "The invoice is still a draft.",
       "invoiceEmpty": "Add at least one service.",
+      "invoiceNotFound": "Invoice not found.",
+      "itemInactive": "The service “{{item}}” is no longer active.",
+      "itemNotFound": "Service not found in the catalog.",
       "nothingDue": "Nothing is left to pay on this invoice.",
       "organizationNotOnInvoice": "This organization has no share on this invoice.",
       "overpayment": "The amount exceeds the balance due ({{due}}).",
+      "patientMerged": "This record was merged: use the kept record.",
+      "patientNotFound": "Patient not found.",
+      "periodInvalid": "The period is invalid (end before start).",
+      "quantityInvalid": "The quantity must be a positive whole number.",
+      "rateInvalid": "A rate must be between 0 and 100%.",
       "reasonRequired": "The reason is required.",
       "referenceRequired": "A reference is required unless paying cash.",
       "refundExceedsPaid": "The refund exceeds the amount collected ({{paid}}).",
       "rejectionExceedsDue": "The rejection exceeds the payer's remaining share ({{due}}).",
       "settlementExceedsDue": "The settlement exceeds the payer's remaining share ({{due}}).",
       "totalsMismatch": "The invoice totals are inconsistent: invoice refused.",
-      "configDateTaken": "A configuration already exists for that date.",
-      "configRetroactive": "A new period cannot apply to a past date.",
-      "coverageNotFound": "Coverage not found for this patient.",
-      "coverageSame": "Primary and complementary coverages must differ.",
-      "currencyMismatch": "The services do not share the same currency.",
-      "entryNotFound": "Entry not found.",
-      "feeStillValid": "The consultation fee is valid until {{until}}: no new payment.",
-      "invoiceNotFound": "Invoice not found.",
-      "itemInactive": "The service “{{item}}” is no longer active.",
-      "itemNotFound": "Service not found in the catalog.",
-      "patientMerged": "This record was merged: use the kept record.",
-      "patientNotFound": "Patient not found.",
-      "periodInvalid": "The period is invalid (end before start).",
-      "quantityInvalid": "The quantity must be a positive whole number.",
-      "rateInvalid": "A rate must be between 0 and 100%.",
       "validityInvalid": "The validity period is invalid (1 to 120 months).",
-      "discountInvalid": "Invalid discount."
+      "catalogImportSize": "An import file must contain between 1 and 500 rows."
     },
     "lab": {
       "testsRequired": "Choose at least one test.",
@@ -441,7 +465,17 @@
       "lotExists": "This lot number already exists for this product.",
       "lotNotFound": "Lot not found.",
       "deviationReasonRequired": "A reason is required when the quantity dispensed is lower than prescribed or the product differs.",
-      "deviationReasonTooLong": "The reason is too long (max {{max}} characters)."
+      "deviationReasonTooLong": "The reason is too long (max {{max}} characters).",
+      "importEmpty": "No lot to import.",
+      "importTooMany": "Too many lots to import at once (500 at most).",
+      "catalogItemInvalid": "Invalid product to create (name, code or price).",
+      "catalogCodeTaken": "This code is already used.",
+      "catalogLabelTaken": "A product already has this name.",
+      "itemIsDerived": "This item is a derived unit: receive stock on the main product.",
+      "packagingLocked": "The pack size cannot change while stock remains: clear the stock first (adjustment).",
+      "catalogLabelLength": "The name must be 2 to 120 characters.",
+      "catalogCodeInvalid": "Invalid code (2-20 characters: letters, digits, dashes).",
+      "amountInvalid": "Invalid amount."
     },
     "hospital": {
       "alreadyAdmitted": "This patient is already admitted ({{number}}).",
@@ -526,6 +560,34 @@
       "alreadyExists": "This patient already has a record: there is only one per patient.",
       "patientInactive": "Cannot open a record for an inactive or merged patient.",
       "formatInvalid": "Invalid export format."
+    },
+    "consultationDurationInvalid": "Invalid duration: whole number of days, 1 to 365.",
+    "patientEmailInvalid": "Invalid email address.",
+    "patientBirthWeightInvalid": "Invalid birth weight (200 to 8000 g).",
+    "categoryLabelRequired": "Enter the category name.",
+    "categoryExists": "The category “{{label}}” already exists.",
+    "categoryDefaultLocked": "The default category cannot be disabled.",
+    "packagingPerPackInvalid": "Invalid content: whole number, at least 1.",
+    "packagingLabelsRequired": "Enter the main unit name (box) and the base unit name (tablet).",
+    "packagingLabelsDifferent": "The main unit and the base unit must have different names.",
+    "packagingExtraInvalid": "Unit “{{label}}” invalid: name required and whole content smaller than the main unit.",
+    "packagingExtraPrice": "Enter the price of unit “{{label}}”.",
+    "packagingExtraDuplicate": "Unit “{{label}}” already exists (same name or same content).",
+    "mail": {
+      "recipientInvalid": "The recipient's email address is not valid.",
+      "subjectRequired": "The subject is required (200 characters max).",
+      "bodyRequired": "The message is required (5000 characters max).",
+      "alreadyQueued": "This reminder is already in the outbox."
     }
+  },
+  "unsaved": {
+    "title": "Leave without saving?",
+    "body": "You have unsaved changes. If you leave now they may be lost.",
+    "stay": "Keep editing",
+    "leave": "Leave anyway"
+  },
+  "draft": {
+    "restored": "Draft found: your previous entry was restored.",
+    "discard": "Start over"
   }
 }

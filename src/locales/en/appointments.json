@@ -155,7 +155,39 @@
     "minutes": "{{count}} min",
     "inConsultation": "In consultation",
     "finished": "Finished",
-    "empty": "Nobody at the moment"
+    "empty": "Nobody at the moment",
+    "atTriage": "At triage",
+    "fee": {
+      "header": "Consultation fee",
+      "valid": "Valid",
+      "validSoon": "Valid ({{count}} d)",
+      "expired": "Expired",
+      "none": "To pay",
+      "category": "No upfront payment ({{category}})"
+    },
+    "origin": {
+      "appointment": "With appointment",
+      "walkIn": "Walk-in"
+    },
+    "orientation": {
+      "consultation": "Consultation",
+      "triage": "Nurse triage",
+      "service": "Service: {{service}}"
+    },
+    "stage": {
+      "waiting": "Waiting",
+      "inTriage": "In triage",
+      "inCare": "In care",
+      "inConsultation": "In consultation"
+    },
+    "present": {
+      "title": "Patients present today",
+      "hint": "All patients present, with or without appointment: most urgent first, then by arrival time.",
+      "priority": "Urgency",
+      "origin": "Origin",
+      "orientation": "Orientation",
+      "nurseNote": "Followed by the nurse"
+    }
   },
   "edit": {
     "title": "Edit the appointment",
@@ -183,6 +215,11 @@
       "urgent": "Urgent",
       "standard": "Standard",
       "nonUrgent": "Non-urgent"
-    }
+    },
+    "practitioner": "Practitioner (optional)",
+    "practitionerHint": "If you know who; otherwise the service will assign one.",
+    "feeNone": "{{name}} has no valid consultation fee: they must go to the cashier before the consultation.",
+    "feeExpired": "{{name}}'s consultation fee has expired: they must go to the cashier before the consultation.",
+    "feeProceed": "Register the arrival anyway"
   }
 }

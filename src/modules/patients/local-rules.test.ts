@@ -59,4 +59,17 @@ describe('patients — règles locales', () => {
     expect(plan.duplicateIds).toEqual(['P-2']);
     expect(markMerged(dup, 'P-1')).toMatchObject({ status: 'inactive', mergedInto: 'P-1' });
   });
+
+  it('e-mail, poids de naissance et catégorie : normalisés, validés, facultatifs', () => {
+    const p = buildPatient({ ...input, email: ' Neema@Example.org ', birthWeightGrams: '3200', categoryId: 'SUBSCRIBER' }, [], NOW, 'x');
+    expect(p.email).toBe('neema@example.org');
+    expect(p.birthWeightGrams).toBe(3200);
+    expect(p.categoryId).toBe('SUBSCRIBER');
+    const bare = buildPatient(input, [], NOW, 'y');
+    expect(bare.email).toBe('');
+    expect(bare.birthWeightGrams).toBeUndefined();
+    expect(bare.categoryId).toBe('PRIVATE');
+    expect(() => buildPatient({ ...input, email: 'pas-un-mail' }, [], NOW, 'x')).toThrow();
+    expect(() => buildPatient({ ...input, birthWeightGrams: '50' }, [], NOW, 'x')).toThrow();
+  });
 });

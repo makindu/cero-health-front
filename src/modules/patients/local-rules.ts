@@ -1,6 +1,7 @@
 import { BusinessRuleError } from '../_shared/business-error';
 import { SERVICE_KEYS } from '../_shared/demo-people';
 import type { Patient } from './data';
+import { DEFAULT_CATEGORY_ID } from './categories';
 import { FILE_NUMBER_PATTERN, normalizeFileNumber } from './duplicates';
 
 /** Règles métier PURES du dossier patient en mode local (sans stockage ni interface : testables seules). */
@@ -30,6 +31,9 @@ export interface PatientDraft {
   insurer: string;
   emergencyContact: string;
   fileNumber: string;
+  email: string;
+  birthWeightGrams?: number;
+  categoryId: string;
 }
 
 /** Valide et normalise la saisie. Refuse sans rien inventer (ex. pas de sexe ou de date de naissance par défaut). */
@@ -43,6 +47,15 @@ export function validatePatientInput(input: Record<string, string>, today: strin
   if (birthDate > today) throw new BusinessRuleError('patientBirthFuture');
   const fileNumber = clean(input.fileNumber).replace(/\s+/g, '');
   if (fileNumber && !FILE_NUMBER_PATTERN.test(fileNumber)) throw new BusinessRuleError('patientFileNumberFormat');
+  const email = clean(input.email).toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new BusinessRuleError('patientEmailInvalid');
+  const weightRaw = clean(input.birthWeightGrams).replace(',', '.');
+  let birthWeightGrams: number | undefined;
+  if (weightRaw !== '') {
+    birthWeightGrams = Number(weightRaw);
+    if (!Number.isFinite(birthWeightGrams) || birthWeightGrams < 200 || birthWeightGrams > 8000) throw new BusinessRuleError('patientBirthWeightInvalid');
+    birthWeightGrams = Math.round(birthWeightGrams);
+  }
   const service = (SERVICE_KEYS as readonly string[]).includes(input.service ?? '') ? (input.service as Patient['service']) : 'generalMedicine';
   return {
     fullName,
@@ -54,6 +67,9 @@ export function validatePatientInput(input: Record<string, string>, today: strin
     insurer: clean(input.insurer),
     emergencyContact: clean(input.emergencyContact),
     fileNumber,
+    email,
+    ...(birthWeightGrams === undefined ? {} : { birthWeightGrams }),
+    categoryId: clean(input.categoryId) || DEFAULT_CATEGORY_ID,
   };
 }
 
@@ -90,7 +106,8 @@ export function applyPatientUpdate(row: Patient, input: Record<string, string>, 
   const fileNumber = draft.fileNumber || row.fileNumber;
   // Un doublon DÉJÀ présent (hérité) ne bloque pas la correction du dossier : seul un changement de numéro est contrôlé.
   if (normalizeFileNumber(fileNumber) !== normalizeFileNumber(row.fileNumber)) assertFileNumberFree(fileNumber, existing, row.id);
-  return { ...row, ...draft, fileNumber };
+  const { birthWeightGrams: _ignored, ...rest } = row;
+  return { ...rest, ...draft, fileNumber };
 }
 
 export interface MergePlan {

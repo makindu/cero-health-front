@@ -33,6 +33,7 @@ export function PatientCreateDialog({ open, onClose }: { open: boolean; onClose:
       submitLabel={t('create.submit')}
       overrideLabel={t('duplicates.createAnyway')}
       fields={fields}
+      defaultValues={{ categoryId: 'PRIVATE' }}
       execute={(values) => patientService.create(values)}
       validate={async (values) => {
         const matches = await lookup(values);
@@ -65,6 +66,9 @@ export function PatientEditDialog({ patient, open, onClose }: { patient: Patient
         address: patient.address,
         insurer: patient.insurer,
         emergencyContact: patient.emergencyContact,
+        email: patient.email ?? '',
+        birthWeightGrams: patient.birthWeightGrams === undefined ? '' : String(patient.birthWeightGrams),
+        categoryId: patient.categoryId ?? 'PRIVATE',
       }}
       execute={(values) => patientService.update(patient.id, values)}
       validate={async (values) => {

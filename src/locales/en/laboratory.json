@@ -132,11 +132,16 @@
     "unpaid": "To pay at cashier",
     "credit": "Credit authorised",
     "exception": "Traced exception",
-    "invoiceCancelled": "Invoice cancelled"
+    "invoiceCancelled": "Invoice cancelled",
+    "waived": "Payment deferred"
   },
   "flag": {
     "unspecified": "Not specified",
     "normal": "Normal",
     "abnormal": "Abnormal"
+  },
+  "tabs": {
+    "orders": "Orders",
+    "catalog": "Catalogue and prices"
   }
 }

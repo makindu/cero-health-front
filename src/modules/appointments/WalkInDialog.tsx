@@ -2,6 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { ActionFormDialog } from '../_shared/action-form-dialog';
 import { SERVICE_KEYS } from '../_shared/demo-people';
 import { PRIORITIES, triageService } from '../nursing/data';
+import { finance } from '../finance/finance';
+import { patientRepo } from '../patients/data';
+import { resolvePatient } from '../patients/local-rules';
 import { appointmentService } from './data';
 import { isDestinationAllowed } from './walkin';
 
@@ -35,17 +38,29 @@ export function WalkInDialog({ open, onClose }: { open: boolean; onClose: () => 
           ],
         },
         { name: 'service', label: t('walkIn.service'), type: 'select', options: SERVICE_KEYS.map((k) => ({ value: k, label: t(`services.${k}`) })), hint: t('walkIn.serviceHint') },
+        { name: 'practitioner', label: t('walkIn.practitioner'), type: 'practitioner', hint: t('walkIn.practitionerHint'), span: 2 },
       ]}
       defaultValues={{ urgency: 'standard', destination: 'triage' }}
       validate={async (v) => {
         if (!isDestinationAllowed(v.urgency ?? '', v.destination ?? '')) return { message: t('walkIn.triageRequired') };
         if (v.destination === 'service' && !v.service) return { message: t('walkIn.serviceRequired') };
+        // Frais de consultation : on prévient AVANT d'orienter (jamais pour une urgence vitale, qui ne doit pas attendre la caisse).
+        if (v.urgency !== 'immediate' && v.urgency !== 'veryUrgent') {
+          try {
+            const patient = resolvePatient(v.patient ?? '', await patientRepo.list());
+            const fee = await finance.feeStatusFor(patient.id);
+            if (fee.state !== 'valid') return { message: t(fee.state === 'expired' ? 'walkIn.feeExpired' : 'walkIn.feeNone', { name: patient.fullName }), overridable: true };
+          } catch {
+            /* patient introuvable ou finance indisponible : le contrôle métier de l'enregistrement fait foi */
+          }
+        }
         return null;
       }}
+      overrideLabel={t('walkIn.feeProceed')}
       execute={(v) =>
         v.destination === 'triage'
           ? triageService.create({ patient: v.patient ?? '', reason: v.reason ?? '', priority: v.urgency ?? 'standard', source: 'walkIn' })
-          : appointmentService.create({ patient: v.patient ?? '', reason: v.reason ?? '', service: v.service ?? '', urgency: v.urgency ?? 'standard', walkIn: 'true' })
+          : appointmentService.create({ patient: v.patient ?? '', reason: v.reason ?? '', service: v.service ?? '', urgency: v.urgency ?? 'standard', walkIn: 'true', practitioner: v.practitioner ?? '' })
       }
     />
   );

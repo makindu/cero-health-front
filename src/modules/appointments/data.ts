@@ -49,6 +49,8 @@ export interface Appointment {
   walkIn?: boolean;
   urgency?: string;
   visitReason?: string;
+  /** Consultation à l'origine du rendez-vous (prochain rendez-vous programmé par le médecin). */
+  sourceConsultationId?: string;
   history: AppointmentEvent[];
 }
 

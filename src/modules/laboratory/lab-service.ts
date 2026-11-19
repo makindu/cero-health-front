@@ -1,4 +1,5 @@
 import type { Unit } from '@/core/local/unit-of-work';
+import { paymentPolicy } from '../patients/payment-policy';
 import { defineCollection } from '@/core/local/unit-of-work';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
 import { BusinessRuleError } from '../_shared/business-error';
@@ -15,7 +16,8 @@ export interface LabOrderView {
   invoice?: InvoiceView;
   /** Le prélèvement est-il autorisé du point de vue du paiement ? */
   paymentCleared: boolean;
-  paymentState: 'paid' | 'unpaid' | 'credit' | 'exception' | 'invoiceCancelled';
+  paymentState: 'paid' | 'unpaid' | 'credit' | 'exception' | 'invoiceCancelled' | 'waived';
+  paymentWaived: boolean;
 }
 
 function wrap<T>(fn: () => T): T {
@@ -31,7 +33,8 @@ const refuse = (code: string, kind: 'validation' | 'conflict' = 'validation'): n
 };
 
 export function createLabService(deps: FinanceDeps, finance: FinanceService) {
-  const gateFor = (view: InvoiceView | undefined): R.PaymentGate => ({
+  const gateFor = (view: InvoiceView | undefined, waived = false): R.PaymentGate => ({
+    waived,
     patientBalance: view ? view.balances.patientBalance : Number.MAX_SAFE_INTEGER,
     creditAuthorized: Boolean(view?.invoice.credit),
     cancelledInvoice: !view || view.status === 'cancelled',
@@ -39,10 +42,11 @@ export function createLabService(deps: FinanceDeps, finance: FinanceService) {
 
   async function toView(u: Unit, order: LabOrder): Promise<LabOrderView> {
     const invoice = await finance.inUnit.invoiceState(u, order.invoiceId);
-    const gate = gateFor(invoice);
+    const waived = !(await paymentPolicy(u, order.patientId)).lab;
+    const gate = gateFor(invoice, waived);
     const cleared = R.paymentCleared(order, gate);
-    const state: LabOrderView['paymentState'] = gate.cancelledInvoice ? 'invoiceCancelled' : gate.patientBalance <= 0 ? 'paid' : gate.creditAuthorized ? 'credit' : order.paymentException ? 'exception' : 'unpaid';
-    return { order, invoice, paymentCleared: cleared, paymentState: state };
+    const state: LabOrderView['paymentState'] = gate.cancelledInvoice ? 'invoiceCancelled' : gate.patientBalance <= 0 ? 'paid' : gate.waived ? 'waived' : gate.creditAuthorized ? 'credit' : order.paymentException ? 'exception' : 'unpaid';
+    return { order, invoice, paymentCleared: cleared, paymentState: state, paymentWaived: waived };
   }
 
   async function load(u: Unit, id: string): Promise<LabOrder> {
@@ -107,7 +111,7 @@ export function createLabService(deps: FinanceDeps, finance: FinanceService) {
       deps.require(P.laboratory.collect);
       const order = await load(u, input.orderId);
       const view = await toView(u, order);
-      return save(u, wrap(() => R.collect(order, { by: u.ctx.actor.name, now: u.now.toISOString(), sampleNote: input.sampleNote }, gateFor(view.invoice))), 'lab:collect');
+      return save(u, wrap(() => R.collect(order, { by: u.ctx.actor.name, now: u.now.toISOString(), sampleNote: input.sampleNote }, gateFor(view.invoice, view.paymentWaived))), 'lab:collect');
     }),
 
     start: (input: { orderId: string }): Promise<LabOrderView> => deps.run(async (u) => {

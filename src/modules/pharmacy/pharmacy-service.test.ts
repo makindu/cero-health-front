@@ -259,3 +259,61 @@ describe('pharmacie locale', () => {
     expect(await s.ph.dispensations()).toHaveLength(0);
   });
 });
+
+describe('importation de lots', () => {
+  const row = (itemId: string, lotNumber: string, quantity = 10, expiresAt: string | null = '2029-01-01') => ({ itemId, lotNumber, quantity, expiresAt });
+
+  it('reçoit tous les lots en une transaction, un mouvement par lot', async () => {
+    const s = setup();
+    const item = (await s.ph.stock()).items.find((i) => i.code === 'PHA-ANT')!.itemId;
+    const before = (await s.ph.stock()).movements.length;
+    expect(await s.ph.importLots([row(item, 'IMP-1'), row(item, 'IMP-2', 5, null)])).toEqual({ count: 2, created: 0 });
+    const stock = await s.ph.stock();
+    expect(stock.items.find((i) => i.itemId === item)!.lots.map((l) => l.lotNumber)).toEqual(expect.arrayContaining(['IMP-1', 'IMP-2']));
+    expect(stock.movements.length).toBe(before + 2);
+  });
+
+  it('tout ou rien : une ligne refusée n\u2019enregistre aucun lot', async () => {
+    const s = setup();
+    const item = (await s.ph.stock()).items.find((i) => i.code === 'PHA-ANT')!.itemId;
+    const lotsBefore = (await s.ph.stock()).items.flatMap((i) => i.lots).length;
+    await expect(s.ph.importLots([row(item, 'OK-1'), row(item, ' ok-1 ')])).rejects.toThrow('pharmacy.lotExists');
+    await expect(s.ph.importLots([row(item, 'OK-2'), row(item, 'LOT-DEMO-A1')])).rejects.toThrow('pharmacy.lotExists');
+    await expect(s.ph.importLots([row(item, 'OK-3'), row(item, 'OLD', 5, '2020-01-01')])).rejects.toThrow('pharmacy.alreadyExpired');
+    await expect(s.ph.importLots([row(item, 'OK-4'), row('inconnu', 'X')])).rejects.toThrow('pharmacy.itemNotInCatalog');
+    await expect(s.ph.importLots([])).rejects.toThrow('pharmacy.importEmpty');
+    expect((await s.ph.stock()).items.flatMap((i) => i.lots)).toHaveLength(lotsBefore);
+  });
+
+  it('exige le droit de réception', async () => {
+    const s = setup([P_RECEIVE]);
+    await expect(s.ph.importLots([row('x', 'L')])).rejects.toThrow(`forbidden:${P_RECEIVE}`);
+  });
+});
+const P_RECEIVE = 'health.stock.receive';
+
+describe('importation de lots — produits absents du catalogue', () => {
+  const nu = (label: string, code: string, lotNumber: string, quantity = 20, price = 3.5) => ({ itemId: '', newItem: { code, label, price }, lotNumber, quantity, expiresAt: '2029-01-01' as string | null });
+
+  it('crée le produit avec son prix, puis reçoit le lot : le stock est disponible aussitôt', async () => {
+    const s = setup();
+    expect(await s.ph.importLots([nu('Amoxicilline 500 mg', 'PHA-900', 'AMX-1', 20, 4.25), nu(' amoxicilline  500 mg ', 'PHA-900', 'AMX-2', 5)])).toEqual({ count: 2, created: 1 });
+    const stock = await s.ph.stock();
+    const amox = stock.items.find((i) => i.code === 'PHA-900')!;
+    expect(amox.label).toBe('Amoxicilline 500 mg');
+    expect(amox.usable).toBe(25);
+    expect((await s.finance.snapshot()).catalog.find((c) => c.code === 'PHA-900')).toMatchObject({ category: 'pharmacy', active: true, price: { minor: 425 } });
+  });
+
+  it('refuse (et ne crée rien) : code pris, désignation déjà au catalogue, prix nul, droit de gérer le catalogue absent', async () => {
+    const s = setup();
+    const before = (await s.finance.snapshot()).catalog.length;
+    await expect(s.ph.importLots([nu('Nouveau A', 'PHA-ANT', 'L1')])).rejects.toThrow('pharmacy.catalogCodeTaken');
+    await expect(s.ph.importLots([nu('ANTALGIQUE (BOITE) (DEMO)', 'PHA-901', 'L1')])).rejects.toThrow('pharmacy.catalogLabelTaken');
+    await expect(s.ph.importLots([nu('Nouveau B', 'PHA-902', 'L1', 5, 0)])).rejects.toThrow('pharmacy.catalogItemInvalid');
+    expect((await s.finance.snapshot()).catalog).toHaveLength(before);
+    expect((await s.ph.stock()).items.some((i) => i.code === 'PHA-902')).toBe(false);
+    const d = setup(['health.pharmacy.catalog']);
+    await expect(d.ph.importLots([nu('Nouveau C', 'PHA-903', 'L1')])).rejects.toThrow('forbidden:health.pharmacy.catalog');
+  });
+});

@@ -13,7 +13,8 @@
     "status": "Hali",
     "lastVisit": "Ziara ya mwisho",
     "fileNumber": "Namba ya faili",
-    "registeredAt": "Alisajiliwa"
+    "registeredAt": "Alisajiliwa",
+    "category": "Kundi"
   },
   "filters": {
     "sex": "Jinsia",
@@ -37,7 +38,13 @@
     "insurer": "Bima / makubaliano",
     "emergencyContact": "Mtu wa kuarifiwa",
     "fileNumber": "Namba ya faili",
-    "fileNumberHint": "Namba ya faili la karatasi au mfumo wa zamani, ikiwa ipo (herufi 3 hadi 30: herufi, tarakimu, . _ / -)."
+    "fileNumberHint": "Namba ya faili la karatasi au mfumo wa zamani, ikiwa ipo (herufi 3 hadi 30: herufi, tarakimu, . _ / -).",
+    "email": "Anwani ya barua pepe",
+    "emailHint": "Kutuma miadi, ankara na matokeo (hiari).",
+    "birthWeight": "Uzito wa kuzaliwa (g)",
+    "birthWeightHint": "Kwa gramu, mfano 3200 (hiari).",
+    "category": "Kundi la mgonjwa",
+    "categoryHint": "Huamua kinachopaswa kulipwa kabla ya huduma."
   },
   "detail": {
     "tabs": {
@@ -48,7 +55,8 @@
       "consultations": "Mashauriano",
       "prescriptions": "Maagizo",
       "hospitalizations": "Kulazwa",
-      "position": "Mahali"
+      "position": "Mahali",
+      "mail": "Barua pepe"
     },
     "section": {
       "civil": "Taarifa binafsi",
@@ -109,5 +117,98 @@
     "done": "Karatasi imetengenezwa",
     "confirmTitle": "Hamisha karatasi ya mgonjwa?",
     "confirmBody": "PDF ina data binafsi. Ihifadhi kama siri."
+  },
+  "categories": {
+    "button": "Makundi ya wagonjwa",
+    "title": "Makundi ya wagonjwa",
+    "hint": "Weka wajibu wa kila kundi. Ongeza kundi jipya hapa, bila kubadilisha msimbo.",
+    "yes": "Ndiyo",
+    "no": "Hapana",
+    "label": "Jina la kundi",
+    "description": "Maelezo",
+    "payConsultation": "Lazima alipe mashauriano kwanza",
+    "payLab": "Malipo ya maabara yanahitajika kwanza",
+    "payMedication": "Malipo ya dawa yanahitajika kwanza",
+    "active": "Kundi linatumika",
+    "consultation": "Mashauriano",
+    "lab": "Maabara",
+    "medication": "Dawa",
+    "mustPay": "Hulipa kwanza",
+    "deferred": "Imeahirishwa",
+    "inactive": "Haitumiki",
+    "edit": "Hariri",
+    "add": "Ongeza kundi",
+    "addTitle": "Kundi jipya",
+    "editTitle": "Hariri “{{name}}”",
+    "save": "Hifadhi",
+    "hospitalizedNote": "Wagonjwa waliolazwa hawalipi kabla ya maabara au dawa: ankara hulipwa mara moja."
+  },
+  "mail": {
+    "title": "Barua pepe kwa mgonjwa",
+    "compose": "Andika barua pepe",
+    "recipient": "Mpokeaji: {{email}}",
+    "noEmail": "Hakuna barua pepe halali ya mgonjwa huyu: iongeze kwenye faili (Hariri).",
+    "localNotice": "Hali ya ndani: ujumbe huwekwa kwenye foleni kisha hufunguliwa kwenye barua pepe yako. Vikumbusho vilivyopangwa vitatumwa kiotomatiki seva ikiunganishwa.",
+    "empty": "Hakuna barua pepe kwa mgonjwa huyu.",
+    "send": "Tuma",
+    "cancel": "Ghairi",
+    "queue": "Weka kwenye foleni",
+    "schedule": "Panga kikumbusho",
+    "body": "Ujumbe",
+    "privacy": "Kwa usiri, matokeo yenyewe hayaambatanishwi kamwe kwenye barua pepe.",
+    "col": {
+      "kind": "Aina",
+      "subject": "Mada",
+      "when": "Tarehe / muda",
+      "status": "Hali"
+    },
+    "kind": {
+      "appointment": "Kikumbusho cha miadi",
+      "unpaidInvoices": "Ankara zisizolipwa",
+      "labResult": "Matokeo ya maabara tayari",
+      "free": "Ujumbe huru"
+    },
+    "status": {
+      "queued": "Kutuma",
+      "scheduled": "Imepangwa",
+      "handedOff": "Imekabidhiwa barua pepe",
+      "cancelled": "Imeghairiwa"
+    },
+    "source": {
+      "appointment": "Miadi",
+      "labResult": "Ombi la uchunguzi"
+    },
+    "noSource": {
+      "appointment": "Hakuna miadi ijayo kwa mgonjwa huyu.",
+      "labResult": "Hakuna matokeo yaliyothibitishwa kwa mgonjwa huyu.",
+      "unpaidInvoices": "Mgonjwa huyu hana ankara isiyolipwa."
+    },
+    "lead": {
+      "label": "Wakati wa kutuma",
+      "hint": "Chagua kikumbusho kabla ya miadi, au “sasa”.",
+      "now": "Sasa",
+      "2h": "Saa 2 kabla",
+      "3h": "Saa 3 kabla",
+      "1d": "Siku 1 kabla",
+      "2d": "Siku 2 kabla",
+      "3d": "Siku 3 kabla",
+      "7d": "Siku 7 kabla"
+    },
+    "tpl": {
+      "greeting": "Habari {{name}},",
+      "signature": "Kwa heshima,\nTimu ya huduma",
+      "appointment": {
+        "subject": "Kikumbusho cha miadi yako — {{when}}",
+        "body": "Tunakukumbusha miadi yako tarehe {{when}} na {{practitioner}}. Tafadhali fika dakika chache mapema. Usipoweza kuja, tuwasiliane kuipanga upya."
+      },
+      "unpaid": {
+        "subject": "Ankara zinazosubiri malipo",
+        "body": "Kulingana na kumbukumbu zetu, una ankara ambazo hazijalipwa zenye jumla ya {{total}}:"
+      },
+      "lab": {
+        "subject": "Matokeo ya vipimo vyako yapo",
+        "body": "Matokeo ya ombi lako la vipimo {{number}} yapo. Kwa usiri hayajaambatanishwa: tafadhali yachukue au zungumza na daktari wako."
+      }
+    }
   }
 }

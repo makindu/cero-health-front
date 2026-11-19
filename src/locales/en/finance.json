@@ -257,7 +257,8 @@
       "contracts": "Contracts",
       "subscriptions": "Subscriptions",
       "catalog": "Catalog",
-      "validity": "Fee validity"
+      "validity": "Fee validity",
+      "statement": "Organization statement"
     },
     "kpi": {
       "insured": "Active insured",
@@ -386,6 +387,32 @@
       "edit": "Edit service",
       "codeHint": "The code does not change: contracts refer to it.",
       "hint": "The private tariff is the reference. Negotiated tariffs are set in contracts. A change does not affect existing invoices."
+    },
+    "statement": {
+      "title": "Statement — {{name}}",
+      "organization": "Organization",
+      "from": "From",
+      "to": "To",
+      "period": "Period",
+      "allTime": "All dates",
+      "export": "Statement",
+      "filename": "organization-statement",
+      "invoices": "Invoices",
+      "due": "Amount due",
+      "settled": "Settled",
+      "disputed": "Rejected / disputed",
+      "outstanding": "Outstanding",
+      "patients": "Covered patients",
+      "patientsValue": "{{active}} active / {{total}}",
+      "total": "Total",
+      "contracts": "Contracts",
+      "noContracts": "No contract for this organization.",
+      "invoicesTitle": "Invoices involved",
+      "entriesTitle": "Settlements and rejections",
+      "empty": "No invoice for this organization in this period.",
+      "noEntries": "No settlement or rejection.",
+      "kind": "Operation",
+      "amount": "Amount"
     }
   },
   "validity": {
@@ -415,5 +442,145 @@
     "voided": "Voided",
     "exempt": "Exempt a patient",
     "exemptHint": "Restricted to authorized people. The reason and the author are kept."
+  },
+  "catalogManager": {
+    "price": "Price",
+    "priceWithCurrency": "Price ({{currency}})",
+    "codeHint": "Suggested automatically; letters, digits and hyphens.",
+    "pharmacy": {
+      "title": "Medicines",
+      "add": "Add a medicine",
+      "edit": "Edit medicine",
+      "label": "Medicine name",
+      "empty": "No medicine in the catalogue.",
+      "hint": "Medicines available for prescription and dispensing, with their price."
+    },
+    "laboratory": {
+      "title": "Tests",
+      "add": "Add a test",
+      "edit": "Edit test",
+      "label": "Test name",
+      "empty": "No test in the catalogue.",
+      "hint": "Laboratory tests available for ordering, with their price."
+    },
+    "problem": {
+      "codeInvalid": "Invalid code: 2 to 20 letters, digits or hyphens.",
+      "codeTaken": "This code already exists.",
+      "labelLength": "The name must be 2 to 120 characters long.",
+      "labelTaken": "This name already exists.",
+      "priceInvalid": "Enter a price above 0 (at most 2 decimals)."
+    },
+    "search": "Search by name or code",
+    "packaging": {
+      "column": "Packaging",
+      "title": "Packaging and sale units",
+      "hint": "Main unit = what you receive and sell whole (the box, the bottle). Base unit = the smallest unit you count in stock (the tablet, the ml). Stock is kept in the base unit, so you can bill 1 box, 3 tablets, 1 sachet…",
+      "perPack": "Content of one main unit",
+      "perPackHint": "Number of base units in one main unit (e.g. 100 tablets in 1 box). Leave 1 if the product is sold per unit.",
+      "unit": "Main unit (e.g. box)",
+      "unitExample": "box",
+      "baseUnit": "Base unit (e.g. tablet)",
+      "baseExample": "tablet",
+      "extras": "Other sale units (sachet, strip, tablet…)",
+      "extraLabel": "Label",
+      "extraContent": "Content ({{unit}})",
+      "extraPrice": "Price ({{currency}})",
+      "remove": "Remove",
+      "addExtra": "Add a sale unit",
+      "derived": "Unit “{{unit}}” = {{perUnit}} of {{product}}",
+      "editViaProduct": "Edit via the main product"
+    }
+  },
+  "group": {
+    "title": "Combined invoice payment",
+    "submit": "Collect payment",
+    "open": "Pay all unpaid invoices",
+    "summary": "{{count}} unpaid invoice(s) — total due: {{amount}}",
+    "description": "{{count}} unpaid invoice(s), total due {{amount}}. The amount is spread over each invoice, oldest first.",
+    "amountHint": "A partial payment is allowed: it settles the oldest invoices first.",
+    "allocation": "Allocation per invoice",
+    "done": "Combined payment recorded"
+  },
+  "orgPay": {
+    "open": "Pay several invoices",
+    "title": "Grouped payment — {{name}}",
+    "description": "{{members}} member(s), {{invoices}} open invoice(s). Left to collect: {{amount}}. Each invoice gets its own settlement entry: you can pay in part, leave members at zero or pay in several instalments.",
+    "submit": "Record payment",
+    "search": "Search a member or an invoice",
+    "empty": "No invoice awaiting settlement for this organisation.",
+    "noMatch": "No member matches the search.",
+    "lump": {
+      "label": "Amount received from the organisation",
+      "hint": "Enter the total received, choose how to spread it, then adjust any line.",
+      "strategy": "Spread",
+      "oldest": "Oldest invoices first",
+      "member": "Member by member (alphabetical)",
+      "proportional": "Proportional to each member's balance",
+      "apply": "Spread",
+      "tooBig": "This amount exceeds the total due for the displayed members ({{due}})."
+    },
+    "payAll": "Settle all",
+    "clear": "Clear all",
+    "payMember": "Settle",
+    "columns": {
+      "member": "Member",
+      "invoices": "Invoices",
+      "due": "Total due",
+      "pay": "Amount to pay",
+      "rest": "Left"
+    },
+    "invoiceCount": "{{count}} invoice(s)",
+    "expand": "Show invoices of {{name}}",
+    "collapse": "Hide invoices of {{name}}",
+    "amountFor": "Amount to pay for {{name}}",
+    "amountError": "Invalid amount or above the balance ({{due}}).",
+    "summary": "To record: {{amount}} for {{members}} member(s) and {{invoices}} invoice(s). Left due afterwards: {{rest}}.",
+    "done": "Grouped payment recorded"
+  },
+  "catalogImport": {
+    "open": "Import from Excel",
+    "title": "Import tests and prices",
+    "help": "Add new tests and update prices, names and status of existing ones. Everything is checked and previewed before saving: a single error blocks the import.",
+    "file": "Excel file (.xlsx)",
+    "template": "Download the template",
+    "templateFile": "tests-import-template",
+    "templateSheet": "Tests",
+    "columns": "Columns: Code (optional — generated if missing), Test, Price (required for a new test) and Active (yes/no, optional). A row whose code or name already exists updates that test.",
+    "summary": "{{file}}: {{created}} to create, {{updated}} to update, {{unchanged}} unchanged, {{errors}} error(s).",
+    "errorsTitle": "Errors to fix in the file",
+    "moreErrors": "… and {{count}} more error(s).",
+    "moreRows": "… and {{count}} more row(s) not shown.",
+    "preview": "Preview",
+    "fixFirst": "Fix the file and load it again: nothing is saved while an error remains.",
+    "submit": "Import ({{count}})",
+    "done": "Test catalogue updated",
+    "action": {
+      "create": "New",
+      "update": "Update",
+      "unchanged": "Unchanged"
+    },
+    "read": {
+      "notXlsx": "This file is not a readable Excel workbook (.xlsx).",
+      "unsupported": "This browser cannot read this compressed workbook. Save it again as a standard .xlsx or use a recent browser.",
+      "empty": "The workbook is empty.",
+      "tooLarge": "The file is too large."
+    },
+    "fatal": {
+      "missingColumns": "Columns not found: at least “Test” (or “Code”) and “Price” are required. Use the template.",
+      "empty": "The file has no row to import.",
+      "tooMany": "Too many rows: {{max}} at most per import."
+    },
+    "problem": {
+      "itemMissing": "Row {{row}}: name missing.",
+      "codeInvalid": "Row {{row}}: code “{{value}}” is invalid (2–20 capital letters, digits or hyphens).",
+      "codeTaken": "Row {{row}}: code “{{value}}” belongs to an item of another category.",
+      "codeMismatch": "Row {{row}}: this name already exists under a code other than “{{value}}”.",
+      "labelLength": "Row {{row}}: the name must be 2 to 120 characters.",
+      "labelTaken": "Row {{row}}: “{{value}}” is already used by another test.",
+      "priceRequired": "Row {{row}}: the price is required for a new test (“{{value}}”).",
+      "priceInvalid": "Row {{row}}: price “{{value}}” is invalid (positive number, at most 2 decimals).",
+      "activeInvalid": "Row {{row}}: status “{{value}}” not understood (yes / no).",
+      "duplicateInFile": "Row {{row}}: “{{value}}” already appears above in the file."
+    }
   }
 }

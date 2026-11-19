@@ -173,3 +173,133 @@ describe('facturation locale', () => {
     expect((await a.svc.snapshot()).invoices).toHaveLength(0);
   });
 });
+
+describe('catalogue — médicaments et examens avec prix', () => {
+  const price = (minor: number) => ({ minor, currency: 'USD' });
+  const med = (over: Record<string, unknown> = {}) => ({ id: 'cat-new', code: 'PHA-900', label: 'Ibuprofène 400 mg', category: 'pharmacy' as const, price: price(250), active: true, ...over });
+
+  it('ajoute un médicament et un examen avec leur prix, visibles dans le catalogue', async () => {
+    const { svc } = setup();
+    await svc.saveCatalogItem(med());
+    await svc.saveCatalogItem(med({ id: 'cat-lab', code: 'LAB-900', label: '  Test  rapide  ', category: 'laboratory', price: price(1200) }));
+    const catalog = (await svc.snapshot()).catalog;
+    expect(catalog.find((c) => c.code === 'PHA-900')?.price.minor).toBe(250);
+    expect(catalog.find((c) => c.code === 'LAB-900')).toMatchObject({ label: 'Test rapide', price: { minor: 1200 } });
+  });
+
+  it('refuse un code ou une désignation déjà utilisés dans la catégorie', async () => {
+    const { svc } = setup();
+    await svc.saveCatalogItem(med());
+    await expect(svc.saveCatalogItem(med({ id: 'cat-2' }))).rejects.toMatchObject({ message: 'billing.catalogCodeTaken' });
+    await expect(svc.saveCatalogItem(med({ id: 'cat-2', code: 'PHA-901', label: 'ibuprofène  400 MG' }))).rejects.toMatchObject({ message: 'billing.catalogLabelTaken' });
+  });
+
+  it('modifier un prix ne crée pas de doublon', async () => {
+    const { svc } = setup();
+    await svc.saveCatalogItem(med());
+    await svc.saveCatalogItem(med({ price: price(300) }));
+    const rows = (await svc.snapshot()).catalog.filter((c) => c.code === 'PHA-900');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.price.minor).toBe(300);
+  });
+
+  it('refuse prix négatif, code mal formé, désignation trop courte', async () => {
+    const { svc } = setup();
+    await expect(svc.saveCatalogItem(med({ price: price(-1) }))).rejects.toMatchObject({ message: 'billing.amountInvalid' });
+    await expect(svc.saveCatalogItem(med({ code: 'a b' }))).rejects.toMatchObject({ message: 'billing.catalogCodeInvalid' });
+    await expect(svc.saveCatalogItem(med({ label: 'x' }))).rejects.toMatchObject({ message: 'billing.catalogLabelLength' });
+  });
+
+  it('exige le droit propre au service : pharmacie, laboratoire, sinon configuration de la facturation', async () => {
+    const a = setup({ denied: ['health.pharmacy.catalog'] });
+    await expect(a.svc.saveCatalogItem(med())).rejects.toThrow('forbidden:health.pharmacy.catalog');
+    await expect(a.svc.saveCatalogItem(med({ id: 'l', code: 'LAB-901', label: 'Autre examen', category: 'laboratory' }))).resolves.toBeDefined();
+    const b = setup({ denied: ['health.billing.configure'] });
+    await expect(b.svc.saveCatalogItem(med({ id: 'c', code: 'CONS-9', label: 'Consultation X', category: 'consultation' }))).rejects.toThrow('forbidden:health.billing.configure');
+  });
+});
+
+describe('règlement en lot d’un organisme', () => {
+  async function twoInvoices(svc: ReturnType<typeof setup>['svc'], item: ReturnType<typeof setup>['item']) {
+    const cons = await item('CONS-GEN');
+    const a = await svc.createInvoice({ patientId: 'DEMO-P-002', lines: [{ itemId: cons, quantity: 1 }], primaryCoverageId: 'cov-01' });
+    const b = await svc.createInvoice({ patientId: 'DEMO-P-002', lines: [{ itemId: cons, quantity: 2 }], primaryCoverageId: 'cov-01' });
+    return [a, b] as const;
+  }
+
+  it('règle plusieurs factures en une opération : une écriture par facture, liées par un même lot', async () => {
+    const { svc, item } = setup();
+    const [a, b] = await twoInvoices(svc, item);
+    const res = await svc.settleOrganizationBatch({
+      organizationId: 'org-assur-a', method: 'transfer', reference: 'VIR-LOT-1', submissionId: 'b1',
+      allocations: [{ invoiceId: a.invoice.id, amount: a.balances.organizations[0]!.outstanding }, { invoiceId: b.invoice.id, amount: 1000 }],
+    });
+    expect(res.count).toBe(2);
+    expect(res.total).toBe(a.balances.organizations[0]!.outstanding + 1000);
+    const snap = await svc.snapshot();
+    const entries = snap.ledger.filter((e) => e.kind === 'insurerSettlement');
+    expect(entries.length).toBe(2);
+    expect(new Set(entries.map((e) => e.groupId)).size).toBe(1);
+    const sa = snap.invoices.find((v) => v.invoice.id === a.invoice.id)!;
+    expect(sa.balances.organizations[0]!.outstanding).toBe(0);
+    const sb = snap.invoices.find((v) => v.invoice.id === b.invoice.id)!;
+    expect(sb.balances.organizations[0]!.outstanding).toBe(b.balances.organizations[0]!.outstanding - 1000);
+  });
+
+  it('tout ou rien : un montant excessif annule tout le lot', async () => {
+    const { svc, item } = setup();
+    const [a, b] = await twoInvoices(svc, item);
+    await expect(svc.settleOrganizationBatch({
+      organizationId: 'org-assur-a', method: 'cash', submissionId: 'b2',
+      allocations: [{ invoiceId: a.invoice.id, amount: 100 }, { invoiceId: b.invoice.id, amount: 99999999 }],
+    })).rejects.toThrow('billing.settlementExceedsDue');
+    expect((await svc.snapshot()).ledger.filter((e) => e.kind === 'insurerSettlement').length).toBe(0);
+  });
+
+  it('un même envoi ne produit qu’un lot (double clic) ; droit de règlement exigé', async () => {
+    const { svc, item } = setup();
+    const [a] = await twoInvoices(svc, item);
+    const input = { organizationId: 'org-assur-a', method: 'cash' as const, submissionId: 'b3', allocations: [{ invoiceId: a.invoice.id, amount: 100 }] };
+    await svc.settleOrganizationBatch(input);
+    await expect(svc.settleOrganizationBatch(input)).rejects.toThrow('billing.duplicatePayment');
+    const denied = setup({ denied: ['billing.settle'] });
+    await expect(denied.svc.settleOrganizationBatch(input)).rejects.toThrow();
+  });
+});
+
+describe('importation du catalogue des examens', () => {
+  const lab = (svc: ReturnType<typeof setup>['svc']) => svc.snapshot().then((s) => s.catalog.filter((c) => c.category === 'laboratory'));
+
+  it('crée et met à jour en une opération', async () => {
+    const { svc } = setup();
+    const before = await lab(svc);
+    const first = before[0]!;
+    const res = await svc.importLabCatalog({ items: [
+      { id: first.id, code: first.code, label: first.label, price: first.price.minor + 100, active: true },
+      { code: 'LAB-IMP-1', label: 'Widal import', price: 850, active: true },
+    ] });
+    expect(res.created).toBe(1);
+    expect(res.updated).toBe(1);
+    const after = await lab(svc);
+    expect(after.length).toBe(before.length + 1);
+    expect(after.find((c) => c.id === first.id)!.price.minor).toBe(first.price.minor + 100);
+    expect(after.find((c) => c.code === 'LAB-IMP-1')!.price.minor).toBe(850);
+  });
+
+  it('tout ou rien : un code déjà pris annule le lot', async () => {
+    const { svc } = setup();
+    const before = await lab(svc);
+    await expect(svc.importLabCatalog({ items: [
+      { code: 'LAB-IMP-2', label: 'Premier', price: 100, active: true },
+      { code: before[0]!.code, label: 'Doublon de code', price: 100, active: true },
+    ] })).rejects.toThrow('billing.catalogCodeTaken');
+    expect((await lab(svc)).length).toBe(before.length);
+  });
+
+  it('exige le droit du laboratoire et refuse un lot vide', async () => {
+    const { svc } = setup();
+    await expect(svc.importLabCatalog({ items: [] })).rejects.toThrow('billing.catalogImportSize');
+    const denied = setup({ denied: ['health.laboratory.catalog'] });
+    await expect(denied.svc.importLabCatalog({ items: [{ code: 'LAB-IMP-3', label: 'Test', price: 100, active: true }] })).rejects.toThrow();
+  });
+});

@@ -12,10 +12,12 @@ import { Tabs } from '@/components/ui/tabs';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
-import { ageFromBirthDate } from '@/utils/dates';
+import { useAgeLabel } from '@/utils/age';
+import { usePatientCategories } from './category-data';
 import { PatientPosition } from '../patientFlow/PatientPosition';
 import { PatientAppointmentsTable } from '../appointments/AppointmentsTable';
 import { PatientFinance } from '../finance/PatientFinance';
+import { PatientMail } from '../patient-mail/PatientMail';
 import { PatientConsultations } from '../consultations/PatientConsultations';
 import { PatientAdmissions } from '../hospitalization/PatientAdmissions';
 import { PatientPrescriptions } from '../prescriptions/PatientPrescriptions';
@@ -53,6 +55,8 @@ function GatedHistory({ permission, children }: { permission: string; children: 
 export default function PatientDetailPage() {
   const { t } = useTranslation('patients');
   const f = useFormatters();
+  const ageLabel = useAgeLabel();
+  const categories = usePatientCategories();
   const { id } = useParams();
   const query = useResourceItem('patients', patientService, id);
   const duplicates = usePatientDuplicates(query.data?.item);
@@ -69,14 +73,14 @@ export default function PatientDetailPage() {
   if (query.error || !query.data) return <ErrorState error={query.error} onRetry={() => void query.refetch()} />;
 
   const { item: patient, isDemo } = query.data;
-  const age = ageFromBirthDate(patient.birthDate);
+  const age = ageLabel(patient.birthDate);
 
   return (
     <>
       <PageHeader
         title={patient.fullName}
         leading={<Avatar name={patient.fullName} size="lg" />}
-        description={`${patient.id} · ${t(`sex.${patient.sex}`)}${age === null ? '' : ` · ${t('age.years', { count: age })}`}`}
+        description={`${patient.id} · ${t(`sex.${patient.sex}`)}${age === '—' ? '' : ` · ${age}`}`}
         breadcrumbs={[{ label: t('title'), to: '/patients' }, { label: patient.fullName }]}
         actions={
           <>
@@ -119,7 +123,9 @@ export default function PatientDetailPage() {
                         { label: t('fields.fullName'), value: patient.fullName },
                         { label: t('fields.sex'), value: t(`sex.${patient.sex}`) },
                         { label: t('fields.birthDate'), value: f.date(patient.birthDate) },
-                        { label: t('columns.age'), value: age === null ? '—' : t('age.years', { count: age }) },
+                        { label: t('columns.age'), value: age },
+                        { label: t('fields.birthWeight'), value: patient.birthWeightGrams === undefined ? '—' : `${patient.birthWeightGrams} g` },
+                        { label: t('fields.category'), value: categories.byId.get(patient.categoryId ?? 'PRIVATE')?.label ?? '—' },
                       ]}
                     />
                   </DetailSection>
@@ -127,6 +133,7 @@ export default function PatientDetailPage() {
                     <DescriptionList
                       items={[
                         { label: t('fields.phone'), value: patient.phone },
+                        { label: t('fields.email'), value: patient.email || '—' },
                         { label: t('fields.address'), value: patient.address },
                         { label: t('fields.emergencyContact'), value: patient.emergencyContact },
                       ]}
@@ -195,6 +202,15 @@ export default function PatientDetailPage() {
             content: (
               <Card className="[&>div]:p-0">
                 <PatientFinance patientId={patient.id} />
+              </Card>
+            ),
+          },
+          {
+            id: 'mail',
+            label: t('detail.tabs.mail'),
+            content: (
+              <Card className="[&>div]:p-0">
+                <PatientMail patientId={patient.id} patientName={patient.fullName} email={patient.email} />
               </Card>
             ),
           },

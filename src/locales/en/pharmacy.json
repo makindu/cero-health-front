@@ -6,7 +6,8 @@
   "tabs": {
     "queue": "To dispense",
     "stock": "Pharmacy stock",
-    "dispensations": "Dispensations"
+    "dispensations": "Dispensations",
+    "catalog": "Catalogue and prices"
   },
   "filters": {
     "level": "Level"
@@ -38,7 +39,68 @@
     "adjustTitle": "Adjust a lot",
     "adjustBody": "Inventory correction: reason required, movement traced, stock never negative.",
     "delta": "Change",
-    "deltaHint": "Negative to remove"
+    "deltaHint": "Negative to remove · Change expressed in the base unit (e.g. tablets) for packaged products",
+    "exportMenu": "Export stock sheet",
+    "sheet": {
+      "title": "Stock sheet — Pharmacy",
+      "filename": "pharmacy-stock-sheet",
+      "code": "Code",
+      "status": "Status",
+      "ok": "Valid",
+      "out": "Out of stock"
+    },
+    "import": {
+      "button": "Import (Excel)",
+      "title": "Import lots from Excel",
+      "help": "Each row of the file is the receipt of one lot. A product missing from the catalogue is added automatically (with its price) and then stocked. Everything is checked before writing: if any row has an error, nothing is imported.",
+      "file": "Excel file (.xlsx)",
+      "template": "Download the template",
+      "templateFile": "lot-import-template",
+      "templateSheet": "Lots",
+      "columns": "Columns: Code (optional) and/or Product, Price (required for a new product, ignored for an existing one), Lot number, Expiry (optional), Quantity (positive whole number). The first sheet is read; the first row holds the headers.",
+      "summary": "{{file}}: {{ok}} valid row(s), {{errors}} error(s), {{created}} product(s) to add to the catalogue.",
+      "errorsTitle": "Fix the file, then choose it again:",
+      "moreErrors": "… and {{count}} more error(s).",
+      "fixFirst": "No lot is imported while the file contains errors.",
+      "preview": "Preview of lots to import",
+      "submit": "Import {{count}} lot(s)",
+      "done": "Lots imported and catalogue updated",
+      "fatal": {
+        "missingColumns": "Columns not found: at least Code (or Product), Lot number and Quantity are required.",
+        "empty": "The file contains no rows to import.",
+        "tooMany": "The file has too many rows (maximum {{max}})."
+      },
+      "read": {
+        "notXlsx": "This file is not a readable Excel workbook (.xlsx).",
+        "unsupported": "This browser cannot read this compressed workbook. Save it again as a standard .xlsx or use a recent browser.",
+        "empty": "The workbook is empty.",
+        "tooLarge": "The file is too large."
+      },
+      "problem": {
+        "itemUnknown": "Row {{row}}: product not found in the pharmacy catalogue (“{{value}}”).",
+        "lotRequired": "Row {{row}}: the lot number is required.",
+        "quantityInvalid": "Row {{row}}: invalid quantity (“{{value}}”) — a positive whole number is expected.",
+        "dateInvalid": "Row {{row}}: unreadable expiry date (“{{value}}”).",
+        "alreadyExpired": "Row {{row}}: the lot is already expired ({{value}}).",
+        "duplicateInFile": "Row {{row}}: lot “{{value}}” appears twice for this product in the file.",
+        "lotExists": "Row {{row}}: lot “{{value}}” already exists for this product.",
+        "codeMismatch": "Row {{row}}: code “{{value}}” does not match this product already in the catalogue.",
+        "codeInvalid": "Row {{row}}: invalid code, or already used in the file (“{{value}}”) — 2 to 20 letters, digits or hyphens.",
+        "labelLength": "Row {{row}}: the name must be 2 to 120 characters long (“{{value}}”).",
+        "priceRequired": "Row {{row}}: “{{value}}” is not in the catalogue: give its price to add it.",
+        "priceInvalid": "Row {{row}}: invalid price (“{{value}}”) — a number above 0 with at most 2 decimals."
+      },
+      "price": "Price",
+      "newBadge": "New — {{price}}"
+    },
+    "search": "Search by product, code or lot number",
+    "filter": {
+      "label": "Filter",
+      "all": "All products",
+      "out": "Out of stock",
+      "expired": "With an expired lot"
+    },
+    "quantityIn": "Quantity in {{unit}}"
   },
   "columns": {
     "prescription": "Prescription",
@@ -59,7 +121,8 @@
     "unpaid": "To pay at cashier",
     "credit": "Credit authorised",
     "exception": "Traced exception",
-    "invoiceCancelled": "Invoice cancelled"
+    "invoiceCancelled": "Invoice cancelled",
+    "waived": "Payment deferred"
   },
   "dispensationStatus": {
     "prepared": "Prepared",

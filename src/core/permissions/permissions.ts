@@ -47,8 +47,16 @@ export const PERMISSIONS = {
     resultsValidate: 'health.laboratory.results.validate',
     /** Prélèvement sans paiement préalable (exception motivée, tracée). */
     exception: 'health.laboratory.exception',
+    /** Gérer le catalogue des examens et leurs prix. */
+    catalog: 'health.laboratory.catalog',
   },
-  pharmacy: { view: 'health.pharmacy.view', dispense: 'health.pharmacy.dispense', exception: 'health.pharmacy.exception' },
+  pharmacy: {
+    view: 'health.pharmacy.view',
+    dispense: 'health.pharmacy.dispense',
+    exception: 'health.pharmacy.exception',
+    /** Gérer le catalogue des médicaments et leurs prix. */
+    catalog: 'health.pharmacy.catalog',
+  },
   hospitalization: {
     view: 'health.admissions.view',
     create: 'health.admissions.create',
@@ -103,6 +111,8 @@ export const PERMISSIONS = {
     view: 'health.administration.view',
     manageUsers: 'health.users.manage',
     manageServices: 'health.services.manage',
+    /** Paramètres de l'établissement (durée de consultation, catégories de patients…). */
+    manageSettings: 'health.settings.manage',
   },
   audit: { view: 'health.audit.view' },
 } as const;

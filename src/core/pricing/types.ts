@@ -23,6 +23,15 @@ export interface CatalogItem {
   category: ServiceCategory;
   price: Money;
   active: boolean;
+  /**
+   * Conditionnement (médicaments) : cet article puise dans le stock de `stock.itemId`, à raison de `stock.perUnit` unités de base
+   * par unité vendue. Le stock est compté en unité de base (ex. le comprimé) ; absent = 1 article = 1 unité de stock.
+   */
+  stock?: { itemId: string; perUnit: number };
+  /** Unité dans laquelle cet article est vendu (boîte, sachet, comprimé…). */
+  unit?: string;
+  /** Sur l'article qui porte le stock : nom de l'unité de base (comprimé…). */
+  baseUnit?: string;
 }
 
 export type OrganizationKind = 'insurer' | 'mutuelle' | 'company' | 'institution' | 'other';

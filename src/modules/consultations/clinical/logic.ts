@@ -47,6 +47,7 @@ export function computeBmi(weightKg: string, heightCm: string): number | null {
 const RANGES: Record<keyof Vitals, [number, number]> = {
   systolic: [40, 300], diastolic: [20, 200], pulse: [20, 300], temperature: [30, 45],
   respiratoryRate: [4, 90], spo2: [30, 100], weight: [0.3, 500], height: [30, 250],
+  brachialPerimeter: [3, 60], headCircumference: [15, 80],
 };
 /** Champs hors plage plausible (faute de frappe probable) : à signaler, jamais à corriger automatiquement. */
 export function vitalsOutOfRange(vitals: Vitals): (keyof Vitals)[] {
@@ -75,7 +76,7 @@ export function addAntecedent(list: readonly Antecedent[], entry: Omit<Anteceden
 export function reviseAntecedent(
   list: readonly Antecedent[],
   id: string,
-  change: Partial<Pick<Antecedent, 'label' | 'detail' | 'severity' | 'state' | 'origin'>>,
+  change: Partial<Pick<Antecedent, 'label' | 'detail' | 'severity' | 'state' | 'origin' | 'originDetail'>>,
   ctx: ActionContext,
 ): Antecedent[] {
   const current = currentAntecedents(list).find((a) => a.id === id);
@@ -193,7 +194,7 @@ export function sectionDone(draft: ConsultationDraft, section: SectionId): boole
     case 'exam': return draft.exam.notDone ? filled(draft.exam.notDoneReason) : vitalsFilled(draft.exam.vitals) || !isEmptyDoc(draft.exam.physical);
     case 'assessment': return draft.diagnoses.length > 0;
     case 'plan': return !isEmptyDoc(draft.plan.synthesis) || !isEmptyDoc(draft.plan.actions);
-    case 'conclusion': return !isEmptyDoc(draft.conclusion.text);
+    case 'conclusion': return filled(draft.conclusion.decision) || !isEmptyDoc(draft.conclusion.recommendations);
   }
 }
 export function progress(draft: ConsultationDraft): { done: SectionId[]; percent: number } {
@@ -201,14 +202,14 @@ export function progress(draft: ConsultationDraft): { done: SectionId[]; percent
   return { done, percent: Math.round((done.length / SECTIONS.length) * 100) };
 }
 
-export type SignatureIssue = 'chiefComplaint' | 'antecedentsNotVerified' | 'principalDiagnosis' | 'conclusion';
+export type SignatureIssue = 'chiefComplaint' | 'antecedentsNotVerified' | 'principalDiagnosis' | 'decision';
 /** Éléments obligatoires avant signature. La signature elle-même reste un acte du praticien. */
 export function signatureIssues(draft: ConsultationDraft): SignatureIssue[] {
   const issues: SignatureIssue[] = [];
   if (!filled(draft.anamnesis.chiefComplaint)) issues.push('chiefComplaint');
   if (draft.verifications.length === 0) issues.push('antecedentsNotVerified');
   if (!principalDiagnosis(draft.diagnoses)) issues.push('principalDiagnosis');
-  if (isEmptyDoc(draft.conclusion.text)) issues.push('conclusion');
+  if (!filled(draft.conclusion.decision)) issues.push('decision');
   return issues;
 }
 
@@ -222,12 +223,12 @@ export function addAddendum(draft: ConsultationDraft, text: string, ctx: ActionC
 export function emptyDraft(consultationId: string, status: ClinicalStatus = 'draft'): ConsultationDraft {
   return {
     consultationId, status,
-    anamnesis: { chiefComplaint: '', source: 'patient', onset: '', duration: '', location: '', intensity: '', associated: '', aggravating: '', relieving: '', priorTreatments: '', history: EMPTY_DOC, notes: EMPTY_DOC },
+    anamnesis: { chiefComplaint: '', source: 'patient', history: EMPTY_DOC, notes: EMPTY_DOC },
     antecedents: [], verifications: [], antecedentNotes: EMPTY_DOC,
-    exam: { notDone: false, notDoneReason: '', vitals: { systolic: '', diastolic: '', pulse: '', temperature: '', respiratoryRate: '', spo2: '', weight: '', height: '' }, generalState: '', physical: EMPTY_DOC, systems: EMPTY_DOC, observations: EMPTY_DOC },
+    exam: { notDone: false, notDoneReason: '', vitals: { systolic: '', diastolic: '', pulse: '', temperature: '', respiratoryRate: '', spo2: '', weight: '', height: '', brachialPerimeter: '', headCircumference: '' }, generalState: '', physical: EMPTY_DOC },
     diagnoses: [], evaluation: EMPTY_DOC,
     plan: { synthesis: EMPTY_DOC, actions: EMPTY_DOC, orientation: 'none', orientationTarget: '', followUpDate: '' },
-    conclusion: { text: EMPTY_DOC, decision: '', recommendations: EMPTY_DOC, nextAppointment: '' },
+    conclusion: { decision: '', recommendations: EMPTY_DOC, nextAppointment: '' },
     revisions: [], addenda: [],
   };
 }

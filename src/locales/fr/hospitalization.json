@@ -59,7 +59,8 @@
     "reason": "Motif d’hospitalisation",
     "consultation": "Consultation (optionnel)",
     "consultationHint": "Identifiant de la consultation d’origine",
-    "notice": "La facturation des jours de chambre et la sortie sont traitées avec le compte hospitalier."
+    "notice": "La facturation des jours de chambre et la sortie sont traitées avec le compte hospitalier.",
+    "attendingOptional": "Facultatif."
   },
   "detail": {
     "summary": "Admission",
@@ -194,7 +195,7 @@
     "clinical": {
       "step1": "1. Plaintes du malade",
       "step2": "2. Examen et observations",
-      "step3": "3. Conclusion : diagnostic",
+      "step3": "3. Conclusion",
       "step4": "4. Plan",
       "complaints": "Plaintes du jour",
       "notRecorded": "Non renseigné",
@@ -228,7 +229,10 @@
       "labsRequested": "Examens demandés ({{count}}) : {{numbers}}",
       "rxIssued": "Ordonnances ({{count}}) : {{numbers}}",
       "orderLabs": "Demander des examens",
-      "prescribe": "Prescrire"
+      "prescribe": "Prescrire",
+      "evolutionDetail": "Précisions sur l’évolution",
+      "afterSaveHint": "Après l’enregistrement de la visite, utilisez les boutons « Demander des examens » et « Prescrire » de la visite, comme en consultation.",
+      "noOrders": "Aucun examen ni prescription pour cette visite."
     }
   }
 }

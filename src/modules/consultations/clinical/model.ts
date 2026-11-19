@@ -8,10 +8,11 @@ export type SectionId = (typeof SECTIONS)[number];
 
 export type InfoSource = 'patient' | 'companion' | 'other';
 /** Déclaré par le patient ou observé/confirmé par un professionnel (à ne jamais confondre). */
-export type Origin = 'declared' | 'observed';
+/** Source de l'information : le patient, un professionnel (observé), l'accompagnant, ou autre (à préciser dans `originDetail`). */
+export type Origin = 'declared' | 'observed' | 'companion' | 'other';
 
-export type AntecedentCategory = 'medical' | 'surgical' | 'family' | 'allergy' | 'medication' | 'obstetric' | 'lifestyle';
-export const ANTECEDENT_CATEGORIES: readonly AntecedentCategory[] = ['medical', 'surgical', 'family', 'allergy', 'medication', 'obstetric', 'lifestyle'];
+export type AntecedentCategory = 'medical' | 'surgical' | 'family' | 'allergy' | 'medication' | 'vaccination' | 'obstetric' | 'lifestyle';
+export const ANTECEDENT_CATEGORIES: readonly AntecedentCategory[] = ['medical', 'surgical', 'family', 'allergy', 'medication', 'vaccination', 'obstetric', 'lifestyle'];
 /** `unknown` = information non connue ; `none` = absence déclarée (« aucune allergie connue »). */
 export type AntecedentState = 'active' | 'resolved' | 'unknown' | 'none';
 
@@ -23,6 +24,8 @@ export interface Antecedent {
   /** Allergies : gravité de la réaction. */
   severity?: 'mild' | 'moderate' | 'severe';
   origin: Origin;
+  /** Précision quand la source est « autre » (ex. « voisin », « ancien dossier »). */
+  originDetail?: string;
   state: AntecedentState;
   recordedAt: string;
   author: string;
@@ -70,8 +73,12 @@ export interface Vitals {
   spo2: string;
   weight: string;
   height: string;
+  /** Périmètre brachial (cm) : dépistage de la malnutrition. */
+  brachialPerimeter: string;
+  /** Périmètre crânien (cm) : surtout chez le nourrisson. */
+  headCircumference: string;
 }
-export const EMPTY_VITALS: Vitals = { systolic: '', diastolic: '', pulse: '', temperature: '', respiratoryRate: '', spo2: '', weight: '', height: '' };
+export const EMPTY_VITALS: Vitals = { systolic: '', diastolic: '', pulse: '', temperature: '', respiratoryRate: '', spo2: '', weight: '', height: '', brachialPerimeter: '', headCircumference: '' };
 
 export interface RevisionEntry {
   at: string;
@@ -92,14 +99,6 @@ export interface ConsultationDraft {
   anamnesis: {
     chiefComplaint: string;
     source: InfoSource;
-    onset: string;
-    duration: string;
-    location: string;
-    intensity: string;
-    associated: string;
-    aggravating: string;
-    relieving: string;
-    priorTreatments: string;
     history: RichDoc;
     notes: RichDoc;
   };
@@ -110,25 +109,29 @@ export interface ConsultationDraft {
     notDone: boolean;
     notDoneReason: string;
     vitals: Vitals;
+    /** Prise de constantes du triage déjà reprise automatiquement (évite de réécraser une saisie ou de re-remplir ce que le médecin a vidé). */
+    triageImportedId?: string;
     generalState: string;
     physical: RichDoc;
-    systems: RichDoc;
-    observations: RichDoc;
   };
   diagnoses: Diagnosis[];
   evaluation: RichDoc;
   plan: {
     synthesis: RichDoc;
+    /** La synthèse a déjà été pré-remplie depuis les sections précédentes (évite de la recréer si le médecin la vide). */
+    synthesisSeeded?: boolean;
     actions: RichDoc;
-    orientation: 'none' | 'service' | 'hospitalization' | 'referral';
+    orientation: 'none' | 'ambulatory' | 'service' | 'hospitalization' | 'referral';
     orientationTarget: string;
     followUpDate: string;
   };
   conclusion: {
-    text: RichDoc;
     decision: string;
     recommendations: RichDoc;
+    /** Date et heure (ISO) du prochain rendez-vous programmé ; les anciens brouillons y gardent un simple texte. */
     nextAppointment: string;
+    /** Rendez-vous du calendrier créé depuis cette consultation. */
+    nextAppointmentId?: string;
   };
   revisions: RevisionEntry[];
   addenda: Addendum[];

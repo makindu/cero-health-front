@@ -1,4 +1,4 @@
-import { CircleCheck, Hourglass, LogIn, Stethoscope, UserPlus, Users } from 'lucide-react';
+import { Activity, CircleCheck, Hourglass, LogIn, Stethoscope, UserPlus, Users } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataTable, type Column } from '@/components/tables/data-table';
@@ -19,6 +19,10 @@ import { AppointmentStatusBadge } from './columns';
 import { appointmentService, type Appointment } from './data';
 import { localDayKey } from './scheduling';
 import { WalkInDialog } from './WalkInDialog';
+import { FeeBadge } from './FeeBadge';
+import { buildPresent, type PresentRow } from './present-rules';
+import { triageService } from '../nursing/data';
+import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { PersonName } from '@/components/ui/avatar';
 import { Avatar } from '@/components/ui/avatar';
 
@@ -45,13 +49,13 @@ export function ReceptionPanel() {
   });
   const rows = list.data?.rows ?? [];
   const toWelcome = rows.filter((a) => a.status === 'scheduled' || a.status === 'confirmed');
-  const waiting = rows
-    .filter((a) => a.status === 'arrived' || a.status === 'waiting')
-    .sort((x, y) => (x.arrivedAt ?? x.startsAt).localeCompare(y.arrivedAt ?? y.startsAt));
-  const inConsult = rows.filter((a) => a.status === 'inProgress');
+  const triage = useResourceList('triage', triageService, { page: 1, perPage: 200, search: '', filters: {}, sort: null });
+  const present = buildPresent(rows, triage.data?.rows ?? [], today);
+  const waiting = present.filter((r) => r.stage === 'waiting');
+  const atTriage = present.filter((r) => r.orientation === 'triage' && r.stage !== 'inCare');
+  const inConsult = present.filter((r) => r.stage === 'inConsultation' || r.stage === 'inCare');
   const done = rows.filter((a) => a.status === 'done');
 
-  const waitMinutes = (a: Appointment) => (a.arrivedAt ? Math.max(0, Math.round((now - new Date(a.arrivedAt).getTime()) / 60000)) : null);
   const lateMinutes = (a: Appointment) => Math.max(0, Math.round((now - new Date(a.startsAt).getTime()) / 60000));
 
   const cmd = (a: Appointment, action: string, label: string, permission: string, icon: ReactNode) => (
@@ -76,6 +80,36 @@ export function ReceptionPanel() {
     { id: 'patient', header: t('columns.patient'), cell: (a) => <PersonName name={a.patientName} />, primary: true },
     { id: 'practitioner', header: t('columns.practitioner'), cell: (a) => a.practitioner },
   ];
+  const tone = (p: PresentRow['priority']): StatusTone => (p === 'immediate' || p === 'veryUrgent' ? 'danger' : p === 'urgent' ? 'warning' : 'neutral');
+  const orientationText = (r: PresentRow): string => {
+    if (r.orientation === 'triage') return t('reception.orientation.triage');
+    const who = r.practitioner ? ` · ${r.practitioner}` : '';
+    return r.orientation === 'service' ? `${t('reception.orientation.service', { service: t(`services.${r.service ?? 'generalMedicine'}`) })}${who}` : `${t('reception.orientation.consultation')}${who}`;
+  };
+  const presentColumns: Column<PresentRow>[] = [
+    { id: 'priority', header: t('reception.present.priority'), cell: (r) => <StatusBadge tone={tone(r.priority)}>{t(`walkIn.priority.${r.priority}`)}</StatusBadge> },
+    { id: 'patient', header: t('columns.patient'), cell: (r) => <PersonName name={r.patientName} />, primary: true },
+    { id: 'origin', header: t('reception.present.origin'), cell: (r) => t(`reception.origin.${r.origin}`) },
+    { id: 'orientation', header: t('reception.present.orientation'), cell: orientationText },
+    { id: 'arrival', header: t('detail.arrivedAt'), cell: (r) => f.time(r.arrivedAt) },
+    { id: 'wait', header: t('reception.waited'), cell: (r) => t('reception.minutes', { count: Math.max(0, Math.round((now - new Date(r.arrivedAt).getTime()) / 60000)) }) },
+    { id: 'stage', header: t('columns.status'), cell: (r) => <StatusBadge tone={r.stage === 'waiting' ? 'warning' : 'info'}>{t(`reception.stage.${r.stage}`)}</StatusBadge> },
+    { id: 'fee', header: t('reception.fee.header'), cell: (r) => <FeeBadge patientId={r.patientId} /> },
+    {
+      id: 'actions', header: t('module.actions'), className: 'text-end',
+      cell: (r) => {
+        const a = r.appointment;
+        if (!a) return <span className="text-xs text-muted-foreground">{t('reception.present.nurseNote')}</span>;
+        return (
+          <div className="flex flex-wrap justify-end gap-2">
+            {a.status === 'arrived' && cmd(a, 'wait', t('actions.wait'), P.checkIn, <Hourglass className="size-4" />)}
+            {a.status !== 'inProgress' && cmd(a, 'start', t('actions.start'), P.update, <Stethoscope className="size-4" />)}
+            {open(a)}
+          </div>
+        );
+      },
+    },
+  ];
   const sections: { key: string; title: string; rows: Appointment[]; columns: Column<Appointment>[] }[] = [
     {
       key: 'welcome',
@@ -84,6 +118,7 @@ export function ReceptionPanel() {
       columns: [
         ...base,
         { id: 'late', header: t('reception.delay'), cell: (a) => (lateMinutes(a) > 15 ? t('reception.late', { count: lateMinutes(a) }) : '—') },
+        { id: 'fee', header: t('reception.fee.header'), cell: (a) => <FeeBadge patientId={a.patientId} /> },
         { id: 'status', header: t('columns.status'), cell: (a) => <AppointmentStatusBadge status={a.status} /> },
         {
           id: 'actions',
@@ -96,39 +131,6 @@ export function ReceptionPanel() {
             </div>
           ),
         },
-      ],
-    },
-    {
-      key: 'waiting',
-      title: t('reception.waitingRoom'),
-      rows: waiting,
-      columns: [
-        ...base,
-        { id: 'arrival', header: t('detail.arrivedAt'), cell: (a) => (a.arrivedAt ? f.time(a.arrivedAt) : '—') },
-        { id: 'wait', header: t('reception.waited'), cell: (a) => { const m = waitMinutes(a); return m === null ? '—' : t('reception.minutes', { count: m }); } },
-        { id: 'status', header: t('columns.status'), cell: (a) => <AppointmentStatusBadge status={a.status} /> },
-        {
-          id: 'actions',
-          header: t('module.actions'),
-          className: 'text-end',
-          cell: (a) => (
-            <div className="flex flex-wrap justify-end gap-2">
-              {a.status === 'arrived' && cmd(a, 'wait', t('actions.wait'), P.checkIn, <Hourglass className="size-4" />)}
-              {cmd(a, 'start', t('actions.start'), P.update, <Stethoscope className="size-4" />)}
-              {open(a)}
-            </div>
-          ),
-        },
-      ],
-    },
-    {
-      key: 'consult',
-      title: t('reception.inConsultation'),
-      rows: inConsult,
-      columns: [
-        ...base,
-        { id: 'status', header: t('columns.status'), cell: (a) => <AppointmentStatusBadge status={a.status} /> },
-        { id: 'actions', header: t('module.actions'), className: 'text-end', cell: (a) => <div className="flex justify-end">{open(a)}</div> },
       ],
     },
   ];
@@ -148,6 +150,7 @@ export function ReceptionPanel() {
       <StatGrid>
         <StatCard icon={Users} label={t('reception.toWelcome')} value={toWelcome.length} />
         <StatCard icon={Hourglass} tone="warning" label={t('reception.waitingRoom')} value={waiting.length} />
+        <StatCard icon={Activity} tone="warning" label={t('reception.atTriage')} value={atTriage.length} />
         <StatCard icon={Stethoscope} tone="info" label={t('reception.inConsultation')} value={inConsult.length} />
         <StatCard icon={CircleCheck} tone="success" label={t('reception.finished')} value={done.length} />
       </StatGrid>
@@ -166,6 +169,18 @@ export function ReceptionPanel() {
             />
           </Card>
         ))}
+        <Card title={`${t('reception.present.title')} (${present.length})`} description={t('reception.present.hint')} className="[&>div]:p-0">
+          <DataTable
+            caption={t('reception.present.title')}
+            columns={presentColumns}
+            rows={present}
+            getRowId={(r) => r.key}
+            loading={list.isPending || triage.isPending}
+            error={list.error ?? triage.error}
+            onRetry={() => { void list.refetch(); void triage.refetch(); }}
+            emptyTitle={t('reception.empty')}
+          />
+        </Card>
       </div>
       <Dialog
         open={selected !== null}

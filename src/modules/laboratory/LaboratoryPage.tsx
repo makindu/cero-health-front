@@ -16,6 +16,8 @@ import type { LabOrderView } from './lab-service';
 import { LabOrderDetail } from './LabOrderDetail';
 import { LAB_STATUSES, LabStatusBadge } from './LabStatusBadge';
 import { NewLabOrderDialog } from './NewLabOrderDialog';
+import { CatalogManager } from '../catalog/CatalogManager';
+import { Tabs } from '@/components/ui/tabs';
 import { LAB_AVAILABLE, useLabOrders } from './use-lab';
 import { PersonName } from '@/components/ui/avatar';
 
@@ -57,6 +59,8 @@ function LaboratoryScreen() {
     <>
       <PageHeader title={t('title')} description={t('subtitle')}
         actions={<Can permission={P.laboratory.order}><Button leftIcon={<Plus className="size-4" />} onClick={() => setCreating(true)}>{t('create.button')}</Button></Can>} />
+      <Tabs ariaLabel={t('title')} tabs={[
+        { id: 'orders', label: t('tabs.orders'), content: (<>
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <SearchInput label={t('search')} value={search} onChange={(v) => { setSearch(v); setPage(1); }} />
         <Select aria-label={t('filters.status')} value={status} onChange={(e) => { setStatus(e.target.value as '' | LabStatus); setPage(1); }}>
@@ -67,6 +71,9 @@ function LaboratoryScreen() {
       <DataTable caption={t('title')} columns={columns} rows={rows.slice((page - 1) * PER_PAGE, page * PER_PAGE)} getRowId={(v) => v.order.id}
         loading={orders.isPending} error={orders.error} onRetry={() => void orders.refetch()} emptyTitle={t('empty')} emptyDescription={t('emptyHint')}
         pagination={{ page, perPage: PER_PAGE, total: rows.length, onPageChange: setPage }} />
+        </>) },
+        { id: 'catalog', label: t('tabs.catalog'), content: <CatalogManager category="laboratory" /> },
+      ]} />
       {creating && <NewLabOrderDialog onClose={() => setCreating(false)} onCreated={(v) => { setCreating(false); setOpenId(v.order.id); }} />}
       {openId && <LabOrderDetail view={orders.data?.find((v) => v.order.id === openId)} onClose={() => setOpenId(null)} />}
     </>

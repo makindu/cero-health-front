@@ -59,7 +59,8 @@
     "reason": "Reason for admission",
     "consultation": "Consultation (optional)",
     "consultationHint": "ID of the originating consultation",
-    "notice": "Billing of room days and discharge are handled with the hospital account."
+    "notice": "Billing of room days and discharge are handled with the hospital account.",
+    "attendingOptional": "Optional."
   },
   "detail": {
     "summary": "Admission",
@@ -194,7 +195,7 @@
     "clinical": {
       "step1": "1. Patient complaints",
       "step2": "2. Examination and findings",
-      "step3": "3. Conclusion: diagnosis",
+      "step3": "3. Conclusion",
       "step4": "4. Plan",
       "complaints": "Today’s complaints",
       "notRecorded": "Not recorded",
@@ -228,7 +229,10 @@
       "labsRequested": "Tests requested ({{count}}): {{numbers}}",
       "rxIssued": "Prescriptions ({{count}}): {{numbers}}",
       "orderLabs": "Request tests",
-      "prescribe": "Prescribe"
+      "prescribe": "Prescribe",
+      "evolutionDetail": "Details on the progress",
+      "afterSaveHint": "After saving the visit, use the “Order tests” and “Prescribe” buttons on the visit, as in consultation.",
+      "noOrders": "No tests or prescriptions for this visit."
     }
   }
 }

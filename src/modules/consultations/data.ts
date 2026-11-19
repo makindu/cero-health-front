@@ -6,6 +6,7 @@ import { staffRepo } from '../administration/data';
 import { finance } from '../finance/finance';
 import { patientRepo } from '../patients/data';
 import { resolvePatient } from '../patients/local-rules';
+import { CONSULTATION_DURATION_KEY, DEFAULT_CONSULTATION_DAYS, readSetting } from '../settings/app-settings';
 import { applyConsultationCommand, buildConsultation, COMMAND_TARGET } from './local-rules';
 import { SERVICE_KEYS, demoPerson, pick, staffFor, type ServiceKey } from '../_shared/demo-people';
 
@@ -30,6 +31,10 @@ export interface Consultation {
   triageEntryId?: string;
   /** Médecin de l'annuaire du personnel (mode local). */
   practitionerId?: string;
+  /** Durée prévue en jours, figée à l'ouverture : modifier le réglage plus tard ne change JAMAIS les consultations passées. */
+  durationDays?: number;
+  /** Fin de validité (ISO) = création + durée en jours, figée à la création comme la durée. */
+  expiresAt?: string;
 }
 
 /** FICTIF. Aucun diagnostic, aucune observation clinique : seulement le cadre administratif. */
@@ -60,7 +65,8 @@ export const consultationService = createResourceService<Consultation>({
       const patients = await patientRepo.list();
       const patient = resolvePatient(input.patient ?? '', patients);
       const fee = await finance.feeStatusFor(patient.id);
-      return buildConsultation(input, patients, fee, ctx.now, `CONS-${globalThis.crypto.randomUUID().slice(0, 8).toUpperCase()}`, await staffRepo.list());
+      const configured = Number(await readSetting(CONSULTATION_DURATION_KEY, String(DEFAULT_CONSULTATION_DAYS)));
+      return buildConsultation(input, patients, fee, ctx.now, `CONS-${globalThis.crypto.randomUUID().slice(0, 8).toUpperCase()}`, await staffRepo.list(), configured);
     },
     commands: Object.fromEntries(Object.keys(COMMAND_TARGET).map((a) => [a, async (row: Consultation) => applyConsultationCommand(row, a)])),
     permissions: { create: P.consultations.create, commands: { start: P.consultations.update, 'await-results': P.consultations.update, submit: P.consultations.update, sign: P.consultations.sign, close: P.consultations.close } },

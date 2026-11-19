@@ -27,31 +27,21 @@ export function buildConsultationReport(draft: ConsultationDraft, c: ReportConte
   add(t('consultations:clinical.anamnesis.title'), lines(
     a.chiefComplaint && `${t('consultations:clinical.anamnesis.chiefComplaint')} : ${a.chiefComplaint}`,
     `${t('consultations:clinical.anamnesis.source')} : ${t(`consultations:clinical.anamnesis.sources.${a.source}`)}`,
-    a.onset && `${t('consultations:clinical.anamnesis.onset')} : ${a.onset}`,
-    a.duration && `${t('consultations:clinical.anamnesis.duration')} : ${a.duration}`,
-    a.location && `${t('consultations:clinical.anamnesis.location')} : ${a.location}`,
-    a.intensity && `${t('consultations:clinical.anamnesis.intensity')} : ${a.intensity}/10`,
-    a.associated && `${t('consultations:clinical.anamnesis.associated')} : ${a.associated}`,
-    a.aggravating && `${t('consultations:clinical.anamnesis.aggravating')} : ${a.aggravating}`,
-    a.relieving && `${t('consultations:clinical.anamnesis.relieving')} : ${a.relieving}`,
-    a.priorTreatments && `${t('consultations:clinical.anamnesis.priorTreatments')} : ${a.priorTreatments}`,
   ));
   add(t('consultations:clinical.anamnesis.history'), a.history);
   add(t('consultations:clinical.anamnesis.notes'), a.notes);
 
   const ants = currentAntecedents(draft.antecedents);
   add(t('consultations:clinical.sections.history'), lines(...ants.map((x) =>
-    `${t(`consultations:clinical.history.categories.${x.category}`)} — ${x.label}${x.detail ? ` (${x.detail})` : ''} · ${t(`consultations:clinical.history.state.${x.state}`)} · ${t(`consultations:clinical.history.origin.${x.origin}`)}`)));
+    `${t(`consultations:clinical.history.categories.${x.category}`)} — ${x.label}${x.detail ? ` (${x.detail})` : ''} · ${t(`consultations:clinical.history.state.${x.state}`)} · ${t(`consultations:clinical.history.origin.${x.origin}`)}${x.origin === 'other' && x.originDetail ? ` (${x.originDetail})` : ''}`)));
   add(t('consultations:clinical.history.notes'), draft.antecedentNotes);
 
   if (draft.exam.notDone) add(t('consultations:clinical.sections.exam'), lines(`${t('consultations:clinical.exam.notDone')}${draft.exam.notDoneReason ? ` : ${draft.exam.notDoneReason}` : ''}`));
   else {
-    const vitalsLine = (['systolic', 'diastolic', 'pulse', 'temperature', 'respiratoryRate', 'spo2', 'weight', 'height'] as const)
+    const vitalsLine = (['systolic', 'diastolic', 'pulse', 'temperature', 'respiratoryRate', 'spo2', 'weight', 'height', 'brachialPerimeter', 'headCircumference'] as const)
       .filter((k) => v[k]).map((k) => `${t(`consultations:clinical.exam.vitals.${k}`)} ${v[k]}`).join(' · ');
     add(t('consultations:clinical.sections.exam'), lines(vitalsLine, bmi !== null && `${t('consultations:clinical.exam.bmi')} ${bmi} kg/m²`, draft.exam.generalState && `${t('consultations:clinical.exam.generalState')} : ${t(`consultations:clinical.exam.states.${draft.exam.generalState}`)}`));
     add(t('consultations:clinical.exam.physical'), draft.exam.physical);
-    add(t('consultations:clinical.exam.systems'), draft.exam.systems);
-    add(t('consultations:clinical.exam.observations'), draft.exam.observations);
   }
 
   add(t('consultations:clinical.assessment.title'), lines(...draft.diagnoses.map((d) =>
@@ -62,10 +52,10 @@ export function buildConsultationReport(draft: ConsultationDraft, c: ReportConte
   add(t('consultations:clinical.plan.orientationTitle'), lines(
     draft.plan.orientation !== 'none' && `${t(`consultations:clinical.plan.orientations.${draft.plan.orientation}`)}${draft.plan.orientationTarget ? ` : ${draft.plan.orientationTarget}` : ''}`,
     draft.plan.followUpDate && `${t('consultations:clinical.plan.followUp')} : ${draft.plan.followUpDate}`));
-  add(t('consultations:clinical.conclusion.text'), draft.conclusion.text);
   add(t('consultations:clinical.conclusion.decision'), lines(draft.conclusion.decision));
   add(t('consultations:clinical.conclusion.recommendations'), draft.conclusion.recommendations);
-  add(t('consultations:clinical.conclusion.nextAppointment'), lines(draft.conclusion.nextAppointment));
+  const next = draft.conclusion.nextAppointment;
+  add(t('consultations:clinical.conclusion.nextAppointment'), lines(next.includes('T') && !Number.isNaN(Date.parse(next)) ? c.dateTime(next) : next));
   if (draft.addenda.length > 0) {
     sections.push({ title: t('consultations:clinical.addendum.title'), doc: lines(...draft.addenda.map((x) => `${c.dateTime(x.at)} · ${x.by} — ${x.text}`)) });
   }

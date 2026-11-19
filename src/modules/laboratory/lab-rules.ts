@@ -76,12 +76,14 @@ export interface PaymentGate {
   patientBalance: number;
   creditAuthorized: boolean;
   cancelledInvoice: boolean;
+  /** Dispensé de payer avant prélèvement (catégorie du patient ou patient hospitalisé). */
+  waived?: boolean;
 }
 
 /** Le prélèvement exige : part patient soldée (0 pour un assuré à 100 %), OU crédit autorisé, OU exception tracée. */
 export function paymentCleared(order: LabOrder, gate: PaymentGate): boolean {
   if (gate.cancelledInvoice) return false;
-  return gate.patientBalance <= 0 || gate.creditAuthorized || Boolean(order.paymentException);
+  return Boolean(gate.waived) || gate.patientBalance <= 0 || gate.creditAuthorized || Boolean(order.paymentException);
 }
 
 export function buildOrder(input: {

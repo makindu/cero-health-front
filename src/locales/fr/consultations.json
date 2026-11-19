@@ -8,7 +8,9 @@
     "practitioner": "Praticien",
     "service": "Service",
     "reason": "Motif",
-    "status": "Statut"
+    "status": "Statut",
+    "duration": "Durée",
+    "expiresAt": "Valable jusqu'au"
   },
   "status": {
     "draft": "Brouillon",
@@ -38,7 +40,8 @@
     "patient": "Patient (nom ou numéro)",
     "service": "Service",
     "practitioner": "Praticien",
-    "reason": "Motif"
+    "reason": "Motif",
+    "durationDays": "Durée prévue (jours, vide = durée par défaut)"
   },
   "detail": {
     "summary": "Consultation",
@@ -75,10 +78,10 @@
     "readOnlyNote": "Lecture seule : vous n'avez pas la permission de modifier cette consultation.",
     "sections": {
       "general": "Informations générales",
-      "anamnesis": "Motif et anamnèse",
+      "anamnesis": "Symptômes dominants",
       "history": "Antécédents",
       "exam": "Examen clinique",
-      "assessment": "Évaluation et diagnostics",
+      "assessment": "Diagnostics",
       "plan": "Conduite à tenir",
       "conclusion": "Conclusion et validation"
     },
@@ -102,7 +105,9 @@
       "clean": "Aucune modification en attente",
       "dirty": "Modifications non enregistrées",
       "dirtyDemo": "Brouillon local, non enregistré (démonstration)",
-      "locked": "Consultation verrouillée"
+      "locked": "Consultation verrouillée",
+      "autoPending": "Enregistrement automatique…",
+      "autoDone": "Enregistré automatiquement ({{when}})"
     },
     "status": {
       "actions": {
@@ -124,10 +129,10 @@
       "title": "Contrôle avant validation",
       "ready": "Les éléments obligatoires sont renseignés.",
       "issues": {
-        "chiefComplaint": "Motif de consultation manquant",
+        "chiefComplaint": "Symptômes dominants manquants",
         "antecedentsNotVerified": "Antécédents non vérifiés lors de cette consultation",
         "principalDiagnosis": "Aucun diagnostic principal retenu",
-        "conclusion": "Conclusion médicale manquante"
+        "decision": "Décision médicale manquante"
       }
     },
     "summary": {
@@ -165,8 +170,8 @@
       "walkIn": "Sans rendez-vous"
     },
     "anamnesis": {
-      "title": "Motif et anamnèse",
-      "chiefComplaint": "Motif principal de consultation",
+      "title": "Symptômes dominants",
+      "chiefComplaint": "Symptômes dominants",
       "source": "Source des informations",
       "sources": {
         "patient": "Patient",
@@ -174,15 +179,11 @@
         "other": "Autre"
       },
       "onset": "Date de début",
-      "duration": "Durée et évolution",
-      "durationHint": "Ex. : depuis 3 jours, en aggravation.",
-      "location": "Localisation des symptômes",
-      "intensity": "Intensité (si pertinente)",
       "associated": "Symptômes associés",
       "aggravating": "Facteurs aggravants",
       "relieving": "Facteurs soulageants",
       "priorTreatments": "Traitements déjà pris",
-      "history": "Histoire de la maladie actuelle",
+      "history": "Affection actuelle",
       "notes": "Informations complémentaires"
     },
     "allergy": {
@@ -210,7 +211,8 @@
         "allergy": "Allergies et réactions",
         "medication": "Traitements habituels",
         "obstetric": "Gynéco-obstétrique (si pertinent)",
-        "lifestyle": "Habitudes et mode de vie"
+        "lifestyle": "Habitudes et mode de vie",
+        "vaccination": "Vaccination"
       },
       "empty": "Aucune information enregistrée.",
       "markNone": "Aucun connu",
@@ -219,7 +221,9 @@
       "unknownLabel": "Information inconnue",
       "origin": {
         "declared": "Déclaré par le patient",
-        "observed": "Observé / confirmé par un professionnel"
+        "observed": "Observé / confirmé par un professionnel",
+        "companion": "Déclaré par l'accompagnant",
+        "other": "Autre source"
       },
       "state": {
         "active": "Actif",
@@ -239,7 +243,9 @@
       "originLabel": "Source",
       "stateLabel": "État",
       "add": "Ajouter",
-      "notes": "Antécédents et observations"
+      "notes": "Antécédents et observations",
+      "carriedFrom": "Antécédents repris de la consultation du {{when}}. Vérifiez-les puis cliquez sur « Confirmer les antécédents ».",
+      "originDetail": "Précisez la source"
     },
     "exam": {
       "notDoneTitle": "Réalisation de l’examen",
@@ -251,7 +257,7 @@
       "triageError": "Impossible de charger les constantes du triage.",
       "importTriage": "Reprendre ces valeurs",
       "vitalsTitle": "Constantes",
-      "vitalsHint": "Laissez vide ce qui n’a pas été mesuré : aucune valeur n’est jamais préremplie.",
+      "vitalsHint": "Les constantes prises au triage ce jour sont reprises automatiquement : vérifiez-les et corrigez-les si elles ont changé. Laissez vide ce qui n’a pas été mesuré.",
       "vitalsSource": "Valeurs saisies par le praticien. Celles du triage gardent leur date, heure et auteur dans la liste ci-dessus.",
       "vitals": {
         "systolic": "Tension systolique",
@@ -261,7 +267,9 @@
         "respiratoryRate": "Fréquence respiratoire",
         "spo2": "Saturation O2",
         "weight": "Poids",
-        "height": "Taille"
+        "height": "Taille",
+        "brachialPerimeter": "Périmètre brachial",
+        "headCircumference": "Périmètre crânien"
       },
       "bmi": "IMC",
       "bmiNone": "non calculable (poids et taille requis)",
@@ -274,7 +282,8 @@
       },
       "physical": "Examen physique",
       "systems": "Examen par appareil ou système",
-      "observations": "Observations cliniques et résultats pertinents"
+      "observations": "Observations cliniques et résultats pertinents",
+      "prefilled": "Constantes reprises du triage du {{when}} ({{author}}). Modifiables."
     },
     "assessment": {
       "title": "Diagnostics",
@@ -329,7 +338,8 @@
         "none": "Aucune",
         "service": "Vers un autre service",
         "hospitalization": "Décision d’hospitalisation",
-        "referral": "Référence vers un autre établissement"
+        "referral": "Référence vers un autre établissement",
+        "ambulatory": "Ambulatoire (soins sans hospitalisation)"
       },
       "target": {
         "service": "Service de destination",
@@ -345,13 +355,35 @@
         "service": "Service de l’hôpital qui prendra le patient en charge.",
         "hospitalization": "Service où le patient sera hospitalisé.",
         "referral": "Hôpital ou centre externe vers lequel le patient est référé."
+      },
+      "ambulatoryNote": "Le patient reviendra uniquement pour suivre ses soins, sans être hospitalisé.",
+      "recapTitle": "Synthèse clinique automatique",
+      "recapHint": "Reprise de ce qui a été saisi dans les sections précédentes. Complétez ci-dessous si nécessaire.",
+      "autoHint": "La synthèse ci-dessous est pré-remplie avec ce qui a été saisi dans les sections précédentes : complétez-la ou corrigez-la directement.",
+      "regenerate": "Régénérer depuis les sections précédentes (remplace le texte)",
+      "linked": {
+        "title": "Examens et prescriptions de cette consultation",
+        "hint": "Tout ce qui est demandé depuis cette fiche y reste rattaché : statut des examens, résultats prêts et ordonnances.",
+        "labs": "Examens de laboratoire",
+        "rx": "Prescriptions",
+        "noLabs": "Aucun examen demandé depuis cette consultation.",
+        "noRx": "Aucune prescription depuis cette consultation.",
+        "resultReady": "Résultat validé disponible",
+        "validatedBy": "validé par {{by}}, {{at}}",
+        "test": "Examen",
+        "value": "Valeur",
+        "range": "Valeurs de référence",
+        "flag": "Interprétation",
+        "flags": {
+          "normal": "Normal",
+          "abnormal": "Anormal"
+        }
       }
     },
     "conclusion": {
-      "text": "Conclusion médicale",
       "decision": "Décision médicale",
       "recommendations": "Recommandations",
-      "nextAppointment": "Date du prochain rendez-vous"
+      "nextAppointment": "Prochain rendez-vous"
     },
     "tpl": {
       "title": "Modèles de rédaction",
@@ -443,6 +475,23 @@
       "title": "Quitter sans enregistrer ?",
       "body": "Des modifications de ce dossier n’ont pas été enregistrées. Si vous quittez maintenant, elles seront perdues.",
       "confirm": "Quitter sans enregistrer"
+    },
+    "followUp": {
+      "title": "Prochain rendez-vous",
+      "none": "Aucun rendez-vous de suivi programmé.",
+      "duration": "{{count}} min",
+      "cancelled": "Le rendez-vous du {{when}} a été annulé ou manqué : vous pouvez en programmer un nouveau.",
+      "legacy": "Date notée précédemment : {{date}} (aucun rendez-vous n'est programmé au calendrier).",
+      "schedule": "Programmer le rendez-vous",
+      "reschedule": "Reprogrammer",
+      "openCalendar": "Voir le calendrier",
+      "hint": "Le rendez-vous est créé au calendrier avec la date et l'heure choisies ; le créneau du médecin et du patient est vérifié.",
+      "noPermission": "Vous n'avez pas le droit de programmer un rendez-vous.",
+      "dialogTitle": "Programmer le prochain rendez-vous",
+      "dialogHint": "La date et l'heure sont obligatoires. Le rendez-vous apparaît aussitôt au calendrier et à l'accueil le jour venu.",
+      "submit": "Programmer",
+      "dateTimeRequired": "Indiquez la date et l'heure du rendez-vous.",
+      "pastSlot": "Le rendez-vous doit être dans le futur."
     }
   },
   "editor": {
@@ -472,5 +521,14 @@
     "exitFullscreen": "Quitter le plein écran",
     "printFacility": "Rédaction clinique",
     "printFooter": "Extrait imprimé depuis CERO HEALTH."
-  }
+  },
+  "duration": {
+    "button": "Durée d'une consultation : {{count}} jour(s)",
+    "title": "Durée d'une consultation",
+    "hint": "S'applique aux prochaines consultations. Les consultations déjà ouvertes gardent leur durée d'origine.",
+    "field": "Durée (nombre de jours, de 1 à 365)",
+    "submit": "Enregistrer",
+    "days": "{{count}} jour(s)"
+  },
+  "expired": "Expirée"
 }

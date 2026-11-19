@@ -83,7 +83,7 @@ export function buildAppointment(
       patientId: patient.id,
       patientName: patient.fullName,
       service: service as Appointment['service'],
-      practitioner: '',
+      practitioner: (input.practitioner ?? '').trim(),
       startsAt,
       durationMin: 20,
       reason: 'walkIn',
@@ -104,7 +104,8 @@ export function buildAppointment(
   const durationMin = duration(input.durationMin, 30);
   assertPractitionerFree(practitioner, startsAt, durationMin, existing);
   assertPatientFree(patient.id, startsAt, durationMin, existing);
-  return { id, patientId: patient.id, patientName: patient.fullName, service: service as Appointment['service'], practitioner, startsAt, durationMin, reason, status: 'scheduled', history };
+  const source = (input.fromConsultation ?? '').trim();
+  return { id, patientId: patient.id, patientName: patient.fullName, service: service as Appointment['service'], practitioner, startsAt, durationMin, reason, status: 'scheduled', ...(source ? { sourceConsultationId: source } : {}), history };
 }
 
 export function applyAppointmentUpdate(row: Appointment, input: Record<string, string>, ctx: RuleContext, existing: readonly Appointment[]): Appointment {

@@ -6,7 +6,8 @@
   "tabs": {
     "queue": "Za kutoa",
     "stock": "Hisa ya famasia",
-    "dispensations": "Utoaji"
+    "dispensations": "Utoaji",
+    "catalog": "Orodha na bei"
   },
   "filters": {
     "level": "Kiwango"
@@ -38,7 +39,68 @@
     "adjustTitle": "Rekebisha kundi",
     "adjustBody": "Marekebisho ya hesabu: sababu inahitajika, mwendo unarekodiwa, hisa haiwi hasi.",
     "delta": "Mabadiliko",
-    "deltaHint": "Hasi kuondoa"
+    "deltaHint": "Hasi kuondoa · Mabadiliko katika kipimo cha msingi (mf. vidonge) kwa bidhaa zilizofungashwa",
+    "exportMenu": "Hamisha karatasi ya hisa",
+    "sheet": {
+      "title": "Karatasi ya hisa — Famasia",
+      "filename": "karatasi-hisa-famasia",
+      "code": "Msimbo",
+      "status": "Hali",
+      "ok": "Halali",
+      "out": "Imeisha"
+    },
+    "import": {
+      "button": "Leta (Excel)",
+      "title": "Leta bechi kutoka Excel",
+      "help": "Kila safu ya faili ni upokeaji wa bechi moja. Bidhaa isiyo kwenye orodha huongezwa kiotomatiki (pamoja na bei yake) kisha huwekwa kwenye hisa. Kila kitu hukaguliwa kabla ya kuandika: safu moja ikikosea, hakuna kinacholetwa.",
+      "file": "Faili la Excel (.xlsx)",
+      "template": "Pakua kiolezo",
+      "templateFile": "kiolezo-bechi",
+      "templateSheet": "Bechi",
+      "columns": "Safu wima: Msimbo (hiari) na/au Bidhaa, Bei (lazima kwa bidhaa mpya, hupuuzwa kwa iliyopo), Nambari ya bechi, Muda wa kuisha (hiari), Kiasi (nambari nzima chanya). Karatasi ya kwanza husomwa; safu ya kwanza ina vichwa.",
+      "summary": "{{file}}: safu {{ok}} halali, makosa {{errors}}, bidhaa {{created}} za kuongezwa kwenye orodha.",
+      "errorsTitle": "Sahihisha faili kisha uichague tena:",
+      "moreErrors": "… na makosa {{count}} zaidi.",
+      "fixFirst": "Hakuna bechi inayoletwa wakati faili lina makosa.",
+      "preview": "Hakiki ya bechi zitakazoletwa",
+      "submit": "Leta bechi {{count}}",
+      "done": "Bechi zimeletwa na orodha imesasishwa",
+      "fatal": {
+        "missingColumns": "Safu wima hazijapatikana: Msimbo (au Bidhaa), Nambari ya bechi na Kiasi zinahitajika.",
+        "empty": "Faili halina safu za kuleta.",
+        "tooMany": "Faili lina safu nyingi mno (juu zaidi {{max}})."
+      },
+      "read": {
+        "notXlsx": "Faili hili si kitabu cha Excel (.xlsx) kinachosomeka.",
+        "unsupported": "Kivinjari hiki hakiwezi kusoma kitabu hiki kilichobanwa. Kihifadhi tena kama .xlsx ya kawaida au tumia kivinjari kipya.",
+        "empty": "Kitabu ni tupu.",
+        "tooLarge": "Faili ni kubwa mno."
+      },
+      "problem": {
+        "itemUnknown": "Safu {{row}}: bidhaa haipo kwenye orodha ya famasia (« {{value}} »).",
+        "lotRequired": "Safu {{row}}: nambari ya bechi inahitajika.",
+        "quantityInvalid": "Safu {{row}}: kiasi si sahihi (« {{value}} ») — nambari nzima chanya inatarajiwa.",
+        "dateInvalid": "Safu {{row}}: tarehe ya kuisha haisomeki (« {{value}} »).",
+        "alreadyExpired": "Safu {{row}}: bechi imeisha muda ({{value}}).",
+        "duplicateInFile": "Safu {{row}}: bechi « {{value}} » inaonekana mara mbili kwa bidhaa hii kwenye faili.",
+        "lotExists": "Safu {{row}}: bechi « {{value}} » tayari ipo kwa bidhaa hii.",
+        "codeMismatch": "Safu {{row}}: msimbo « {{value}} » haulingani na bidhaa hii iliyopo kwenye orodha.",
+        "codeInvalid": "Safu {{row}}: msimbo si sahihi au umetumika tayari kwenye faili (« {{value}} ») — herufi, tarakimu au vistari 2 hadi 20.",
+        "labelLength": "Safu {{row}}: jina lazima liwe na herufi 2 hadi 120 (« {{value}} »).",
+        "priceRequired": "Safu {{row}}: « {{value}} » haipo kwenye orodha: weka bei yake ili kuiongeza.",
+        "priceInvalid": "Safu {{row}}: bei si sahihi (« {{value}} ») — nambari kubwa kuliko 0, desimali 2 kwa juu."
+      },
+      "price": "Bei",
+      "newBadge": "Mpya — {{price}}"
+    },
+    "search": "Tafuta kwa bidhaa, msimbo au nambari ya bechi",
+    "filter": {
+      "label": "Kichujio",
+      "all": "Bidhaa zote",
+      "out": "Zilizoisha",
+      "expired": "Zenye bechi iliyoisha muda"
+    },
+    "quantityIn": "Idadi katika {{unit}}"
   },
   "columns": {
     "prescription": "Agizo",
@@ -59,7 +121,8 @@
     "unpaid": "Ilipwe kwa mhasibu",
     "credit": "Mkopo umeidhinishwa",
     "exception": "Ubaguzi umerekodiwa",
-    "invoiceCancelled": "Ankara imeghairiwa"
+    "invoiceCancelled": "Ankara imeghairiwa",
+    "waived": "Malipo yameahirishwa"
   },
   "dispensationStatus": {
     "prepared": "Imeandaliwa",

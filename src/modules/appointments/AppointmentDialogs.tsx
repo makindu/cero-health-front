@@ -14,7 +14,7 @@ const DURATIONS = ['20', '30', '45', '60'] as const;
  * C'est un confort : l'API doit refuser un chevauchement (409), message alors affiché par la fenêtre.
  * Si la lecture échoue, on ne bloque pas (le serveur reste l'arbitre).
  */
-function useSlotCheck() {
+export function useSlotCheck() {
   const { t } = useTranslation('appointments');
   const f = useFormatters();
   return async (practitioner: string, startsAt: string, durationMin: number, ignoreId?: string): Promise<ValidationProblem | null> => {

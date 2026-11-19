@@ -5,6 +5,7 @@ import { Outlet } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { env } from '@/core/config/env';
+import { UnsavedChangesGuard } from '@/core/unsaved/UnsavedChangesGuard';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { StatusBadge } from '@/components/ui/badge';
 import { LocalModeBanner } from './local-mode-banner';
@@ -13,7 +14,6 @@ import { FacilitySwitcher, NotificationCenter } from './header-widgets';
 import { Sidebar, SidebarNav } from './sidebar';
 import { ThemeSwitcher } from './theme-switcher';
 import { UserMenu } from './user-menu';
-import { ChatDock } from '@/modules/messaging/ChatDock';
 
 export function AppLayout() {
   const { t } = useTranslation();
@@ -22,6 +22,7 @@ export function AppLayout() {
 
   return (
     <div className="app-shell relative flex h-dvh overflow-hidden bg-background text-foreground">
+      <UnsavedChangesGuard />
       <a
         href="#main"
         className="sr-only z-50 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-3 focus:top-3"
@@ -75,7 +76,6 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
-      <ChatDock />
     </div>
   );
 }

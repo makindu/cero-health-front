@@ -8,7 +8,9 @@
     "practitioner": "Practitioner",
     "service": "Department",
     "reason": "Reason",
-    "status": "Status"
+    "status": "Status",
+    "duration": "Duration",
+    "expiresAt": "Valid until"
   },
   "status": {
     "draft": "Draft",
@@ -38,7 +40,8 @@
     "patient": "Patient (name or number)",
     "service": "Department",
     "practitioner": "Practitioner",
-    "reason": "Reason"
+    "reason": "Reason",
+    "durationDays": "Planned duration (days, empty = default)"
   },
   "detail": {
     "summary": "Consultation",
@@ -75,10 +78,10 @@
     "readOnlyNote": "Read-only: you do not have permission to edit this consultation.",
     "sections": {
       "general": "General information",
-      "anamnesis": "Reason and history taking",
+      "anamnesis": "Main symptoms",
       "history": "Medical history",
       "exam": "Clinical examination",
-      "assessment": "Assessment and diagnoses",
+      "assessment": "Diagnoses",
       "plan": "Management plan",
       "conclusion": "Conclusion and validation"
     },
@@ -102,7 +105,9 @@
       "clean": "No pending changes",
       "dirty": "Unsaved changes",
       "dirtyDemo": "Local draft, not saved (demo)",
-      "locked": "Consultation locked"
+      "locked": "Consultation locked",
+      "autoPending": "Saving automatically…",
+      "autoDone": "Saved automatically ({{when}})"
     },
     "status": {
       "actions": {
@@ -124,10 +129,10 @@
       "title": "Pre-validation check",
       "ready": "Required items are filled in.",
       "issues": {
-        "chiefComplaint": "Chief complaint missing",
+        "chiefComplaint": "Main symptoms missing",
         "antecedentsNotVerified": "Medical history not verified during this consultation",
         "principalDiagnosis": "No principal diagnosis recorded",
-        "conclusion": "Medical conclusion missing"
+        "decision": "Medical decision missing"
       }
     },
     "summary": {
@@ -165,8 +170,8 @@
       "walkIn": "Walk-in"
     },
     "anamnesis": {
-      "title": "Reason and history taking",
-      "chiefComplaint": "Chief complaint",
+      "title": "Main symptoms",
+      "chiefComplaint": "Main symptoms",
       "source": "Source of information",
       "sources": {
         "patient": "Patient",
@@ -174,15 +179,11 @@
         "other": "Other"
       },
       "onset": "Onset date",
-      "duration": "Duration and course",
-      "durationHint": "E.g. for 3 days, worsening.",
-      "location": "Location of symptoms",
-      "intensity": "Intensity (if relevant)",
       "associated": "Associated symptoms",
       "aggravating": "Aggravating factors",
       "relieving": "Relieving factors",
       "priorTreatments": "Treatments already taken",
-      "history": "History of the present illness",
+      "history": "Current condition",
       "notes": "Additional information"
     },
     "allergy": {
@@ -210,7 +211,8 @@
         "allergy": "Allergies and reactions",
         "medication": "Usual medications",
         "obstetric": "Gynaecological / obstetric (if relevant)",
-        "lifestyle": "Habits and lifestyle"
+        "lifestyle": "Habits and lifestyle",
+        "vaccination": "Vaccination"
       },
       "empty": "No information recorded.",
       "markNone": "None known",
@@ -219,7 +221,9 @@
       "unknownLabel": "Unknown information",
       "origin": {
         "declared": "Declared by the patient",
-        "observed": "Observed / confirmed by a professional"
+        "observed": "Observed / confirmed by a professional",
+        "companion": "Reported by the companion",
+        "other": "Other source"
       },
       "state": {
         "active": "Active",
@@ -239,7 +243,9 @@
       "originLabel": "Source",
       "stateLabel": "State",
       "add": "Add",
-      "notes": "History and observations"
+      "notes": "History and observations",
+      "carriedFrom": "History carried over from the consultation of {{when}}. Review it, then confirm the history.",
+      "originDetail": "Specify the source"
     },
     "exam": {
       "notDoneTitle": "Examination performed",
@@ -251,7 +257,7 @@
       "triageError": "Unable to load triage vitals.",
       "importTriage": "Use these values",
       "vitalsTitle": "Vital signs",
-      "vitalsHint": "Leave blank what was not measured: no value is ever prefilled.",
+      "vitalsHint": "Vitals taken at triage today are filled in automatically: check them and correct them if they changed. Leave blank what was not measured.",
       "vitalsSource": "Values entered by the practitioner. Triage values keep their date, time and author in the list above.",
       "vitals": {
         "systolic": "Systolic pressure",
@@ -261,7 +267,9 @@
         "respiratoryRate": "Respiratory rate",
         "spo2": "O2 saturation",
         "weight": "Weight",
-        "height": "Height"
+        "height": "Height",
+        "brachialPerimeter": "Mid-upper arm circumference",
+        "headCircumference": "Head circumference"
       },
       "bmi": "BMI",
       "bmiNone": "not computable (weight and height required)",
@@ -274,7 +282,8 @@
       },
       "physical": "Physical examination",
       "systems": "Examination by system",
-      "observations": "Clinical observations and relevant results"
+      "observations": "Clinical observations and relevant results",
+      "prefilled": "Vitals taken from triage on {{when}} ({{author}}). Editable."
     },
     "assessment": {
       "title": "Diagnoses",
@@ -329,7 +338,8 @@
         "none": "None",
         "service": "To another service",
         "hospitalization": "Hospitalization decision",
-        "referral": "Referral to another facility"
+        "referral": "Referral to another facility",
+        "ambulatory": "Outpatient (care without admission)"
       },
       "target": {
         "service": "Destination service",
@@ -345,13 +355,35 @@
         "service": "Hospital service that will take over the patient’s care.",
         "hospitalization": "Service where the patient will be admitted.",
         "referral": "External hospital or centre the patient is referred to."
+      },
+      "ambulatoryNote": "The patient will only come back to receive care, without being admitted.",
+      "recapTitle": "Automatic clinical summary",
+      "recapHint": "Taken from the previous sections. Add comments below if needed.",
+      "autoHint": "The summary below is pre-filled from the previous sections: complete or correct it directly.",
+      "regenerate": "Regenerate from previous sections (replaces the text)",
+      "linked": {
+        "title": "Tests and prescriptions from this consultation",
+        "hint": "Everything ordered from this record stays attached to it: test status, results ready and prescriptions.",
+        "labs": "Lab tests",
+        "rx": "Prescriptions",
+        "noLabs": "No test requested from this consultation.",
+        "noRx": "No prescription from this consultation.",
+        "resultReady": "Validated result available",
+        "validatedBy": "validated by {{by}}, {{at}}",
+        "test": "Test",
+        "value": "Value",
+        "range": "Reference range",
+        "flag": "Interpretation",
+        "flags": {
+          "normal": "Normal",
+          "abnormal": "Abnormal"
+        }
       }
     },
     "conclusion": {
-      "text": "Medical conclusion",
       "decision": "Medical decision",
       "recommendations": "Recommendations",
-      "nextAppointment": "Next appointment date"
+      "nextAppointment": "Next appointment"
     },
     "tpl": {
       "title": "Writing templates",
@@ -443,6 +475,23 @@
       "title": "Leave without saving?",
       "body": "Changes to this record have not been saved. If you leave now they will be lost.",
       "confirm": "Leave without saving"
+    },
+    "followUp": {
+      "title": "Next appointment",
+      "none": "No follow-up appointment scheduled.",
+      "duration": "{{count}} min",
+      "cancelled": "The appointment on {{when}} was cancelled or missed: you can schedule a new one.",
+      "legacy": "Previously noted date: {{date}} (no appointment is scheduled in the calendar).",
+      "schedule": "Schedule the appointment",
+      "reschedule": "Reschedule",
+      "openCalendar": "View calendar",
+      "hint": "The appointment is created in the calendar with the chosen date and time; the doctor's and the patient's slots are checked.",
+      "noPermission": "You are not allowed to schedule an appointment.",
+      "dialogTitle": "Schedule the next appointment",
+      "dialogHint": "Date and time are required. The appointment appears in the calendar right away, and at reception on the day.",
+      "submit": "Schedule",
+      "dateTimeRequired": "Enter the date and time of the appointment.",
+      "pastSlot": "The appointment must be in the future."
     }
   },
   "editor": {
@@ -472,5 +521,14 @@
     "exitFullscreen": "Exit full screen",
     "printFacility": "Clinical writing",
     "printFooter": "Extract printed from CERO HEALTH."
-  }
+  },
+  "duration": {
+    "button": "Consultation duration: {{count}} day(s)",
+    "title": "Consultation length",
+    "hint": "Applies to future consultations. Existing consultations keep their original length.",
+    "field": "Duration (number of days, 1 to 365)",
+    "submit": "Save",
+    "days": "{{count}} day(s)"
+  },
+  "expired": "Expired"
 }

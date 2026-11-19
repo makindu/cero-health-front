@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDirtySource } from '@/core/unsaved/use-dirty-source';
 import { cn } from '@/utils/cn';
 import { Button } from './button';
 
@@ -23,6 +24,15 @@ interface DialogProps {
   variant?: DialogVariant;
   /** Affiche le bouton de fermeture dans le coin. */
   showClose?: boolean;
+  /**
+   * Protège la saisie : si l'utilisateur a modifié un champ, fermer par clic à côté, Échap ou la croix
+   * demande confirmation (règle du projet). `false` pour une fenêtre sans saisie à protéger.
+   */
+  guard?: boolean;
+  /** Force l'état « modifié » (saisie faite autrement que par un champ : boutons de remplissage, sélections…). */
+  dirty?: boolean;
+  /** Fenêtre centrée large (tableaux de saisie). */
+  wide?: boolean;
 }
 
 const variantClasses: Record<DialogVariant, string> = {
@@ -49,11 +59,31 @@ export function Dialog({
   headerActions,
   variant = 'center',
   showClose = true,
+  guard = true,
+  dirty: forcedDirty = false,
+  wide = false,
 }: DialogProps) {
   const { t } = useTranslation();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
+  const [dirty, setDirty] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const guarded = guard && open && (dirty || forcedDirty);
+  useDirtySource(guarded);
+
+  useEffect(() => {
+    if (!open) {
+      setDirty(false);
+      setConfirming(false);
+    }
+  }, [open]);
+
+  /** Fermeture demandée par l'utilisateur (clic à côté, Échap, croix) : confirmation si saisie en cours. */
+  const requestClose = () => {
+    if (guarded) setConfirming(true);
+    else onClose();
+  };
 
   useEffect(() => {
     const dialog = ref.current;
@@ -73,22 +103,45 @@ export function Dialog({
   }, [open]);
 
   return (
+    <>
     <dialog
       ref={ref}
       aria-labelledby={title ? titleId : undefined}
       aria-label={title ? undefined : ariaLabel}
       aria-describedby={description ? descriptionId : undefined}
+      onCancel={(event) => {
+        // Échap avec une saisie en cours : on garde la fenêtre et on demande confirmation.
+        if (guarded) {
+          event.preventDefault();
+          setConfirming(true);
+        }
+      }}
       onClose={() => {
-        if (open) onClose();
+        if (!open) return;
+        if (guarded) {
+          // Certains navigateurs ferment malgré tout au second Échap : on rouvre pour ne rien perdre.
+          ref.current?.showModal();
+          setConfirming(true);
+          return;
+        }
+        onClose();
+      }}
+      onInput={(event) => {
+        if (!guard || dirty) return;
+        const target = event.target as HTMLElement;
+        if (target instanceof HTMLInputElement && target.type === 'search') return;
+        if (target.closest('[data-no-guard]')) return;
+        setDirty(true);
       }}
       onClick={(event) => {
         // Un clic sur le fond (le <dialog> lui-même, hors de son contenu) ferme la fenêtre.
-        if (event.target === ref.current) onClose();
+        if (event.target === ref.current) requestClose();
       }}
       className={cn(
         'max-h-[100dvh] overflow-hidden border border-border bg-surface p-0 text-foreground shadow-popover',
         'backdrop:bg-black/50',
         variantClasses[variant],
+        wide && variant === 'center' && 'sm:max-w-4xl',
       )}
     >
       <div className={cn('flex max-h-[inherit] flex-col', variant !== 'center' && 'h-full')}>
@@ -113,7 +166,7 @@ export function Dialog({
               <div className="-mr-2 -mt-1 flex shrink-0 items-center gap-1">
                 {headerActions}
                 {showClose && (
-                  <Button variant="ghost" size="icon" aria-label={t('dialog.close')} onClick={onClose}>
+                  <Button variant="ghost" size="icon" aria-label={t('dialog.close')} onClick={requestClose}>
                     <X aria-hidden className="size-5" />
                   </Button>
                 )}
@@ -131,6 +184,23 @@ export function Dialog({
         )}
       </div>
     </dialog>
+    {confirming && (
+      <ConfirmDialog
+        open
+        tone="danger"
+        title={t('unsaved.title')}
+        description={t('unsaved.body')}
+        cancelLabel={t('unsaved.stay')}
+        confirmLabel={t('unsaved.leave')}
+        onCancel={() => setConfirming(false)}
+        onConfirm={() => {
+          setConfirming(false);
+          setDirty(false);
+          onClose();
+        }}
+      />
+    )}
+    </>
   );
 }
 

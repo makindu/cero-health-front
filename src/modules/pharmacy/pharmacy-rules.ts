@@ -151,8 +151,8 @@ export function checkPrepare(lines: readonly { rxLineIndex: number; quantity: nu
   for (const [i, q] of asked) if (q > left[i]!) fail('overDispense', { label: rxLines[i]!.label, remaining: left[i]! });
 }
 
-export interface PaymentGate { patientBalance: number; creditAuthorized: boolean; cancelledInvoice: boolean }
-export const paymentCleared = (d: Dispensation, gate: PaymentGate): boolean => !gate.cancelledInvoice && (gate.patientBalance <= 0 || gate.creditAuthorized || Boolean(d.paymentException));
+export interface PaymentGate { patientBalance: number; creditAuthorized: boolean; cancelledInvoice: boolean; /** Dispensé de payer avant remise (catégorie du patient ou patient hospitalisé). */ waived?: boolean }
+export const paymentCleared = (d: Dispensation, gate: PaymentGate): boolean => !gate.cancelledInvoice && (Boolean(gate.waived) || gate.patientBalance <= 0 || gate.creditAuthorized || Boolean(d.paymentException));
 
 export function nextNumber(existing: readonly { number: string }[], year: number): string {
   const prefix = `DIS-${year}-`;

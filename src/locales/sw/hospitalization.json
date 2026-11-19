@@ -59,7 +59,8 @@
     "reason": "Sababu ya kulazwa",
     "consultation": "Mashauriano (hiari)",
     "consultationHint": "Kitambulisho cha mashauriano asili",
-    "notice": "Utozaji wa siku za chumba na kuruhusiwa hushughulikiwa na akaunti ya hospitali."
+    "notice": "Utozaji wa siku za chumba na kuruhusiwa hushughulikiwa na akaunti ya hospitali.",
+    "attendingOptional": "Hiari."
   },
   "detail": {
     "summary": "Kulazwa",
@@ -194,7 +195,7 @@
     "clinical": {
       "step1": "1. Malalamiko ya mgonjwa",
       "step2": "2. Uchunguzi na matokeo",
-      "step3": "3. Hitimisho: utambuzi",
+      "step3": "3. Hitimisho",
       "step4": "4. Mpango",
       "complaints": "Malalamiko ya leo",
       "notRecorded": "Haijajazwa",
@@ -228,7 +229,10 @@
       "labsRequested": "Vipimo vilivyoombwa ({{count}}): {{numbers}}",
       "rxIssued": "Maagizo ya dawa ({{count}}): {{numbers}}",
       "orderLabs": "Omba vipimo",
-      "prescribe": "Andika dawa"
+      "prescribe": "Andika dawa",
+      "evolutionDetail": "Maelezo ya maendeleo",
+      "afterSaveHint": "Baada ya kuhifadhi ziara, tumia vitufe vya “Omba vipimo” na “Andika dawa” kama kwenye mashauriano.",
+      "noOrders": "Hakuna vipimo wala maagizo ya dawa kwa ziara hii."
     }
   }
 }

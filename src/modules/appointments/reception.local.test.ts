@@ -19,6 +19,7 @@ import { setLocalUser } from '@/core/local/session';
 import { patientService } from '../patients/data';
 import { triageService } from '../nursing/data';
 import { appointmentService } from './data';
+import { addDays, localDayKey, toIso } from './scheduling';
 
 const all = { page: 1, perPage: 500, search: '', filters: {}, sort: null };
 const newPatient = { fullName: 'Patient Local Essai', sex: 'M', birthDate: '1985-03-02', phone: '+000 000 9999', service: 'generalMedicine' };
@@ -71,5 +72,27 @@ describe('parcours accueil — mode local (persistant)', () => {
     const fileNumber = await createPatient();
     setLocalUser('local-user-cashier');
     await expect(appointmentService.create({ patient: fileNumber, reason: 'x', service: 'generalMedicine', urgency: 'standard', walkIn: 'true' })).rejects.toMatchObject({ kind: 'forbidden' });
+  });
+
+  it('prochain rendez-vous programmé depuis la consultation : date et heure, visible au calendrier, lien conservé, conflits refusés', async () => {
+    const fileNumber = await createPatient();
+    setLocalUser('local-user-doctor');
+    const day = addDays(localDayKey(new Date()), 1);
+    const startsAt = toIso(day, '10:00');
+    await appointmentService.create({ patient: fileNumber, service: 'generalMedicine', practitioner: 'Dr Essai', reason: 'followUp', startsAt, durationMin: '30', fromConsultation: 'CONS-1' });
+    // le calendrier lit la même collection, par plage de jours
+    const onDay = (await appointmentService.list({ ...all, search: 'Patient Local Essai', filters: { from: day, to: day } })).rows;
+    expect(onDay).toHaveLength(1);
+    expect(onDay[0]).toMatchObject({ status: 'scheduled', startsAt, durationMin: 30, practitioner: 'Dr Essai', reason: 'followUp', sourceConsultationId: 'CONS-1' });
+    // même patient, même créneau, autre praticien → refusé ; hier → refusé
+    await expect(appointmentService.create({ patient: fileNumber, service: 'generalMedicine', practitioner: 'Dr Autre', reason: 'control', startsAt, durationMin: '30' })).rejects.toMatchObject({ message: 'patientBusy' });
+    await expect(appointmentService.create({ patient: fileNumber, service: 'generalMedicine', practitioner: 'Dr Essai', reason: 'control', startsAt: toIso(addDays(localDayKey(new Date()), -1), '10:00'), durationMin: '30' })).rejects.toMatchObject({ message: 'appointmentPast' });
+  });
+
+  it('sans rendez-vous orienté vers un service : le praticien choisi à l’accueil est conservé (facultatif)', async () => {
+    const fileNumber = await createPatient();
+    await appointmentService.create({ patient: fileNumber, reason: 'Toux', service: 'generalMedicine', urgency: 'standard', walkIn: 'true', practitioner: ' Dr Essai ' });
+    const row = (await appointmentService.list({ ...all, search: 'Patient Local Essai', filters: { status: 'arrived' } })).rows[0];
+    expect(row).toMatchObject({ walkIn: true, practitioner: 'Dr Essai', status: 'arrived' });
   });
 });

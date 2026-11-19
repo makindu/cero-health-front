@@ -20,6 +20,12 @@ export interface Patient {
   emergencyContact: string;
   registeredAt: string;
   lastVisit: string | null;
+  /** Adresse e-mail (notifications : rendez-vous, factures impayées, résultats). */
+  email?: string;
+  /** Poids de naissance en grammes. */
+  birthWeightGrams?: number;
+  /** Catégorie du patient (obligations de paiement) ; absente = « privé ». */
+  categoryId?: string;
   /** Mode local : dossier fusionné dans un autre (désactivé, jamais supprimé). */
   mergedInto?: string;
 }

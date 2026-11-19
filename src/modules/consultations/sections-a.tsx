@@ -10,7 +10,7 @@ import { activeAllergies, addAntecedent, antecedentHistory, currentAntecedents, 
 import { ANTECEDENT_CATEGORIES, type Antecedent, type AntecedentCategory, type AntecedentState, type ConsultationDraft, type InfoSource, type Origin } from './clinical/model';
 import type { Consultation } from './data';
 import type { Patient } from '../patients/data';
-import { ageFromBirthDate } from '@/utils/dates';
+import { useAgeLabel } from '@/utils/age';
 
 type Update = (fn: (d: ConsultationDraft) => ConsultationDraft) => void;
 export const newCtx = (by: string): ActionContext => ({ by, at: new Date().toISOString(), id: crypto.randomUUID() });
@@ -19,7 +19,7 @@ export const newCtx = (by: string): ActionContext => ({ by, at: new Date().toISO
 export function GeneralSection({ consultation, patient }: { consultation: Consultation; patient: Patient | null }) {
   const { t } = useTranslation('consultations');
   const f = useFormatters();
-  const age = patient ? ageFromBirthDate(patient.birthDate) : null;
+  const ageLabel = useAgeLabel();
   return (
     <Panel title={t('clinical.general.title')}>
       <p className="text-sm text-muted-foreground">{t('clinical.general.hint')}</p>
@@ -27,7 +27,7 @@ export function GeneralSection({ consultation, patient }: { consultation: Consul
         items={[
           { label: t('columns.patient'), value: `${consultation.patientName} (${consultation.patientId})` },
           { label: t('clinical.general.fileNumber'), value: patient?.fileNumber },
-          { label: t('clinical.general.age'), value: age === null ? '—' : t('clinical.ageYears', { count: age }) },
+          { label: t('clinical.general.age'), value: patient ? ageLabel(patient.birthDate) : '—' },
           { label: t('clinical.general.sex'), value: patient ? t(`clinical.sex.${patient.sex}`) : '—' },
           { label: t('columns.date'), value: f.dateTime(consultation.date) },
           { label: t('columns.practitioner'), value: consultation.practitioner },
@@ -52,15 +52,6 @@ export function AnamnesisSection({ draft, update, readOnly }: { draft: Consultat
         <div className="grid gap-3 sm:grid-cols-2">
           <AreaField className="sm:col-span-2" rows={2} label={t('clinical.anamnesis.chiefComplaint')} value={a.chiefComplaint} onChange={(v) => set('chiefComplaint', v)} disabled={readOnly} />
           <SelectField label={t('clinical.anamnesis.source')} value={a.source} onChange={(v) => set('source', v as InfoSource)} disabled={readOnly} options={sources.map((s) => ({ value: s, label: t(`clinical.anamnesis.sources.${s}`) }))} />
-          <TextField type="date" label={t('clinical.anamnesis.onset')} value={a.onset} onChange={(v) => set('onset', v)} disabled={readOnly} />
-          <TextField label={t('clinical.anamnesis.duration')} hint={t('clinical.anamnesis.durationHint')} value={a.duration} onChange={(v) => set('duration', v)} disabled={readOnly} />
-          <TextField label={t('clinical.anamnesis.location')} value={a.location} onChange={(v) => set('location', v)} disabled={readOnly} />
-          <SelectField label={t('clinical.anamnesis.intensity')} value={a.intensity} onChange={(v) => set('intensity', v)} disabled={readOnly}
-            options={[{ value: '', label: t('clinical.notAssessed') }, ...Array.from({ length: 11 }, (_, i) => ({ value: String(i), label: `${i} / 10` }))]} />
-          <AreaField label={t('clinical.anamnesis.associated')} value={a.associated} onChange={(v) => set('associated', v)} disabled={readOnly} />
-          <AreaField label={t('clinical.anamnesis.aggravating')} value={a.aggravating} onChange={(v) => set('aggravating', v)} disabled={readOnly} />
-          <AreaField label={t('clinical.anamnesis.relieving')} value={a.relieving} onChange={(v) => set('relieving', v)} disabled={readOnly} />
-          <AreaField label={t('clinical.anamnesis.priorTreatments')} value={a.priorTreatments} onChange={(v) => set('priorTreatments', v)} disabled={readOnly} />
         </div>
       </Panel>
       <RichField label={t('clinical.anamnesis.history')} target="anamnesis" value={a.history} onChange={(v) => set('history', v)} disabled={readOnly} />
@@ -93,18 +84,18 @@ export function AllergyAlert({ antecedents }: { antecedents: readonly Antecedent
   );
 }
 
-export function HistorySection({ draft, update, readOnly, author, since }: { draft: ConsultationDraft; update: Update; readOnly: boolean; author: string; since: string }) {
+export function HistorySection({ draft, update, readOnly, author, since, carriedFrom }: { draft: ConsultationDraft; update: Update; readOnly: boolean; author: string; since: string; carriedFrom?: string }) {
   const { t } = useTranslation('consultations');
   const f = useFormatters();
   const [open, setOpen] = useState<string | null>(null);
-  const [form, setForm] = useState({ category: 'medical' as AntecedentCategory, label: '', detail: '', severity: '', origin: 'declared' as Origin, state: 'active' as AntecedentState });
+  const [form, setForm] = useState({ category: 'medical' as AntecedentCategory, label: '', detail: '', severity: '', origin: 'declared' as Origin, originDetail: '', state: 'active' as AntecedentState });
   const current = currentAntecedents(draft.antecedents);
   const states: AntecedentState[] = ['active', 'resolved', 'unknown', 'none'];
 
   const add = () => {
-    if (form.label.trim() === '') return;
-    update((d) => ({ ...d, antecedents: addAntecedent(d.antecedents, { category: form.category, label: form.label.trim(), detail: form.detail.trim() || undefined, severity: form.category === 'allergy' && form.severity ? (form.severity as 'mild' | 'moderate' | 'severe') : undefined, origin: form.origin, state: form.state }, newCtx(author)) }));
-    setForm({ ...form, label: '', detail: '', severity: '' });
+    if (form.label.trim() === '' || (form.origin === 'other' && form.originDetail.trim() === '')) return;
+    update((d) => ({ ...d, antecedents: addAntecedent(d.antecedents, { category: form.category, label: form.label.trim(), detail: form.detail.trim() || undefined, severity: form.category === 'allergy' && form.severity ? (form.severity as 'mild' | 'moderate' | 'severe') : undefined, origin: form.origin, ...(form.origin === 'other' ? { originDetail: form.originDetail.trim() } : {}), state: form.state }, newCtx(author)) }));
+    setForm({ ...form, label: '', detail: '', severity: '', originDetail: '' });
   };
   const markAbsent = (category: AntecedentCategory, state: 'none' | 'unknown') =>
     update((d) => ({ ...d, antecedents: addAntecedent(d.antecedents, { category, label: t(`clinical.history.${state}Label`), origin: 'declared', state }, newCtx(author)) }));
@@ -116,6 +107,7 @@ export function HistorySection({ draft, update, readOnly, author, since }: { dra
   return (
     <div className="space-y-4">
       <AllergyAlert antecedents={draft.antecedents} />
+      {carriedFrom && draft.verifications.length === 0 && <p role="note" className="rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink">{t('clinical.history.carriedFrom', { when: f.date(carriedFrom) })}</p>}
       <Panel
         title={t('clinical.history.verifyTitle')}
         actions={!readOnly && <Button size="sm" leftIcon={<ShieldCheck className="size-4" />} onClick={verify}>{t('clinical.history.verify')}</Button>}
@@ -145,7 +137,7 @@ export function HistorySection({ draft, update, readOnly, author, since }: { dra
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-medium">{a.label}{a.detail ? ` — ${a.detail}` : ''}</p>
                     <span className="flex flex-wrap gap-1.5">
-                      <StatusBadge tone={a.origin === 'observed' ? 'success' : 'info'}>{t(`clinical.history.origin.${a.origin}`)}</StatusBadge>
+                      <StatusBadge tone={a.origin === 'observed' ? 'success' : 'info'}>{t(`clinical.history.origin.${a.origin}`)}{a.origin === 'other' && a.originDetail ? ` : ${a.originDetail}` : ''}</StatusBadge>
                       <StatusBadge tone={a.state === 'active' ? 'warning' : 'neutral'}>{t(`clinical.history.state.${a.state}`)}</StatusBadge>
                     </span>
                   </div>
@@ -182,10 +174,11 @@ export function HistorySection({ draft, update, readOnly, author, since }: { dra
               <SelectField label={t('clinical.history.severity')} value={form.severity} onChange={(v) => setForm({ ...form, severity: v })}
                 options={[{ value: '', label: t('clinical.notAssessed') }, ...(['mild', 'moderate', 'severe'] as const).map((s) => ({ value: s, label: t(`clinical.severity.${s}`) }))]} />
             )}
-            <SelectField label={t('clinical.history.originLabel')} value={form.origin} onChange={(v) => setForm({ ...form, origin: v as Origin })} options={(['declared', 'observed'] as const).map((o) => ({ value: o, label: t(`clinical.history.origin.${o}`) }))} />
+            <SelectField label={t('clinical.history.originLabel')} value={form.origin} onChange={(v) => setForm({ ...form, origin: v as Origin })} options={(['declared', 'companion', 'observed', 'other'] as const).map((o) => ({ value: o, label: t(`clinical.history.origin.${o}`) }))} />
+            {form.origin === 'other' && <TextField label={t('clinical.history.originDetail')} value={form.originDetail} onChange={(v) => setForm({ ...form, originDetail: v })} />}
             <SelectField label={t('clinical.history.stateLabel')} value={form.state} onChange={(v) => setForm({ ...form, state: v as AntecedentState })} options={states.map((s) => ({ value: s, label: t(`clinical.history.state.${s}`) }))} />
           </div>
-          <Button onClick={add} disabled={form.label.trim() === ''}>{t('clinical.history.add')}</Button>
+          <Button onClick={add} disabled={form.label.trim() === '' || (form.origin === 'other' && form.originDetail.trim() === '')}>{t('clinical.history.add')}</Button>
         </Panel>
       )}
       <RichField label={t('clinical.history.notes')} target="history" value={draft.antecedentNotes} onChange={(v) => update((d) => ({ ...d, antecedentNotes: v }))} disabled={readOnly} />

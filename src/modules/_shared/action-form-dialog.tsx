@@ -32,6 +32,8 @@ interface ActionFormDialogProps {
   validate?: (values: Record<string, string>) => Promise<ValidationProblem | null>;
   overrideLabel?: string;
   successTitle?: string;
+  /** Appelé après un enregistrement RÉEL (jamais en démonstration), avant la fermeture : permet de relier le résultat à un autre écran. */
+  onDone?: (values: Record<string, string>) => void | Promise<void>;
 }
 
 /**
@@ -51,6 +53,7 @@ export function ActionFormDialog({
   validate,
   overrideLabel,
   successTitle,
+  onDone,
 }: ActionFormDialogProps) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -77,6 +80,7 @@ export function ActionFormDialog({
           void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, name) });
         }
         toast({ tone: 'success', title: successTitle ?? t('module.saved') });
+        try { await onDone?.(values); } catch { /* le rappel ne doit jamais faire échouer un enregistrement déjà effectué */ }
       }
       close();
     } catch (error) {
