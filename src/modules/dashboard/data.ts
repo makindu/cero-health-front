@@ -3,12 +3,13 @@ import { ApiError, healthClient } from '@/core/api';
 import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
 import { env } from '@/core/config/env';
 import { isoDay } from '@/utils/dates';
-import { DEMO_APPOINTMENTS } from '../appointments/data';
+import { DEMO_APPOINTMENTS, appointmentService } from '../appointments/data';
 import { DEMO_INVOICES } from '../billing/data';
 import { DEMO_BEDS } from '../hospitalization/data';
 import { DEMO_LAB_ORDERS } from '../laboratory/data';
 import { DEMO_PRESCRIPTIONS } from '../prescriptions/data';
-import { DEMO_TRIAGE } from '../nursing/data';
+import { DEMO_TRIAGE, triageService } from '../nursing/data';
+import { referenceFromApi } from '../_shared/reference-data';
 import { DEMO_PRODUCTS, stockLevel } from '../inventory/data';
 
 /**
@@ -27,7 +28,8 @@ export interface DashboardSummary {
 }
 
 export interface DashboardResult {
-  summary: DashboardSummary;
+  /** Avec l'API réelle, seuls les compteurs des modules déjà reliés et lisibles par le compte sont fournis. */
+  summary: Partial<DashboardSummary>;
   isDemo: boolean;
 }
 
@@ -46,8 +48,25 @@ function demoSummary(): DashboardSummary {
   };
 }
 
+/** Un compteur illisible pour ce compte (droit manquant, module non relié) est simplement absent : jamais un faux zéro. */
+const total = async (read: () => Promise<{ total: number }>): Promise<number | undefined> => read().then((r) => r.total, () => undefined);
+
+/** Compteurs calculés à partir des listes de l'API réelle (la route /reports/dashboard n'existe pas encore côté serveur). */
+export async function liveSummary(): Promise<Partial<DashboardSummary>> {
+  const one = { page: 1, perPage: 1, search: '', sort: null } as const;
+  const [appointmentsToday, waitingNow] = await Promise.all([
+    total(() => appointmentService.list({ ...one, filters: { period: 'today' } })),
+    total(() => triageService.list({ ...one, filters: { status: 'waiting' } })),
+  ]);
+  const summary: Partial<DashboardSummary> = {};
+  if (appointmentsToday !== undefined) summary.appointmentsToday = appointmentsToday;
+  if (waitingNow !== undefined) summary.waitingNow = waitingNow;
+  return summary;
+}
+
 export const dashboardService = {
   async get(): Promise<DashboardResult> {
+    if (referenceFromApi()) return { summary: await liveSummary(), isDemo: false };
     if (env.api.health) {
       const result = await healthClient.get<DashboardSummary>(HEALTH_ENDPOINTS.reports.dashboard);
       return { summary: result.data, isDemo: false };

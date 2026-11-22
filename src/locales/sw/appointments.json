@@ -60,7 +60,10 @@
     "minutes": "dakika {{count}}",
     "actions": "Vitendo",
     "arrivedAt": "Saa ya kufika",
-    "noActions": "Hakuna kitendo kinachowezekana: miadi hii imefungwa."
+    "noActions": "Hakuna kitendo kinachowezekana: miadi hii imefungwa.",
+    "toAssign": "Apangiwe daktari",
+    "waited": "Muda wa kusubiri",
+    "visit": "Ziara"
   },
   "actions": {
     "confirm": "Thibitisha",
@@ -75,7 +78,11 @@
     "complete": "Maliza",
     "noShow": "Weka hajaja",
     "reschedule": "Ahirisha",
-    "edit": "Hariri"
+    "edit": "Hariri",
+    "openConsultation": "Fungua mashauriano",
+    "resumeConsultation": "Endelea na mashauriano",
+    "takeCharge": "Chukua jukumu",
+    "cancelVisit": "Ghairi ziara"
   },
   "tabs": {
     "reception": "Mapokezi",
@@ -88,7 +95,9 @@
     "wait": "Mweke mgonjwa chumba cha kusubiri?",
     "start": "Mwite mgonjwa kwenye mashauriano?",
     "complete": "Weka mashauriano kuwa yamekamilika?",
-    "no-show": "Weka mgonjwa kuwa hajaja?"
+    "no-show": "Weka mgonjwa kuwa hajaja?",
+    "openConsultation": "Kufungua mashauriano ya mgonjwa huyu?",
+    "takeCharge": "Kumchukua mgonjwa huyu na kufungua mashauriano?"
   },
   "changeReason": {
     "patientRequest": "Ombi la mgonjwa",
@@ -124,7 +133,14 @@
     "from": "Muda wa awali: {{date}}",
     "reason": "Sababu",
     "serverNote": "Kila kuahirisha au kughairi kunarekodiwa na seva pamoja na mtumiaji, tarehe na sababu. Kwenye majaribio, historia inayoonyeshwa ni ya kifikra.",
-    "updated": "Miadi imehaririwa"
+    "updated": "Miadi imehaririwa",
+    "confirmed": "Miadi imethibitishwa",
+    "waiting": "Amewekwa chumba cha kusubiri",
+    "started": "Ameitwa kwa mashauriano",
+    "completed": "Ziara imekamilika",
+    "assigned": "Amepelekwa kwa daktari",
+    "createdWalkIn": "Kuwasili bila miadi",
+    "loadFailed": "Historia haikuweza kupakiwa."
   },
   "calendar": {
     "count": "miadi {{count}}",
@@ -221,5 +237,19 @@
     "feeNone": "{{name}} hana ada halali ya mashauriano: lazima apite kwa mhasibu kabla ya mashauriano.",
     "feeExpired": "Ada ya mashauriano ya {{name}} imeisha muda: lazima apite kwa mhasibu kabla ya mashauriano.",
     "feeProceed": "Sajili kuwasili hata hivyo"
+  },
+  "assign": {
+    "button": "Mpeleke kwa daktari",
+    "title": "Kwa daktari yupi?",
+    "hint": "Chagua daktari atakayemwona {{name}}. Mgonjwa ataingia kwenye foleni yake.",
+    "submit": "Mpeleke mgonjwa",
+    "change": "Badilisha daktari",
+    "changeTitle": "Badilisha daktari",
+    "changeSubmit": "Badilisha daktari"
+  },
+  "cancelVisit": {
+    "title": "Ghairi ziara",
+    "hint": "Kughairi kunahifadhiwa kwenye historia pamoja na sababu.",
+    "submit": "Ghairi ziara"
   }
 }

@@ -84,12 +84,20 @@
     "start-triage": "Démarrer le triage",
     "send-to-care": "Envoyer en soins",
     "transfer": "Transférer",
-    "discharge": "Clôturer (sortie)"
+    "discharge": "Clôturer (sortie)",
+    "start-short": "Démarrer"
   },
   "confirmTitles": {
     "start-triage": "Démarrer le triage de ce patient ?",
     "send-to-care": "Envoyer ce patient en soins ?",
     "transfer": "Marquer ce patient comme transféré ?",
     "discharge": "Clôturer ce passage (sortie) ?"
+  },
+  "sendToDoctor": {
+    "button": "Envoyer chez un médecin",
+    "title": "Choisir le médecin",
+    "hint": "Le triage de {{name}} est terminé. Choisissez le médecin qui le verra : le patient arrivera dans sa file d'attente.",
+    "submit": "Envoyer au médecin",
+    "doctor": "Médecin"
   }
 }

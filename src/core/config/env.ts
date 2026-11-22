@@ -19,6 +19,7 @@ const schema = z.object({
   VITE_APP_NAME: z.string().trim().min(1).optional(),
   VITE_APP_CODE: z.string().trim().min(1).optional(),
   VITE_ID_CORE_API_URL: optionalUrl,
+  VITE_ID_CORE_CLIENT_ID: z.string().trim().min(1).optional(),
   VITE_UZISHA_API_URL: optionalUrl,
   VITE_HEALTH_API_URL: optionalUrl,
   VITE_API_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120000).optional(),
@@ -38,6 +39,10 @@ export interface AppEnv {
   previewMode: boolean;
   /** Mode local : données persistantes sur CET appareil (IndexedDB), aucune requête vers les API. */
   localMode: boolean;
+  /** Identifiant (public) du client OAuth de HEALTH dans CERO CEPATEC ; null = connexion non configurée. */
+  idCoreClientId: string | null;
+  /** Connexion réelle via CERO CEPATEC (adresse de l'API + identifiant du client, hors mode local). */
+  ssoEnabled: boolean;
   designSystemEnabled: boolean;
   isDev: boolean;
 }
@@ -62,6 +67,10 @@ export function parseEnv(raw: RawEnv, isDev: boolean): AppEnv {
 
   const get = <T>(key: string): T | undefined => valid[key] as T | undefined;
 
+  const idCoreUrl = get<string>('VITE_ID_CORE_API_URL') ?? null;
+  const clientId = get<string>('VITE_ID_CORE_CLIENT_ID') ?? null;
+  const localMode = get<string>('VITE_LOCAL_MODE') === 'true';
+
   return {
     appName: get<string>('VITE_APP_NAME') ?? 'CERO HEALTH',
     appCode: get<string>('VITE_APP_CODE') ?? 'cero-health',
@@ -72,7 +81,9 @@ export function parseEnv(raw: RawEnv, isDev: boolean): AppEnv {
       health: get<string>('VITE_HEALTH_API_URL') ?? null,
     },
     previewMode: get<string>('VITE_PREVIEW_MODE') === 'true',
-    localMode: get<string>('VITE_LOCAL_MODE') === 'true',
+    localMode,
+    idCoreClientId: clientId,
+    ssoEnabled: !localMode && Boolean(idCoreUrl && clientId),
     designSystemEnabled: get<string>('VITE_ENABLE_DESIGN_SYSTEM')
       ? get<string>('VITE_ENABLE_DESIGN_SYSTEM') === 'true'
       : isDev,

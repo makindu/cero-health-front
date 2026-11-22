@@ -9,10 +9,12 @@ import { CommandButton } from '../_shared/command-button';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { SERVICE_KEYS } from '../_shared/demo-people';
 import { ResourcePage } from '../_shared/ResourcePage';
+import { referenceFromApi } from '../_shared/reference-data';
 import { FacilityForm } from './FacilityForm';
 import { RolesMatrix } from './RolesMatrix';
 import { PersonName } from '@/components/ui/avatar';
 import {
+  CARE_UNIT_TYPES,
   hospitalServiceService,
   ROLE_IDS,
   userService,
@@ -96,7 +98,7 @@ function UsersTab() {
 function ServicesTab() {
   const { t } = useTranslation('administration');
   const columns: Column<HospitalService>[] = [
-    { id: 'key', header: t('services.name'), cell: (s) => <span className="font-medium">{t(`serviceNames.${s.key}`)}</span>, primary: true },
+    { id: 'key', header: t('services.name'), cell: (s) => <span className="font-medium">{s.name || t(`serviceNames.${s.key}`)}</span>, primary: true },
     { id: 'head', header: t('services.head'), cell: (s) => s.head },
     { id: 'beds', header: t('services.beds'), cell: (s) => s.beds, sortable: true, className: 'text-end tabular-nums' },
     { id: 'status', header: t('users.status'), cell: (s) => t(`users.statuses.${s.status === 'active' ? 'active' : 'suspended'}`) },
@@ -114,11 +116,17 @@ function ServicesTab() {
         buttonLabel: t('services.create'),
         title: t('services.createTitle'),
         submitLabel: t('services.createSubmit'),
-        fields: [
-          { name: 'name', label: t('services.name'), type: 'text', required: true },
-          { name: 'head', label: t('services.head'), type: 'text' },
-          { name: 'beds', label: t('services.beds'), type: 'number' },
-        ],
+        fields: referenceFromApi()
+          ? [
+              { name: 'name', label: t('services.name'), type: 'text', required: true, span: 2 },
+              { name: 'unitType', label: t('services.type'), type: 'select', required: true, options: CARE_UNIT_TYPES.map((k) => ({ value: k, label: t(`services.types.${k}`) })) },
+              { name: 'beds', label: t('services.beds'), type: 'number' },
+            ]
+          : [
+              { name: 'name', label: t('services.name'), type: 'text', required: true },
+              { name: 'head', label: t('services.head'), type: 'text' },
+              { name: 'beds', label: t('services.beds'), type: 'number' },
+            ],
       }}
     />
   );

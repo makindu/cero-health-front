@@ -69,7 +69,7 @@ export function LabOrderDetail({ view, onClose }: { view: LabOrderView | undefin
           ]} />
         </DetailSection>
 
-        <DetailSection title={t('detail.payment')}>
+        {!view.serverSide && <DetailSection title={t('detail.payment')}>
           {invoice ? (
             <DescriptionList items={[
               { label: t('detail.invoice'), value: <span className="inline-flex items-center gap-2">{invoice.invoice.number} <InvoiceStatusBadge status={invoice.status} /></span> },
@@ -82,7 +82,7 @@ export function LabOrderDetail({ view, onClose }: { view: LabOrderView | undefin
             <p className="rounded-md bg-warning-soft p-3 text-sm text-warning-ink">{t('detail.exceptionBy', { by: order.paymentException.by, reason: order.paymentException.reason })}</p>
           )}
           {order.cancellation?.refundPending && <p className="rounded-md bg-warning-soft p-3 text-sm text-warning-ink">{t('detail.refundPending')}</p>}
-        </DetailSection>
+        </DetailSection>}
 
         {(order.collected || order.results.length > 0) && (
           <DetailSection title={t('detail.results')}>
@@ -124,7 +124,7 @@ export function LabOrderDetail({ view, onClose }: { view: LabOrderView | undefin
             {order.status === 'requested' && (
               <>
                 <Can permission={P.laboratory.collect}><Button onClick={() => open('collect')} disabled={!view.paymentCleared}>{t('actions.collect')}</Button></Can>
-                {!view.paymentCleared && !order.paymentException && <Can permission={P.laboratory.exception}><Button variant="outline" onClick={() => open('exception')}>{t('actions.exception')}</Button></Can>}
+                {!view.serverSide && !view.paymentCleared && !order.paymentException && <Can permission={P.laboratory.exception}><Button variant="outline" onClick={() => open('exception')}>{t('actions.exception')}</Button></Can>}
                 <Can permission={P.laboratory.order}><Button variant="outline" onClick={() => open('cancel')}>{t('actions.cancel')}</Button></Can>
               </>
             )}
@@ -138,7 +138,7 @@ export function LabOrderDetail({ view, onClose }: { view: LabOrderView | undefin
             )}
             {order.status === 'validated' && <Can permission={P.laboratory.resultsValidate}><Button variant="outline" onClick={() => open('amend')}>{t('actions.amend')}</Button></Can>}
           </div>
-          {!view.paymentCleared && order.status === 'requested' && <p className="text-xs text-muted-foreground">{t('detail.gateHint')}</p>}
+          {!view.serverSide && !view.paymentCleared && order.status === 'requested' && <p className="text-xs text-muted-foreground">{t('detail.gateHint')}</p>}
         </DetailSection>
       </div>
 

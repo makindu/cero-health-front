@@ -65,7 +65,9 @@
       "pharmacist": "Pharmacien",
       "labTech": "Laborantin",
       "cashier": "Caissier",
-      "admin": "Administrateur"
+      "admin": "Administrateur",
+      "receptionist": "Réceptionniste",
+      "wardManager": "Resp. hospitalisation"
     },
     "modules": {
       "dashboard": "Tableau de bord",
@@ -84,7 +86,116 @@
       "reports": "Rapports",
       "administration": "Administration",
       "audit": "Audit"
-    }
+    },
+    "permissions": {
+      "dashboard": {
+        "view": "Voir le tableau de bord"
+      },
+      "patients": {
+        "view": "Consulter les patients",
+        "create": "Créer un patient",
+        "update": "Modifier un patient",
+        "merge": "Fusionner des doublons",
+        "export": "Exporter les patients"
+      },
+      "appointments": {
+        "view": "Consulter les rendez-vous",
+        "create": "Créer un rendez-vous",
+        "update": "Modifier un rendez-vous",
+        "cancel": "Annuler un rendez-vous",
+        "checkIn": "Enregistrer l’arrivée du patient"
+      },
+      "medicalRecords": {
+        "view": "Consulter les dossiers médicaux",
+        "manage": "Gérer les dossiers médicaux",
+        "export": "Exporter un dossier médical"
+      },
+      "consultations": {
+        "view": "Consulter les consultations",
+        "create": "Ouvrir une consultation",
+        "update": "Modifier une consultation",
+        "sign": "Signer une consultation",
+        "close": "Clôturer une consultation"
+      },
+      "nursing": {
+        "view": "Consulter les soins infirmiers",
+        "record": "Enregistrer les soins et constantes"
+      },
+      "prescriptions": {
+        "view": "Consulter les prescriptions",
+        "create": "Prescrire des médicaments",
+        "validate": "Valider une prescription",
+        "dispense": "Délivrer une prescription"
+      },
+      "laboratory": {
+        "view": "Consulter les examens de laboratoire",
+        "order": "Demander des examens",
+        "collect": "Effectuer les prélèvements",
+        "resultsEnter": "Saisir les résultats",
+        "resultsValidate": "Valider les résultats",
+        "exception": "Prélèvement sans paiement préalable",
+        "catalog": "Gérer le catalogue des examens"
+      },
+      "pharmacy": {
+        "view": "Consulter la pharmacie",
+        "dispense": "Dispenser des médicaments",
+        "exception": "Dispensation sans paiement préalable",
+        "catalog": "Gérer le catalogue des médicaments"
+      },
+      "hospitalization": {
+        "view": "Consulter les hospitalisations",
+        "create": "Admettre un patient",
+        "assignBed": "Attribuer et gérer les lits",
+        "discharge": "Valider la sortie d’un patient",
+        "dischargeException": "Sortie malgré un solde dû",
+        "visitView": "Consulter les visites",
+        "visitRecord": "Enregistrer une visite",
+        "visitClinical": "Saisir examen, diagnostic et plan de visite",
+        "consumptionReverse": "Corriger une consommation (contre-écriture)"
+      },
+      "billing": {
+        "view": "Consulter la facturation",
+        "create": "Créer une facture",
+        "pay": "Encaisser un paiement",
+        "refund": "Rembourser",
+        "cancel": "Annuler une facture",
+        "reverse": "Extourner une écriture",
+        "credit": "Accorder un crédit au patient",
+        "exempt": "Exempter des frais de consultation",
+        "settle": "Enregistrer les règlements d’organismes",
+        "configure": "Configurer tarifs et validité des frais",
+        "discount": "Accorder une réduction"
+      },
+      "insurance": {
+        "view": "Consulter les assurances",
+        "manage": "Gérer organismes, contrats et couvertures",
+        "validate": "Valider une couverture",
+        "authorize": "Accorder une autorisation préalable"
+      },
+      "cash": {
+        "view": "Consulter la caisse",
+        "record": "Enregistrer des mouvements de caisse",
+        "close": "Clôturer la caisse"
+      },
+      "inventory": {
+        "view": "Consulter le stock",
+        "receive": "Réceptionner du stock",
+        "adjust": "Ajuster le stock"
+      },
+      "reports": {
+        "view": "Consulter les rapports"
+      },
+      "administration": {
+        "view": "Accéder à l’administration",
+        "manageUsers": "Gérer le personnel et les droits",
+        "manageServices": "Gérer les services",
+        "manageSettings": "Gérer les paramètres de l’établissement"
+      },
+      "audit": {
+        "view": "Consulter le journal d’audit"
+      }
+    },
+    "reset": "Rétablir"
   },
   "services": {
     "name": "Service",
@@ -93,7 +204,21 @@
     "search": "Rechercher un service",
     "create": "Nouveau service",
     "createTitle": "Créer un service",
-    "createSubmit": "Créer le service"
+    "createSubmit": "Créer le service",
+    "type": "Type de service",
+    "types": {
+      "reception": "Accueil",
+      "consultation": "Consultation",
+      "emergency": "Urgences",
+      "maternity": "Maternité",
+      "pediatrics": "Pédiatrie",
+      "laboratory": "Laboratoire",
+      "imaging": "Imagerie",
+      "pharmacy": "Pharmacie",
+      "inpatient": "Hospitalisation",
+      "surgery": "Chirurgie",
+      "other": "Autre"
+    }
   },
   "serviceNames": {
     "generalMedicine": "Médecine générale",

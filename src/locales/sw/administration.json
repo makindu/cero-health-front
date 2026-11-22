@@ -65,7 +65,9 @@
       "pharmacist": "Mfamasia",
       "labTech": "Mtaalamu wa maabara",
       "cashier": "Mhasibu",
-      "admin": "Msimamizi"
+      "admin": "Msimamizi",
+      "receptionist": "Mpokeaji",
+      "wardManager": "Msimamizi wa wodi"
     },
     "modules": {
       "dashboard": "Dashibodi",
@@ -84,7 +86,116 @@
       "reports": "Ripoti",
       "administration": "Utawala",
       "audit": "Ukaguzi"
-    }
+    },
+    "permissions": {
+      "dashboard": {
+        "view": "Tazama dashibodi"
+      },
+      "patients": {
+        "view": "Tazama wagonjwa",
+        "create": "Sajili mgonjwa",
+        "update": "Hariri mgonjwa",
+        "merge": "Unganisha rekodi mbili",
+        "export": "Hamisha wagonjwa"
+      },
+      "appointments": {
+        "view": "Tazama miadi",
+        "create": "Unda miadi",
+        "update": "Hariri miadi",
+        "cancel": "Ghairi miadi",
+        "checkIn": "Pokea mgonjwa aliyewasili"
+      },
+      "medicalRecords": {
+        "view": "Tazama mafaili ya matibabu",
+        "manage": "Simamia mafaili ya matibabu",
+        "export": "Hamisha faili la matibabu"
+      },
+      "consultations": {
+        "view": "Tazama mashauriano",
+        "create": "Anzisha ushauri",
+        "update": "Hariri ushauri",
+        "sign": "Saini ushauri",
+        "close": "Funga ushauri"
+      },
+      "nursing": {
+        "view": "Tazama huduma za uuguzi",
+        "record": "Rekodi huduma na vipimo vya msingi"
+      },
+      "prescriptions": {
+        "view": "Tazama maagizo ya dawa",
+        "create": "Andika dawa",
+        "validate": "Thibitisha agizo la dawa",
+        "dispense": "Toa dawa kwa agizo"
+      },
+      "laboratory": {
+        "view": "Tazama vipimo vya maabara",
+        "order": "Omba vipimo",
+        "collect": "Chukua sampuli",
+        "resultsEnter": "Ingiza matokeo",
+        "resultsValidate": "Thibitisha matokeo",
+        "exception": "Chukua sampuli bila malipo ya awali",
+        "catalog": "Simamia orodha ya vipimo"
+      },
+      "pharmacy": {
+        "view": "Tazama famasia",
+        "dispense": "Toa dawa",
+        "exception": "Toa dawa bila malipo ya awali",
+        "catalog": "Simamia orodha ya dawa"
+      },
+      "hospitalization": {
+        "view": "Tazama wagonjwa waliolazwa",
+        "create": "Mlaze mgonjwa",
+        "assignBed": "Gawa na simamia vitanda",
+        "discharge": "Thibitisha kuruhusiwa kwa mgonjwa",
+        "dischargeException": "Ruhusu mgonjwa mwenye deni",
+        "visitView": "Tazama ziara",
+        "visitRecord": "Rekodi ziara",
+        "visitClinical": "Ingiza uchunguzi, utambuzi na mpango wa ziara",
+        "consumptionReverse": "Sahihisha matumizi (kinyume)"
+      },
+      "billing": {
+        "view": "Tazama ankara",
+        "create": "Unda ankara",
+        "pay": "Pokea malipo",
+        "refund": "Rudisha pesa",
+        "cancel": "Ghairi ankara",
+        "reverse": "Geuza kiingilio",
+        "credit": "Mpe mgonjwa mkopo",
+        "exempt": "Msamehe ada ya ushauri",
+        "settle": "Rekodi malipo ya bima",
+        "configure": "Weka ada na muda wa uhalali",
+        "discount": "Toa punguzo"
+      },
+      "insurance": {
+        "view": "Tazama bima",
+        "manage": "Simamia bima, mikataba na bima za wagonjwa",
+        "validate": "Thibitisha bima",
+        "authorize": "Toa idhini ya awali"
+      },
+      "cash": {
+        "view": "Tazama kasha",
+        "record": "Rekodi miamala ya kasha",
+        "close": "Funga kasha"
+      },
+      "inventory": {
+        "view": "Tazama hifadhi",
+        "receive": "Pokea bidhaa",
+        "adjust": "Rekebisha hifadhi"
+      },
+      "reports": {
+        "view": "Tazama ripoti"
+      },
+      "administration": {
+        "view": "Fikia usimamizi",
+        "manageUsers": "Simamia wafanyakazi na ruhusa",
+        "manageServices": "Simamia idara",
+        "manageSettings": "Simamia mipangilio ya kituo"
+      },
+      "audit": {
+        "view": "Tazama kumbukumbu za ukaguzi"
+      }
+    },
+    "reset": "Weka upya"
   },
   "services": {
     "name": "Idara",
@@ -93,7 +204,21 @@
     "search": "Tafuta idara",
     "create": "Idara mpya",
     "createTitle": "Unda idara",
-    "createSubmit": "Unda idara"
+    "createSubmit": "Unda idara",
+    "type": "Aina ya idara",
+    "types": {
+      "reception": "Mapokezi",
+      "consultation": "Ushauri",
+      "emergency": "Dharura",
+      "maternity": "Uzazi",
+      "pediatrics": "Watoto",
+      "laboratory": "Maabara",
+      "imaging": "Picha",
+      "pharmacy": "Duka la dawa",
+      "inpatient": "Wagonjwa wa kulazwa",
+      "surgery": "Upasuaji",
+      "other": "Nyingine"
+    }
   },
   "serviceNames": {
     "generalMedicine": "Tiba ya jumla",

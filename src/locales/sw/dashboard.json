@@ -17,5 +17,21 @@
     "seeAll": "Ona yote",
     "none": "Hakuna cha kuripoti",
     "minutes": "dakika {{count}}"
+  },
+  "doctor": {
+    "noProfile": "Hakuna wasifu wa wafanyakazi uliounganishwa na akaunti yako bado: utaundwa utakapofanya kitendo chako cha kwanza cha kitabibu.",
+    "queue": "Foleni yangu",
+    "queueHint": "Wagonjwa wako waliofika au wanaosubiri: wa dharura kwanza, kisha wa zamani hadi wa hivi karibuni.",
+    "queueEmpty": "Hakuna mgonjwa anayekusubiri kwa sasa.",
+    "arrived": "alifika saa {{time}}",
+    "open": "Mashauriano yangu yanayoendelea",
+    "toSign": "Ya kutia saini",
+    "unassigned": "Wagonjwa wasio na daktari aliyepangiwa",
+    "unassignedHint": "Waliopo, wameelekezwa kwenye huduma yako, hawana daktari: atakayewachukua atakuwa daktari wao."
+  },
+  "nurse": {
+    "queue": "Foleni ya triage",
+    "queueHint": "Wagonjwa wanaosubiri, walio kwenye triage au huduma, wa dharura kwanza. Chukua hatua hapa hapa.",
+    "queueEmpty": "Hakuna mgonjwa kwenye foleni ya triage."
   }
 }

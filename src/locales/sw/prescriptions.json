@@ -21,6 +21,7 @@
     "status": "Hali",
     "allStatuses": "Hali zote"
   },
+  "drugSource": {"catalog": "Famasia", "prescribed": "Tayari imeandikwa"},
   "create": {
     "button": "Agizo jipya",
     "title": "Andika agizo",
@@ -35,6 +36,9 @@
     "consultation": "Mashauriano (hiari)",
     "consultationHint": "Kitambulisho cha mashauriano asili",
     "note": "Maelezo",
+    "drugNoMatch": "Hakuna dawa iliyopatikana.",
+    "addDrug": "Ongeza “{{label}}” kama dawa mpya",
+    "addDrugFailed": "Imeshindwa kuongeza.",
     "drugPlaceholder": "Andika jina la dawa…"
   },
   "fields": {

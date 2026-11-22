@@ -76,7 +76,7 @@ function CategoriesDialog({ onClose }: { onClose: () => void }) {
           defaultValues={row
             ? { label: row.label, description: row.description, payConsultation: flag(row.payConsultation), payLab: flag(row.payLab), payMedication: flag(row.payMedication), active: flag(row.active) }
             : { payConsultation: 'true', payLab: 'true', payMedication: 'true' }}
-          execute={(v) => (row ? patientCategoryService.update(row.id, v) : patientCategoryService.create(v))}
+          execute={(v) => (row ? patientCategoryService.update(row.apiId ?? row.id, v) : patientCategoryService.create(v))}
         />
       )}
     </Dialog>

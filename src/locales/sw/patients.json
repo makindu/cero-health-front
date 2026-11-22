@@ -41,8 +41,8 @@
     "fileNumberHint": "Namba ya faili la karatasi au mfumo wa zamani, ikiwa ipo (herufi 3 hadi 30: herufi, tarakimu, . _ / -).",
     "email": "Anwani ya barua pepe",
     "emailHint": "Kutuma miadi, ankara na matokeo (hiari).",
-    "birthWeight": "Uzito wa kuzaliwa (g)",
-    "birthWeightHint": "Kwa gramu, mfano 3200 (hiari).",
+    "birthWeight": "Uzito wa kuzaliwa (kg)",
+    "birthWeightHint": "Kwa kilo, mfano 3,2 (hiari).",
     "category": "Kundi la mgonjwa",
     "categoryHint": "Huamua kinachopaswa kulipwa kabla ya huduma."
   },

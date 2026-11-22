@@ -40,6 +40,7 @@ const TRANSITIONS: Record<string, { from: readonly TriageStatus[]; to: TriageSta
   'send-to-care': { from: ['inTriage'], to: 'inCare' },
   transfer: { from: ['inCare'], to: 'transferred' },
   discharge: { from: ['inCare'], to: 'discharged' },
+  'send-to-doctor': { from: ['inTriage', 'inCare'], to: 'transferred' },
 };
 
 export function applyTriageCommand(row: TriageEntry, action: string, ctx: Ctx): TriageEntry {

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ActionFormDialog } from '../_shared/action-form-dialog';
 import { DuplicateWarning } from './DuplicateWarning';
-import { patientService, type Patient } from './data';
+import { gramsToKgText, patientService, type Patient } from './data';
 import { findDuplicatesOf } from './duplicates';
 import { usePatientFields } from './form-fields';
 
@@ -67,7 +67,7 @@ export function PatientEditDialog({ patient, open, onClose }: { patient: Patient
         insurer: patient.insurer,
         emergencyContact: patient.emergencyContact,
         email: patient.email ?? '',
-        birthWeightGrams: patient.birthWeightGrams === undefined ? '' : String(patient.birthWeightGrams),
+        birthWeightKg: gramsToKgText(patient.birthWeightGrams),
         categoryId: patient.categoryId ?? 'PRIVATE',
       }}
       execute={(values) => patientService.update(patient.id, values)}

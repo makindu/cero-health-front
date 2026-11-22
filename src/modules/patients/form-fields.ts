@@ -15,7 +15,7 @@ export function usePatientFields(): FieldDef[] {
     { name: 'birthDate', label: t('fields.birthDate'), type: 'date', required: true },
     { name: 'phone', label: t('fields.phone'), type: 'tel' },
     { name: 'email', label: t('fields.email'), type: 'email', hint: t('fields.emailHint') },
-    { name: 'birthWeightGrams', label: t('fields.birthWeight'), type: 'number', hint: t('fields.birthWeightHint') },
+    { name: 'birthWeightKg', label: t('fields.birthWeight'), type: 'number', hint: t('fields.birthWeightHint') },
     { name: 'categoryId', label: t('fields.category'), type: 'select', required: true, options: categories.active.map((c) => ({ value: c.id, label: c.label })), hint: t('fields.categoryHint') },
     { name: 'fileNumber', label: t('fields.fileNumber'), type: 'text', hint: t('fields.fileNumberHint'), pattern: FILE_NUMBER_PATTERN, patternMessage: 'validation.fileNumber' },
     { name: 'service', label: t('fields.service'), type: 'select', options: serviceOptions },

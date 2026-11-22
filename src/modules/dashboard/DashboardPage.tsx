@@ -28,6 +28,9 @@ import { productService, stockLevel } from '../inventory/data';
 import { triageService } from '../nursing/data';
 import { useResourceList } from '../_shared/use-resource';
 import { dashboardService, type DashboardSummary } from './data';
+import { DoctorQueue } from './DoctorQueue';
+import { NurseQueue } from './NurseQueue';
+import { referenceFromApi } from '../_shared/reference-data';
 import { PersonName } from '@/components/ui/avatar';
 
 interface Tile {
@@ -125,6 +128,10 @@ export default function DashboardPage() {
   const f = useFormatters();
   const { can } = usePermissions();
   const { activeFacilityId } = usePreferences();
+  // Le médecin a sa propre file (ci-dessus) : les listes générales feraient double emploi.
+  const doctorDesk = referenceFromApi() && can(PERMISSIONS.consultations.create);
+  // L'infirmier a sa file de triage complète avec ses actions (ci-dessous) : la mini-liste ferait double emploi.
+  const nurseDesk = referenceFromApi() && !doctorDesk && can(PERMISSIONS.nursing.record);
   const query = useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'dashboard'),
     queryFn: () => dashboardService.get(),
@@ -133,6 +140,8 @@ export default function DashboardPage() {
   return (
     <>
       <PageHeader title={t('title')} description={t('subtitle')} />
+      {doctorDesk && <DoctorQueue />}
+      {nurseDesk && <NurseQueue />}
       {query.data?.isDemo && <DemoNotice endpoint="/health/reports/dashboard" />}
 
       {query.isPending && (
@@ -143,18 +152,19 @@ export default function DashboardPage() {
       {query.error && <ErrorState error={query.error} onRetry={() => void query.refetch()} />}
       {query.data && (
         <StatGrid>
-          {TILES.filter((tile) => can(tile.permission)).map((tile) => {
+          {TILES.filter((tile) => can(tile.permission) && (tile.key === 'beds' ? query.data.summary.bedsOccupied !== undefined : query.data.summary[tile.key] !== undefined)).map((tile) => {
             const s = query.data.summary;
-            const value = tile.key === 'beds' ? `${f.number(s.bedsOccupied)} / ${f.number(s.bedsTotal)}` : f.number(s[tile.key]);
+            const value = tile.key === 'beds' ? `${f.number(s.bedsOccupied ?? 0)} / ${f.number(s.bedsTotal ?? 0)}` : f.number(s[tile.key] ?? 0);
             return <StatCard key={tile.key} icon={tile.icon} tone={tile.tone} label={t(`tiles.${tile.key}`)} value={value} to={tile.to} />;
           })}
         </StatGrid>
       )}
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {can(PERMISSIONS.appointments.view) && <UpcomingAppointments />}
-        {can(PERMISSIONS.nursing.view) && <WaitingQueue />}
-        {can(PERMISSIONS.inventory.view) && <StockAlerts />}
+        {!doctorDesk && can(PERMISSIONS.appointments.view) && <UpcomingAppointments />}
+        {!doctorDesk && !nurseDesk && can(PERMISSIONS.nursing.view) && <WaitingQueue />}
+        {/* En mode API, les quantités vivent dans UZISHA et aucune route n'est confirmée : pas de carte vide en erreur. */}
+        {!referenceFromApi() && can(PERMISSIONS.inventory.view) && <StockAlerts />}
       </div>
     </>
   );

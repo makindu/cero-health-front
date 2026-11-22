@@ -5,9 +5,12 @@ import { Outlet } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { env } from '@/core/config/env';
+import { useLiveSync } from '@/core/live/useLiveSync';
 import { UnsavedChangesGuard } from '@/core/unsaved/UnsavedChangesGuard';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { StatusBadge } from '@/components/ui/badge';
+import { ChatDock } from '@/modules/messaging/ChatDock';
+import { LiveIndicator } from './live-indicator';
 import { LocalModeBanner } from './local-mode-banner';
 import { LanguageSwitcher } from './language-switcher';
 import { FacilitySwitcher, NotificationCenter } from './header-widgets';
@@ -19,6 +22,7 @@ export function AppLayout() {
   const { t } = useTranslation();
   const { sidebarCollapsed } = usePreferences();
   const [menuOpen, setMenuOpen] = useState(false);
+  useLiveSync();
 
   return (
     <div className="app-shell relative flex h-dvh overflow-hidden bg-background text-foreground">
@@ -66,6 +70,7 @@ export function AppLayout() {
             </span>
           )}
           <div className="ms-auto flex items-center gap-0.5">
+            <LiveIndicator />
             <NotificationCenter />
             <LanguageSwitcher />
             <ThemeSwitcher />
@@ -76,6 +81,7 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <ChatDock />
     </div>
   );
 }

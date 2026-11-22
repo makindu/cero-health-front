@@ -17,5 +17,21 @@
     "seeAll": "Tout voir",
     "none": "Rien à signaler",
     "minutes": "{{count}} min"
+  },
+  "doctor": {
+    "noProfile": "Aucun profil de personnel n'est encore associé à votre compte : il sera créé à votre première action clinique.",
+    "queue": "Ma file d'attente",
+    "queueHint": "Vos patients arrivés ou en attente : les plus urgents d'abord, puis du plus ancien au plus récent.",
+    "queueEmpty": "Aucun patient ne vous attend pour le moment.",
+    "arrived": "arrivé à {{time}}",
+    "open": "Mes consultations en cours",
+    "toSign": "À signer",
+    "unassigned": "Patients sans médecin assigné",
+    "unassignedHint": "Présents, orientés vers votre service, sans praticien : le premier qui les prend en charge devient leur praticien."
+  },
+  "nurse": {
+    "queue": "File de triage",
+    "queueHint": "Patients en attente, en triage ou en soins, les plus urgents d'abord. Agissez directement ici.",
+    "queueEmpty": "Aucun patient dans la file de triage."
   }
 }

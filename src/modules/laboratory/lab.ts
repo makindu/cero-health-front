@@ -1,10 +1,12 @@
 import { assertPermission } from '@/core/local/session';
 import { runUnit } from '@/core/local/unit-of-work';
 import { finance, patientsRef } from '../finance/finance';
+import { referenceFromApi } from '../_shared/reference-data';
+import { apiLab } from './lab-api';
 import { createLabService } from './lab-service';
 
 /** Service laboratoire du mode local : la demande et sa facture sont écrites dans la même transaction. */
-export const lab = createLabService(
+const localLab = createLabService(
   {
     run: (fn) => runUnit(fn),
     require: assertPermission,
@@ -14,3 +16,8 @@ export const lab = createLabService(
   },
   finance,
 );
+
+/** Mode API : le serveur fait foi. Mode local : le service transactionnel du navigateur. Choix fait à chaque appel. */
+export const lab: typeof localLab = new Proxy(localLab, {
+  get: (target, key: string) => (referenceFromApi() ? (apiLab as Record<string, unknown>)[key] : (target as Record<string, unknown>)[key]),
+});

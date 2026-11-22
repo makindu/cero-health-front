@@ -1,10 +1,12 @@
 import { assertPermission } from '@/core/local/session';
 import { runUnit } from '@/core/local/unit-of-work';
 import { finance, patientsRef } from '../finance/finance';
+import { referenceFromApi } from '../_shared/reference-data';
+import { apiPharmacy } from './pharmacy-api';
 import { createPharmacyService } from './pharmacy-service';
 
 /** Service pharmacie du mode local : dispensation, facture et sortie de stock dans la même transaction. */
-export const pharmacy = createPharmacyService(
+const localPharmacy = createPharmacyService(
   {
     run: (fn) => runUnit(fn),
     require: assertPermission,
@@ -14,3 +16,8 @@ export const pharmacy = createPharmacyService(
   },
   finance,
 );
+
+/** Mode API : le serveur fait foi (lots FEFO, paiement, stock UZISHA). Mode local : le service transactionnel du navigateur. */
+export const pharmacy: typeof localPharmacy = new Proxy(localPharmacy, {
+  get: (target, key: string) => (referenceFromApi() ? (apiPharmacy as Record<string, unknown>)[key] : (target as Record<string, unknown>)[key]),
+});

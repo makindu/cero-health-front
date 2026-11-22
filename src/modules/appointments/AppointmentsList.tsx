@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { ResourcePage } from '../_shared/ResourcePage';
-import { SERVICE_KEYS } from '../_shared/demo-people';
+import { useServiceOptions } from './service-options';
 import { AppointmentDetail } from './AppointmentDetail';
 import { APPOINTMENT_STATUSES, useAppointmentColumns } from './columns';
 import { appointmentService, type Appointment } from './data';
@@ -11,7 +11,7 @@ export function AppointmentsList() {
   const { t } = useTranslation('appointments');
   const f = useFormatters();
   const columns = useAppointmentColumns();
-  const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
+  const serviceOptions = useServiceOptions();
 
   return (
     <ResourcePage<Appointment>

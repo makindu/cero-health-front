@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Ban, CircleCheck, Clock, RotateCcw, Undo2, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -83,7 +83,14 @@ export function VisitsSection({ admissionId }: { admissionId: string }) {
   const closeAll = (): void => { setDialog(null); setTarget(null); setReason(''); setQty(''); setDiscount(''); setDiscountReason('');
     vDraft.discard(); setFormKey((k) => k + 1);
   };
-  const mVisit = useHospitalMutation(visits.recordVisit, { successTitle: t('visits.done.recorded'), onDone: closeAll });
+  /** Suite demandée dans la fenêtre de visite : la visite est d'abord enregistrée, puis la fenêtre d'examens/prescription s'ouvre, liée à CETTE visite. */
+  const afterSave = useRef<'lab' | 'rx' | null>(null);
+  const mVisit = useHospitalMutation(visits.recordVisit, { successTitle: t('visits.done.recorded'), onDone: (ledgerAfter) => {
+    const next = afterSave.current; afterSave.current = null;
+    closeAll();
+    const created = ledgerAfter?.visits?.[ledgerAfter.visits.length - 1];
+    if (next && created) { if (next === 'lab') setLabFor(created); else setRxFor(created); }
+  } });
   const mReverse = useHospitalMutation(visits.reverse, { successTitle: t('visits.done.reversed'), onDone: closeAll });
   const mBill = useHospitalMutation(visits.bill, { successTitle: t('visits.done.billed'), onDone: closeAll });
 
@@ -206,8 +213,8 @@ export function VisitsSection({ admissionId }: { admissionId: string }) {
                     )}
                     {active && (
                       <div className="flex flex-wrap gap-2">
-                        <Can permission={P.laboratory.order}><Button size="sm" variant="primary" onClick={() => setLabFor(x)}>{t('visits.clinical.orderLabs')}</Button></Can>
-                        <Can permission={P.prescriptions.create}><Button size="sm" variant="primary" onClick={() => setRxFor(x)}>{t('visits.clinical.prescribe')}</Button></Can>
+                        <Button size="sm" variant="primary" disabled={!can(P.laboratory.order)} title={can(P.laboratory.order) ? undefined : t('visits.clinical.noOrderRight', { defaultValue: "Vous n'avez pas le droit de demander des examens." })} onClick={() => setLabFor(x)}>{t('visits.clinical.orderLabs')}</Button>
+                        <Button size="sm" variant="primary" disabled={!can(P.prescriptions.create)} title={can(P.prescriptions.create) ? undefined : t('visits.clinical.noRxRight', { defaultValue: "Vous n'avez pas le droit de prescrire." })} onClick={() => setRxFor(x)}>{t('visits.clinical.prescribe')}</Button>
                       </div>
                     )}
                   </div>
@@ -280,6 +287,18 @@ export function VisitsSection({ admissionId }: { admissionId: string }) {
           </>
         ) : <p className="text-xs text-muted-foreground">{t('visits.clinical.noClinicalRight')}</p>}
         {clinicalProblem && <p className="text-sm text-danger" role="alert">{t(`business.visit.${clinicalProblem.code}`, { ns: 'common', ...clinicalProblem.params })}</p>}
+        <div className="space-y-2 rounded-md border border-border p-3">
+          <p className="text-sm font-medium">{t('visits.clinical.consumptions')}</p>
+          <p className="text-xs text-muted-foreground">{t('visits.clinical.saveThenHint', { defaultValue: "Ces demandes sont rattachées à cette visite (traçabilité) : la visite est enregistrée d'abord, puis la fenêtre s'ouvre." })}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" disabled={!can(P.laboratory.order) || clinicalProblem !== null || mVisit.isPending}
+              onClick={() => { afterSave.current = 'lab'; mVisit.mutate({ admissionId, type, clinical: clinicalInput, lines: [] }); }}>{t('visits.clinical.orderLabs')}</Button>
+            <Button size="sm" variant="outline" disabled={!can(P.prescriptions.create) || clinicalProblem !== null || mVisit.isPending}
+              onClick={() => { afterSave.current = 'rx'; mVisit.mutate({ admissionId, type, clinical: clinicalInput, lines: [] }); }}>{t('visits.clinical.prescribe')}</Button>
+          </div>
+          {clinicalProblem && <p className="text-xs text-danger">{t(`business.visit.${clinicalProblem.code}`, { ns: 'common', ...clinicalProblem.params })}</p>}
+          {!clinicalProblem && !can(P.laboratory.order) && !can(P.prescriptions.create) && <p className="text-xs text-muted-foreground">{t('visits.clinical.noOrderRight', { defaultValue: "Vous n'avez pas le droit de demander des examens ni de prescrire." })}</p>}
+        </div>
         <p className="text-xs text-muted-foreground">{t('visits.clinical.afterSaveHint')}</p>
       </ActionDialog>
 

@@ -54,6 +54,8 @@ export interface Admission {
   billedDays?: Record<string, string>;
   discharge?: { at: string; by: string; outcome: DischargeOutcome; note: string; exception?: { reason: string } };
   cancellation?: { at: string; by: string; reason: string };
+  /** Clôture administrative (mode API) : le séjour est soldé ou clos par dérogation. */
+  closure?: { at: string; by: string; note: string; exception?: { reason: string } };
 }
 
 export type DischargeOutcome = 'normal' | 'referral' | 'againstAdvice' | 'deceased';

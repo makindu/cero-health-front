@@ -14,5 +14,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // jsdom était recréé pour chacun des fichiers (≈60 % du temps) : on le garde, mais en isolation « vm » bien plus rapide.
+    pool: 'vmThreads',
   },
 });

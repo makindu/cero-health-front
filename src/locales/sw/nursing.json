@@ -84,12 +84,20 @@
     "start-triage": "Anza uchunguzi wa awali",
     "send-to-care": "Peleka kwenye huduma",
     "transfer": "Hamisha",
-    "discharge": "Funga (ameruhusiwa)"
+    "discharge": "Funga (ameruhusiwa)",
+    "start-short": "Anza"
   },
   "confirmTitles": {
     "start-triage": "Kuanza uchunguzi wa awali wa mgonjwa huyu?",
     "send-to-care": "Kumpeleka mgonjwa huyu kwenye huduma?",
     "transfer": "Kumweka mgonjwa huyu kama amehamishwa?",
     "discharge": "Kufunga ziara hii (ameruhusiwa)?"
+  },
+  "sendToDoctor": {
+    "button": "Mpeleke kwa daktari",
+    "title": "Chagua daktari",
+    "hint": "Triage ya {{name}} imekamilika. Chagua daktari atakayemwona: mgonjwa ataingia kwenye foleni yake.",
+    "submit": "Tuma kwa daktari",
+    "doctor": "Daktari"
   }
 }

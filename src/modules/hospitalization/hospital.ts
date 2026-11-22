@@ -2,7 +2,9 @@ import { assertPermission } from '@/core/local/session';
 import { runUnit } from '@/core/local/unit-of-work';
 import { finance, patientsRef } from '../finance/finance';
 import type { FinanceDeps } from '../finance/finance-service';
+import { referenceFromApi } from '../_shared/reference-data';
 import { createAccountService } from './account-service';
+import { apiHospital } from './hospital-api';
 import { createHospitalService } from './hospital-service';
 import { createVisitService } from './visit-service';
 
@@ -18,9 +20,13 @@ const deps: FinanceDeps = {
 /** Visites (tour de salle) et consommations : registre en ajout seul, contre-écritures, facturation automatique à la sortie. */
 export const visits = createVisitService(deps, finance);
 
-export const hospital = createHospitalService(deps, {
+const localHospital = createHospitalService(deps, {
   beforeCancel: visits.inUnit.assertCanCancel,
   afterDischargeRequest: (admissionId) => visits.autoBill(admissionId),
+});
+/** Mode API : le serveur fait foi. Mode local : le service transactionnel du navigateur. Choix fait à chaque appel. */
+export const hospital: typeof localHospital = new Proxy(localHospital, {
+  get: (target, key: string) => (referenceFromApi() ? (apiHospital as Record<string, unknown>)[key] : (target as Record<string, unknown>)[key]),
 });
 /** Compte hospitalier : jours de chambre facturés via le moteur de prix, sortie conditionnée au solde. */
 export const hospitalAccount = createAccountService(deps, finance, { beforeDischarge: (admissionId) => visits.autoBill(admissionId) });

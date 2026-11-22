@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { CommandButton } from '../_shared/command-button';
-import { SERVICE_KEYS } from '../_shared/demo-people';
+import { useServiceOptions } from '../appointments/service-options';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { consultationService, type Consultation, type ConsultationStatus } from './data';
@@ -30,7 +30,7 @@ export default function ConsultationsPage() {
   const validity = (c: Consultation) => (c.expiresAt ? (
     <span className="flex flex-wrap items-center gap-2">{f.date(c.expiresAt)}{c.expiresAt < new Date().toISOString() && <StatusBadge tone="neutral">{t('expired')}</StatusBadge>}</span>
   ) : '—');
-  const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
+  const serviceOptions = useServiceOptions();
   const statusBadge = (s: ConsultationStatus) => (
     <StatusBadge tone={STATUS[s].tone} icon={STATUS[s].icon}>
       {t(`status.${s}`)}
@@ -41,7 +41,7 @@ export default function ConsultationsPage() {
     { id: 'date', header: t('columns.date'), cell: (c) => f.dateTime(c.date), sortable: true },
     { id: 'patientName', header: t('columns.patient'), cell: (c) => <PersonName name={c.patientName} />, sortable: true, primary: true },
     { id: 'practitioner', header: t('columns.practitioner'), cell: (c) => <PersonName name={c.practitioner} size="sm" strong={false} /> },
-    { id: 'service', header: t('columns.service'), cell: (c) => t(`services.${c.service}`) },
+    { id: 'service', header: t('columns.service'), cell: (c) => c.serviceLabel ?? t(`services.${c.service}`) },
     { id: 'reason', header: t('columns.reason'), cell: (c) => t(`reason.${c.reason}`) },
     { id: 'durationDays', header: t('columns.duration'), cell: (c) => (c.durationDays ? t('duration.days', { count: c.durationDays }) : '—') },
     { id: 'expiresAt', header: t('columns.expiresAt'), cell: (c) => validity(c) },
@@ -86,7 +86,7 @@ export default function ConsultationsPage() {
                 { label: t('detail.reference'), value: c.id },
                 { label: t('columns.date'), value: f.dateTime(c.date) },
                 { label: t('columns.practitioner'), value: c.practitioner },
-                { label: t('columns.service'), value: t(`services.${c.service}`) },
+                { label: t('columns.service'), value: c.serviceLabel ?? t(`services.${c.service}`) },
                 { label: t('columns.reason'), value: t(`reason.${c.reason}`) },
                 { label: t('columns.duration'), value: c.durationDays ? t('duration.days', { count: c.durationDays }) : '—' },
                 { label: t('columns.expiresAt'), value: validity(c) },

@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { ApiError } from '@/core/api/types';
 import { hasPermission } from '@/core/permissions/permissions';
 import { DEFAULT_LOCAL_USER, LOCAL_USERS, type LocalUser } from './roles';
+import { getRoleOverrides, subscribeRoleOverrides } from './role-overrides';
 
 /**
  * Session locale : choix de l'utilisateur de démonstration (préférence conservée sur l'appareil).
@@ -21,7 +22,17 @@ function read(): LocalUser {
   }
 }
 
-let current: LocalUser = read();
+/** Droits effectifs : ceux du rôle, remplacés par la liste modifiée par l'administrateur (le rôle admin n'est jamais restreint). */
+function resolve(user: LocalUser): LocalUser {
+  const custom = user.role === 'admin' ? undefined : getRoleOverrides()[user.role];
+  return custom ? { ...user, permissions: custom } : user;
+}
+
+let current: LocalUser = resolve(read());
+subscribeRoleOverrides(() => {
+  current = resolve(LOCAL_USERS.find((u) => u.id === current.id) ?? DEFAULT_LOCAL_USER);
+  listeners.forEach((l) => l());
+});
 
 export function getLocalSession(): { user: LocalUser } {
   return { user: current };
@@ -30,7 +41,7 @@ export function getLocalSession(): { user: LocalUser } {
 export function setLocalUser(userId: string): void {
   const next = LOCAL_USERS.find((u) => u.id === userId);
   if (!next) return;
-  current = next;
+  current = resolve(next);
   try {
     window.localStorage.setItem(LOCAL_SESSION_KEY, next.id);
   } catch {

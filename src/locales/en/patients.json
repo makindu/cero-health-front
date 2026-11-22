@@ -41,8 +41,8 @@
     "fileNumberHint": "Number of the paper file or old system, if any (3 to 30 characters: letters, digits, . _ / -).",
     "email": "Email address",
     "emailHint": "To send appointments, invoices and results (optional).",
-    "birthWeight": "Birth weight (g)",
-    "birthWeightHint": "In grams, for example 3200 (optional).",
+    "birthWeight": "Birth weight (kg)",
+    "birthWeightHint": "In kilograms, for example 3.2 (optional).",
     "category": "Patient category",
     "categoryHint": "Sets what must be paid before consumption."
   },

@@ -15,6 +15,8 @@ export interface PatientCategory {
   /** Doit payer les médicaments avant la dispensation. */
   payMedication: boolean;
   active: boolean;
+  /** Identifiant numérique côté serveur (l'identifiant de l'interface est le CODE de la catégorie). */
+  apiId?: string;
 }
 
 export const DEFAULT_CATEGORY_ID = 'PRIVATE';

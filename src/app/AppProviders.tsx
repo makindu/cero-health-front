@@ -3,6 +3,8 @@ import { useState, type ReactNode } from 'react';
 import { ToastProvider } from '@/components/feedback/toast';
 import { createQueryClient } from '@/core/api';
 import { env } from '@/core/config/env';
+import { AuthGate } from '@/core/auth/AuthGate';
+import { AuthProvider, useAuth } from '@/core/auth/cero-id';
 import { useLocalUser } from '@/core/local/session';
 import { PermissionsProvider } from '@/core/permissions/PermissionsProvider';
 import { ThemeProvider } from '@/core/theme/ThemeProvider';
@@ -19,14 +21,30 @@ function ScopedPermissions({ children }: { children: ReactNode }) {
   return <PermissionsProvider granted={env.localMode ? user.permissions : PREVIEW_PERMISSIONS}>{children}</PermissionsProvider>;
 }
 
+/** Connexion réelle : les permissions viennent de l'établissement actif (CERO CEPATEC). */
+function SsoPermissions({ children }: { children: ReactNode }) {
+  const { permissions } = useAuth();
+  return <PermissionsProvider granted={permissions}>{children}</PermissionsProvider>;
+}
+
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ScopedPermissions>
-          <ToastProvider>{children}</ToastProvider>
-        </ScopedPermissions>
+        {env.ssoEnabled ? (
+          <AuthProvider>
+            <AuthGate>
+              <SsoPermissions>
+                <ToastProvider>{children}</ToastProvider>
+              </SsoPermissions>
+            </AuthGate>
+          </AuthProvider>
+        ) : (
+          <ScopedPermissions>
+            <ToastProvider>{children}</ToastProvider>
+          </ScopedPermissions>
+        )}
       </ThemeProvider>
     </QueryClientProvider>
   );

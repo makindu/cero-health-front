@@ -5,6 +5,11 @@ import { Autocomplete } from '@/components/forms/autocomplete';
 import { usePatients } from '../finance/use-finance';
 import type { Patient } from '../patients/data';
 import { PersonName } from '@/components/ui/avatar';
+import { Input } from '@/components/forms/controls';
+import { patientService } from '../patients/data';
+import { PatientCombobox } from './patient-combobox';
+import { referenceFromApi } from './reference-data';
+import { useResourceItem } from './use-resource';
 
 type InputProps = Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'defaultValue' | 'type'>;
 
@@ -22,7 +27,21 @@ function useActivePatients(): Patient[] {
 }
 
 /** Choix d'UN patient avec recherche instantanée (nom, numéro de dossier, identifiant, téléphone). Valeur = identifiant. */
-export function PatientPicker({ value, onChange, ...rest }: InputProps & { value: string; onChange: (patientId: string) => void }) {
+export function PatientPicker(props: InputProps & { value: string; onChange: (patientId: string) => void }) {
+  return referenceFromApi() ? <ApiPatientPicker {...props} /> : <LocalPatientPicker {...props} />;
+}
+
+/** API réelle : patient imposé (affiché par son nom) ou recherche côté serveur ; la valeur n'est renseignée qu'après un vrai choix. */
+function ApiPatientPicker({ value, onChange, disabled, ...rest }: InputProps & { value: string; onChange: (patientId: string) => void }) {
+  const item = useResourceItem('patients', patientService, value && disabled ? value : undefined);
+  if (value && disabled) {
+    const p = item.data?.item;
+    return <Input {...rest} readOnly value={p ? `${p.fullName} — ${p.fileNumber}` : item.isError ? `#${value}` : '…'} />;
+  }
+  return <PatientCombobox {...rest} disabled={disabled} defaultValue="" onValueChange={(v) => onChange(/^\d+$/.test(v) ? v : '')} />;
+}
+
+function LocalPatientPicker({ value, onChange, ...rest }: InputProps & { value: string; onChange: (patientId: string) => void }) {
   const { t } = useTranslation();
   const items = useActivePatients();
   return (

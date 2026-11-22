@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ActionFormDialog } from '../_shared/action-form-dialog';
-import { SERVICE_KEYS } from '../_shared/demo-people';
+import { useServiceOptions } from './service-options';
 import { PRIORITIES, triageService } from '../nursing/data';
 import { finance } from '../finance/finance';
 import { patientRepo } from '../patients/data';
@@ -15,6 +15,7 @@ import { isDestinationAllowed } from './walkin';
  */
 export function WalkInDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation('appointments');
+  const serviceOptions = useServiceOptions();
   return (
     <ActionFormDialog
       open={open}
@@ -37,7 +38,7 @@ export function WalkInDialog({ open, onClose }: { open: boolean; onClose: () => 
             { value: 'service', label: t('walkIn.toService') },
           ],
         },
-        { name: 'service', label: t('walkIn.service'), type: 'select', options: SERVICE_KEYS.map((k) => ({ value: k, label: t(`services.${k}`) })), hint: t('walkIn.serviceHint') },
+        { name: 'service', label: t('walkIn.service'), type: 'select', options: serviceOptions, hint: t('walkIn.serviceHint') },
         { name: 'practitioner', label: t('walkIn.practitioner'), type: 'practitioner', hint: t('walkIn.practitionerHint'), span: 2 },
       ]}
       defaultValues={{ urgency: 'standard', destination: 'triage' }}

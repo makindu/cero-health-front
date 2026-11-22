@@ -589,5 +589,11 @@
   "draft": {
     "restored": "Rasimu imepatikana: ulichoandika awali kimerejeshwa.",
     "discard": "Anza upya"
+  },
+  "live": {
+    "on": "Moja kwa moja",
+    "onHint": "Wakati halisi umewashwa: skrini husasishwa zenyewe.",
+    "connecting": "Inaunganisha…",
+    "connectingHint": "Inaunganisha na wakati halisi."
   }
 }

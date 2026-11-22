@@ -4,14 +4,16 @@ import { useToast } from '@/components/feedback/toast';
 import { queryKeys } from '@/core/api/query-client';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { describeBusinessError } from '../_shared/business-error';
+import { ApiError } from '@/core/api';
+import { referenceFromApi } from '../_shared/reference-data';
 import { FINANCE_AVAILABLE } from '../finance/use-finance';
 import { pharmacy } from './pharmacy';
 
-export const PHARMACY_AVAILABLE = FINANCE_AVAILABLE;
+export const PHARMACY_AVAILABLE = FINANCE_AVAILABLE || referenceFromApi();
 
 function usePharmacyQuery<T>(part: string, fn: () => Promise<T>) {
   const { activeFacilityId } = usePreferences();
-  return useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'pharmacy', part), queryFn: fn, enabled: PHARMACY_AVAILABLE });
+  return useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'pharmacy', part), queryFn: fn, enabled: PHARMACY_AVAILABLE, refetchInterval: referenceFromApi() ? 30_000 : false });
 }
 export const usePharmacyQueue = () => usePharmacyQuery('queue', () => pharmacy.queue());
 export const useDispensations = () => usePharmacyQuery('dispensations', () => pharmacy.dispensations());
@@ -31,8 +33,11 @@ export function usePharmacyMutation<I, R>(run: (input: I) => Promise<R>, options
       options.onDone?.(result);
     },
     onError: (error) => {
+      // Un refus du serveur (stock insuffisant, paiement, ordonnance changée entre-temps) : on relit l'état réel.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, 'pharmacy') });
       const business = describeBusinessError(t, error);
-      toast({ tone: 'danger', title: business ?? t('module.saveFailed'), description: business ? undefined : t('module.saveFailedHint') });
+      const server = !business && error instanceof ApiError && error.status && error.status < 500 ? error.message : undefined;
+      toast({ tone: 'danger', title: business ?? server ?? t('module.saveFailed'), description: business || server ? undefined : t('module.saveFailedHint') });
     },
   });
 }

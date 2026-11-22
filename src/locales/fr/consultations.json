@@ -107,7 +107,9 @@
       "dirtyDemo": "Brouillon local, non enregistré (démonstration)",
       "locked": "Consultation verrouillée",
       "autoPending": "Enregistrement automatique…",
-      "autoDone": "Enregistré automatiquement ({{when}})"
+      "autoDone": "Enregistré automatiquement ({{when}})",
+      "localPending": "Enregistré sur cet appareil. Envoi au serveur : bouton « Enregistrer » ou automatiquement après quelques minutes sans saisie.",
+      "restored": "Brouillon repris depuis cet appareil : il n'a pas encore été envoyé au serveur."
     },
     "status": {
       "actions": {

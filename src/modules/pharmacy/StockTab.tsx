@@ -20,6 +20,7 @@ import { matchesQuery } from '../catalog/catalog-rules';
 import { formatStock } from './packaging';
 import { StockExportMenu } from './StockExportMenu';
 import { StockImportDialog } from './StockImportDialog';
+import { referenceFromApi } from '../_shared/reference-data';
 
 const PER_PAGE = 15;
 type StockFilter = '' | 'out' | 'expired';
@@ -28,6 +29,7 @@ export function StockTab() {
   const { t } = useTranslation('pharmacy');
   const f = useFormatters();
   const stock = usePharmacyStock();
+  const api = referenceFromApi();
   const [receiving, setReceiving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [search, setSearch] = useState('');
@@ -66,6 +68,17 @@ export function StockTab() {
       ),
     },
   ];
+  if (api) {
+    return (
+      <Card>
+        <div className="space-y-2 p-4 text-sm">
+          <p className="font-medium">{t('stock.inUzishaTitle', { defaultValue: 'Le stock se gère dans UZISHA' })}</p>
+          <p className="text-muted-foreground">{t('stock.inUzishaBody', { defaultValue: "Les réceptions, lots, péremptions et corrections d'inventaire se font dans UZISHA. Ici, la pharmacie prépare et remet les ordonnances : le serveur choisit les lots et refuse un stock insuffisant." })}</p>
+          <p className="text-xs text-muted-foreground">{t('stock.catalogCount', { defaultValue: '{{count}} produits au catalogue.', count: items.length })}</p>
+        </div>
+      </Card>
+    );
+  }
   return (
     <>
       <div className="mb-3 flex flex-wrap justify-end gap-2">

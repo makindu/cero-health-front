@@ -60,7 +60,10 @@
     "minutes": "{{count}} min",
     "actions": "Actions",
     "arrivedAt": "Heure d’arrivée",
-    "noActions": "Aucune action possible : ce rendez-vous est clôturé."
+    "noActions": "Aucune action possible : ce rendez-vous est clôturé.",
+    "toAssign": "À orienter",
+    "waited": "Temps d'attente",
+    "visit": "Visite"
   },
   "actions": {
     "confirm": "Confirmer",
@@ -75,7 +78,11 @@
     "complete": "Terminer",
     "noShow": "Marquer absent",
     "reschedule": "Reporter",
-    "edit": "Modifier"
+    "edit": "Modifier",
+    "openConsultation": "Ouvrir la consultation",
+    "resumeConsultation": "Reprendre la consultation",
+    "takeCharge": "Prendre en charge",
+    "cancelVisit": "Annuler la visite"
   },
   "tabs": {
     "reception": "Accueil",
@@ -88,7 +95,9 @@
     "wait": "Placer le patient en salle d'attente ?",
     "start": "Appeler le patient en consultation ?",
     "complete": "Marquer la consultation comme terminée ?",
-    "no-show": "Marquer le patient absent ?"
+    "no-show": "Marquer le patient absent ?",
+    "openConsultation": "Ouvrir la consultation de ce patient ?",
+    "takeCharge": "Prendre ce patient en charge et ouvrir sa consultation ?"
   },
   "changeReason": {
     "patientRequest": "Demande du patient",
@@ -124,7 +133,14 @@
     "from": "Ancien créneau : {{date}}",
     "reason": "Motif",
     "serverNote": "Chaque report ou annulation est enregistré par le serveur avec l'utilisateur, la date et le motif. En démonstration, l'historique affiché est fictif.",
-    "updated": "Rendez-vous modifié"
+    "updated": "Rendez-vous modifié",
+    "confirmed": "Rendez-vous confirmé",
+    "waiting": "Placé en salle d’attente",
+    "started": "Appelé en consultation",
+    "completed": "Visite terminée",
+    "assigned": "Orienté vers un médecin",
+    "createdWalkIn": "Arrivée sans rendez-vous",
+    "loadFailed": "L'historique n'a pas pu être chargé."
   },
   "calendar": {
     "count": "{{count}} rendez-vous",
@@ -221,5 +237,19 @@
     "feeNone": "{{name}} n'a aucun frais de consultation valide : il doit passer à la caisse avant la consultation.",
     "feeExpired": "Les frais de consultation de {{name}} ont expiré : il doit passer à la caisse avant la consultation.",
     "feeProceed": "Enregistrer quand même l'arrivée"
+  },
+  "assign": {
+    "button": "Orienter vers un médecin",
+    "title": "Chez quel médecin ?",
+    "hint": "Choisissez le médecin qui verra {{name}}. Le patient entrera dans sa file d'attente.",
+    "submit": "Orienter le patient",
+    "change": "Changer de médecin",
+    "changeTitle": "Changer de médecin",
+    "changeSubmit": "Changer de médecin"
+  },
+  "cancelVisit": {
+    "title": "Annuler la visite",
+    "hint": "L'annulation est conservée dans l'historique avec son motif.",
+    "submit": "Annuler la visite"
   }
 }

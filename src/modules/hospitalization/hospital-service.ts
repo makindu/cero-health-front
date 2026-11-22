@@ -4,7 +4,7 @@ import { BusinessRuleError } from '../_shared/business-error';
 import type { FinanceDeps } from '../finance/finance-service';
 import { admissionsRef, bedsRef, roomsRef } from './collections';
 import * as R from './hospital-rules';
-import { HospitalError, type Admission, type Bed, type Room } from './hospital-rules';
+import { HospitalError, type Admission, type Bed, type BedStatus, type Room } from './hospital-rules';
 
 function wrap<T>(fn: () => T): T {
   try {
@@ -110,7 +110,7 @@ export function createHospitalService(deps: FinanceDeps, hooks: HospitalHooks = 
       return next;
     }),
 
-    setBedState: (input: { bedId: string; to: 'free' | 'maintenance'; reason: string }): Promise<Bed> => deps.run(async (u) => {
+    setBedState: (input: { bedId: string; to: 'free' | 'maintenance'; reason: string; from?: BedStatus }): Promise<Bed> => deps.run(async (u) => {
       deps.require(P.hospitalization.assignBed);
       const bed = await u.get(bedsRef, input.bedId);
       if (!bed) return refuse('bedNotFound');

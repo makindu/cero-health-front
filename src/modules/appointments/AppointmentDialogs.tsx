@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { ActionFormDialog, type ValidationProblem } from '../_shared/action-form-dialog';
-import { SERVICE_KEYS } from '../_shared/demo-people';
+import { useServiceOptions } from './service-options';
 import { appointmentService, type Appointment } from './data';
 import { findConflicts, localDayKey, nextFreeSlot, timeKey, toIso } from './scheduling';
 
@@ -57,7 +57,7 @@ const num = (value: string | undefined, fallback: number): number => {
 export function AppointmentCreateDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation('appointments');
   const check = useSlotCheck();
-  const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
+  const serviceOptions = useServiceOptions();
   return (
     <ActionFormDialog
       open={open}
@@ -86,7 +86,7 @@ export function AppointmentCreateDialog({ open, onClose }: { open: boolean; onCl
 export function AppointmentEditDialog({ appointment, open, onClose }: { appointment: Appointment; open: boolean; onClose: () => void }) {
   const { t } = useTranslation('appointments');
   const check = useSlotCheck();
-  const serviceOptions = SERVICE_KEYS.map((key) => ({ value: key, label: t(`services.${key}`) }));
+  const serviceOptions = useServiceOptions();
   return (
     <ActionFormDialog
       open={open}
@@ -104,7 +104,7 @@ export function AppointmentEditDialog({ appointment, open, onClose }: { appointm
         { name: 'reason', label: t('fields.reason'), type: 'select', required: true, options: REASONS.map((r) => ({ value: r, label: t(`reason.${r}`) })) },
       ]}
       defaultValues={{
-        service: appointment.service,
+        service: appointment.careUnitId ?? appointment.service,
         practitioner: appointment.practitioner,
         date: localDayKey(appointment.startsAt),
         time: timeKey(appointment.startsAt),
@@ -142,16 +142,16 @@ export function RescheduleDialog({ appointment, open, onClose }: { appointment: 
   );
 }
 
-export function CancelDialog({ appointment, open, onClose }: { appointment: Appointment; open: boolean; onClose: () => void }) {
+export function CancelDialog({ appointment, open, onClose, visit = false }: { appointment: Appointment; open: boolean; onClose: () => void; visit?: boolean }) {
   const { t } = useTranslation('appointments');
   return (
     <ActionFormDialog
       open={open}
       onClose={onClose}
       invalidate={['appointments']}
-      title={t('cancel.title')}
-      description={t('cancel.hint')}
-      submitLabel={t('cancel.submit')}
+      title={t(visit ? 'cancelVisit.title' : 'cancel.title')}
+      description={t(visit ? 'cancelVisit.hint' : 'cancel.hint')}
+      submitLabel={t(visit ? 'cancelVisit.submit' : 'cancel.submit')}
       fields={[
         { name: 'reason', label: t('cancel.reason'), type: 'select', required: true, options: CHANGE_REASONS.map((r) => ({ value: r, label: t(`changeReason.${r}`) })), span: 2 },
         { name: 'note', label: t('reschedule.note'), type: 'textarea', span: 2 },

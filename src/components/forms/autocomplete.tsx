@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Input } from './controls';
 
 const fold = (s: string): string => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -18,6 +18,20 @@ export interface AutocompleteProps<T> extends Omit<ComponentProps<'input'>, 'val
   renderOption?: (item: T) => ReactNode;
   emptyText: string;
   maxResults?: number;
+  /**
+   * Ajout à la volée : quand la saisie ne correspond à aucun élément, une dernière ligne « Ajouter … » propose de la créer
+   * sans quitter le champ. Le parent crée l'élément (et signale lui-même une erreur) ; une exception laisse la saisie intacte.
+   */
+  onCreate?: (text: string) => void | Promise<void>;
+  createLabel?: (text: string) => string;
+  /** Texte comparé à la saisie pour savoir si l'élément existe déjà (par défaut : getLabel). */
+  getExact?: (item: T) => string;
+  /** Éléments déjà connus, y compris ceux déjà choisis (absents de `items`) : une saisie identique n'est jamais proposée à la création. */
+  knownItems?: readonly T[];
+  /** Texte saisi, à chaque frappe : permet au parent de chercher côté serveur. */
+  onQueryChange?: (text: string) => void;
+  /** Message affiché quand la saisie correspond à un élément déjà choisi. */
+  duplicateText?: string;
 }
 
 /**
@@ -25,12 +39,13 @@ export interface AutocompleteProps<T> extends Omit<ComponentProps<'input'>, 'val
  * (patients, prestations, produits…). Remplace les listes déroulantes qui se figent au-delà de quelques centaines d'options.
  * Une saisie sans choix n'est jamais retenue : la valeur reste '' et le champ se vide en quittant.
  */
-export function Autocomplete<T>({ items, value, onChange, getKey, getLabel, getSearch, renderOption, emptyText, maxResults = 8, id, disabled, ...rest }: AutocompleteProps<T>) {
+export function Autocomplete<T>({ items, value, onChange, getKey, getLabel, getSearch, renderOption, emptyText, maxResults = 8, onCreate, createLabel, getExact, knownItems, duplicateText, onQueryChange, id, disabled, ...rest }: AutocompleteProps<T>) {
   const listId = useId();
   const selected = useMemo(() => (value ? items.find((i) => getKey(i) === value) : undefined), [items, value, getKey]);
   const [text, setText] = useState(selected ? getLabel(selected) : '');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const [creating, setCreating] = useState(false);
   const box = useRef<HTMLDivElement>(null);
 
   // Le champ suit la valeur externe (choix programmatique, remise à zéro du formulaire).
@@ -60,6 +75,24 @@ export function Autocomplete<T>({ items, value, onChange, getKey, getLabel, getS
     return () => document.removeEventListener('mousedown', close);
   }, []);
 
+  const needle = fold(text);
+  const exists = needle.length >= 2 && (knownItems ?? items).some((i) => fold((getExact ?? getLabel)(i)) === needle);
+  const canCreate = Boolean(onCreate) && !disabled && !selected && needle.length >= 2 && !exists;
+  const duplicate = Boolean(duplicateText) && exists && matches.length === 0;
+  const total = matches.length + (canCreate ? 1 : 0);
+  const create = async (): Promise<void> => {
+    if (!onCreate || creating) return;
+    setCreating(true);
+    try {
+      await onCreate(text.trim().replace(/\s+/g, ' '));
+      setText('');
+      setOpen(false);
+    } catch {
+      /* l'appelant a déjà informé l'utilisateur : la saisie reste en place */
+    } finally {
+      setCreating(false);
+    }
+  };
   const choose = (item: T) => { onChange(getKey(item), item); setText(getLabel(item)); setOpen(false); };
   const showList = open && !disabled && text.trim() !== '' && !selected;
 
@@ -75,20 +108,21 @@ export function Autocomplete<T>({ items, value, onChange, getKey, getLabel, getS
         aria-expanded={showList}
         aria-controls={listId}
         aria-autocomplete="list"
-        aria-activedescendant={showList && matches[active] ? `${listId}-${active}` : undefined}
-        onChange={(e) => { setText(e.target.value); if (value !== '') onChange(''); setOpen(true); setActive(0); }}
+        aria-activedescendant={showList && active < total ? `${listId}-${active}` : undefined}
+        onChange={(e) => { setText(e.target.value); onQueryChange?.(e.target.value); if (value !== '') onChange(''); setOpen(true); setActive(0); }}
         onFocus={(e) => { setOpen(true); if (selected) e.currentTarget.select(); }}
         onBlur={() => { if (value === '') setTimeout(() => setText(''), 150); }}
         onKeyDown={(e) => {
-          if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(true); setActive((a) => Math.min(a + 1, Math.max(matches.length - 1, 0))); }
+          if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(true); setActive((a) => Math.min(a + 1, Math.max(total - 1, 0))); }
           else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
           else if (e.key === 'Enter' && showList && matches[active]) { e.preventDefault(); choose(matches[active] as T); }
+          else if (e.key === 'Enter' && showList && canCreate && active === matches.length) { e.preventDefault(); void create(); }
           else if (e.key === 'Escape' && showList) { e.stopPropagation(); setOpen(false); }
         }}
       />
       {showList && (
         <ul id={listId} role="listbox" className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md border border-border bg-surface py-1 text-sm shadow-lg">
-          {matches.length === 0 && <li className="px-3 py-2 text-muted-foreground">{emptyText}</li>}
+          {matches.length === 0 && !canCreate && !duplicate && <li className="px-3 py-2 text-muted-foreground">{emptyText}</li>}
           {matches.map((item, i) => (
             <li key={getKey(item)} id={`${listId}-${i}`} role="option" aria-selected={i === active}
               className={`cursor-pointer px-3 py-2 ${i === active ? 'bg-primary-soft' : ''}`}
@@ -96,6 +130,14 @@ export function Autocomplete<T>({ items, value, onChange, getKey, getLabel, getS
               {renderOption ? renderOption(item) : getLabel(item)}
             </li>
           ))}
+          {duplicate && <li className="px-3 py-2 text-muted-foreground">{duplicateText}</li>}
+          {canCreate && (
+            <li id={`${listId}-${matches.length}`} role="option" aria-selected={active === matches.length} aria-disabled={creating}
+              className={`flex cursor-pointer items-center gap-2 px-3 py-2 font-medium text-primary ${active === matches.length ? 'bg-primary-soft' : ''} ${creating ? 'opacity-60' : ''}`}
+              onMouseDown={(e) => { e.preventDefault(); void create(); }} onMouseEnter={() => setActive(matches.length)}>
+              <Plus aria-hidden className="size-4" />{createLabel ? createLabel(text.trim()) : text.trim()}
+            </li>
+          )}
         </ul>
       )}
     </div>
@@ -118,15 +160,25 @@ export interface MultiPickerProps<T> {
   id?: string;
   disabled?: boolean;
   'aria-label'?: string;
+  /** Crée un élément absent de la liste depuis la barre de recherche ; renvoie l'élément créé, qui est aussitôt ajouté. */
+  onCreate?: (text: string) => Promise<T>;
+  createLabel?: (text: string) => string;
+  /** Message quand la saisie correspond à un élément déjà choisi. */
+  alreadyText?: string;
 }
 
 /** Choix de PLUSIEURS éléments parmi une longue liste : recherche instantanée + pastilles retirables. */
-export function MultiPicker<T>({ items, value, onChange, getKey, getLabel, getSearch, renderOption, emptyText, placeholder, removeLabel, maxResults, id, disabled, 'aria-label': ariaLabel }: MultiPickerProps<T>) {
-  const available = useMemo(() => items.filter((i) => !value.includes(getKey(i))), [items, value, getKey]);
-  const byKey = useMemo(() => new Map(items.map((i) => [getKey(i), i])), [items, getKey]);
+export function MultiPicker<T>({ items, value, onChange, getKey, getLabel, getSearch, renderOption, emptyText, placeholder, removeLabel, maxResults, id, disabled, 'aria-label': ariaLabel, onCreate, createLabel, alreadyText }: MultiPickerProps<T>) {
+  // Éléments créés à la volée : affichés tout de suite, avant que la liste du parent ne soit rechargée.
+  const [extra, setExtra] = useState<T[]>([]);
+  const all = useMemo(() => [...items, ...extra.filter((e) => !items.some((i) => getKey(i) === getKey(e)))], [items, extra, getKey]);
+  const available = useMemo(() => all.filter((i) => !value.includes(getKey(i))), [all, value, getKey]);
+  const byKey = useMemo(() => new Map(all.map((i) => [getKey(i), i])), [all, getKey]);
   return (
     <div className="space-y-2">
-      <Autocomplete<T> id={id} disabled={disabled} aria-label={ariaLabel} placeholder={placeholder} maxResults={maxResults} items={available} value="" getKey={getKey} getLabel={() => ''} getSearch={getSearch} emptyText={emptyText}
+      <Autocomplete<T> id={id} disabled={disabled} aria-label={ariaLabel} placeholder={placeholder} maxResults={maxResults} items={available} value="" getKey={getKey} getLabel={() => ''} getExact={getLabel} knownItems={all} duplicateText={alreadyText} getSearch={getSearch} emptyText={emptyText}
+        createLabel={createLabel}
+        onCreate={onCreate ? async (text) => { const made = await onCreate(text); setExtra((e) => [...e, made]); const key = getKey(made); if (!value.includes(key)) onChange([...value, key]); } : undefined}
         onChange={(key) => { if (key) onChange([...value, key]); }} renderOption={renderOption ?? ((i) => getLabel(i))} />
       {value.length > 0 && (
         <ul className="flex flex-wrap gap-2">

@@ -1,7 +1,8 @@
 import { Bell, Building2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
-import { Dropdown } from '@/components/ui/dropdown';
+import { Dropdown, DropdownItem } from '@/components/ui/dropdown';
+import { useAuth } from '@/core/auth/cero-id';
 import { env } from '@/core/config/env';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { useMarkNotifications, useNotifications } from '@/modules/notifications/use-notifications';
@@ -11,6 +12,37 @@ import { PersonName } from '@/components/ui/avatar';
 
 /** Sélecteur d'établissement : squelette. Liste réelle et changement : phase 2 (dépend de CERO ID CORE). */
 export function FacilitySwitcher() {
+  return env.ssoEnabled ? <SsoFacilitySwitcher /> : <DemoFacilitySwitcher />;
+}
+
+/** Établissement actif de la vraie session CERO CEPATEC, avec changement si plusieurs sont autorisés. */
+function SsoFacilitySwitcher() {
+  const { t } = useTranslation();
+  const { facilities, activeFacility, selectFacility } = useAuth();
+  const allowed = facilities.filter((f) => f.allowed);
+  return (
+    <Dropdown
+      label={t('facility.label')}
+      align="start"
+      trigger={
+        <>
+          <Building2 aria-hidden className="size-5" />
+          <span className="hidden max-w-56 truncate text-sm sm:inline">{activeFacility?.name ?? t('facility.notConnected')}</span>
+        </>
+      }
+    >
+      {(close) =>
+        allowed.map((f) => (
+          <DropdownItem key={f.id} selected={activeFacility?.id === f.id} onClick={() => { selectFacility(f.id); close(); }}>
+            {f.name}
+          </DropdownItem>
+        ))
+      }
+    </Dropdown>
+  );
+}
+
+function DemoFacilitySwitcher() {
   const { t } = useTranslation();
   return (
     <Dropdown

@@ -1,23 +1,18 @@
 import { Download, Link2, TriangleAlert } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
-import { AdmitDialog } from '../hospitalization/AdmitDialog';
-import { HOSPITAL_AVAILABLE } from '../hospitalization/use-hospital';
 import { NewLabOrderDialog } from '../laboratory/NewLabOrderDialog';
 import { LabStatusBadge } from '../laboratory/LabStatusBadge';
 import { LAB_AVAILABLE, useLabOrders } from '../laboratory/use-lab';
 import { NewRxDialog } from '../prescriptions/NewRxDialog';
 import { RxStatusBadge } from '../prescriptions/RxStatusBadge';
 import { RX_AVAILABLE, useRxList } from '../prescriptions/use-rx';
-import { createResourceService } from '../_shared/resource-service';
-import { useResourceList } from '../_shared/use-resource';
 import { SuggestInput } from '@/components/forms/suggest-input';
 import { FormField } from '@/components/forms/form-field';
 import { SERVICE_KEYS } from '../_shared/demo-people';
@@ -28,47 +23,14 @@ import { ICD10_SUGGESTIONS } from './clinical/icd10';
 import { newCtx } from './sections-a';
 import { buildClinicalSummary, summaryToDoc } from './summary';
 import { isEmptyDoc } from './richtext/doc';
-import { latestReadingOn, useLocalTriageVitals, type TriageReading } from './triage-vitals';
+import { latestReadingOn, useApiPatientVitals, useLocalTriageVitals, type TriageReading } from './triage-vitals';
 import { env } from '@/core/config/env';
 
 type Update = (fn: (d: ConsultationDraft) => ConsultationDraft) => void;
 const VITAL_KEYS = ['systolic', 'diastolic', 'pulse', 'temperature', 'respiratoryRate', 'spo2', 'weight', 'height', 'brachialPerimeter', 'headCircumference'] as const;
 
-interface TriageVitalsRow extends Partial<Vitals> {
-  id: string;
-  recordedAt: string;
-  author: string;
-}
-
 // ───────────── D. Examen clinique ─────────────
-function TriageVitals({ triageEntryId, onImport, readOnly }: { triageEntryId?: string; onImport: (v: Partial<Vitals>) => void; readOnly: boolean }) {
-  const { t } = useTranslation('consultations');
-  const f = useFormatters();
-  // Contrat proposé : GET /health/triage/{id}/vitals. Aucune constante n'est inventée en démonstration.
-  const service = useMemo(
-    () => createResourceService<TriageVitalsRow>({ source: 'health', endpoint: triageEntryId ? HEALTH_ENDPOINTS.triage.vitals(triageEntryId) : undefined, demoRows: [] }),
-    [triageEntryId],
-  );
-  const list = useResourceList('triage-vitals', service, { page: 1, perPage: 5, search: '', filters: {}, sort: null });
-  if (!triageEntryId) return <p className="text-sm text-muted-foreground">{t('clinical.exam.noTriageLink')}</p>;
-  const rows = list.data?.rows ?? [];
-  if (list.isPending) return <p className="text-sm text-muted-foreground">…</p>;
-  if (list.error) return <p role="alert" className="text-sm text-danger-ink">{t('clinical.exam.triageError')}</p>;
-  if (rows.length === 0) return <p className="text-sm text-muted-foreground">{t('clinical.exam.noTriageVitals')}</p>;
-  return (
-    <ul className="space-y-2">
-      {rows.map((r) => (
-        <li key={r.id} className="rounded-md border border-border p-3 text-sm">
-          <p className="font-medium">{f.dateTime(r.recordedAt)} · {r.author}</p>
-          <p className="text-muted-foreground">{VITAL_KEYS.filter((k) => r[k]).map((k) => `${t(`clinical.exam.vitals.${k}`)}: ${r[k]}`).join(' · ')}</p>
-          {!readOnly && <Button size="sm" variant="outline" leftIcon={<Download className="size-4" />} onClick={() => onImport(r)}>{t('clinical.exam.importTriage')}</Button>}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Mode local : liste des prises du triage de ce patient, avec reprise manuelle. */
+/** Prises de constantes du patient (triage), les plus récentes d'abord, avec reprise manuelle. */
 function LocalTriageList({ readings, onImport, readOnly }: { readings: readonly TriageReading[]; onImport: (v: Partial<Vitals>) => void; readOnly: boolean }) {
   const { t } = useTranslation('consultations');
   const f = useFormatters();
@@ -91,7 +53,8 @@ export function ExamSection({ draft, update, readOnly, triageEntryId, patientId,
   const f = useFormatters();
   const e = draft.exam;
   const local = useLocalTriageVitals(patientId, triageEntryId);
-  const readings = local.data ?? [];
+  const remote = useApiPatientVitals(patientId);
+  const readings = (env.localMode ? local.data : remote.data) ?? [];
   const latest = latestReadingOn(readings, day);
   const untouched = VITAL_KEYS.every((k) => !e.vitals[k]);
   // Les constantes déjà prises au triage ce jour-là sont reprises UNE fois, sans écraser une saisie ; le médecin peut les corriger.
@@ -118,7 +81,7 @@ export function ExamSection({ draft, update, readOnly, triageEntryId, patientId,
       {!e.notDone && (
         <>
           <Panel title={t('clinical.exam.triageTitle')}>
-            {env.localMode ? <LocalTriageList readings={readings} onImport={importTriage} readOnly={readOnly} /> : <TriageVitals triageEntryId={triageEntryId} onImport={importTriage} readOnly={readOnly} />}
+            <LocalTriageList readings={readings} onImport={importTriage} readOnly={readOnly} />
           </Panel>
           <Panel title={t('clinical.exam.vitalsTitle')}>
             <p className="text-xs text-muted-foreground">{t('clinical.exam.vitalsHint')}</p>
@@ -302,7 +265,7 @@ function LinkedOrders({ consultationId }: { consultationId?: string }) {
 // ───────────── F. Conduite à tenir ─────────────
 export function PlanSection({ draft, update, readOnly, patientId, consultationId }: { draft: ConsultationDraft; update: Update; readOnly: boolean; patientId?: string; consultationId?: string }) {
   const { t } = useTranslation('consultations');
-  const [ordering, setOrdering] = useState<'lab' | 'rx' | 'admit' | null>(null);
+  const [ordering, setOrdering] = useState<'lab' | 'rx' | null>(null);
   const p = draft.plan;
   const set = <K extends keyof typeof p>(key: K, value: (typeof p)[K]) => update((d) => ({ ...d, plan: { ...d.plan, [key]: value } }));
   // L'éditeur ne relit pas sa valeur après son montage : on le remonte (clé) quand la synthèse est (re)générée.
@@ -332,9 +295,6 @@ export function PlanSection({ draft, update, readOnly, patientId, consultationId
           {RX_AVAILABLE && patientId && !readOnly && (
             <Can permission={PERMISSIONS.prescriptions.create}><Button variant="primary" onClick={() => setOrdering('rx')}>{t('clinical.plan.rxOrder')}</Button></Can>
           )}
-          {HOSPITAL_AVAILABLE && patientId && !readOnly && (
-            <Can permission={PERMISSIONS.hospitalization.create}><Button variant="primary" onClick={() => setOrdering('admit')}>{t('clinical.plan.admitOrder')}</Button></Can>
-          )}
           <Link to="/laboratory" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.labLink')}</Link>
           <Link to="/prescriptions" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.rxLink')}</Link>
           <Link to="/hospitalization" className={buttonVariants('outline')}><Link2 aria-hidden className="size-4" />{t('clinical.plan.admissionLink')}</Link>
@@ -342,7 +302,6 @@ export function PlanSection({ draft, update, readOnly, patientId, consultationId
       </Panel>
       <LinkedOrders consultationId={consultationId} />
       {ordering === 'lab' && patientId && <NewLabOrderDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onCreated={() => setOrdering(null)} />}
-      {ordering === 'admit' && patientId && <AdmitDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onDone={() => setOrdering(null)} />}
       {ordering === 'rx' && patientId && <NewRxDialog initialPatientId={patientId} consultationId={consultationId} onClose={() => setOrdering(null)} onCreated={() => setOrdering(null)} />}
       <RichField label={t('clinical.plan.actions')} target="plan" value={p.actions} onChange={(v) => set('actions', v)} disabled={readOnly} />
       <Panel title={t('clinical.plan.orientationTitle')}>

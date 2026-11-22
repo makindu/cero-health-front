@@ -1,9 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { healthClient } from '@/core/api';
 import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
 import { queryKeys } from '@/core/api/query-client';
 import { env } from '@/core/config/env';
 import { usePreferences } from '@/core/preferences/preferences-store';
+import { ensureReference } from '../_shared/reference-data';
 import { localRepositoryFor } from '../_shared/resource-service';
+import { authorName, VITALS_API_FIELDS as API_FIELDS } from './record-api';
 import { triageRepo } from '../nursing/data';
 import type { VitalsRecord } from '../nursing/local-rules';
 import { VITALS_COLLECTION } from '../nursing/VitalsHistory';
@@ -40,6 +43,35 @@ export function useLocalTriageVitals(patientId: string, triageEntryId?: string) 
       const entries = await triageRepo.list();
       const ids = new Set(entries.filter((e) => (triageEntryId ? e.id === triageEntryId : e.patientId === patientId)).map((e) => e.id));
       return (await vitalsRepo.list()).filter((v) => ids.has(v.entryId)).map(toReading);
+    },
+  });
+}
+
+/** Prises de constantes du serveur -> lectures de l'examen. Une ligne corrigée par une autre est écartée (ajout seul côté serveur). */
+export function readingsFromApi(rows: readonly Record<string, unknown>[], nameOf: (userId: unknown) => string): TriageReading[] {
+  const corrected = new Set(rows.map((r) => r.corrects_vital_sign_id).filter((v) => v !== null && v !== undefined).map(String));
+  return rows
+    .filter((r) => !corrected.has(String(r.id)))
+    .map((r) => {
+      const values: Partial<Vitals> = {};
+      for (const [key, field] of Object.entries(API_FIELDS) as [keyof Vitals, string][]) {
+        const raw = r[field];
+        if (raw !== null && raw !== undefined && Number.isFinite(Number(raw))) values[key] = String(Number(raw));
+      }
+      return { id: String(r.id), entryId: r.triage_entry_id == null ? '' : String(r.triage_entry_id), recordedAt: String(r.recorded_at ?? ''), author: nameOf(r.recorded_by_user_id), values };
+    });
+}
+
+/** API réelle : constantes prises pour ce patient (au triage ou ailleurs), relues quand le serveur signale un changement. */
+export function useApiPatientVitals(patientId: string) {
+  const { activeFacilityId } = usePreferences();
+  return useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'triage-vitals', 'patient', patientId),
+    enabled: !env.localMode && patientId !== '',
+    queryFn: async (): Promise<TriageReading[]> => {
+      await ensureReference();
+      const res = await healthClient.get<Record<string, unknown>[]>(`/patients/${encodeURIComponent(patientId)}/vital-signs?per_page=50`);
+      return readingsFromApi(Array.isArray(res.data) ? res.data : [], authorName);
     },
   });
 }

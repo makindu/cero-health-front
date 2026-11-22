@@ -44,6 +44,8 @@ export interface DetailResult<T> {
 export interface MutationResult {
   /** Vrai si RIEN n'a été enregistré (démonstration). */
   isDemo: boolean;
+  /** API réelle : identifiant de l'élément créé, quand le serveur le renvoie. */
+  id?: string;
 }
 
 export interface ResourceService<T extends { id: string }> {
@@ -59,6 +61,32 @@ export interface ResourceService<T extends { id: string }> {
    * Contrat cible : POST {endpoint}/{id}/{action}. En démonstration, rien n'est modifié.
    */
   command(id: string, action: string, payload?: Record<string, string>): Promise<MutationResult>;
+}
+
+/**
+ * Correspondance avec l'API réelle (champs en snake_case, chemins du serveur). Sans cette option, le service garde
+ * le contrat générique d'origine. Le serveur revérifie toujours les droits : ceci ne fait que traduire les données.
+ */
+export interface ApiMapping<T> {
+  /** Chemin réel de la collection côté serveur (ex. « /patients »). */
+  endpoint: string;
+  /** Ligne du serveur -> objet de l'interface. */
+  fromApi: (row: Record<string, unknown>) => T;
+  /** Saisie du formulaire -> corps de requête du serveur. */
+  toApi: (input: Record<string, string>) => Record<string, unknown>;
+  /** Filtre de l'interface -> paramètre du serveur ; null = pas d'équivalent (ignoré). */
+  filterMap?: Record<string, string | null>;
+  /** Colonne de l'interface -> champ de tri du serveur ; absent = non triable côté serveur. */
+  sortMap?: Record<string, string>;
+  /** Filtre qui se traduit en un ou plusieurs paramètres (ex. période -> from/to). Prioritaire sur filterMap ; null = ignoré. */
+  mapFilter?: (id: string, value: string) => Record<string, string> | null | undefined;
+  /** Corps d'une modification (PATCH) quand il diffère de celui d'une création. */
+  toApiUpdate?: (input: Record<string, string>) => Record<string, unknown>;
+  /** Chemin de création quand il dépend de la saisie (ex. passage sans rendez-vous). */
+  createPath?: (input: Record<string, string>) => string;
+  /** Chemin et corps d'une action métier (ex. POST /appointments/{id}/actions/cancel). */
+  commandPath?: (id: string, action: string) => string;
+  commandBody?: (action: string, payload: Record<string, string>) => Record<string, unknown>;
 }
 
 export interface ResourceServiceOptions<T extends { id: string }> {
@@ -79,6 +107,8 @@ export interface ResourceServiceOptions<T extends { id: string }> {
    * module déclare ici ses règles métier : jamais de création générique qui produirait des données incohérentes.
    */
   local?: LocalResourceOptions<T>;
+  /** Traduction vers l'API réelle (voir ApiMapping). */
+  api?: ApiMapping<T>;
 }
 
 export interface LocalWriteContext extends LocalContext {
@@ -167,7 +197,7 @@ export function localRepositoryFor<T extends { id: string }>(endpoint: string, s
 export function createResourceService<T extends { id: string }>(
   options: ResourceServiceOptions<T>,
 ): ResourceService<T> {
-  const { source, endpoint, demoRows, searchText, matchFilter, sortValue, local } = options;
+  const { source, endpoint, demoRows, searchText, matchFilter, sortValue, local, api } = options;
   const client: ApiClient =
     source === 'health' ? healthClient : source === 'uzisha' ? uzishaClient : idCoreClient;
   const hasDemo = demoRows !== undefined;
@@ -187,6 +217,29 @@ export function createResourceService<T extends { id: string }>(
       if (mode === 'local' && localRepo) {
         const rows = await localRepo.list();
         return { ...queryRows(rows, params, { searchText, matchFilter, sortValue }), isDemo: false };
+      }
+      if (mode === 'api' && api) {
+        const query: Record<string, string | number> = { page: params.page, per_page: params.perPage };
+        if (params.search) query.q = params.search;
+        for (const [id, value] of Object.entries(params.filters)) {
+          if (!value) continue;
+          const mapped = api.mapFilter?.(id, value);
+          if (mapped) {
+            Object.assign(query, mapped);
+            continue;
+          }
+          if (mapped === null) continue;
+          const name = api.filterMap && id in api.filterMap ? api.filterMap[id] : id;
+          if (name) query[name] = value;
+        }
+        const sortField = params.sort ? api.sortMap?.[params.sort.columnId] : undefined;
+        if (params.sort && sortField) {
+          query.sort = sortField;
+          query.dir = params.sort.direction;
+        }
+        const result = await client.get<Record<string, unknown>[]>(api.endpoint, { params: query });
+        const rows = Array.isArray(result.data) ? result.data.map(api.fromApi) : [];
+        return { rows, total: result.meta?.total ?? rows.length, isDemo: false };
       }
       if (mode === 'api' && endpoint) {
         const query: Record<string, string | number> = {
@@ -213,6 +266,10 @@ export function createResourceService<T extends { id: string }>(
         if (!item) throw new ApiError('not_found', 'Not found', { source, status: 404 });
         return { item, isDemo: false };
       }
+      if (mode === 'api' && api) {
+        const result = await client.get<Record<string, unknown>>(`${api.endpoint}/${encodeURIComponent(id)}`);
+        return { item: api.fromApi(result.data), isDemo: false };
+      }
       if (mode === 'api' && endpoint) {
         const result = await client.get<T>(`${endpoint}/${encodeURIComponent(id)}`);
         return { item: result.data, isDemo: false };
@@ -232,6 +289,11 @@ export function createResourceService<T extends { id: string }>(
         const row = await creator(input, ctx, localRepo);
         await localRepo.insert(row, { action: 'create' });
         return { isDemo: false };
+      }
+      if (mode === 'api' && api) {
+        const created = await client.post<Record<string, unknown> | undefined>(api.createPath ? api.createPath(input) : api.endpoint, api.toApi(input));
+        const newId = created?.data?.id;
+        return newId === undefined || newId === null ? { isDemo: false } : { isDemo: false, id: String(newId) };
       }
       if (mode === 'api' && endpoint) {
         await client.post(endpoint, input);
@@ -254,6 +316,10 @@ export function createResourceService<T extends { id: string }>(
         await localRepo.update(id, () => next, { action: 'update' });
         return { isDemo: false };
       }
+      if (mode === 'api' && api) {
+        await client.patch(`${api.endpoint}/${encodeURIComponent(id)}`, (api.toApiUpdate ?? api.toApi)(input));
+        return { isDemo: false };
+      }
       if (mode === 'api' && endpoint) {
         await client.put(`${endpoint}/${encodeURIComponent(id)}`, input);
         return { isDemo: false };
@@ -272,6 +338,10 @@ export function createResourceService<T extends { id: string }>(
         if (!current) throw new ApiError('not_found', 'Not found', { source, status: 404 });
         const next = await handler(current, payload ?? {}, ctx, localRepo);
         await localRepo.update(id, () => next, { action: `command:${action}`, reason: payload?.reason });
+        return { isDemo: false };
+      }
+      if (mode === 'api' && api?.commandPath) {
+        await client.post(api.commandPath(id, action), api.commandBody ? api.commandBody(action, payload ?? {}) : payload);
         return { isDemo: false };
       }
       if (mode === 'api' && endpoint) {

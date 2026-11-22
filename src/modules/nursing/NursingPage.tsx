@@ -26,9 +26,13 @@ import { ResourcePage } from '../_shared/ResourcePage';
 import { useResourceList } from '../_shared/use-resource';
 import { buildVitals, type VitalsRecord } from './local-rules';
 import { VitalsHistory, VITALS_COLLECTION } from './VitalsHistory';
+import { vitalsApi } from './vitals-api';
+import { referenceFromApi } from '../_shared/reference-data';
 import { CommandButton } from '../_shared/command-button';
 import { PRIORITIES, triageService, type TriageEntry, type TriagePriority, type TriageStatus } from './data';
 import { PersonName } from '@/components/ui/avatar';
+import { SendToDoctorButton } from './SendToDoctorButton';
+import { ValidateCareButton } from './ValidateCareButton';
 
 /** Étapes proposées depuis chaque statut (le service local refuse de toute façon une étape invalide). */
 const TRIAGE_STEPS: Record<TriageStatus, readonly ('start-triage' | 'send-to-care' | 'transfer' | 'discharge')[]> = {
@@ -48,6 +52,9 @@ const PRIORITY_STYLE: Record<TriagePriority, { tone: StatusTone; icon: typeof Si
 };
 const STATUSES: readonly TriageStatus[] = ['waiting', 'inTriage', 'inCare', 'transferred', 'discharged'];
 const CATEGORIES = ['injury', 'fever', 'pregnancy', 'followUp', 'other'] as const;
+
+/** Mode API : triage terminé mais soins pas encore validés par un médecin. */
+const awaitingValidation = (e: TriageEntry): boolean => referenceFromApi() && e.status === 'inTriage' && !e.careValidated;
 
 function QueueSummary() {
   const { t } = useTranslation('nursing');
@@ -82,6 +89,7 @@ export default function NursingPage() {
         source: 'health',
         endpoint: vitalsFor ? HEALTH_ENDPOINTS.triage.vitals(vitalsFor.id) : undefined,
         demoRows: [],
+        api: vitalsFor ? vitalsApi(vitalsFor.patientId, vitalsFor.id) : undefined,
         local: {
           collection: VITALS_COLLECTION,
           create: (input, ctx) => buildVitals(input, vitalsFor?.id ?? '', ctx, `VIT-LOC-${globalThis.crypto.randomUUID().slice(0, 8).toUpperCase()}`),
@@ -116,7 +124,7 @@ export default function NursingPage() {
     { id: 'category', header: t('columns.category'), cell: (e) => t(`category.${e.category}`) },
     { id: 'arrivedAt', header: t('columns.arrival'), cell: (e) => f.time(e.arrivedAt), sortable: true },
     { id: 'wait', header: t('columns.wait'), cell: (e) => t('minutes', { count: minutesSince(e.arrivedAt) }) },
-    { id: 'status', header: t('columns.status'), cell: (e) => t(`status.${e.status}`) },
+    { id: 'status', header: t('columns.status'), cell: (e) => (awaitingValidation(e) ? t('status.awaitingValidation', { defaultValue: 'Triage — à valider par le médecin' }) : t(`status.${e.status}`)) },
   ];
 
   return (
@@ -159,12 +167,22 @@ export default function NursingPage() {
                   { label: t('columns.wait'), value: t('minutes', { count: minutesSince(e.arrivedAt) }) },
                   { label: t('columns.status'), value: t(`status.${e.status}`) },
                   { label: t('detail.nurse'), value: e.nurse },
+                  ...(e.careValidated ? [
+                    { label: t('detail.careValidated', { defaultValue: 'Soins validés par' }), value: `${e.careValidated.by} · ${f.dateTime(e.careValidated.at)}` },
+                    ...(e.careValidated.instructions ? [{ label: t('detail.careInstructions', { defaultValue: 'Consigne du médecin' }), value: e.careValidated.instructions }] : []),
+                  ] : []),
                 ]}
               />
             </DetailSection>
             <DetailSection title={t('detail.care')}>
               <div className="flex flex-wrap gap-2">
-                {TRIAGE_STEPS[e.status].map((action) => (
+                {awaitingValidation(e) && (
+                  <div className="w-full space-y-2 rounded-md bg-warning-soft p-3 text-sm">
+                    <p>{t('detail.awaitingValidation', { defaultValue: 'En attente de la validation du médecin : les soins ne peuvent pas commencer.' })}</p>
+                    <ValidateCareButton entry={e} />
+                  </div>
+                )}
+                {TRIAGE_STEPS[e.status].filter((action) => !(action === 'send-to-care' && awaitingValidation(e))).map((action) => (
                   <CommandButton
                     key={action}
                     name="triage"
@@ -176,12 +194,13 @@ export default function NursingPage() {
                     confirmTitle={t(`confirmTitles.${action}`)}
                   />
                 ))}
-                {TRIAGE_STEPS[e.status].length === 0 && <p className="text-sm text-muted-foreground">{t('detail.noActions')}</p>}
+                {(e.status === 'inTriage' || e.status === 'inCare') && <SendToDoctorButton entry={e} />}
+                {TRIAGE_STEPS[e.status].length === 0 && e.status !== 'inTriage' && e.status !== 'inCare' && <p className="text-sm text-muted-foreground">{t('detail.noActions')}</p>}
               </div>
             </DetailSection>
             <DetailSection title={t('detail.vitals')}>
-              {env.localMode && <VitalsHistory entryId={e.id} />}
-              <p className="text-sm text-muted-foreground">{env.localMode ? t('detail.vitalsBodyLocal') : t('detail.vitalsBody')}</p>
+              {(env.localMode || referenceFromApi()) && <VitalsHistory entryId={e.id} patientId={e.patientId} />}
+              {!referenceFromApi() && <p className="text-sm text-muted-foreground">{env.localMode ? t('detail.vitalsBodyLocal') : t('detail.vitalsBody')}</p>}
               <Can permission={PERMISSIONS.nursing.record}>
                 <Button size="sm" leftIcon={<HeartPulse className="size-4" />} onClick={() => setVitalsFor(e)}>
                   {t('detail.enterVitals')}

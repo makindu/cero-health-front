@@ -107,7 +107,9 @@
       "dirtyDemo": "Rasimu ya ndani, haijahifadhiwa (onyesho)",
       "locked": "Mashauriano yamefungwa",
       "autoPending": "Inahifadhi kiotomatiki…",
-      "autoDone": "Imehifadhiwa kiotomatiki ({{when}})"
+      "autoDone": "Imehifadhiwa kiotomatiki ({{when}})",
+      "localPending": "Imehifadhiwa kwenye kifaa hiki. Inatumwa kwa seva kwa kitufe cha “Hifadhi” au kiotomatiki baada ya dakika chache bila kuandika.",
+      "restored": "Rasimu imerejeshwa kutoka kifaa hiki: bado haijatumwa kwa seva."
     },
     "status": {
       "actions": {

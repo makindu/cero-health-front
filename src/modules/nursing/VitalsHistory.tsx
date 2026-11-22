@@ -5,6 +5,7 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { createResourceService } from '../_shared/resource-service';
 import { useResourceList } from '../_shared/use-resource';
 import type { VitalsRecord } from './local-rules';
+import { vitalsApi } from './vitals-api';
 
 export const VITALS_COLLECTION = 'health-triage-vitals';
 
@@ -15,12 +16,12 @@ const FIELDS = Object.keys(UNITS) as (keyof typeof UNITS)[];
  * Constantes vitales saisies (mode local uniquement : la lecture API n'a pas de contrat défini).
  * Valeurs affichées telles que saisies : aucune interprétation, aucun diagnostic automatique.
  */
-export function VitalsHistory({ entryId }: { entryId: string }) {
+export function VitalsHistory({ entryId, patientId }: { entryId: string; patientId: string }) {
   const { t } = useTranslation('nursing');
   const f = useFormatters();
   const service = useMemo(
-    () => createResourceService<VitalsRecord>({ source: 'health', endpoint: HEALTH_ENDPOINTS.triage.vitals(entryId), local: { collection: VITALS_COLLECTION } }),
-    [entryId],
+    () => createResourceService<VitalsRecord>({ source: 'health', endpoint: HEALTH_ENDPOINTS.triage.vitals(entryId), local: { collection: VITALS_COLLECTION }, api: vitalsApi(patientId, entryId) }),
+    [entryId, patientId],
   );
   const list = useResourceList('triage', service, { page: 1, perPage: 50, search: '', filters: { entryId }, sort: { columnId: 'recordedAt', direction: 'desc' } });
   const rows = list.data?.rows ?? [];
@@ -30,7 +31,7 @@ export function VitalsHistory({ entryId }: { entryId: string }) {
       {rows.map((row) => (
         <li key={row.id} className="rounded-md border border-border p-2 text-sm">
           <p className="text-xs text-muted-foreground">
-            {f.dateTime(row.recordedAt)} · {row.recordedBy}
+            {[f.dateTime(row.recordedAt), row.recordedBy].filter(Boolean).join(' · ')}
           </p>
           <p>
             {FIELDS.filter((field) => row[field] !== undefined)

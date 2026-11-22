@@ -46,7 +46,7 @@ function PharmacyScreen() {
     { id: 'number', header: t('columns.number'), cell: (v) => v.dispensation.number },
     { id: 'patient', header: t('columns.patient'), cell: (v) => <PersonName name={v.dispensation.patientName} />, primary: true },
     { id: 'rx', header: t('columns.prescription'), cell: (v) => v.dispensation.rxNumber },
-    { id: 'payment', header: t('columns.payment'), cell: (v) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`)}</StatusBadge> },
+    { id: 'payment', header: t('columns.payment'), cell: (v) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`, { defaultValue: v.paymentState === 'waived' ? 'Sans paiement préalable' : v.paymentState === 'noInvoice' ? 'Pas de facture' : v.paymentState })}</StatusBadge> },
     { id: 'status', header: t('columns.status'), cell: (v) => <DispensationStatusBadge status={v.dispensation.status} /> },
     { id: 'open', header: '', cell: (v) => <Button size="sm" variant="outline" onClick={() => setOpenId(v.dispensation.id)}>{t('actions.open')}</Button> },
   ];

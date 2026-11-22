@@ -589,5 +589,11 @@
   "draft": {
     "restored": "Brouillon retrouvé : votre saisie précédente a été restaurée.",
     "discard": "Repartir de zéro"
+  },
+  "live": {
+    "on": "En direct",
+    "onHint": "Temps réel actif : les écrans se mettent à jour seuls.",
+    "connecting": "Connexion…",
+    "connectingHint": "Connexion au temps réel en cours."
   }
 }

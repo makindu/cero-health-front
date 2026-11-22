@@ -17,5 +17,21 @@
     "seeAll": "See all",
     "none": "Nothing to report",
     "minutes": "{{count}} min"
+  },
+  "doctor": {
+    "noProfile": "No staff profile is linked to your account yet: it is created at your first clinical action.",
+    "queue": "My queue",
+    "queueHint": "Your patients who have arrived or are waiting: most urgent first, then oldest to newest.",
+    "queueEmpty": "No patient is waiting for you right now.",
+    "arrived": "arrived at {{time}}",
+    "open": "My open consultations",
+    "toSign": "To sign",
+    "unassigned": "Patients without an assigned doctor",
+    "unassignedHint": "Present, sent to your service, no practitioner: whoever takes them becomes their practitioner."
+  },
+  "nurse": {
+    "queue": "Triage queue",
+    "queueHint": "Patients waiting, in triage or in care, most urgent first. Act right here.",
+    "queueEmpty": "No patient in the triage queue."
   }
 }

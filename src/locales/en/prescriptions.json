@@ -21,6 +21,7 @@
     "status": "Status",
     "allStatuses": "All statuses"
   },
+  "drugSource": {"catalog": "Pharmacy", "prescribed": "Already prescribed"},
   "create": {
     "button": "New prescription",
     "title": "Write a prescription",
@@ -35,6 +36,9 @@
     "consultation": "Consultation (optional)",
     "consultationHint": "ID of the originating consultation",
     "note": "Note",
+    "drugNoMatch": "No drug found.",
+    "addDrug": "Add “{{label}}” as a new drug",
+    "addDrugFailed": "Could not add.",
     "drugPlaceholder": "Type the drug name…"
   },
   "fields": {

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { referenceFromApi } from '../_shared/reference-data';
 import { useResourceList } from '../_shared/use-resource';
 import { consultationService } from './data';
 import { recordService } from './record-service';
@@ -14,9 +15,11 @@ export interface PreviousHistory { pending: boolean; antecedents: Antecedent[]; 
  * Les entrées gardent leur auteur et leur date d'origine ; le médecin doit les revérifier pour cette consultation.
  */
 export function usePreviousHistory(patientId: string | undefined, currentId: string | undefined, currentDate: string | undefined): PreviousHistory {
-  const consultations = useResourceList('consultations', consultationService, ALL);
-  const records = useResourceList('consultation-records', recordService, ALL);
-  const pending = Boolean(patientId) && (consultations.isPending || records.isPending);
+  // API réelle : les antécédents sont ceux du dossier du patient (chargés avec la consultation) ; ni liste de brouillons, ni requête ici.
+  const local = !referenceFromApi();
+  const consultations = useResourceList('consultations', consultationService, ALL, { enabled: local });
+  const records = useResourceList('consultation-records', recordService, ALL, { enabled: local });
+  const pending = local && Boolean(patientId) && (consultations.isPending || records.isPending);
   return useMemo(() => {
     const none: PreviousHistory = { pending, antecedents: [], notes: EMPTY_DOC, from: '' };
     if (!patientId || !currentDate) return none;

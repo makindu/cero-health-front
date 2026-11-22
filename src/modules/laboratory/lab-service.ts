@@ -18,6 +18,8 @@ export interface LabOrderView {
   paymentCleared: boolean;
   paymentState: 'paid' | 'unpaid' | 'credit' | 'exception' | 'invoiceCancelled' | 'waived';
   paymentWaived: boolean;
+  /** Mode API : le paiement est contrôlé par le serveur (rien à afficher côté facture). */
+  serverSide?: boolean;
 }
 
 function wrap<T>(fn: () => T): T {

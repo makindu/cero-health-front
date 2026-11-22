@@ -1,14 +1,20 @@
-import { Check, CheckCheck, ChevronLeft, MessageSquare, MessageSquarePlus, Minus, Send, X } from 'lucide-react';
+import { Check, CheckCheck, ChevronLeft, MessageSquare, MessageSquarePlus, Minus, Send, Users, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/feedback/spinner';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useFormatters } from '@/core/i18n/useFormatters';
-import { useLocalUser } from '@/core/local/session';
+import { usePermissions } from '@/core/permissions/PermissionsProvider';
 import { cn } from '@/utils/cn';
-import { MAX_MESSAGE_LENGTH, presenceOf, readersOf, totalUnread, type ConversationSummary } from './messaging-rules';
-import { MESSAGING_AVAILABLE, useContacts, useConversations, useHeartbeat, useMessagingActions, usePresence, useReads, useThread } from './use-messaging';
+import { disablePush, enablePush, pushSupported, rememberChatLink, takeChatLink } from './chat-push';
+import { desktopDenied, desktopSupported, incoming, loadPrefs, notifyDesktop, playChime, requestDesktop, savePrefs, titleWithCount, unlockAudio, type AlertPrefs } from './chat-alerts';
+import { MAX_MESSAGE_LENGTH, type Message, presenceOf, readersOf, totalUnread, type ConversationSummary } from './messaging-rules';
+import { referenceFromApi } from '../_shared/reference-data';
+import { MembersPanel, NewGroupForm } from './GroupPanels';
+import { PAGE } from './messaging-api';
+import { messaging } from './messaging';
+import { MESSAGING_AVAILABLE, useChatMe, useContacts, useConversations, useHeartbeat, useMessagingActions, usePresence, useReads, useThread, useTypists } from './use-messaging';
 
 type Mode = 'closed' | 'open' | 'min';
 const KEY = 'cero-health.chat-dock';
@@ -28,16 +34,28 @@ function load(): { mode: Mode; selected: string | null } {
  */
 export function ChatDock() {
   if (!MESSAGING_AVAILABLE) return null;
+  // Ouverte à tout utilisateur connecté (aucun droit particulier) ; sans profil de personnel actif, la fenêtre ne s'affiche pas (voir Dock).
   return <Dock />;
 }
 
 function Dock() {
   const { t } = useTranslation('messaging');
   const f = useFormatters();
-  const me = useLocalUser();
+  const meOrNull = useChatMe();
+  const me = meOrNull ?? { id: '', name: '' };
   const [{ mode, selected }, setState] = useState(load);
   const [picking, setPicking] = useState(false);
   const [draft, setDraft] = useState('');
+  const [prefs, setPrefs] = useState<AlertPrefs>(loadPrefs);
+  const [blocked, setBlocked] = useState(desktopDenied());
+  const seen = useRef<Record<string, string> | null>(null);
+  const { can } = usePermissions();
+  const canManage = referenceFromApi() && can('health.messaging.manage');
+  const [grouping, setGrouping] = useState(false);
+  const [membersOpen, setMembersOpen] = useState(false);
+  /** Historique : messages plus anciens déjà chargés, par conversation (mode API). */
+  const [olderBy, setOlderBy] = useState<Record<string, { items: Message[]; done: boolean }>>({});
+  const [loadingOlder, setLoadingOlder] = useState(false);
   useHeartbeat();
   const presence = usePresence();
   const list = useConversations();
@@ -59,9 +77,23 @@ function Dock() {
   const summaries = list.data ?? [];
   const unread = totalUnread(summaries);
   const current = summaries.find((s) => s.conversation.id === selected);
+  const typists = useTypists(mode === 'open' ? (selected ?? undefined) : undefined);
+  const lastTypingSent = useRef(0);
   const reads = useReads(mode === 'open' ? (selected ?? undefined) : undefined);
-  const messages = thread.data ?? [];
+  const olderState = selected ? olderBy[selected] : undefined;
+  /** Fil affiché = page la plus récente + historique chargé + messages déjà vus que la page récente a fait glisser hors de sa fenêtre. */
+  const seenMessages = useRef<Record<string, Map<string, Message>>>({});
+  const messages = useMemo(() => {
+    if (!selected) return [];
+    const keep = (seenMessages.current[selected] ??= new Map());
+    for (const m of [...(olderState?.items ?? []), ...(thread.data ?? [])]) keep.set(m.id, m);
+    const all = [...keep.values()];
+    const numeric = all.every((m) => /^\d+$/.test(m.id));
+    return all.sort((a, b) => (numeric ? Number(a.id) - Number(b.id) : a.at.localeCompare(b.at) || a.id.localeCompare(b.id)));
+  }, [selected, olderState, thread.data]);
+  const canLoadOlder = referenceFromApi() && !olderState?.done && (thread.data?.length ?? 0) >= PAGE;
   const lastAt = messages[messages.length - 1]?.at;
+  useEffect(() => { setMembersOpen(false); }, [selected]);
   const nameOf = useMemo(() => {
     const m = new Map((contacts.data ?? []).map((c) => [c.id, c.name]));
     return (s: ConversationSummary): string => (s.conversation.kind === 'channel' ? (s.conversation.title ?? t('channel')) : (m.get(s.conversation.memberIds.find((id) => id !== me.id) ?? '') ?? t('unknownContact')));
@@ -91,18 +123,95 @@ function Dock() {
     if (mode === 'open' && current && current.unread > 0) markRead.mutate(current.conversation.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, selected, current?.unread, lastAt]);
-  useEffect(() => { bottom.current?.scrollIntoView?.({ block: 'end' }); }, [lastAt, selected, mode]);
+  useEffect(() => { bottom.current?.scrollIntoView?.({ block: 'end' }); }, [lastAt, selected, mode, typists.data?.length]);
 
+  // Alertes : son + notification du navigateur pour un nouveau message d'un autre, sauf si la conversation est déjà sous les yeux.
+  const prefsRef = useRef(prefs);
+  prefsRef.current = prefs;
+  useEffect(() => {
+    const unlock = (): void => unlockAudio();
+    globalThis.document?.addEventListener('pointerdown', unlock, { once: true });
+    globalThis.document?.addEventListener('keydown', unlock, { once: true });
+    return () => { globalThis.document?.removeEventListener('pointerdown', unlock); globalThis.document?.removeEventListener('keydown', unlock); };
+  }, []);
+  useEffect(() => {
+    if (!list.data) return;
+    const r = incoming(seen.current, list.data, me.id);
+    seen.current = r.seen;
+    const away = globalThis.document?.visibilityState === 'hidden' || !globalThis.document?.hasFocus();
+    for (const s of r.fresh) {
+      const watching = mode === 'open' && selected === s.conversation.id && !away;
+      if (watching) continue;
+      if (prefsRef.current.sound) playChime();
+      if (prefsRef.current.desktop && away) {
+        notifyDesktop({
+          tag: `chat-${s.conversation.id}`, title: t('alerts.notifyTitle', { defaultValue: 'Nouveau message de {{name}}', name: nameOf(s) }),
+          body: t('alerts.notifyBody', { defaultValue: 'Ouvrez la messagerie pour le lire.' }), onClick: () => set({ mode: 'open', selected: s.conversation.id }),
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list.data]);
+  // Compteur dans le titre de l'onglet : visible même quand la fenêtre est cachée.
+  useEffect(() => {
+    const doc = globalThis.document;
+    if (!doc) return;
+    doc.title = titleWithCount(doc.title, unread);
+    return () => { doc.title = titleWithCount(doc.title, 0); };
+  }, [unread]);
+  const changePrefs = (patch: Partial<AlertPrefs>): void => { const next = { ...prefs, ...patch }; setPrefs(next); savePrefs(next); };
+  const toggleDesktop = async (on: boolean): Promise<void> => {
+    if (!on) { changePrefs({ desktop: false }); if (referenceFromApi() && pushSupported()) void disablePush(); return; }
+    const ok = await requestDesktop();
+    setBlocked(!ok && desktopDenied());
+    changePrefs({ desktop: ok });
+    // Réveil même application fermée (Web Push) : seulement avec l'API, et sans bloquer l'alerte locale si le serveur ne l'offre pas.
+    if (ok && referenceFromApi() && pushSupported()) void enablePush();
+  };
+
+  // Un clic sur une notification Web Push ouvre la conversation concernée (application déjà ouverte ou lancée via #chat=ID).
+  useEffect(() => {
+    const openChat = (id: string | null | undefined): void => { if (id) set({ mode: 'open', selected: id }); };
+    rememberChatLink();
+    openChat(takeChatLink());
+    const onMessage = (e: MessageEvent): void => { const d = e.data as { type?: string; conversationId?: string | null } | null; if (d?.type === 'chat-open') openChat(d.conversationId); };
+    globalThis.navigator?.serviceWorker?.addEventListener('message', onMessage);
+    return () => globalThis.navigator?.serviceWorker?.removeEventListener('message', onMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /** Au plus un signal toutes les 3 s tant que l'on tape ; jamais pour un champ vidé. */
+  const notifyTyping = (value: string): void => {
+    if (!referenceFromApi() || !selected || !value.trim()) return;
+    const now = Date.now();
+    if (now - lastTypingSent.current < 3_000) return;
+    lastTypingSent.current = now;
+    actions.typing.mutate(selected);
+  };
+  const typingNames = (typists.data ?? []).map((id) => (contacts.data ?? []).find((c) => c.id === id)?.name ?? t('unknownContact'));
   const send = (): void => {
     if (!selected || !draft.trim() || actions.send.isPending) return;
     actions.send.mutate({ conversationId: selected, body: draft }, { onSuccess: () => { setDraft(''); setTimeout(grow, 0); } });
   };
+  const loadOlder = async (): Promise<void> => {
+    const first = messages[0];
+    if (!selected || !first || loadingOlder) return;
+    setLoadingOlder(true);
+    try {
+      const batch = await messaging.older(selected, first.id);
+      setOlderBy((cur) => ({ ...cur, [selected]: { items: [...batch, ...(cur[selected]?.items ?? [])], done: batch.length < PAGE } }));
+    } catch { /* l'historique reste tel quel ; on peut réessayer */ } finally { setLoadingOlder(false); }
+  };
+  const members = (current?.conversation.memberIds ?? []).map((id) => ({ id, name: id === me.id ? me.name : (contacts.data ?? []).find((c) => c.id === id)?.name ?? t('unknownContact'), role: '' }));
+  const candidates = (contacts.data ?? []).filter((c) => !(current?.conversation.memberIds ?? []).includes(c.id));
   const start = (id: string): void => actions.openDirect.mutate(id, { onSuccess: (c) => { set({ selected: c.id }); setPicking(false); } });
+
+  if (!meOrNull) return null;
 
   if (mode === 'closed') {
     return (
       <button type="button" onClick={() => set({ mode: 'open' })} aria-label={unread > 0 ? `${t('open')} — ${t('unread', { count: unread })}` : t('open')}
-        className="no-print fixed bottom-4 end-4 z-30 inline-flex size-12 items-center justify-center rounded-full border border-border bg-surface text-foreground shadow-lg hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+        className="no-print fixed bottom-4 end-4 z-30 inline-flex size-12 items-center justify-center rounded-full border-2 border-background bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/40 transition-transform hover:scale-105 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
         <MessageSquare aria-hidden className="size-5" />
         {unread > 0 && <span aria-hidden className="absolute -end-1.5 -top-1.5 h-5 min-w-5 rounded-full bg-danger px-1 text-center text-[11px] font-bold leading-5 text-danger-foreground ring-2 ring-background">{unread > 99 ? '99+' : unread}</span>}
       </button>
@@ -132,6 +241,9 @@ function Dock() {
           </span>
           {unread > 0 && mode === 'min' && <span className="rounded-full bg-danger px-1.5 text-[11px] text-danger-foreground">{unread}</span>}
         </button>
+        {mode === 'open' && selected && current?.conversation.kind === 'channel' && (
+          <Button size="icon" variant="ghost" className="size-7" aria-label={t('group.members', { defaultValue: 'Membres' })} aria-expanded={membersOpen} onClick={() => setMembersOpen(!membersOpen)}><Users aria-hidden className="size-4" /></Button>
+        )}
         {mode === 'open' && !selected && (
           <Button size="icon" variant="ghost" className="size-7" aria-label={t('new')} aria-expanded={picking} onClick={() => setPicking(!picking)}><MessageSquarePlus aria-hidden className="size-4" /></Button>
         )}
@@ -141,8 +253,20 @@ function Dock() {
 
       {mode === 'open' && (!selected || !current ? (
         <div className="flex min-h-0 flex-1 flex-col">
-          <p className="border-b border-border bg-muted px-3 py-1.5 text-[11px] text-muted-foreground">{t('note')}</p>
-          {picking && (
+          <p className="border-b border-border bg-muted px-3 py-1.5 text-[11px] text-muted-foreground">{referenceFromApi() ? t('noteApi', { defaultValue: 'Ce n’est pas un dossier médical : désignez un patient par son numéro de dossier, sans détail clinique.' }) : t('note')}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border px-3 py-1.5 text-xs">
+            <label className="inline-flex items-center gap-1.5"><input type="checkbox" checked={prefs.sound} onChange={(e) => { changePrefs({ sound: e.target.checked }); if (e.target.checked) { unlockAudio(); playChime(); } }} />{t('alerts.sound', { defaultValue: 'Son' })}</label>
+            {desktopSupported() && <label className="inline-flex items-center gap-1.5"><input type="checkbox" checked={prefs.desktop} onChange={(e) => { void toggleDesktop(e.target.checked); }} />{t('alerts.desktop', { defaultValue: 'Notifications' })}</label>}
+            {blocked && <span className="text-warning">{t('alerts.blocked', { defaultValue: 'Notifications bloquées dans le navigateur : autorisez-les dans les réglages du site.' })}</span>}
+          </div>
+          {picking && canManage && !grouping && (
+            <button type="button" onClick={() => setGrouping(true)} className="flex w-full items-center gap-2 border-b border-border bg-muted/40 px-3 py-2 text-left text-sm font-medium hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"><Users aria-hidden className="size-4" />{t('group.new', { defaultValue: 'Nouveau groupe' })}</button>
+          )}
+          {picking && grouping && (
+            <NewGroupForm contacts={contacts.data ?? []} pending={actions.createChannel.isPending} onCancel={() => setGrouping(false)}
+              onCreate={(title, ids) => actions.createChannel.mutate({ title, memberIds: ids }, { onSuccess: (c) => { set({ selected: c.id }); setPicking(false); setGrouping(false); } })} />
+          )}
+          {picking && !grouping && (
             <ul className="border-b border-border bg-muted/40 p-1" aria-label={t('pickContact')}>
               {(contacts.data ?? []).map((c) => (
                 <li key={c.id}><button type="button" onClick={() => start(c.id)} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"><Avatar name={c.name} size="sm" /><span className="truncate">{c.name}</span></button></li>
@@ -174,7 +298,16 @@ function Dock() {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
+          {membersOpen && current?.conversation.kind === 'channel' && (
+            <MembersPanel members={members} candidates={candidates} canAdd={canManage} pending={actions.addMembers.isPending}
+              onAdd={(ids) => actions.addMembers.mutate({ conversationId: current.conversation.id, memberIds: ids })} />
+          )}
           <div className="scroll-nav min-h-0 flex-1 space-y-2 overflow-y-auto p-3" aria-live="polite">
+            {canLoadOlder && (
+              <div className="flex justify-center">
+                <Button size="sm" variant="outline" loading={loadingOlder} onClick={() => { void loadOlder(); }}>{t('older', { defaultValue: 'Voir les messages précédents' })}</Button>
+              </div>
+            )}
             {thread.isPending ? <Skeleton className="h-16" /> : messages.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
             ) : messages.map((m) => {
@@ -197,12 +330,25 @@ function Dock() {
                 </div>
               );
             })}
+            {typingNames.length > 0 && (
+              <div className="flex justify-start" role="status">
+                <div className="max-w-[85%] rounded-lg border border-border bg-surface px-3 py-2 text-foreground shadow-sm">
+                  {current?.conversation.kind === 'channel' && <p className="text-[11px] font-semibold">{typingNames.join(', ')}</p>}
+                  <span aria-hidden className="flex h-4 items-center gap-1">
+                    <i className="size-1.5 animate-bounce rounded-full bg-muted-foreground" />
+                    <i className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]" />
+                    <i className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]" />
+                  </span>
+                  <span className="sr-only">{typingNames.length === 1 ? t('typing.one', { defaultValue: '{{name}} est en train d’écrire…', name: typingNames[0] }) : t('typing.many', { defaultValue: '{{names}} écrivent…', names: typingNames.join(', ') })}</span>
+                </div>
+              </div>
+            )}
             <div ref={bottom} />
           </div>
           <form className="border-t border-border bg-surface p-2" onSubmit={(e) => { e.preventDefault(); send(); }}>
             <div className="flex items-end gap-1 rounded-2xl border border-border bg-muted px-3 py-1.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-ring">
               <textarea ref={composer} rows={1} aria-label={t('composer')} placeholder={t('placeholder')} maxLength={MAX_MESSAGE_LENGTH} value={draft}
-                onChange={(e) => { setDraft(e.target.value); grow(); }}
+                onChange={(e) => { setDraft(e.target.value); grow(); notifyTyping(e.target.value); }}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}
                 className="max-h-28 min-h-8 flex-1 resize-none self-center bg-transparent py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground" />
               <button type="submit" aria-label={t('send')} disabled={!draft.trim() || actions.send.isPending}

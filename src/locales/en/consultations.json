@@ -107,7 +107,9 @@
       "dirtyDemo": "Local draft, not saved (demo)",
       "locked": "Consultation locked",
       "autoPending": "Saving automatically…",
-      "autoDone": "Saved automatically ({{when}})"
+      "autoDone": "Saved automatically ({{when}})",
+      "localPending": "Saved on this device. Sent to the server with the “Save” button or automatically after a few minutes without typing.",
+      "restored": "Draft restored from this device: it has not been sent to the server yet."
     },
     "status": {
       "actions": {

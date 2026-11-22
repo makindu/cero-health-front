@@ -33,9 +33,10 @@ const refuse = (code: string): never => {
 
 export interface DispensationView {
   dispensation: Dispensation;
+  /** Absent en mode API : la facture est tenue par le serveur (état du paiement seul). */
   invoice?: InvoiceView;
   paymentCleared: boolean;
-  paymentState: 'paid' | 'unpaid' | 'credit' | 'exception' | 'invoiceCancelled' | 'waived';
+  paymentState: 'paid' | 'unpaid' | 'credit' | 'exception' | 'invoiceCancelled' | 'waived' | 'noInvoice';
 }
 export interface QueueRow {
   prescription: Rx;
@@ -107,7 +108,7 @@ export function createPharmacyService(deps: FinanceDeps, finance: FinanceService
     }),
 
     /** Établit la dispensation et SA facture (même transaction). Aucun stock n'est sorti à ce stade. */
-    prepare: (input: { prescriptionId: string; lines: { rxLineIndex: number; itemId: string; quantity: number; reason?: string }[]; primaryCoverageId?: string; secondaryCoverageId?: string }): Promise<DispensationView> => deps.run(async (u) => {
+    prepare: (input: { prescriptionId: string; /** Mode API : unité de soins (pharmacie) qui sert l'ordonnance. */ careUnitId?: string; lines: { rxLineIndex: number; itemId: string; quantity: number; reason?: string }[]; primaryCoverageId?: string; secondaryCoverageId?: string }): Promise<DispensationView> => deps.run(async (u) => {
       deps.require(P.pharmacy.dispense);
       const rx = await u.get(rxRef, input.prescriptionId);
       if (!rx) return refuse('prescriptionNotFound');
@@ -164,7 +165,7 @@ export function createPharmacyService(deps: FinanceDeps, finance: FinanceService
     }),
 
     /** Remise au patient : paiement vérifié, lots périmés exclus, sortie de stock FEFO + mouvements + dispensation, dans UNE transaction. */
-    dispense: (input: { id: string }): Promise<DispensationView> => deps.run(async (u) => {
+    dispense: (input: { id: string; /** Mode API : second témoin (produit contrôlé). */ witnessUserId?: string }): Promise<DispensationView> => deps.run(async (u) => {
       deps.require(P.pharmacy.dispense);
       const d = await u.get(dispensationsRef, input.id);
       if (!d) return refuse('notFound');

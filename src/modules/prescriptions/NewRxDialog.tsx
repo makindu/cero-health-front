@@ -1,12 +1,17 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { PatientPicker } from '../_shared/pickers';
-import { useMemo } from 'react';
+import { useMemo, useState, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { FormField } from '@/components/forms/form-field';
 import { Input, Textarea } from '@/components/forms/controls';
-import { SuggestInput } from '@/components/forms/suggest-input';
+import { SuggestInput, type Suggestion } from '@/components/forms/suggest-input';
+import { referenceFromApi } from '../_shared/reference-data';
+import { addDrug, useDrugSuggestions, type DrugSuggestion } from './drug-suggestions';
+import { Autocomplete } from '@/components/forms/autocomplete';
+import { useToast } from '@/components/feedback/toast';
+import { ApiError } from '@/core/api';
 import { useMoney, useFinanceSnapshot } from '../finance/use-finance';
 import { rx } from './rx';
 import type { Rx, RxItem } from './rx-rules';
@@ -18,6 +23,40 @@ import { usePersistentState } from '@/core/drafts/use-persistent-state';
 
 interface Row extends Omit<RxItem, 'quantity'> { key: number; quantity: string }
 const empty = (key: number): Row => ({ key, label: '', dosage: '', frequency: '', duration: '', quantity: '1', instructions: '' });
+
+/**
+ * Désignation d'un médicament. API réelle : même recherche que les examens, avec les médicaments de la pharmacie et ceux déjà
+ * prescrits ; un nom absent s'ajoute depuis la barre (« + Ajouter … ») et reste proposé aux confrères.
+ * Mode local : saisie libre avec suggestions du catalogue.
+ */
+function DrugField({ local, value, onChange, ...rest }: Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'type'> & { local: readonly Suggestion[]; value: string; onChange: (v: string) => void }) {
+  const { t } = useTranslation('prescriptions');
+  const toast = useToast();
+  const api = referenceFromApi();
+  const [query, setQuery] = useState('');
+  const remote = useDrugSuggestions(query);
+  const items = useMemo<DrugSuggestion[]>(() => {
+    const base = remote.data ?? [];
+    // La valeur déjà choisie (ou restaurée d'un brouillon) doit toujours être reconnue, même hors des résultats de la recherche.
+    return value && !base.some((d) => d.name === value) ? [{ name: value, source: 'prescribed' }, ...base] : base;
+  }, [remote.data, value]);
+  if (!api) return <SuggestInput {...rest} suggestions={local} value={value} onChange={onChange} placeholder={t('create.drugPlaceholder')} />;
+  return (
+    <Autocomplete<DrugSuggestion> {...rest} items={items} value={value} onChange={(key) => onChange(key)} getKey={(d) => d.name} getLabel={(d) => d.name} getSearch={(d) => d.name}
+      renderOption={(d) => <span>{d.name}<span className="ms-2 text-xs text-muted-foreground">{t(`drugSource.${d.source}`)}</span></span>}
+      emptyText={t('create.drugNoMatch')} placeholder={t('create.drugPlaceholder')} onQueryChange={setQuery}
+      createLabel={(text) => t('create.addDrug', { label: text })}
+      onCreate={async (text) => {
+        try {
+          const drug = await addDrug(text);
+          onChange(drug.name);
+        } catch (error) {
+          toast({ tone: 'danger', title: error instanceof ApiError ? error.message : t('create.addDrugFailed') });
+          throw error;
+        }
+      }} />
+  );
+}
 
 export function NewRxDialog({ onClose, onCreated, initialPatientId, consultationId }: { onClose: () => void; onCreated: (r: Rx) => void; initialPatientId?: string; consultationId?: string }) {
   const { t } = useTranslation('prescriptions');
@@ -56,7 +95,7 @@ export function NewRxDialog({ onClose, onCreated, initialPatientId, consultation
           <fieldset key={r.key} className="space-y-2 rounded-md border border-border p-3">
             <legend className="px-1 text-sm font-medium">{t('create.line', { n: index + 1 })}</legend>
             <div className="grid gap-2 sm:grid-cols-[1fr_6rem]">
-              <FormField label={t('fields.product')} required>{(c) => <SuggestInput {...c} suggestions={drugs} value={r.label} onChange={(v) => set(r.key, { label: v })} placeholder={t('create.drugPlaceholder')} />}</FormField>
+              <FormField label={t('fields.product')} required>{(c) => <DrugField {...c} local={drugs} value={r.label} onChange={(v) => set(r.key, { label: v })} />}</FormField>
               <FormField label={t('fields.quantity')} required>{(c) => <NumberInput {...c} decimal value={r.quantity} onValueChange={(v) => set(r.key, { quantity: v })} />}</FormField>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">

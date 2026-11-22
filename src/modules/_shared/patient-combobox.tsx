@@ -3,6 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/forms/controls';
 import { usePatients } from '../finance/use-finance';
 import { PersonName } from '@/components/ui/avatar';
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@/core/api/query-client';
+import { usePreferences } from '@/core/preferences/preferences-store';
+import { patientService } from '../patients/data';
+import { referenceFromApi } from './reference-data';
 
 /** Minuscules sans accents : « Éloïse » se trouve en tapant « eloi ». */
 const fold = (s: string): string => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -20,9 +25,23 @@ interface Props extends Omit<ComponentProps<'input'>, 'value' | 'defaultValue' |
  */
 export function PatientCombobox({ defaultValue = '', onValueChange, id, ...rest }: Props) {
   const { t } = useTranslation();
-  const patients = usePatients();
-  const listId = useId();
+  const localPatients = usePatients();
+  const fromApi = referenceFromApi();
+  const { activeFacilityId } = usePreferences();
   const [text, setText] = useState(defaultValue);
+  // API réelle : le serveur cherche (nom, numéro, téléphone) ; on n'envoie rien avant 2 caractères et on attend la fin de la frappe.
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setQuery(text.trim()), 250);
+    return () => clearTimeout(handle);
+  }, [text]);
+  const apiSearch = useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'patients', 'combobox', query),
+    queryFn: async () => (await patientService.list({ page: 1, perPage: MAX, search: query, filters: {}, sort: null })).rows,
+    enabled: fromApi && query.length >= 2,
+  });
+  const patients = fromApi ? apiSearch : localPatients;
+  const listId = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const box = useRef<HTMLDivElement>(null);
@@ -30,6 +49,7 @@ export function PatientCombobox({ defaultValue = '', onValueChange, id, ...rest 
   const matches = useMemo(() => {
     const needle = fold(text);
     if (!needle || !patients.data) return [];
+    if (fromApi) return patients.data.filter((p) => !p.mergedInto && p.status !== 'inactive').slice(0, MAX);
     const tokens = needle.split(/\s+/);
     return patients.data
       .filter((p) => !p.mergedInto && p.status !== 'inactive')
@@ -38,7 +58,7 @@ export function PatientCombobox({ defaultValue = '', onValueChange, id, ...rest 
       .sort((a, b) => Number(fold(b.p.fullName).startsWith(needle)) - Number(fold(a.p.fullName).startsWith(needle)) || a.p.fullName.localeCompare(b.p.fullName))
       .slice(0, MAX)
       .map(({ p }) => p);
-  }, [text, patients.data]);
+  }, [text, patients.data, fromApi]);
 
   useEffect(() => {
     const close = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };

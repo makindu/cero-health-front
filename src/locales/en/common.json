@@ -589,5 +589,11 @@
   "draft": {
     "restored": "Draft found: your previous entry was restored.",
     "discard": "Start over"
+  },
+  "live": {
+    "on": "Live",
+    "onHint": "Real time is on: screens update by themselves.",
+    "connecting": "Connecting…",
+    "connectingHint": "Connecting to real time."
   }
 }

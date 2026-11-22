@@ -49,3 +49,29 @@ export function StatCard({ label, value, hint, icon: Icon, tone = 'neutral', to 
 export function StatGrid({ children }: { children: ReactNode }) {
   return <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{children}</div>;
 }
+
+export interface StatStripItem {
+  label: string;
+  value: ReactNode;
+  icon: LucideIcon;
+  tone?: StatusTone;
+}
+
+/** Bande d'indicateurs sur une seule ligne : même information que StatGrid pour le tiers de la hauteur. */
+export function StatStrip({ items }: { items: readonly StatStripItem[] }) {
+  return (
+    <div className="mb-4 grid grid-cols-2 divide-border rounded-card border border-border bg-surface shadow-card sm:grid-cols-3 sm:divide-x lg:grid-cols-5">
+      {items.map(({ label, value, icon: Icon, tone = 'neutral' }) => (
+        <div key={label} className="flex items-center gap-3 px-4 py-2.5">
+          <span className={cn('flex size-8 shrink-0 items-center justify-center rounded-md', toneClasses[tone])}>
+            <Icon aria-hidden className="size-4" />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-xs text-muted-foreground">{label}</p>
+            <p className="text-lg font-semibold leading-tight tabular-nums text-foreground">{value}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

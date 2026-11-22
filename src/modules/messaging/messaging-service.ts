@@ -72,6 +72,15 @@ export function createMessagingService(deps: MessagingDeps) {
       return message;
     }),
 
+    /** Propres au mode API : historique paginé, canaux de groupe. Le mode local garde tout l'historique et n'a que le canal général. */
+    older: async (_conversationId: string, _beforeId: string): Promise<R.Message[]> => [],
+    createChannel: async (_input: { title: string; memberIds: string[] }): Promise<R.Conversation> => { throw new R.MessagingError('apiOnly'); },
+    addMembers: async (_input: { conversationId: string; memberIds: string[] }): Promise<void> => { throw new R.MessagingError('apiOnly'); },
+
+    /** « Est en train d'écrire » : propre au mode API (serveur). En mode local, les rôles de démonstration ne se voient pas écrire. */
+    typing: async (_conversationId: string): Promise<void> => undefined,
+    typists: async (_conversationId: string): Promise<string[]> => [],
+
     markRead: (conversationId: string): Promise<void> => deps.run(async (u) => {
       await member(u, conversationId);
       const me = u.ctx.actor.id;

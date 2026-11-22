@@ -12,12 +12,15 @@ export function useResourceList<T extends { id: string }>(
   name: string,
   service: ResourceService<T>,
   params: ListParams,
+  /** `enabled: false` : aucune requête (donnée inutile dans le mode courant). */
+  options: { enabled?: boolean } = {},
 ) {
   const { activeFacilityId } = usePreferences();
   return useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, name, 'list', params),
     queryFn: () => service.list(params),
     placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
   });
 }
 

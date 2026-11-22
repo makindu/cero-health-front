@@ -32,7 +32,7 @@ export const PERMISSIONS = {
     sign: 'health.consultations.sign',
     close: 'health.consultations.close',
   },
-  nursing: { view: 'health.nursing.view', record: 'health.nursing.record' },
+  nursing: { view: 'health.nursing.view', record: 'health.nursing.record', validateCare: 'health.nursing.validateCare' },
   prescriptions: {
     view: 'health.prescriptions.view',
     create: 'health.prescriptions.create',

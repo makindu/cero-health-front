@@ -65,7 +65,9 @@
       "pharmacist": "Pharmacist",
       "labTech": "Lab technician",
       "cashier": "Cashier",
-      "admin": "Administrator"
+      "admin": "Administrator",
+      "receptionist": "Receptionist",
+      "wardManager": "Ward manager"
     },
     "modules": {
       "dashboard": "Dashboard",
@@ -84,7 +86,116 @@
       "reports": "Reports",
       "administration": "Administration",
       "audit": "Audit"
-    }
+    },
+    "permissions": {
+      "dashboard": {
+        "view": "View the dashboard"
+      },
+      "patients": {
+        "view": "View patients",
+        "create": "Create a patient",
+        "update": "Edit a patient",
+        "merge": "Merge duplicates",
+        "export": "Export patients"
+      },
+      "appointments": {
+        "view": "View appointments",
+        "create": "Create an appointment",
+        "update": "Edit an appointment",
+        "cancel": "Cancel an appointment",
+        "checkIn": "Check a patient in"
+      },
+      "medicalRecords": {
+        "view": "View medical records",
+        "manage": "Manage medical records",
+        "export": "Export a medical record"
+      },
+      "consultations": {
+        "view": "View consultations",
+        "create": "Open a consultation",
+        "update": "Edit a consultation",
+        "sign": "Sign a consultation",
+        "close": "Close a consultation"
+      },
+      "nursing": {
+        "view": "View nursing care",
+        "record": "Record care and vital signs"
+      },
+      "prescriptions": {
+        "view": "View prescriptions",
+        "create": "Prescribe medicines",
+        "validate": "Validate a prescription",
+        "dispense": "Dispense a prescription"
+      },
+      "laboratory": {
+        "view": "View laboratory tests",
+        "order": "Request tests",
+        "collect": "Collect samples",
+        "resultsEnter": "Enter results",
+        "resultsValidate": "Validate results",
+        "exception": "Collect without prior payment",
+        "catalog": "Manage the test catalogue"
+      },
+      "pharmacy": {
+        "view": "View the pharmacy",
+        "dispense": "Dispense medicines",
+        "exception": "Dispense without prior payment",
+        "catalog": "Manage the medicine catalogue"
+      },
+      "hospitalization": {
+        "view": "View admissions",
+        "create": "Admit a patient",
+        "assignBed": "Assign and manage beds",
+        "discharge": "Validate a discharge",
+        "dischargeException": "Discharge despite an outstanding balance",
+        "visitView": "View visits",
+        "visitRecord": "Record a visit",
+        "visitClinical": "Enter visit examination, diagnosis and plan",
+        "consumptionReverse": "Correct a consumption (reversal)"
+      },
+      "billing": {
+        "view": "View billing",
+        "create": "Create an invoice",
+        "pay": "Take a payment",
+        "refund": "Refund",
+        "cancel": "Cancel an invoice",
+        "reverse": "Reverse an entry",
+        "credit": "Grant credit to a patient",
+        "exempt": "Waive consultation fees",
+        "settle": "Record insurer settlements",
+        "configure": "Configure fees and validity",
+        "discount": "Grant a discount"
+      },
+      "insurance": {
+        "view": "View insurance",
+        "manage": "Manage insurers, contracts and coverage",
+        "validate": "Validate coverage",
+        "authorize": "Grant prior authorisation"
+      },
+      "cash": {
+        "view": "View the cash desk",
+        "record": "Record cash movements",
+        "close": "Close the cash desk"
+      },
+      "inventory": {
+        "view": "View stock",
+        "receive": "Receive stock",
+        "adjust": "Adjust stock"
+      },
+      "reports": {
+        "view": "View reports"
+      },
+      "administration": {
+        "view": "Access administration",
+        "manageUsers": "Manage staff and permissions",
+        "manageServices": "Manage services",
+        "manageSettings": "Manage facility settings"
+      },
+      "audit": {
+        "view": "View the audit log"
+      }
+    },
+    "reset": "Reset"
   },
   "services": {
     "name": "Department",
@@ -93,7 +204,21 @@
     "search": "Search departments",
     "create": "New department",
     "createTitle": "Create a department",
-    "createSubmit": "Create department"
+    "createSubmit": "Create department",
+    "type": "Department type",
+    "types": {
+      "reception": "Reception",
+      "consultation": "Consultation",
+      "emergency": "Emergency",
+      "maternity": "Maternity",
+      "pediatrics": "Pediatrics",
+      "laboratory": "Laboratory",
+      "imaging": "Imaging",
+      "pharmacy": "Pharmacy",
+      "inpatient": "Inpatient",
+      "surgery": "Surgery",
+      "other": "Other"
+    }
   },
   "serviceNames": {
     "generalMedicine": "General medicine",

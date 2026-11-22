@@ -60,7 +60,10 @@
     "minutes": "{{count}} min",
     "actions": "Actions",
     "arrivedAt": "Arrival time",
-    "noActions": "No action possible: this appointment is closed."
+    "noActions": "No action possible: this appointment is closed.",
+    "toAssign": "To be assigned",
+    "waited": "Waiting time",
+    "visit": "Visit"
   },
   "actions": {
     "confirm": "Confirm",
@@ -75,7 +78,11 @@
     "complete": "Complete",
     "noShow": "Mark as no-show",
     "reschedule": "Reschedule",
-    "edit": "Edit"
+    "edit": "Edit",
+    "openConsultation": "Open consultation",
+    "resumeConsultation": "Resume consultation",
+    "takeCharge": "Take charge",
+    "cancelVisit": "Cancel visit"
   },
   "tabs": {
     "reception": "Reception",
@@ -88,7 +95,9 @@
     "wait": "Place the patient in the waiting room?",
     "start": "Call the patient to consultation?",
     "complete": "Mark the consultation as completed?",
-    "no-show": "Mark the patient as a no-show?"
+    "no-show": "Mark the patient as a no-show?",
+    "openConsultation": "Open this patient's consultation?",
+    "takeCharge": "Take this patient and open the consultation?"
   },
   "changeReason": {
     "patientRequest": "Patient request",
@@ -124,7 +133,14 @@
     "from": "Previous slot: {{date}}",
     "reason": "Reason",
     "serverNote": "Each reschedule or cancellation is recorded by the server with the user, date and reason. In the demo, the history shown is fictitious.",
-    "updated": "Appointment edited"
+    "updated": "Appointment edited",
+    "confirmed": "Appointment confirmed",
+    "waiting": "Placed in waiting room",
+    "started": "Called to consultation",
+    "completed": "Visit completed",
+    "assigned": "Sent to a doctor",
+    "createdWalkIn": "Walk-in arrival",
+    "loadFailed": "The history could not be loaded."
   },
   "calendar": {
     "count": "{{count}} appointment(s)",
@@ -221,5 +237,19 @@
     "feeNone": "{{name}} has no valid consultation fee: they must go to the cashier before the consultation.",
     "feeExpired": "{{name}}'s consultation fee has expired: they must go to the cashier before the consultation.",
     "feeProceed": "Register the arrival anyway"
+  },
+  "assign": {
+    "button": "Send to a doctor",
+    "title": "Which doctor?",
+    "hint": "Choose the doctor who will see {{name}}. The patient will join that doctor's queue.",
+    "submit": "Send patient",
+    "change": "Change doctor",
+    "changeTitle": "Change doctor",
+    "changeSubmit": "Change doctor"
+  },
+  "cancelVisit": {
+    "title": "Cancel visit",
+    "hint": "The cancellation is kept in the history with its reason.",
+    "submit": "Cancel visit"
   }
 }

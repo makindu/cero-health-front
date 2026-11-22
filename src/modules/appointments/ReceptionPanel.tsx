@@ -1,14 +1,13 @@
-import { Activity, CircleCheck, Hourglass, LogIn, Stethoscope, UserPlus, Users } from 'lucide-react';
+import { Activity, CircleCheck, Hourglass, LogIn, Stethoscope, Users } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataTable, type Column } from '@/components/tables/data-table';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog } from '@/components/ui/dialog';
-import { StatCard, StatGrid } from '@/components/ui/stat-card';
+import { StatStrip } from '@/components/ui/stat-card';
 import { useNow } from '@/hooks/useNow';
 import { useFormatters } from '@/core/i18n/useFormatters';
-import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { LOADED_AT } from '@/utils/dates';
 import { CommandButton } from '../_shared/command-button';
@@ -18,8 +17,12 @@ import { AppointmentDetail } from './AppointmentDetail';
 import { AppointmentStatusBadge } from './columns';
 import { appointmentService, type Appointment } from './data';
 import { localDayKey } from './scheduling';
-import { WalkInDialog } from './WalkInDialog';
 import { FeeBadge } from './FeeBadge';
+import { StartConsultationButton } from './StartConsultationButton';
+import { AssignPractitionerButton } from './AssignPractitionerButton';
+import { isUnassigned } from './start-consultation';
+import { canOpenConsultation } from './start-consultation';
+import { referenceFromApi } from '../_shared/reference-data';
 import { buildPresent, type PresentRow } from './present-rules';
 import { triageService } from '../nursing/data';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
@@ -37,8 +40,8 @@ export function ReceptionPanel() {
   const f = useFormatters();
   const now = useNow();
   const [selected, setSelected] = useState<Appointment | null>(null);
-  const [walkIn, setWalkIn] = useState(false);
   const today = localDayKey(LOADED_AT);
+  const fromApi = referenceFromApi();
 
   const list = useResourceList('appointments', appointmentService, {
     page: 1,
@@ -102,8 +105,10 @@ export function ReceptionPanel() {
         if (!a) return <span className="text-xs text-muted-foreground">{t('reception.present.nurseNote')}</span>;
         return (
           <div className="flex flex-wrap justify-end gap-2">
-            {a.status === 'arrived' && cmd(a, 'wait', t('actions.wait'), P.checkIn, <Hourglass className="size-4" />)}
-            {a.status !== 'inProgress' && cmd(a, 'start', t('actions.start'), P.update, <Stethoscope className="size-4" />)}
+            {fromApi && isUnassigned(a) && (a.status === 'arrived' || a.status === 'waiting') && <AssignPractitionerButton appointment={a} />}
+            {fromApi
+              ? canOpenConsultation(a) && <StartConsultationButton appointment={a} />
+              : a.status !== 'inProgress' && cmd(a, 'start', t('actions.start'), P.update, <Stethoscope className="size-4" />)}
             {open(a)}
           </div>
         );
@@ -138,23 +143,16 @@ export function ReceptionPanel() {
   return (
     <>
       {list.data?.isDemo && <DemoNotice endpoint={appointmentService.endpoint} />}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-muted-foreground">{t('walkIn.hint')}</p>
-        <Can permission={P.checkIn}>
-          <Button leftIcon={<UserPlus className="size-4" />} onClick={() => setWalkIn(true)}>
-            {t('walkIn.button')}
-          </Button>
-        </Can>
-      </div>
-      <WalkInDialog open={walkIn} onClose={() => setWalkIn(false)} />
-      <StatGrid>
-        <StatCard icon={Users} label={t('reception.toWelcome')} value={toWelcome.length} />
-        <StatCard icon={Hourglass} tone="warning" label={t('reception.waitingRoom')} value={waiting.length} />
-        <StatCard icon={Activity} tone="warning" label={t('reception.atTriage')} value={atTriage.length} />
-        <StatCard icon={Stethoscope} tone="info" label={t('reception.inConsultation')} value={inConsult.length} />
-        <StatCard icon={CircleCheck} tone="success" label={t('reception.finished')} value={done.length} />
-      </StatGrid>
-      <div className="space-y-5">
+      <StatStrip
+        items={[
+          { icon: Users, label: t('reception.toWelcome'), value: toWelcome.length },
+          { icon: Hourglass, tone: 'warning', label: t('reception.waitingRoom'), value: waiting.length },
+          { icon: Activity, tone: 'warning', label: t('reception.atTriage'), value: atTriage.length },
+          { icon: Stethoscope, tone: 'info', label: t('reception.inConsultation'), value: inConsult.length },
+          { icon: CircleCheck, tone: 'success', label: t('reception.finished'), value: done.length },
+        ]}
+      />
+      <div className="space-y-4">
         {sections.map((section) => (
           <Card key={section.key} title={`${section.title} (${section.rows.length})`} className="[&>div]:p-0">
             <DataTable

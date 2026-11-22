@@ -41,8 +41,8 @@
     "fileNumberHint": "Numéro du dossier papier ou de l’ancien système, s’il existe (3 à 30 caractères : lettres, chiffres, . _ / -).",
     "email": "Adresse e-mail",
     "emailHint": "Pour envoyer rendez-vous, factures et résultats (facultatif).",
-    "birthWeight": "Poids de naissance (g)",
-    "birthWeightHint": "En grammes, par exemple 3200 (facultatif).",
+    "birthWeight": "Poids de naissance (kg)",
+    "birthWeightHint": "En kilogrammes, par exemple 3,2 (facultatif).",
     "category": "Catégorie du patient",
     "categoryHint": "Détermine ce qui doit être payé avant consommation."
   },

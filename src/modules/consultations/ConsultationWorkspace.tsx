@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { useDirtySource } from '@/core/unsaved/use-dirty-source';
+import { ApiError } from '@/core/api';
+import { useAuth } from '@/core/auth/cero-id';
+import { clearDraft, loadDraft, saveDraft as saveLocalDraft } from '@/core/drafts/draft-store';
 import { queryKeys } from '@/core/api/query-client';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { ErrorState } from '@/components/feedback/error-state';
@@ -27,11 +30,17 @@ import { SECTIONS, type ClinicalStatus, type ConsultationDraft, type SectionId }
 import { consultationService, type Consultation } from './data';
 import { buildConsultationReport } from './report';
 import { buildReportHtml, printHtml } from './print';
+import { openConsultationPdf } from './consultation-pdf';
+import { referenceFromApi } from '../_shared/reference-data';
 import { FollowUpScheduler } from './FollowUpScheduler';
 import { AllergyAlert, AnamnesisSection, GeneralSection, HistorySection, newCtx } from './sections-a';
 import { AssessmentSection, ExamSection, PlanSection } from './sections-b';
 import { sanitizeDoc } from './richtext/doc';
 import { Avatar } from '@/components/ui/avatar';
+
+/** Copie locale presque immédiate ; envoi au serveur seulement après 3 minutes sans saisie (ou sur action explicite). */
+const LOCAL_SAVE_DELAY_MS = 800;
+const SERVER_SYNC_IDLE_MS = 3 * 60 * 1000;
 
 const STATUS_TONE: Record<ClinicalStatus, StatusTone> = { draft: 'neutral', inProgress: 'info', awaitingResults: 'warning', toValidate: 'warning', signed: 'success', closed: 'success' };
 const STATUS_ACTION: Partial<Record<ClinicalStatus, string>> = { inProgress: 'start', awaitingResults: 'await-results', toValidate: 'submit', signed: 'sign', closed: 'close' };
@@ -90,17 +99,28 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
   const { t } = useTranslation('consultations');
   const f = useFormatters();
   const toast = useToast();
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const printPdf = (): void => {
+    setPdfBusy(true);
+    openConsultationPdf(consultation.id)
+      .catch((error: unknown) => toast({ tone: 'danger', title: t('clinical.summary.pdfFailed', { defaultValue: 'Impossible de générer la fiche PDF.' }), description: error instanceof ApiError && error.status && error.status < 500 ? error.message : undefined }))
+      .finally(() => setPdfBusy(false));
+  };
   const { can } = usePermissions();
-  const [draft, setDraft] = useState<ConsultationDraft>(initial);
+  const { activeFacilityId } = usePreferences();
+  // Copie de sécurité sur l'appareil (sans réseau) : reprise si la page a été fermée avant l'envoi au serveur.
+  const { user } = useAuth();
+  const localKey = `consultation.${activeFacilityId}.${user?.id ?? 'anon'}.${consultation.id}`;
+  const [localCopy] = useState<ConsultationDraft | null>(() => (isLocked(initial.status) || isDemo ? null : loadDraft<ConsultationDraft>(localKey)));
+  const [draft, setDraft] = useState<ConsultationDraft>(() => (localCopy ? restoreDraft(localCopy, consultation.id, consultation.status) : initial));
   const [baseline, setBaseline] = useState<ConsultationDraft>(initial);
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useState(localCopy !== null);
   const [saving, setSaving] = useState(false);
   const [section, setSection] = useState<SectionId>('general');
   const [confirm, setConfirm] = useState<ClinicalStatus | null>(null);
   const [addendumText, setAddendumText] = useState('');
   const [recordExists, setRecordExists] = useState(hasRecord);
   const queryClient = useQueryClient();
-  const { activeFacilityId } = usePreferences();
   // Quitter l'écran avec des modifications non enregistrées : confirmation par la garde globale.
 
   const author = t('clinical.you');
@@ -129,13 +149,21 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
     return { isDemo: result.isDemo, logged };
   }
 
-  // Enregistrement automatique : la saisie est sauvegardée seule peu après chaque modification (coupure de courant, onglet fermé…).
+  // Copie sur l'appareil : quasi immédiate, sans aucun appel au serveur (coupure de courant, onglet fermé…).
+  useEffect(() => {
+    if (!dirty || readOnly || isDemo) return;
+    const id = setTimeout(() => saveLocalDraft(localKey, draft), LOCAL_SAVE_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [draft, dirty, readOnly, isDemo, localKey]);
+  // Envoi au serveur : bouton « Enregistrer », changement d'état, sortie de l'écran, ou longue inactivité (le serveur est partagé par des milliers de médecins).
   const draftRef = useRef(draft);
   draftRef.current = draft;
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
   const autoBusy = useRef(false);
   const [autoFailed, setAutoFailed] = useState(false);
+  const [autoError, setAutoError] = useState('');
+  const failures = useRef(0);
   const [lastAuto, setLastAuto] = useState<Date | null>(null);
   const [tick, setTick] = useState(0);
   const autoCapable = !readOnly && !isDemo;
@@ -144,28 +172,43 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
     if (autoBusy.current || !dirtyRef.current || !autoCapable) return;
     autoBusy.current = true;
     const snapshot = draftRef.current;
+    let again = true;
     try {
       const { isDemo: demo, logged } = await persist(snapshot);
       if (!demo) {
+        failures.current = 0;
         setAutoFailed(false);
+        setAutoError('');
         setLastAuto(new Date());
         // Si l'utilisateur a continué à écrire pendant l'enregistrement, on ne touche pas à sa saisie : la suite sera enregistrée au tour suivant.
         if (draftRef.current === snapshot) {
           setDraft(logged);
           setBaseline(logged);
           setDirty(false);
+          clearDraft(localKey);
         }
       }
-    } catch {
+    } catch (error) {
+      failures.current += 1;
       setAutoFailed(true);
+      setAutoError(error instanceof Error ? error.message : '');
+      // Refus du serveur (4xx) : réessayer à l'identique ne sert à rien, on attend la prochaine modification de l'utilisateur.
+      // Panne passagère (réseau, serveur) : nouvel essai de plus en plus espacé (3 s, 6 s… 60 s max), jamais en rafale.
+      const status = error instanceof ApiError ? error.status : undefined;
+      if (status !== undefined && status >= 400 && status < 500 && status !== 429) {
+        again = false;
+      } else {
+        again = false;
+        window.setTimeout(() => setTick((n) => n + 1), Math.min(60000, 3000 * 2 ** (failures.current - 1)));
+      }
     } finally {
       autoBusy.current = false;
-      setTick((n) => n + 1);
+      if (again) setTick((n) => n + 1);
     }
   };
   useEffect(() => {
     if (!dirty || !autoCapable) return;
-    const id = setTimeout(() => void autoSaveRef.current(), 1500);
+    const id = setTimeout(() => void autoSaveRef.current(), SERVER_SYNC_IDLE_MS);
     return () => clearTimeout(id);
   }, [draft, dirty, autoCapable, tick]);
   useEffect(() => {
@@ -189,6 +232,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
         setDraft(logged);
         setBaseline(logged);
         setDirty(false);
+        clearDraft(localKey);
         toast({ tone: 'success', title: t('clinical.save.ok') });
       }
     } catch {
@@ -202,6 +246,8 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
     setConfirm(null);
     if (!canTransition(draft.status, to)) return;
     try {
+      // Le serveur vérifie les éléments obligatoires à partir de ce qui est enregistré : on enregistre d'abord la saisie en cours.
+      if (dirtyRef.current && !isDemo) await persist(draftRef.current);
       const result = await consultationService.command(consultation.id, STATUS_ACTION[to] ?? to, {});
       const patch: Partial<ConsultationDraft> = to === 'signed' ? { signedAt: new Date().toISOString(), signedBy: author } : {};
       if (result.isDemo) {
@@ -297,7 +343,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
           {draft.signedAt && <p className="text-sm text-muted-foreground">{t('clinical.report.signedBy', { by: draft.signedBy ?? '', when: f.dateTime(draft.signedAt) })}</p>}
         </Panel>
 
-        <Panel title={t('clinical.summary.title')} actions={<Button size="sm" variant="outline" leftIcon={<Printer className="size-4" />} onClick={() => printHtml(reportHtml)}>{t('clinical.summary.print')}</Button>}>
+        <Panel title={t('clinical.summary.title')} actions={<div className="flex gap-2">{referenceFromApi() && !isDemo && <Button size="sm" loading={pdfBusy} leftIcon={<Printer className="size-4" />} onClick={printPdf}>{t('clinical.summary.printPdf', { defaultValue: 'Imprimer la fiche (PDF)' })}</Button>}{!(referenceFromApi() && !isDemo) && <Button size="sm" variant="outline" leftIcon={<Printer className="size-4" />} onClick={() => printHtml(reportHtml)}>{t('clinical.summary.print')}</Button>}</div>}>
           <p className="text-xs text-muted-foreground">{t('clinical.summary.hint')}</p>
           <iframe title={t('clinical.summary.title')} sandbox="" srcDoc={reportHtml} className="h-[28rem] w-full rounded-md border border-border bg-white" />
         </Panel>
@@ -347,13 +393,15 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
         }
       />
       {isDemo && <DemoNotice endpoint="/health/consultations" />}
+      {localCopy && dirty && !autoFailed && <p role="status" className="mb-3 rounded-md bg-info-soft px-3 py-2 text-sm">{t('clinical.save.restored')}</p>}
       {previewing && <p role="status" className="mb-3 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning-ink">{t('clinical.status.previewBanner')}</p>}
       <div className="mb-3 space-y-2">
         <AllergyAlert antecedents={draft.antecedents} />
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <span className={dirty ? 'font-medium text-warning-ink' : 'text-muted-foreground'} role="status">
-            {locked ? t('clinical.save.locked') : dirty ? (isDemo ? t('clinical.save.dirtyDemo') : autoCapable && !autoFailed ? t('clinical.save.autoPending') : t('clinical.save.dirty')) : lastAuto ? t('clinical.save.autoDone', { when: f.dateTime(lastAuto.toISOString()) }) : t('clinical.save.clean')}
+            {locked ? t('clinical.save.locked') : dirty ? (isDemo ? t('clinical.save.dirtyDemo') : autoCapable && !autoFailed ? t('clinical.save.localPending') : t('clinical.save.dirty')) : lastAuto ? t('clinical.save.autoDone', { when: f.dateTime(lastAuto.toISOString()) }) : t('clinical.save.clean')}
           </span>
+          {autoFailed && autoError && !locked && <span role="alert" className="text-danger-ink">{autoError}</span>}
           <div className="flex min-w-40 flex-1 items-center gap-2" aria-label={t('clinical.progress', { percent })}>
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted"><div className="h-full bg-primary transition-all" style={{ width: `${percent}%` }} /></div>
             <span className="tabular-nums text-muted-foreground">{percent}%</span>

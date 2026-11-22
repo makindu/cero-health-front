@@ -85,3 +85,22 @@ export const adaptiveNormalizer: ResponseNormalizer = (body, context) => {
   // Tableau brut, objet métier brut ou { success: true, user, ... } : renvoyé tel quel.
   return { data: body, meta: null };
 };
+
+/**
+ * API CERO HEALTH (Laravel) : ressources renvoyées telles quelles — { data } pour un élément,
+ * { data: [...], links, meta } pour une liste paginée — et erreurs { success: false, code, message }
+ * ou { message, errors } (422). Les réponses de succès sans enveloppe sont acceptées.
+ */
+export const resourceNormalizer: ResponseNormalizer = (body, context) => {
+  if (isRecord(body)) {
+    if (body.success === false) throw failure(body, context);
+    if ('data' in body) {
+      return {
+        data: body.data,
+        message: typeof body.message === 'string' ? body.message : undefined,
+        meta: toPageMeta(body.meta) ?? toPageMeta(body),
+      };
+    }
+  }
+  return { data: body, meta: null };
+};

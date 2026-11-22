@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/ui/badge';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
+import { referenceFromApi } from '../_shared/reference-data';
 import { LocalOnly } from '../finance/LocalOnly';
 import type { LabStatus } from './lab-rules';
 import type { LabOrderView } from './lab-service';
@@ -44,13 +45,14 @@ function LaboratoryScreen() {
     return (orders.data ?? []).filter((v) => (!status || v.order.status === status) && (!q || `${v.order.patientName} ${v.order.number}`.toLowerCase().includes(q)));
   }, [orders.data, search, status]);
 
+  const apiMode = referenceFromApi();
   const columns: Column<LabOrderView>[] = [
     { id: 'number', header: t('columns.number'), cell: (v) => v.order.number },
     { id: 'requestedAt', header: t('columns.requestedAt'), cell: (v) => f.dateTime(v.order.requestedAt) },
     { id: 'patientName', header: t('columns.patient'), cell: (v) => <PersonName name={v.order.patientName} />, primary: true },
     { id: 'tests', header: t('columns.tests'), cell: (v) => v.order.tests.map((x) => x.label).join(', ') },
     { id: 'priority', header: t('columns.priority'), cell: (v) => <StatusBadge tone={v.order.priority === 'urgent' ? 'danger' : 'neutral'}>{t(`priority.${v.order.priority}`)}</StatusBadge> },
-    { id: 'payment', header: t('columns.payment'), cell: (v) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`)}</StatusBadge> },
+    ...(apiMode ? [] : [{ id: 'payment', header: t('columns.payment'), cell: (v: LabOrderView) => <StatusBadge tone={v.paymentCleared ? 'success' : 'warning'}>{t(`payment.${v.paymentState}`)}</StatusBadge> }]),
     { id: 'status', header: t('columns.status'), cell: (v) => <LabStatusBadge status={v.order.status} /> },
     { id: 'open', header: '', cell: (v) => <Button size="sm" variant="outline" onClick={() => setOpenId(v.order.id)}>{t('actions.open')}</Button> },
   ];
@@ -72,7 +74,7 @@ function LaboratoryScreen() {
         loading={orders.isPending} error={orders.error} onRetry={() => void orders.refetch()} emptyTitle={t('empty')} emptyDescription={t('emptyHint')}
         pagination={{ page, perPage: PER_PAGE, total: rows.length, onPageChange: setPage }} />
         </>) },
-        { id: 'catalog', label: t('tabs.catalog'), content: <CatalogManager category="laboratory" /> },
+        ...(apiMode ? [] : [{ id: 'catalog', label: t('tabs.catalog'), content: <CatalogManager category="laboratory" /> }]),
       ]} />
       {creating && <NewLabOrderDialog onClose={() => setCreating(false)} onCreated={(v) => { setCreating(false); setOpenId(v.order.id); }} />}
       {openId && <LabOrderDetail view={orders.data?.find((v) => v.order.id === openId)} onClose={() => setOpenId(null)} />}

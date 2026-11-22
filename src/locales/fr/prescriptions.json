@@ -21,6 +21,7 @@
     "status": "Statut",
     "allStatuses": "Tous les statuts"
   },
+  "drugSource": {"catalog": "Pharmacie", "prescribed": "Déjà prescrit"},
   "create": {
     "button": "Nouvelle prescription",
     "title": "Rédiger une prescription",
@@ -35,6 +36,9 @@
     "consultation": "Consultation (optionnel)",
     "consultationHint": "Identifiant de la consultation d’origine",
     "note": "Note",
+    "drugNoMatch": "Aucun médicament trouvé.",
+    "addDrug": "Ajouter « {{label}} » comme nouveau médicament",
+    "addDrugFailed": "Ajout impossible.",
     "drugPlaceholder": "Tapez le nom du médicament…"
   },
   "fields": {

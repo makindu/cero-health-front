@@ -5,9 +5,10 @@ import { queryKeys } from '@/core/api/query-client';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { describeBusinessError } from '../_shared/business-error';
 import { FINANCE_AVAILABLE } from '../finance/use-finance';
+import { referenceFromApi } from '../_shared/reference-data';
 import { rx } from './rx';
 
-export const RX_AVAILABLE = FINANCE_AVAILABLE;
+export const RX_AVAILABLE = FINANCE_AVAILABLE || referenceFromApi();
 
 export function useRxList() {
   const { activeFacilityId } = usePreferences();

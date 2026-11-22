@@ -7,6 +7,8 @@ import { FormField } from '@/components/forms/form-field';
 import { DateField, Input, Select, Textarea } from '@/components/forms/controls';
 import { DraftNotice } from '@/components/feedback/draft-notice';
 import { usePersistentState } from '@/core/drafts/use-persistent-state';
+import { referenceFromApi } from '../_shared/reference-data';
+import { wardLabel } from './ward';
 import { hospital } from './hospital';
 import type { Admission } from './hospital-rules';
 import type { BedView } from './hospital-service';
@@ -28,7 +30,7 @@ export function AdmitDialog({ bedId, initialPatientId, consultationId, onClose, 
   const setConsult = (consult: string): void => setForm((f) => ({ ...f, consult }));
   const admit = useHospitalMutation(hospital.admit, { successTitle: t('done.admit'), onDone: (a) => { draft.clear(); onDone(a); } });
   const free = (board.data?.beds ?? []).filter((b: BedView) => b.bed.status === 'free');
-  const ready = patientId !== '' && bed !== '' && reason.trim() !== '';
+  const ready = patientId !== '' && bed !== '' && reason.trim() !== '' && (!referenceFromApi() || attending.trim() !== '');
   return (
     <Dialog open onClose={onClose} title={t('create.title')} description={t('create.description')}
       footer={<>
@@ -46,12 +48,12 @@ export function AdmitDialog({ bedId, initialPatientId, consultationId, onClose, 
           {(c) => (
             <Select {...c} value={bed} onChange={(e) => setBed(e.target.value)}>
               <option value="">{t('create.chooseBed')}</option>
-              {free.map((b) => <option key={b.bed.id} value={b.bed.id}>{b.bed.label} — {t(`services.${b.room.ward}`)} · {t(`roomKind.${b.room.kind}`)}</option>)}
+              {free.map((b) => <option key={b.bed.id} value={b.bed.id}>{b.bed.label} — {wardLabel(t, b.room.ward)} · {t(`roomKind.${b.room.kind}`)}</option>)}
             </Select>
           )}
         </FormField>
         <div className="grid gap-3 sm:grid-cols-2">
-          <FormField label={t('create.attending')} hint={t('create.attendingOptional')}>{(c) => <PractitionerCombobox {...c} defaultValue={attending} onValueChange={setAttending} />}</FormField>
+          <FormField label={t('create.attending')} hint={referenceFromApi() ? t('create.attendingRequired', { defaultValue: 'Choisissez un médecin dans la liste.' }) : t('create.attendingOptional')} required={referenceFromApi()}>{(c) => <PractitionerCombobox {...c} defaultValue={attending} onValueChange={setAttending} />}</FormField>
           <FormField label={t('columns.expectedDischarge')}>{(c) => <DateField {...c} value={expected} onChange={(e) => setExpected(e.target.value)} />}</FormField>
         </div>
         <FormField label={t('create.reason')} required>{(c) => <Textarea {...c} rows={2} value={reason} onChange={(e) => setReason(e.target.value)} />}</FormField>

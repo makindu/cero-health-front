@@ -84,12 +84,20 @@
     "start-triage": "Start triage",
     "send-to-care": "Send to care",
     "transfer": "Transfer",
-    "discharge": "Close (discharged)"
+    "discharge": "Close (discharged)",
+    "start-short": "Start"
   },
   "confirmTitles": {
     "start-triage": "Start triage for this patient?",
     "send-to-care": "Send this patient to care?",
     "transfer": "Mark this patient as transferred?",
     "discharge": "Close this visit (discharged)?"
+  },
+  "sendToDoctor": {
+    "button": "Send to a doctor",
+    "title": "Choose the doctor",
+    "hint": "Triage for {{name}} is done. Choose the doctor who will see them: the patient will join that doctor's queue.",
+    "submit": "Send to doctor",
+    "doctor": "Doctor"
   }
 }

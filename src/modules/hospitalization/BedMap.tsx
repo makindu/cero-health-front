@@ -6,8 +6,8 @@ import { ErrorState } from '@/components/feedback/error-state';
 import { Skeleton } from '@/components/feedback/spinner';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SearchInput } from '@/components/forms/search-input';
 import { Dialog } from '@/components/ui/dialog';
-import { StatCard, StatGrid } from '@/components/ui/stat-card';
 import { HEALTH_ENDPOINTS } from '@/core/api/contracts/health-endpoints';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
@@ -34,6 +34,7 @@ export function BedMap() {
   const { t } = useTranslation('hospitalization');
   const [selected, setSelected] = useState<Bed | null>(null);
   const [assigning, setAssigning] = useState<Bed | null>(null);
+  const [q, setQ] = useState('');
   const list = useResourceList('beds', bedService, { page: 1, perPage: 300, search: '', filters: {}, sort: null });
 
   // Contrat cible : POST /health/beds/{id}/assign (voir docs/API_CONTRACTS_NEEDED.md).
@@ -53,19 +54,24 @@ export function BedMap() {
   if (beds.length === 0) return <EmptyState title={t('beds.empty')} />;
 
   const count = (status: BedStatus) => beds.filter((b) => b.status === status).length;
+  // Recherche rapide : lit, chambre, service, statut ou patient.
+  const needle = q.trim().toLowerCase();
+  const visible = needle === '' ? beds : beds.filter((b) => [b.label, b.room, t(`services.${b.ward}`), t(`bedStatus.${b.status}`), b.patientName ?? ''].join(' ').toLowerCase().includes(needle));
 
   return (
     <div>
       {list.data?.isDemo && <DemoNotice endpoint={bedService.endpoint} />}
-      <StatGrid>
-        {STATUSES.map((status) => (
-          <StatCard key={status} icon={STATUS[status].icon} tone={STATUS[status].tone} label={t(`bedStatus.${status}`)} value={count(status)} />
-        ))}
-      </StatGrid>
-
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {STATUSES.map((status) => {
+          const Icon = STATUS[status].icon;
+          return <span key={status} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-sm"><Icon aria-hidden className="size-4" /><span className="text-muted-foreground">{t(`bedStatus.${status}`)}</span><strong>{count(status)}</strong></span>;
+        })}
+        <div className="ms-auto w-full sm:w-72"><SearchInput label={t('search')} placeholder={t('beds.searchPlaceholder', { defaultValue: 'Rechercher…' })} value={q} onChange={setQ} /></div>
+      </div>
+      {needle !== '' && visible.length === 0 && <EmptyState title={t('beds.noMatch', { defaultValue: 'Aucun lit ne correspond à la recherche.' })} />}
       <div className="space-y-6">
         {WARDS.map((ward) => {
-          const wardBeds = beds.filter((b) => b.ward === ward);
+          const wardBeds = visible.filter((b) => b.ward === ward);
           if (wardBeds.length === 0) return null;
           const rooms = [...new Set(wardBeds.map((b) => b.room))];
           return (
@@ -73,16 +79,16 @@ export function BedMap() {
               <h3 id={`ward-${ward}`} className="mb-3 text-base font-semibold">
                 {t(`services.${ward}`)}
                 <span className="ms-2 text-sm font-normal text-muted-foreground">
-                  {t('beds.occupancy', { occupied: wardBeds.filter((b) => b.status === 'occupied').length, total: wardBeds.length })}
+                  {t('beds.occupancy', { occupied: beds.filter((b) => b.ward === ward && b.status === 'occupied').length, total: beds.filter((b) => b.ward === ward).length })}
                 </span>
               </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,16rem),1fr))]">
                 {rooms.map((room) => (
-                  <div key={room}>
+                  <div key={room} className="min-w-0">
                     <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {t('beds.room', { room })}
                     </p>
-                    <ul className="grid grid-cols-3 gap-2">
+                    <ul className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(min(100%,7.5rem),1fr))]">
                       {wardBeds
                         .filter((b) => b.room === room)
                         .map((bed) => {
@@ -94,13 +100,14 @@ export function BedMap() {
                                 type="button"
                                 onClick={() => setSelected(bed)}
                                 className={cn(
-                                  'flex w-full flex-col items-center gap-1 rounded-md border-2 bg-surface p-2 text-center text-xs transition-colors hover:bg-surface-muted',
+                                  'flex h-full w-full min-w-0 flex-col items-center gap-1 rounded-md border-2 bg-surface p-3 text-center text-xs transition-colors hover:bg-surface-muted',
                                   style.ring,
                                 )}
                               >
                                 <Icon aria-hidden className="size-5" />
-                                <span className="font-semibold">{bed.label}</span>
-                                <span className="text-muted-foreground">{t(`bedStatus.${bed.status}`)}</span>
+                                <span className="max-w-full break-words font-semibold">{bed.label}</span>
+                                <span className="max-w-full break-words text-muted-foreground">{t(`bedStatus.${bed.status}`)}</span>
+                                {bed.patientName && <span className="max-w-full break-words leading-snug">{bed.patientName}</span>}
                               </button>
                             </li>
                           );
