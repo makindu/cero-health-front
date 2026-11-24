@@ -2,8 +2,10 @@ import type { CatalogItem, ServiceCategory } from '@/core/pricing/types';
 
 /** Catégories gérées par le formulaire de catalogue (médicaments / examens de laboratoire). */
 export type ManagedCategory = Extract<ServiceCategory, 'pharmacy' | 'laboratory'>;
+/** Catégories dont le catalogue se gère ici : médicaments, examens, et prestations (actes sans stock). */
+export type CatalogCategory = ManagedCategory | 'procedure';
 
-export const CODE_PREFIX: Record<ManagedCategory, string> = { pharmacy: 'PHA', laboratory: 'LAB' };
+export const CODE_PREFIX: Record<CatalogCategory, string> = { pharmacy: 'PHA', laboratory: 'LAB', procedure: 'SRV' };
 export const CODE_PATTERN = /^[A-Z0-9-]{2,20}$/;
 
 export type CatalogProblem = 'codeInvalid' | 'codeTaken' | 'labelLength' | 'labelTaken' | 'priceInvalid';
@@ -17,7 +19,7 @@ export function parsePrice(text: string): number | null {
 }
 
 /** Prochain code libre : PHA-001, PHA-002… (ignore les codes de forme différente). */
-export function suggestCode(category: ManagedCategory, existing: ReadonlyArray<Pick<CatalogItem, 'code'>>): string {
+export function suggestCode(category: CatalogCategory, existing: ReadonlyArray<Pick<CatalogItem, 'code'>>): string {
   const prefix = CODE_PREFIX[category];
   const re = new RegExp(`^${prefix}-(\\d+)$`);
   const max = existing.reduce((m, i) => Math.max(m, Number(re.exec(i.code)?.[1] ?? 0)), 0);
@@ -35,7 +37,7 @@ const norm = labelKey;
 
 /** Contrôles d'une saisie ; `selfId` exclut la ligne en cours de modification. */
 export function checkCatalogDraft(
-  draft: { code: string; label: string; price: string; category: ManagedCategory },
+  draft: { code: string; label: string; price: string; category: CatalogCategory },
   existing: ReadonlyArray<Pick<CatalogItem, 'id' | 'code' | 'label' | 'category'>>,
   selfId?: string,
 ): CatalogProblem[] {

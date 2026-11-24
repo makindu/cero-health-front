@@ -21,5 +21,20 @@ export function describeBusinessError(t: TFunction, error: unknown): string | nu
   if (error instanceof BusinessRuleError) return t(`business.${error.message}`, error.params);
   if (error instanceof ApiError && error.code === 'local_forbidden') return error.message;
   if (error instanceof ApiError && error.code === 'local_unsupported') return error.message;
+  // Panne ou refus technique : on dit la vraie cause plutôt que « vérifiez les informations ».
+  if (error instanceof ApiError) {
+    switch (error.kind) {
+      case 'network': return t('module.errNetwork');
+      case 'timeout': return t('module.errTimeout');
+      case 'server': return t('module.errServer');
+      case 'rate_limited': return t('module.errRateLimited');
+      case 'forbidden': return t('module.errForbidden');
+      default: {
+        // Refus de validation du serveur (ex. « Un service porte déjà ce nom. ») : on montre sa raison, pas un message vague.
+        const first = Object.values(error.fieldErrors ?? {}).flat().find((m) => typeof m === 'string' && m.trim() !== '');
+        return first ?? null;
+      }
+    }
+  }
   return null;
 }

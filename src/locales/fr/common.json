@@ -38,7 +38,8 @@
     "audit": "Audit",
     "insurance": "Assurances et tarifs",
     "patientFlowBoard": "Suivi des patients",
-    "messages": "Messagerie"
+    "messages": "Messagerie",
+    "expenses": "Dépenses"
   },
   "actions": {
     "save": "Enregistrer",
@@ -254,7 +255,16 @@
     "patientSearchPlaceholder": "Tapez un nom, un numéro de dossier…",
     "itemNoMatch": "Aucun résultat. Vérifiez l’orthographe ou le code.",
     "itemSearchPlaceholder": "Tapez un nom ou un code…",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "errNetwork": "Le serveur est injoignable. Vos informations sont conservées : réessayez dès que la connexion est rétablie.",
+    "errTimeout": "Le serveur met trop de temps à répondre. Réessayez dans un instant ; aucun doublon ne sera créé.",
+    "errServer": "Le serveur a rencontré une erreur. Réessayez ; si elle persiste, contactez le support.",
+    "errRateLimited": "Trop de demandes en peu de temps. Patientez quelques secondes puis réessayez.",
+    "errForbidden": "Vous n’avez pas la permission d’effectuer cette action.",
+    "notConnected": {
+      "title": "Pas encore relié au serveur",
+      "description": "Cette partie n’est pas encore disponible avec le serveur CERO HEALTH. Aucune donnée fictive n’est affichée."
+    }
   },
   "sex": {
     "F": "Féminin",
@@ -595,5 +605,18 @@
     "onHint": "Temps réel actif : les écrans se mettent à jour seuls.",
     "connecting": "Connexion…",
     "connectingHint": "Connexion au temps réel en cours."
+  },
+  "connection": {
+    "lostText": "Ce que vous saisissez reste sur cet appareil. Réessayez l'enregistrement quand la connexion revient.",
+    "backTitle": "Connexion rétablie",
+    "backText": "Les écrans se mettent à jour.",
+    "browser": "Cet ordinateur n'est plus connecté au réseau.",
+    "server": {
+      "health": "Le serveur HEALTH ne répond pas.",
+      "idCore": "Le serveur d'identité (CERO ID) ne répond pas.",
+      "uzisha": "Le serveur UZISHA (facturation, stock) ne répond pas."
+    },
+    "unavailable": "Connexion indisponible",
+    "unavailableText": "Les données s'afficheront automatiquement dès que la connexion sera rétablie."
   }
 }

@@ -4,7 +4,7 @@
  * Règle de confidentialité : un e-mail ne contient JAMAIS de données cliniques (résultats, diagnostic) — il invite à venir les retirer.
  */
 export type MailKind = 'appointment' | 'unpaidInvoices' | 'labResult' | 'free';
-export type MailStatus = 'queued' | 'handedOff' | 'cancelled';
+export type MailStatus = 'queued' | 'handedOff' | 'sent' | 'failed' | 'cancelled';
 export const MAIL_KINDS: readonly MailKind[] = ['appointment', 'unpaidInvoices', 'labResult', 'free'];
 
 export interface OutboxMail {
@@ -21,6 +21,9 @@ export interface OutboxMail {
   /** Rappel programmé : date d'envoi souhaitée (le serveur l'enverra ; en mode local l'utilisateur le voit « à envoyer »). */
   scheduledFor?: string;
   handedOffAt?: string;
+  /** Avec le serveur : date d'envoi réel et cause d'un échec (le message reste en file, renvoyable). */
+  sentAt?: string;
+  errorCode?: string;
   /** Source (rendez-vous, examen…) : évite de mettre deux fois le même rappel en file. */
   sourceRef?: string;
 }

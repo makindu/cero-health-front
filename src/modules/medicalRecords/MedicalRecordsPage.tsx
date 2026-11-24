@@ -14,6 +14,8 @@ import { recordService, type Completeness, type MedicalRecord, type RecordStatus
 import { PersonName } from '@/components/ui/avatar';
 import { RecordContentDialog, RecordCounts } from './RecordContentDialog';
 import { actionsFor } from './record-rules';
+import { referenceFromApi } from '../_shared/reference-data';
+import { RecordsApiScreen } from './RecordsApiScreen';
 
 const STATUS: Record<RecordStatus, { tone: StatusTone; icon: typeof Ban }> = {
   active: { tone: 'success', icon: CircleCheck },
@@ -26,7 +28,12 @@ const COMPLETENESS: Record<Completeness, { tone: StatusTone; icon: typeof Ban }>
   incomplete: { tone: 'danger', icon: Ban },
 };
 
+/** Serveur branché : écran API ; sinon les dossiers locaux de démonstration. */
 export default function MedicalRecordsPage() {
+  return referenceFromApi() ? <RecordsApiScreen /> : <MedicalRecordsLocalPage />;
+}
+
+function MedicalRecordsLocalPage() {
   const { t } = useTranslation('medicalRecords');
   const f = useFormatters();
   const [params] = useSearchParams();

@@ -4,7 +4,6 @@
   "tabs": {
     "facility": "Établissement",
     "users": "Personnel",
-    "roles": "Rôles et permissions",
     "services": "Services"
   },
   "facility": {
@@ -25,7 +24,20 @@
     "timeZoneHint": "Ex. Africa/Lubumbashi",
     "currency": "Devise",
     "currencyHint": "Code ISO 4217, ex. USD ou CDF",
-    "save": "Enregistrer les paramètres"
+    "save": "Enregistrer les paramètres",
+    "viewTitle": "Fiche de l’établissement",
+    "viewDescription": "Informations de l’établissement actif. Lecture seule.",
+    "managedByIdCore": "La modification de l’établissement se fait uniquement dans CERO ID.",
+    "contact": "Coordonnées",
+    "legal": "Identification légale",
+    "social": "Réseaux sociaux",
+    "website": "Site web",
+    "rccm": "RCCM",
+    "nationalId": "Identification nationale",
+    "taxNumber": "Numéro d’impôt",
+    "authorization": "Autorisation de fonctionnement",
+    "logoAlt": "Logo de {{name}}",
+    "unavailable": "Les informations de l’établissement ne sont pas disponibles pour le moment."
   },
   "users": {
     "name": "Nom",
@@ -53,7 +65,15 @@
     "suspendTitle": "Suspendre ce membre du personnel ?",
     "suspendBody": "Il ne sera plus proposé dans les listes de médecins. Son historique est conservé.",
     "reactivate": "Réactiver",
-    "reactivateTitle": "Réactiver ce membre du personnel ?"
+    "reactivateTitle": "Réactiver ce membre du personnel ?",
+    "edit": "Modifier",
+    "createProfile": "Créer le profil",
+    "editTitle": "Modifier le profil du personnel",
+    "createTitle": "Créer le profil du personnel",
+    "saved": "Profil enregistré.",
+    "pickAccount": "Choisir un compte",
+    "pickType": "Choisir une fonction",
+    "noCandidates": "Tous les membres ont déjà un profil. Ajoutez d’abord la personne dans le portail CERO ID."
   },
   "roles": {
     "note": "Proposition de rôles types, à valider avec CERO ID CORE. Les codes de permission sont réels ; l'attribution aux rôles est illustrative et n'est pas appliquée.",
@@ -85,7 +105,8 @@
       "inventory": "Stocks",
       "reports": "Rapports",
       "administration": "Administration",
-      "audit": "Audit"
+      "audit": "Audit",
+      "expenses": "Dépenses"
     },
     "permissions": {
       "dashboard": {
@@ -193,6 +214,12 @@
       },
       "audit": {
         "view": "Consulter le journal d’audit"
+      },
+      "expenses": {
+        "view": "Consulter les dépenses",
+        "create": "Enregistrer une dépense",
+        "validate": "Valider une dépense",
+        "cancel": "Annuler une dépense"
       }
     },
     "reset": "Rétablir"
@@ -218,7 +245,13 @@
       "inpatient": "Hospitalisation",
       "surgery": "Chirurgie",
       "other": "Autre"
-    }
+    },
+    "addType": "Ajouter un type",
+    "newTypeLabel": "Nom du nouveau type",
+    "newTypePlaceholder": "Ex. Dialyse",
+    "addTypeConfirm": "Ajouter",
+    "addTypeCancel": "Annuler",
+    "addTypeError": "Impossible d’ajouter ce type. Réessayez."
   },
   "serviceNames": {
     "generalMedicine": "Médecine générale",
@@ -226,5 +259,50 @@
     "maternity": "Maternité",
     "emergency": "Urgences",
     "surgery": "Chirurgie"
+  },
+  "staff": {
+    "type": "Fonction",
+    "account": "Compte de l’établissement",
+    "accountHint": "Seuls les membres sans profil de personnel sont proposés. Ajoutez d’abord la personne dans le portail CERO ID.",
+    "title": "Titre professionnel",
+    "managedByIdCore": "Les comptes et les accès se gèrent dans le portail CERO ID. Ici, vous décrivez la fonction de la personne dans l’établissement.",
+    "types": {
+      "doctor": "Médecin",
+      "nurse": "Infirmier(ère)",
+      "midwife": "Sage-femme",
+      "lab_technician": "Technicien de laboratoire",
+      "pharmacist": "Pharmacien(ne)",
+      "receptionist": "Réceptionniste",
+      "cashier": "Caissier(ère)",
+      "administrator": "Administrateur",
+      "other": "Autre"
+    },
+    "noProfile": "Sans profil HEALTH",
+    "owner": "Propriétaire"
+  },
+  "functions": {
+    "manage": "Fonctions",
+    "title": "Fonctions du personnel",
+    "hint": "Ajoutez les fonctions propres à votre établissement. Chacune se comporte comme l’une des fonctions standard.",
+    "standard": "Fonctions standard",
+    "custom": "Fonctions de l’établissement",
+    "empty": "Aucune fonction ajoutée pour l’instant.",
+    "label": "Nom de la fonction",
+    "baseType": "Se comporte comme",
+    "baseTypeHint": "Décide des droits métier : « Médecin » pour apparaître dans les listes de médecins, etc.",
+    "add": "Ajouter",
+    "added": "Fonction ajoutée.",
+    "deleted": "Fonction supprimée.",
+    "delete": "Supprimer",
+    "inUse": "utilisée : {{count}}",
+    "inUseHint": "Utilisée par du personnel : changez d’abord leur fonction.",
+    "suggested": "Fonctions courantes",
+    "suggestedHint": "Cochez celles dont vous avez besoin, vous pourrez en ajouter d’autres ensuite.",
+    "allAdded": "Toutes les fonctions courantes sont déjà ajoutées.",
+    "selectAll": "Tout cocher",
+    "selectNone": "Tout décocher",
+    "addSelected": "Ajouter la sélection ({{count}})",
+    "close": "Fermer",
+    "addTitle": "Ajouter une fonction"
   }
 }

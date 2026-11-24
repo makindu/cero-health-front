@@ -489,7 +489,8 @@
       "addExtra": "Ongeza kipimo cha mauzo",
       "derived": "Kipimo “{{unit}}” = {{perUnit}} ya {{product}}",
       "editViaProduct": "Hariri kupitia bidhaa kuu"
-    }
+    },
+    "noCurrency": "Hakuna sarafu ya malipo iliyowekwa kwa kituo hiki, kwa hiyo bei haziwezi kuonyeshwa. Weka sarafu kwenye malipo."
   },
   "group": {
     "title": "Malipo ya pamoja ya ankara",
@@ -581,6 +582,114 @@
       "priceInvalid": "Mstari {{row}}: bei “{{value}}” si sahihi (nambari chanya, desimali 2 kwa juu).",
       "activeInvalid": "Mstari {{row}}: hali “{{value}}” haieleweki (ndiyo / hapana).",
       "duplicateInFile": "Mstari {{row}}: “{{value}}” tayari limeonekana juu kwenye faili."
+    },
+    "drop": {
+      "title": "Buruta faili yako ya Excel hapa",
+      "browse": "au bofya kuvinjari",
+      "hint": "Faili za .xlsx pekee",
+      "change": "Badilisha faili"
+    }
+  },
+  "patientApi": {
+    "noAccess": "Huna ruhusa ya kuona malipo ya mgonjwa huyu.",
+    "balance": "Deni lililobaki",
+    "nothingDue": "Hakuna cha kulipa.",
+    "invoices": "Ankara za mgonjwa",
+    "noInvoice": "Hakuna ankara kwa mgonjwa huyu",
+    "coverages": "Bima",
+    "noCoverage": "Hakuna bima.",
+    "until": "hadi {{date}}",
+    "coverageStatus": {
+      "active": "Inatumika",
+      "approved": "Imekubaliwa",
+      "pending": "Inasubiri",
+      "rejected": "Imekataliwa",
+      "expired": "Imekwisha",
+      "suspended": "Imesimamishwa"
+    }
+  },
+  "pharmacyImport": {
+    "title": "Ingiza dawa, bei na vipimo vyake",
+    "help": "Ongeza dawa mpya na usasishe bei, majina, hali na vipimo vya kuuza (boksi, kadi, kidonge…) vya zilizopo. Makundi ya hifadhi (lots) hayaingizwi. Kila kitu hukaguliwa na kuonyeshwa kabla ya kuhifadhi: kosa moja huzuia uingizaji.",
+    "columns": "Safu: Code (si lazima — huundwa ikikosekana), Name, Price ya kipimo kikuu (lazima kwa dawa mpya), Active (ndiyo/hapana), kisha ufungashaji: Unit (mf. boksi), Base unit (mf. kidonge) na Content (idadi ya vipimo vya msingi katika kipimo kikuu). Hadi vipimo {{max}} vingine vya kuuza: Sub-unit 1, Content 1, Price 1, Sub-unit 2… Seli tupu ya ufungashaji huhifadhi ufungashaji wa sasa; mstari ambao code au jina lipo tayari husasisha dawa hiyo, na vipimo vidogo visivyo kwenye faili huhifadhiwa.",
+    "templateFile": "kiolezo-cha-dawa",
+    "templateSheet": "Dawa",
+    "done": "Orodha ya dawa imesasishwa",
+    "yes": "ndiyo",
+    "header": {
+      "code": "Code",
+      "label": "Name",
+      "price": "Price",
+      "active": "Active",
+      "unit": "Unit",
+      "baseUnit": "Base unit",
+      "perPack": "Content",
+      "extraUnit": "Sub-unit",
+      "extraContent": "Content",
+      "extraPrice": "Price",
+      "exBox": "Boksi",
+      "exTablet": "Kidonge",
+      "exStrip": "Kadi"
+    },
+    "fatal": {
+      "missingColumns": "Safu hazijapatikana: angalau « Name » (au « Code ») na « Price » zinahitajika. Tumia kiolezo."
+    },
+    "problem": {
+      "itemMissing": "Mstari {{row}}: jina halipo.",
+      "codeInvalid": "Mstari {{row}}: code « {{value}} » si sahihi (herufi kubwa, tarakimu au vistari, 2 hadi 20).",
+      "codeTaken": "Mstari {{row}}: code « {{value}} » tayari inatumiwa na kipimo cha bidhaa nyingine.",
+      "codeMismatch": "Mstari {{row}}: jina hili lipo tayari chini ya code tofauti na « {{value}} ».",
+      "labelLength": "Mstari {{row}}: jina lazima liwe na herufi 2 hadi 120.",
+      "labelTaken": "Mstari {{row}}: « {{value}} » tayari linatumiwa na dawa nyingine.",
+      "priceRequired": "Mstari {{row}}: bei ni lazima kwa « {{value}} ».",
+      "priceInvalid": "Mstari {{row}}: bei « {{value}} » si sahihi (nambari chanya, desimali 2 kwa juu).",
+      "activeInvalid": "Mstari {{row}}: hali « {{value}} » haieleweki (ndiyo / hapana).",
+      "duplicateInFile": "Mstari {{row}}: « {{value}} » imeonekana tayari juu kwenye faili.",
+      "perPackInvalid": "Mstari {{row}}: content « {{value}} » si sahihi (nambari nzima kutoka 1 hadi 100,000).",
+      "packagingLabelsRequired": "Mstari {{row}}: andika unit na base unit wakati content ni zaidi ya 1 (« {{value}} »).",
+      "packagingLabelsDifferent": "Mstari {{row}}: unit na base unit lazima zitofautiane (« {{value}} »).",
+      "extrasNeedPackaging": "Mstari {{row}}: vipimo vidogo vimeandikwa lakini content ya unit ni 1 (« {{value}} »).",
+      "extraInvalid": "Mstari {{row}}: kipimo kidogo « {{value}} » si sahihi (jina lazima, content nzima ndogo kuliko ya kipimo kikuu).",
+      "extraPriceInvalid": "Mstari {{row}}: bei ya kipimo kidogo « {{value}} » si sahihi (nambari chanya, desimali 2 kwa juu).",
+      "extraDuplicate": "Mstari {{row}}: kipimo kidogo « {{value}} » kina jina au content sawa na kipimo kingine cha bidhaa hii."
+    }
+  },
+  "servicesCatalog": {
+    "title": "Huduma",
+    "label": "Jina la huduma",
+    "add": "Ongeza huduma",
+    "addTitle": "Ongeza huduma",
+    "edit": "Hariri huduma",
+    "empty": "Hakuna huduma kwenye orodha.",
+    "hint": "Huduma zinazotozwa (mashauriano, matibabu, kulazwa, picha…) pamoja na bei zake. Vipimo vya maabara na dawa vinasimamiwa kwenye moduli zake.",
+    "noCurrency": "Hakuna sarafu chaguo-msingi: iweke kwenye CERO ID ili uone bei.",
+    "import": {
+      "title": "Ingiza huduma na bei zake",
+      "help": "Ongeza huduma mpya na usasishe bei, majina na hali ya zilizopo. Kila kitu huhakikiwa na kuonyeshwa kabla ya kuhifadhi: kosa moja huzuia uingizaji.",
+      "columns": "Safu: Msimbo (hiari — msimbo SRV-001… huundwa ukikosekana), Huduma, Bei (lazima kwa huduma mpya) na Hai (ndiyo/hapana, hiari). Safu yenye msimbo au jina lililopo husasisha huduma hiyo.",
+      "templateFile": "kiolezo-cha-huduma",
+      "templateSheet": "Huduma",
+      "example": "Mashauriano ya jumla",
+      "done": "Huduma zimeingizwa."
+    }
+  },
+  "labCatalog": {
+    "noCurrency": "Bado hakuna bei iliyowekwa: bei zitaonekana mara uchunguzi unapopata bei.",
+    "example": "Sukari ya damu"
+  },
+  "newArrival": {
+    "badge": "Mpya",
+    "view": "Tazama",
+    "close": "Funga",
+    "none": "Nyongeza hii haihusiani na orodha hii.",
+    "failed": "Imeshindwa kuonyesha nyongeza mpya. Jaribu tena.",
+    "item": {
+      "one": "Bidhaa mpya imeongezwa kwenye orodha",
+      "many": "Bidhaa mpya {{count}} zimeongezwa kwenye orodha"
+    },
+    "lab": {
+      "one": "Kipimo kipya kimeongezwa",
+      "many": "Vipimo vipya {{count}} vimeongezwa"
     }
   }
 }

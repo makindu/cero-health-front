@@ -79,5 +79,6 @@
       "transferred": "Moved to another room",
       "discharged": "Discharged from hospital"
     }
-  }
+  },
+  "noteApi": "The position is deduced from recorded operations (arrival, consultation, laboratory, pharmacy, cashier, hospitalization). It shows where the patient's file stands in the pathway, not where the patient physically is. You only see the steps of the services your rights allow you to read."
 }

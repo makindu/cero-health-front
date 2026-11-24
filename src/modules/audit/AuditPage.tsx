@@ -7,9 +7,16 @@ import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { AUDIT_ACTIONS, AUDIT_RESOURCES, auditService, type AuditEntry } from './data';
 import { PersonName } from '@/components/ui/avatar';
+import { referenceFromApi } from '../_shared/reference-data';
+import { AuditApiScreen } from './AuditApiScreen';
 
 /** Journal d'audit : lecture seule (aucune création ni suppression depuis l'interface). */
+/** Serveur branché : écran API ; sinon le journal de démonstration local. */
 export default function AuditPage() {
+  return referenceFromApi() ? <AuditApiScreen /> : <AuditLocalPage />;
+}
+
+function AuditLocalPage() {
   const { t } = useTranslation('audit');
   const f = useFormatters();
   const outcome = (e: AuditEntry) => (

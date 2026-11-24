@@ -79,5 +79,6 @@
       "transferred": "Changé de chambre",
       "discharged": "Sorti de l’hôpital"
     }
-  }
+  },
+  "noteApi": "La position est déduite des opérations enregistrées (arrivée, consultation, laboratoire, pharmacie, caisse, hospitalisation). Elle indique où en est le dossier du patient dans le circuit, pas où il se trouve physiquement. Vous ne voyez que les étapes des services que vos droits vous permettent de lire."
 }

@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next';
 import type { Column } from '@/components/tables/data-table';
 import { PageHeader } from '@/components/layout/page-header';
 import { StatusBadge } from '@/components/ui/badge';
+import { useAuth } from '@/core/auth/cero-id';
 import { Tabs } from '@/components/ui/tabs';
 import { PERMISSIONS } from '@/core/permissions/permissions';
-import { CommandButton } from '../_shared/command-button';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { SERVICE_KEYS } from '../_shared/demo-people';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { referenceFromApi } from '../_shared/reference-data';
+import { StaffApiScreen } from './StaffApiScreen';
 import { FacilityForm } from './FacilityForm';
-import { RolesMatrix } from './RolesMatrix';
+import { careUnitTypeOptions, createCareUnitType, useCareUnitTypes, useRefreshCareUnitTypes } from './care-unit-types';
+import { ReviewQueue } from '../review/ReviewQueue';
 import { PersonName } from '@/components/ui/avatar';
 import {
   CARE_UNIT_TYPES,
@@ -23,6 +25,11 @@ import {
 } from './data';
 
 function UsersTab() {
+  // API réelle : profils du personnel (/staff-profiles) ; les comptes eux-mêmes restent gérés dans CERO ID.
+  return referenceFromApi() ? <StaffApiScreen /> : <UsersScreen />;
+}
+
+function UsersScreen() {
   const { t } = useTranslation('administration');
   const columns: Column<UserAccount>[] = [
     { id: 'name', header: t('users.name'), cell: (u) => <PersonName name={u.name} />, sortable: true, primary: true },
@@ -53,20 +60,6 @@ function UsersTab() {
         { id: 'service', label: t('users.service'), options: SERVICE_KEYS.map((k) => ({ value: k, label: t(`serviceNames.${k}`) })) },
         { id: 'status', label: t('users.status'), options: [{ value: 'active', label: t('users.statuses.active') }, { value: 'suspended', label: t('users.statuses.suspended') }] },
       ]}
-      create={{
-        permission: PERMISSIONS.administration.manageUsers,
-        buttonLabel: t('users.invite'),
-        title: t('users.inviteTitle'),
-        submitLabel: t('users.inviteSubmit'),
-        fields: [
-          { name: 'name', label: t('users.name'), type: 'text', required: true },
-          { name: 'email', label: t('users.email'), type: 'email' },
-          { name: 'role', label: t('users.role'), type: 'select', required: true, options: ROLE_IDS.map((r) => ({ value: r, label: t(`roles.names.${r}`) })), span: 2 },
-          { name: 'service', label: t('users.service'), type: 'select', hint: t('users.serviceHint'), options: SERVICE_KEYS.map((k) => ({ value: k, label: t(`serviceNames.${k}`) })) },
-          { name: 'specialty', label: t('users.specialty'), type: 'text' },
-          { name: 'registrationNumber', label: t('users.registration'), type: 'text', span: 2 },
-        ],
-      }}
       detailTitle={(u) => u.name}
       renderDetail={(u) => (
         <>
@@ -83,11 +76,6 @@ function UsersTab() {
               ]}
             />
           </DetailSection>
-          <DetailSection title={t('users.actions')}>
-            {u.status === 'active'
-              ? <CommandButton name="users" service={userService} id={u.id} action="suspend" label={t('users.suspend')} permission={PERMISSIONS.administration.manageUsers} confirmTitle={t('users.suspendTitle')} confirmDescription={t('users.suspendBody')} />
-              : <CommandButton name="users" service={userService} id={u.id} action="reactivate" label={t('users.reactivate')} permission={PERMISSIONS.administration.manageUsers} confirmTitle={t('users.reactivateTitle')} />}
-          </DetailSection>
           <p className="mt-4 text-xs text-muted-foreground">{t('users.managedByIdCore')}</p>
         </>
       )}
@@ -97,6 +85,8 @@ function UsersTab() {
 
 function ServicesTab() {
   const { t } = useTranslation('administration');
+  const customTypes = useCareUnitTypes();
+  const refreshTypes = useRefreshCareUnitTypes();
   const columns: Column<HospitalService>[] = [
     { id: 'key', header: t('services.name'), cell: (s) => <span className="font-medium">{s.name || t(`serviceNames.${s.key}`)}</span>, primary: true },
     { id: 'head', header: t('services.head'), cell: (s) => s.head },
@@ -119,7 +109,28 @@ function ServicesTab() {
         fields: referenceFromApi()
           ? [
               { name: 'name', label: t('services.name'), type: 'text', required: true, span: 2 },
-              { name: 'unitType', label: t('services.type'), type: 'select', required: true, options: CARE_UNIT_TYPES.map((k) => ({ value: k, label: t(`services.types.${k}`) })) },
+              {
+                name: 'unitType',
+                label: t('services.type'),
+                type: 'select',
+                required: true,
+                span: 2,
+                options: careUnitTypeOptions(CARE_UNIT_TYPES, (k) => t(`services.types.${k}`), customTypes.data ?? []),
+                // Un type absent de la liste s'ajoute ici même, sans quitter la fenêtre (propre à cet établissement).
+                creatable: {
+                  addLabel: t('services.addType'),
+                  inputLabel: t('services.newTypeLabel'),
+                  placeholder: t('services.newTypePlaceholder'),
+                  confirmLabel: t('services.addTypeConfirm'),
+                  cancelLabel: t('services.addTypeCancel'),
+                  errorMessage: t('services.addTypeError'),
+                  onCreate: async (label) => {
+                    const created = await createCareUnitType(label);
+                    refreshTypes();
+                    return { value: created.code, label: created.label };
+                  },
+                },
+              },
               { name: 'beds', label: t('services.beds'), type: 'number' },
             ]
           : [
@@ -134,18 +145,20 @@ function ServicesTab() {
 
 export default function AdministrationPage() {
   const { t } = useTranslation('administration');
+  const { activeFacility } = useAuth();
   return (
-    <>
+    // key : tout l'écran (onglets, recherche, pages, détail) repart à neuf quand on change d'établissement.
+    <div key={activeFacility?.id ?? 'none'}>
       <PageHeader title={t('title')} description={t('subtitle')} />
       <Tabs
         ariaLabel={t('title')}
         tabs={[
           { id: 'facility', label: t('tabs.facility'), content: <FacilityForm /> },
           { id: 'users', label: t('tabs.users'), content: <UsersTab /> },
-          { id: 'roles', label: t('tabs.roles'), content: <RolesMatrix /> },
           { id: 'services', label: t('tabs.services'), content: <ServicesTab /> },
+          ...(referenceFromApi() ? [{ id: 'review', label: t('tabs.review', { defaultValue: 'À valider' }), content: <ReviewQueue /> }] : []),
         ]}
       />
-    </>
+    </div>
   );
 }

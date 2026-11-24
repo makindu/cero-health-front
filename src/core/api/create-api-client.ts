@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 import { installErrorInterceptor } from './interceptors/error-interceptor';
 import { installRequestInterceptor } from './interceptors/request-interceptor';
+import { isIdempotentCreate, keepKeyAfter, pendingKey, releaseKey, requestId } from './idempotency';
 import type { ResponseNormalizer } from './normalizers';
 import type { ApiResult, ApiSource } from './types';
 
@@ -52,7 +53,19 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
   installErrorInterceptor(instance, source);
 
   async function send<T>(config: AxiosRequestConfig): Promise<ApiResult<T>> {
-    const response = await instance.request<unknown>(config);
+    // Création sans doublon (HEALTH) : même demande sans réponse du serveur = même clé d'idempotence.
+    const rid = source === 'health' && isIdempotentCreate(config.method, config.url) && !(config.headers as Record<string, unknown> | undefined)?.['Idempotency-Key']
+      ? requestId(headers?.()['X-Enterprise-Id'] ?? '', config.url ?? '', config.data)
+      : null;
+    const withKey = rid ? { ...config, headers: { ...(config.headers as object | undefined), 'Idempotency-Key': pendingKey(rid) } } : config;
+    let response;
+    try {
+      response = await instance.request<unknown>(withKey);
+    } catch (error) {
+      if (rid && !keepKeyAfter(error as { status?: number; code?: string })) releaseKey(rid);
+      throw error;
+    }
+    if (rid) releaseKey(rid);
     return normalize(response.data, { source, status: response.status }) as ApiResult<T>;
   }
 

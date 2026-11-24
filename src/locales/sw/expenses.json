@@ -1,0 +1,86 @@
+{
+  "title": "Matumizi",
+  "subtitle": "Matumizi ya kituo, yanayorekodiwa katika hesabu za UZISHA",
+  "columns": {
+    "date": "Tarehe",
+    "account": "Kundi",
+    "unit": "Idara",
+    "motif": "Sababu",
+    "amount": "Kiasi",
+    "status": "Hali",
+    "by": "Aliyeingiza"
+  },
+  "state": {
+    "pending": "Inasubiri uthibitisho",
+    "validated": "Imethibitishwa",
+    "cancelled": "Imefutwa"
+  },
+  "cancelReason": "Imefutwa: {{reason}}",
+  "actions": {
+    "new": "Matumizi mapya",
+    "validate": "Thibitisha",
+    "cancel": "Futa",
+    "close": "Funga"
+  },
+  "totals": {
+    "validated": "Yaliyothibitishwa",
+    "validatedHint": "Yanahesabiwa kwenye salio la kasha",
+    "pending": "Yanayosubiri uthibitisho",
+    "pendingHint": "Hayajahesabiwa bado kwenye salio",
+    "total": "Jumla ya kipindi",
+    "none": "Hakuna matumizi katika kipindi hiki."
+  },
+  "filters": {
+    "from": "Kuanzia",
+    "to": "Hadi",
+    "allStatuses": "Hali zote",
+    "allAccounts": "Makundi yote",
+    "allUnits": "Idara zote",
+    "search": "Sababu ina",
+    "periodInvalid": "Tarehe ya mwisho iko kabla ya tarehe ya kuanza."
+  },
+  "empty": "Hakuna matumizi",
+  "emptyHint": "Badilisha kipindi au vichujio, au rekodi matumizi mapya.",
+  "failed": "Haikuwezekana",
+  "failedHint": "Angalia taarifa kisha ujaribu tena.",
+  "created": "Matumizi yamerekodiwa",
+  "validated": "Matumizi yamethibitishwa",
+  "cancelled": "Matumizi yamefutwa",
+  "errors": {
+    "account": "Chagua kundi.",
+    "amount": "Weka kiasi kinachozidi sifuri.",
+    "amountUnreadable": "Kiasi hakisomeki au kina desimali nyingi.",
+    "motif": "Andika sababu ya matumizi.",
+    "currency": "Hakuna sarafu iliyowekwa kwenye hesabu."
+  },
+  "new": {
+    "title": "Matumizi mapya",
+    "description": "Matumizi yanarekodiwa kwenye hesabu na yanasubiri uthibitisho hadi msimamizi aamue.",
+    "submit": "Rekodi matumizi",
+    "chooseAccount": "Chagua kundi",
+    "noAccount": "Hakuna kundi la matumizi lililowekwa kwenye hesabu.",
+    "unitHint": "Si lazima: idara iliyotumia.",
+    "noUnit": "Hakuna idara",
+    "currency": "Sarafu"
+  },
+  "validate": {
+    "title": "Kuthibitisha matumizi haya?",
+    "description": "{{amount}} — {{account}}. Matumizi yaliyothibitishwa yanahesabiwa kwenye kasha na hayawezi kufutwa tena."
+  },
+  "cancel": {
+    "title": "Kufuta matumizi haya?",
+    "description": "{{amount}} — {{account}}. Yataondolewa kwenye hesabu na hayatahesabiwa tena.",
+    "confirm": "Futa matumizi",
+    "reason": "Sababu ya kufuta",
+    "hint": "Sababu inahifadhiwa kwenye kumbukumbu ya ukaguzi."
+  },
+  "cash": {
+    "title": "Mapato na matumizi ya leo ({{currency}})",
+    "income": "Mapato yaliyopokelewa",
+    "out": "Matumizi yaliyothibitishwa",
+    "outHint": "Matumizi yaliyothibitishwa ya siku",
+    "pending": "Matumizi yanayosubiri",
+    "pendingHint": "Nje ya salio hadi yathibitishwe",
+    "balance": "Salio la siku"
+  }
+}

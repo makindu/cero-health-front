@@ -172,7 +172,9 @@
       "queued": "To send",
       "scheduled": "Scheduled",
       "handedOff": "Handed to mail client",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "sent": "Sent",
+      "failed": "Send failed"
     },
     "source": {
       "appointment": "Appointment",
@@ -209,6 +211,15 @@
         "subject": "Your test results are available",
         "body": "The results of your lab request {{number}} are available. For confidentiality they are not attached: please come to collect them or discuss them with your doctor."
       }
+    },
+    "apiNotice": "Emails are sent from the server to the address on the patient file. A scheduled reminder goes out automatically at the chosen time.",
+    "sendFailed": "Could not send: the message is kept, try again later.",
+    "sent": "Email sent",
+    "retry": "Retry",
+    "dueSource": {
+      "consultation": "Consultation",
+      "lab_order": "Lab test",
+      "dispensation": "Pharmacy"
     }
   }
 }

@@ -172,7 +172,9 @@
       "queued": "Kutuma",
       "scheduled": "Imepangwa",
       "handedOff": "Imekabidhiwa barua pepe",
-      "cancelled": "Imeghairiwa"
+      "cancelled": "Imeghairiwa",
+      "sent": "Imetumwa",
+      "failed": "Imeshindwa kutuma"
     },
     "source": {
       "appointment": "Miadi",
@@ -209,6 +211,15 @@
         "subject": "Matokeo ya vipimo vyako yapo",
         "body": "Matokeo ya ombi lako la vipimo {{number}} yapo. Kwa usiri hayajaambatanishwa: tafadhali yachukue au zungumza na daktari wako."
       }
+    },
+    "apiNotice": "Barua pepe hutumwa na seva kwa anwani ya faili la mgonjwa. Ukumbusho uliopangwa hutumwa kiotomatiki kwa wakati uliochaguliwa.",
+    "sendFailed": "Imeshindwa kutuma: ujumbe umehifadhiwa, jaribu tena baadaye.",
+    "sent": "Barua pepe imetumwa",
+    "retry": "Jaribu tena",
+    "dueSource": {
+      "consultation": "Mashauriano",
+      "lab_order": "Kipimo",
+      "dispensation": "Famasia"
     }
   }
 }

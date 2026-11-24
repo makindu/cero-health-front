@@ -38,7 +38,8 @@
     "audit": "Audit",
     "insurance": "Insurance and tariffs",
     "patientFlowBoard": "Patient tracking",
-    "messages": "Messages"
+    "messages": "Messages",
+    "expenses": "Expenses"
   },
   "actions": {
     "save": "Save",
@@ -254,7 +255,16 @@
     "patientSearchPlaceholder": "Type a name or file number…",
     "itemNoMatch": "No result. Check the spelling or the code.",
     "itemSearchPlaceholder": "Type a name or code…",
-    "remove": "Remove"
+    "remove": "Remove",
+    "errNetwork": "The server cannot be reached. Your entries are kept: try again once the connection is back.",
+    "errTimeout": "The server is taking too long to answer. Try again shortly; no duplicate will be created.",
+    "errServer": "The server hit an error. Try again; if it persists, contact support.",
+    "errRateLimited": "Too many requests in a short time. Wait a few seconds and try again.",
+    "errForbidden": "You do not have permission to do this.",
+    "notConnected": {
+      "title": "Not connected to the server yet",
+      "description": "This part is not yet available with the CERO HEALTH server. No sample data is shown."
+    }
   },
   "sex": {
     "F": "Female",
@@ -595,5 +605,18 @@
     "onHint": "Real time is on: screens update by themselves.",
     "connecting": "Connecting…",
     "connectingHint": "Connecting to real time."
+  },
+  "connection": {
+    "lostText": "What you type stays on this device. Try saving again once the connection is back.",
+    "backTitle": "Connection restored",
+    "backText": "Screens are updating.",
+    "browser": "This computer is no longer connected to the network.",
+    "server": {
+      "health": "The HEALTH server is not responding.",
+      "idCore": "The identity server (CERO ID) is not responding.",
+      "uzisha": "The UZISHA server (billing, stock) is not responding."
+    },
+    "unavailable": "Connection unavailable",
+    "unavailableText": "Data will appear automatically as soon as the connection is back."
   }
 }

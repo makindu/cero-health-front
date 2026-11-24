@@ -18,13 +18,16 @@ import { LocalOnly } from '../finance/LocalOnly';
 import { NewInvoiceDialog } from '../finance/NewInvoiceDialog';
 import type { InvoiceView } from '../finance/finance-service';
 import { FINANCE_AVAILABLE, useFinanceSnapshot, useMoney } from '../finance/use-finance';
+import { referenceFromApi } from '../_shared/reference-data';
+import { BillingApiScreen } from './BillingApiScreen';
 import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
 
 export default function BillingPage() {
   const { t } = useTranslation('finance');
-  if (!FINANCE_AVAILABLE) return <LocalOnly title={t('billing.title')} />;
+  // Mode API : la facturation du serveur (liens facture/acte, paiements). Mode local : l'ancien module de démonstration.
+  if (!FINANCE_AVAILABLE) return referenceFromApi() ? <BillingApiScreen /> : <LocalOnly title={t('billing.title')} />;
   return <BillingScreen />;
 }
 

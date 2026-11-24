@@ -3,15 +3,17 @@ import { queryKeys } from '@/core/api/query-client';
 import { env } from '@/core/config/env';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { patientFlow } from './patient-flow';
+import { apiPatientFlow } from './patient-flow-api';
 
-export const PATIENT_FLOW_AVAILABLE = env.localMode;
+/** Disponible en mode local (données de l'appareil) et avec l'API réelle (GET /patient-flow). */
+export const PATIENT_FLOW_AVAILABLE = env.localMode || Boolean(env.api.health);
 
 /** Actualisé toutes les 20 s et au retour sur l'onglet : les autres modules ne préviennent pas ce tableau. */
 export function usePatientFlow() {
   const { activeFacilityId } = usePreferences();
   return useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'patientFlow', 'snapshot'),
-    queryFn: () => patientFlow.snapshot(),
+    queryFn: () => (env.localMode ? patientFlow.snapshot() : apiPatientFlow.snapshot()),
     enabled: PATIENT_FLOW_AVAILABLE,
     refetchInterval: 20_000,
     refetchOnWindowFocus: true,

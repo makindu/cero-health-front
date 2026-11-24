@@ -46,16 +46,20 @@ const MAP: Record<string, readonly string[]> = {
   'health.insurance.manage': ['health.insurance.manage'],
   'health.insurance.validate': ['health.insurance.validate'],
   'health.insurance.authorize': ['health.insurance.authorize'],
-  'health.staff.read': ['health.administration.view'],
-  'health.staff.manage': ['health.users.manage'],
-  'health.care-units.read': ['health.administration.view'],
-  'health.care-units.manage': ['health.services.manage'],
+  // Lire le personnel ou les unités de soins sert aux listes (médecin prescripteur, nom du service) : cela n'ouvre PAS le menu Administration.
+  // Le menu Administration s'ouvre pour qui peut gérer le personnel, les unités de soins ou les paramètres.
+  'health.staff.manage': ['health.users.manage', 'health.administration.view'],
+  'health.care-units.manage': ['health.services.manage', 'health.administration.view'],
   'health.audit.read': ['health.audit.view', 'health.reports.view'],
-  'health.patients.categories': ['health.settings.manage'],
+  'health.patients.categories': ['health.settings.manage', 'health.administration.view'],
   'health.visits.read': ['health.visits.view'],
   'health.lab.catalog': ['health.laboratory.catalog'],
-  'health.catalog.manage': ['health.pharmacy.catalog', 'health.stock.receive', 'health.stock.adjust'],
+  'health.catalog.manage': ['health.pharmacy.catalog', 'health.insurance.catalog', 'health.stock.receive', 'health.stock.adjust'],
   'health.medical-records.export': ['health.patients.export'],
+  'health.expenses.read': ['health.expenses.view'],
+  'health.expenses.create': ['health.expenses.create'],
+  'health.expenses.validate': ['health.expenses.validate'],
+  'health.expenses.cancel': ['health.expenses.cancel'],
 };
 
 /** Codes de l'interface déduits des permissions du serveur (sans doublon). */

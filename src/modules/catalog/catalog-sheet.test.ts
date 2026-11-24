@@ -6,6 +6,17 @@ const item = (id: string, code: string, label: string, minor: number, category: 
 const existing = [item('1', 'LAB-001', 'Glycémie', 500), item('2', 'LAB-002', 'Hémogramme', 1200, 'laboratory', false), item('3', 'PHA-001', 'Paracétamol', 300, 'pharmacy')];
 const T = (...rows: string[][]): string[][] => [['Code', 'Examen', 'Prix', 'Actif'], ...rows];
 
+describe('import des prestations (actes sans stock)', () => {
+  const act = (id: string, code: string, label: string, minor: number) => ({ id, code, label, category: 'procedure', active: true, price: { minor, currency: 'USD' } }) as never;
+  const acts = [act('1', 'SRV-001', 'Consultation générale', 1000)];
+
+  it('propose des codes SRV-xxx et retrouve une prestation par sa désignation', () => {
+    const p = planCatalogImport([['Prestation', 'Prix'], ['Échographie', '30'], ['consultation generale', '12']], acts, 'procedure');
+    expect(p.errors).toEqual([]);
+    expect(p.rows.map((r) => [r.action, r.code, r.price])).toEqual([['create', 'SRV-002', 30], ['update', 'SRV-001', 12]]);
+  });
+});
+
 describe('import du catalogue et des prix (laboratoire)', () => {
   it('crée, met à jour et reconnaît les lignes inchangées', () => {
     const p = planCatalogImport(T(['LAB-001', 'Glycémie', '6,50', ''], ['', 'Hémogramme', '12', 'oui'], ['', 'Widal', '8', ''], ['LAB-001x', '', '', '']), existing, 'laboratory');
@@ -38,5 +49,14 @@ describe('import du catalogue et des prix (laboratoire)', () => {
     expect(planCatalogImport([], existing, 'laboratory').fatal).toBe('empty');
     const many = [['Examen', 'Prix'], ...Array.from({ length: 501 }, (_, i) => [`Test ${i}`, '1'])];
     expect(planCatalogImport(many, existing, 'laboratory').fatal).toBe('tooMany');
+  });
+
+  it('relit les modèles téléchargés : leurs en-têtes complets sont reconnus', () => {
+    for (const label of ["Désignation de l'examen", 'Désignation de la prestation', 'Désignation du médicament']) {
+      const p = planCatalogImport([['Code', label, 'Prix', 'Actif'], ['TST-1', 'Test A', '5', 'oui']], [], 'laboratory');
+      expect(p.fatal).toBeUndefined();
+      expect(p.errors).toEqual([]);
+      expect(p.rows).toHaveLength(1);
+    }
   });
 });

@@ -12,6 +12,7 @@ import { useAgeLabel } from '@/utils/age';
 import { PatientCategoriesButton } from './PatientCategoriesDialog';
 import { usePatientCategories } from './category-data';
 import { SERVICE_KEYS } from '../_shared/demo-people';
+import { referenceFromApi } from '../_shared/reference-data';
 import { ExportMenu } from '../_shared/export/ExportMenu';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { DuplicatesDialog } from './DuplicatesDialog';
@@ -105,7 +106,7 @@ export default function PatientsPage() {
         filters={[
           { id: 'sex', label: t('filters.sex'), options: [{ value: 'F', label: t('sex.F') }, { value: 'M', label: t('sex.M') }] },
           { id: 'status', label: t('filters.status'), options: [{ value: 'active', label: t('status.active') }, { value: 'inactive', label: t('status.inactive') }] },
-          { id: 'service', label: t('filters.service'), options: serviceOptions },
+          ...(referenceFromApi() ? [] : [{ id: 'service', label: t('filters.service'), options: serviceOptions }]),
           { id: 'registeredFrom', type: 'date', label: t('filters.registeredFrom') },
           { id: 'registeredTo', type: 'date', label: t('filters.registeredTo') },
         ]}

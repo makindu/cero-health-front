@@ -19,19 +19,23 @@
   "items": {
     "activity": {
       "title": "Shughuli za kituo",
-      "description": "Wagonjwa waliohudumiwa, mashauriano na ziara kwa idara."
+      "description": "Wagonjwa waliohudumiwa, mashauriano na ziara kwa idara.",
+      "descriptionApi": "Wagonjwa wapya, miadi, triage, mashauriano, maabara na kulazwa."
     },
     "appointments": {
       "title": "Miadi",
-      "description": "Kiwango cha mahudhurio, kughairi na kutokuja."
+      "description": "Kiwango cha mahudhurio, kughairi na kutokuja.",
+      "descriptionApi": "Miadi kwa hali, idara na siku."
     },
     "hospitalization": {
       "title": "Kulazwa",
-      "description": "Matumizi ya vitanda na muda wa kukaa."
+      "description": "Matumizi ya vitanda na muda wa kukaa.",
+      "descriptionApi": "Kulazwa kwa hali, idara na siku."
     },
     "laboratory": {
       "title": "Maabara",
-      "description": "Vipimo vilivyoombwa, muda na uthibitisho."
+      "description": "Vipimo vilivyoombwa, muda na uthibitisho.",
+      "descriptionApi": "Maombi ya maabara, hali na muda wa wastani."
     },
     "stock": {
       "title": "Hifadhi",
@@ -39,7 +43,8 @@
     },
     "finance": {
       "title": "Fedha",
-      "description": "Ankara, makusanyo na madeni."
+      "description": "Ankara, makusanyo na madeni.",
+      "descriptionApi": "Ankara na malipo kwa sarafu."
     },
     "cash": {
       "title": "Kasha",
@@ -49,5 +54,85 @@
       "title": "Matumizi na ukaguzi",
       "description": "Ufikiaji wa faili na vitendo nyeti."
     }
-  }
+  },
+  "subtitleApi": "Hesabu na jumla za kituo kwa kipindi, bila data ya kitabibu.",
+  "open": "Fungua skrini",
+  "exportXlsx": "Hamisha kwa Excel",
+  "loading": "Inapakia ripoti…",
+  "empty": "Hakuna data kwa kipindi hiki.",
+  "minutes": "dak {{count}}",
+  "period": {
+    "missing": "Chagua tarehe zote mbili.",
+    "order": "Tarehe ya mwisho isiwe kabla ya ya kuanza.",
+    "tooLong": "Kipindi hakiwezi kuzidi mwaka mmoja."
+  },
+  "otherScreen": {
+    "cash": "Jarida la fedha, jumla kwa njia ya malipo na mtunza fedha, pamoja na usafirishaji wake.",
+    "audit": "Ufikiaji wa rekodi na vitendo nyeti, na vichujio na usafirishaji."
+  },
+  "sections": {
+    "summary": "Muhtasari",
+    "byStatus": "Kwa hali",
+    "byUnit": "Kwa idara",
+    "byDay": "Kwa siku",
+    "byPriority": "Kwa kipaumbele",
+    "invoices": "Ankara",
+    "payments": "Malipo yaliyopokelewa",
+    "cashflow": "Mapato, matumizi na salio",
+    "expenses": "Matumizi",
+    "expensesByAccount": "Matumizi kwa kundi"
+  },
+  "cols": {
+    "key": "Kipengele",
+    "count": "Idadi",
+    "currency": "Sarafu",
+    "status": "Hali",
+    "method": "Njia ya malipo",
+    "total_minor": "Jumla iliyotozwa",
+    "paid_minor": "Tayari imelipwa",
+    "amount_minor": "Kiasi kilichopokelewa",
+    "income_minor": "Mapato yaliyopokelewa",
+    "expenses_minor": "Matumizi yaliyothibitishwa",
+    "pending_minor": "Matumizi yanayosubiri uthibitisho",
+    "balance_minor": "Salio"
+  },
+  "metrics": {
+    "total": "Jumla",
+    "walkIn": "Bila miadi",
+    "avgMinutes": "Muda wa wastani hadi uthibitisho",
+    "patients": "Wagonjwa wapya",
+    "appointments": "Miadi",
+    "triage": "Ziara za triage",
+    "consultations": "Mashauriano",
+    "labOrders": "Maombi ya maabara",
+    "admissions": "Kulazwa"
+  },
+  "values": {
+    "scheduled": "Imepangwa",
+    "confirmed": "Imethibitishwa",
+    "arrived": "Amefika",
+    "inConsultation": "Kwenye mashauriano",
+    "completed": "Imekamilika",
+    "cancelled": "Imefutwa",
+    "noShow": "Hakuja",
+    "requested": "Imeombwa",
+    "collected": "Imechukuliwa",
+    "inProgress": "Inaendelea",
+    "resultsEntered": "Matokeo yameingizwa",
+    "validated": "Imethibitishwa",
+    "routine": "Kawaida",
+    "urgent": "Haraka",
+    "admitted": "Amelazwa",
+    "dischargePending": "Ameombewa kuruhusiwa",
+    "discharged": "Ameruhusiwa",
+    "active": "Hai",
+    "cash": "Fedha taslimu",
+    "card": "Kadi",
+    "mobile_money": "Pesa ya simu",
+    "transfer": "Uhamisho",
+    "pending": "Inasubiri uthibitisho"
+  },
+  "exportPdf": "Hamisha kwa PDF",
+  "pdfConfidential": "Hati ya siri: kwa matumizi ya kituo pekee.",
+  "pdfPage": "Ukurasa"
 }

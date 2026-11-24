@@ -100,7 +100,11 @@
       "out": "En rupture",
       "expired": "Avec lot périmé"
     },
-    "quantityIn": "Quantité en {{unit}}"
+    "quantityIn": "Quantité en {{unit}}",
+    "inUzishaTitle": "Le stock se gère dans UZISHA",
+    "inUzishaBody": "Les réceptions, lots, péremptions et corrections d'inventaire se font dans UZISHA. Ici, la pharmacie prépare et remet les ordonnances : le serveur choisit les lots et refuse un stock insuffisant. Les médicaments, leurs prix et leurs unités de vente se gèrent dans l'onglet « Catalogue et prix ».",
+    "catalogCount_one": "{{count}} produit au catalogue.",
+    "catalogCount_other": "{{count}} produits au catalogue."
   },
   "columns": {
     "prescription": "Prescription",

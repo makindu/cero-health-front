@@ -41,6 +41,19 @@ export function PatientCombobox({ defaultValue = '', onValueChange, id, ...rest 
     enabled: fromApi && query.length >= 2,
   });
   const patients = fromApi ? apiSearch : localPatients;
+  // Brouillon restauré : la valeur retenue est un identifiant ; on remet le NOM du patient dans le champ (tant que rien n'est tapé).
+  const idLike = /^\d+$/.test(defaultValue.trim());
+  const resolved = useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'patients', 'combobox-name', defaultValue),
+    queryFn: async () => (await patientService.get(defaultValue.trim())).item.fullName,
+    enabled: fromApi && idLike,
+    staleTime: 60_000,
+    retry: false,
+  });
+  const resolvedName = fromApi ? resolved.data : localPatients.data?.find((p) => p.id === defaultValue)?.fullName;
+  useEffect(() => {
+    if (resolvedName && idLike) setText((current) => (current === defaultValue ? resolvedName : current));
+  }, [resolvedName, idLike, defaultValue]);
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);

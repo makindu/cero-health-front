@@ -19,6 +19,7 @@ export const MODULE_PAGES: Record<string, LazyExoticComponent<ComponentType>> = 
   billing: lazy(() => import('@/modules/billing/BillingPage')),
   insurance: lazy(() => import('@/modules/insurance/InsurancePage')),
   cash: lazy(() => import('@/modules/cash/CashPage')),
+  expenses: lazy(() => import('@/modules/expenses/ExpensesPage')),
   inventory: lazy(() => import('@/modules/inventory/InventoryPage')),
   reports: lazy(() => import('@/modules/reports/ReportsPage')),
   administration: lazy(() => import('@/modules/administration/AdministrationPage')),

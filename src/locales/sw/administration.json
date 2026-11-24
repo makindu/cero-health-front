@@ -4,7 +4,6 @@
   "tabs": {
     "facility": "Kituo",
     "users": "Wafanyakazi",
-    "roles": "Majukumu na ruhusa",
     "services": "Idara"
   },
   "facility": {
@@ -25,7 +24,20 @@
     "timeZoneHint": "Mfano Africa/Lubumbashi",
     "currency": "Sarafu",
     "currencyHint": "Msimbo wa ISO 4217, mf. USD au CDF",
-    "save": "Hifadhi mipangilio"
+    "save": "Hifadhi mipangilio",
+    "viewTitle": "Wasifu wa kituo",
+    "viewDescription": "Taarifa za kituo kinachotumika. Kusoma tu.",
+    "managedByIdCore": "Kituo kinabadilishwa tu ndani ya CERO ID.",
+    "contact": "Mawasiliano",
+    "legal": "Utambulisho wa kisheria",
+    "social": "Mitandao ya kijamii",
+    "website": "Tovuti",
+    "rccm": "RCCM",
+    "nationalId": "Kitambulisho cha kitaifa",
+    "taxNumber": "Namba ya kodi",
+    "authorization": "Kibali cha kufanya kazi",
+    "logoAlt": "Nembo ya {{name}}",
+    "unavailable": "Taarifa za kituo hazipatikani kwa sasa."
   },
   "users": {
     "name": "Jina",
@@ -53,7 +65,15 @@
     "suspendTitle": "Kumsimamisha mfanyakazi huyu?",
     "suspendBody": "Hataonyeshwa tena kwenye orodha za madaktari. Historia yake inahifadhiwa.",
     "reactivate": "Washa tena",
-    "reactivateTitle": "Kumrudisha mfanyakazi huyu kazini?"
+    "reactivateTitle": "Kumrudisha mfanyakazi huyu kazini?",
+    "edit": "Hariri",
+    "createProfile": "Unda wasifu",
+    "editTitle": "Hariri wasifu wa mfanyakazi",
+    "createTitle": "Unda wasifu wa mfanyakazi",
+    "saved": "Wasifu umehifadhiwa.",
+    "pickAccount": "Chagua akaunti",
+    "pickType": "Chagua jukumu",
+    "noCandidates": "Kila mwanachama ana wasifu tayari. Mwongeze kwanza kwenye lango la CERO ID."
   },
   "roles": {
     "note": "Pendekezo la majukumu ya kawaida, linalopaswa kuthibitishwa na CERO ID CORE. Misimbo ya ruhusa ni halisi; ugawaji kwa majukumu ni wa mfano na haujatekelezwa.",
@@ -85,7 +105,8 @@
       "inventory": "Hifadhi",
       "reports": "Ripoti",
       "administration": "Utawala",
-      "audit": "Ukaguzi"
+      "audit": "Ukaguzi",
+      "expenses": "Matumizi"
     },
     "permissions": {
       "dashboard": {
@@ -193,6 +214,12 @@
       },
       "audit": {
         "view": "Tazama kumbukumbu za ukaguzi"
+      },
+      "expenses": {
+        "view": "Kuona matumizi",
+        "create": "Kurekodi matumizi",
+        "validate": "Kuthibitisha matumizi",
+        "cancel": "Kufuta matumizi"
       }
     },
     "reset": "Weka upya"
@@ -218,7 +245,13 @@
       "inpatient": "Wagonjwa wa kulazwa",
       "surgery": "Upasuaji",
       "other": "Nyingine"
-    }
+    },
+    "addType": "Ongeza aina",
+    "newTypeLabel": "Jina la aina mpya",
+    "newTypePlaceholder": "Mf. Dayalisisi",
+    "addTypeConfirm": "Ongeza",
+    "addTypeCancel": "Ghairi",
+    "addTypeError": "Imeshindwa kuongeza aina hii. Jaribu tena."
   },
   "serviceNames": {
     "generalMedicine": "Tiba ya jumla",
@@ -226,5 +259,50 @@
     "maternity": "Uzazi",
     "emergency": "Dharura",
     "surgery": "Upasuaji"
+  },
+  "staff": {
+    "type": "Jukumu",
+    "account": "Akaunti ya kituo",
+    "accountHint": "Ni wanachama wasio na wasifu wa wafanyakazi pekee wanaoonyeshwa. Mwongeze kwanza kwenye lango la CERO ID.",
+    "title": "Cheo cha kitaaluma",
+    "managedByIdCore": "Akaunti na ufikiaji husimamiwa kwenye lango la CERO ID. Hapa unaeleza jukumu la mtu katika kituo.",
+    "types": {
+      "doctor": "Daktari",
+      "nurse": "Muuguzi",
+      "midwife": "Mkunga",
+      "lab_technician": "Fundi wa maabara",
+      "pharmacist": "Mfamasia",
+      "receptionist": "Mpokezi",
+      "cashier": "Mtunza fedha",
+      "administrator": "Msimamizi",
+      "other": "Nyingine"
+    },
+    "noProfile": "Hana wasifu wa HEALTH",
+    "owner": "Mmiliki"
+  },
+  "functions": {
+    "manage": "Majukumu",
+    "title": "Majukumu ya wafanyakazi",
+    "hint": "Ongeza majukumu ya kituo chako. Kila moja hufanya kazi kama jukumu la kawaida.",
+    "standard": "Majukumu ya kawaida",
+    "custom": "Majukumu ya kituo",
+    "empty": "Hakuna jukumu lililoongezwa bado.",
+    "label": "Jina la jukumu",
+    "baseType": "Hufanya kazi kama",
+    "baseTypeHint": "Huamua sheria za kazi: “Daktari” ili aonekane kwenye orodha ya madaktari, n.k.",
+    "add": "Ongeza",
+    "added": "Jukumu limeongezwa.",
+    "deleted": "Jukumu limefutwa.",
+    "delete": "Futa",
+    "inUse": "linatumika: {{count}}",
+    "inUseHint": "Linatumiwa na wafanyakazi: badilisha jukumu lao kwanza.",
+    "suggested": "Majukumu ya kawaida",
+    "suggestedHint": "Weka alama kwenye unayohitaji; unaweza kuongeza mengine baadaye.",
+    "allAdded": "Majukumu yote ya kawaida yameongezwa tayari.",
+    "selectAll": "Chagua yote",
+    "selectNone": "Ondoa yote",
+    "addSelected": "Ongeza chaguo ({{count}})",
+    "close": "Funga",
+    "addTitle": "Ongeza jukumu"
   }
 }

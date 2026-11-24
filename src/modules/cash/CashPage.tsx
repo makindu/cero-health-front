@@ -12,13 +12,16 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { summarizeCash } from '../finance/cash-summary';
 import { LocalOnly } from '../finance/LocalOnly';
 import { FINANCE_AVAILABLE, useFinanceSnapshot, useMoney } from '../finance/use-finance';
+import { referenceFromApi } from '../_shared/reference-data';
+import { CashApiScreen } from './CashApiScreen';
 
 const PER_PAGE = 10;
 const localDay = (iso: string): string => { const d = new Date(iso); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 export default function CashPage() {
   const { t } = useTranslation('finance');
-  if (!FINANCE_AVAILABLE) return <LocalOnly title={t('cash.title')} />;
+  // Mode API : les encaissements du serveur. Mode local : l'ancien module de démonstration.
+  if (!FINANCE_AVAILABLE) return referenceFromApi() ? <CashApiScreen /> : <LocalOnly title={t('cash.title')} />;
   return <CashScreen />;
 }
 
@@ -59,8 +62,8 @@ function CashScreen() {
         </StatGrid>
         <Card>
           <div className="flex flex-wrap items-end gap-3 border-b border-border p-4">
-            <label className="text-sm">{t('cash.day')}<Input type="date" value={day} onChange={(e) => { setDayFilter(e.target.value); setPage(1); }} className="mt-1 w-44" /></label>
-            <label className="text-sm">{t('columns.cashier')}
+            <label className="flex flex-col text-sm">{t('cash.day')}<Input type="date" value={day} onChange={(e) => { setDayFilter(e.target.value); setPage(1); }} className="mt-1 w-44" /></label>
+            <label className="flex flex-col text-sm">{t('columns.cashier')}
               <Select value={cashier} onChange={(e) => { setCashier(e.target.value); setPage(1); }} className="mt-1 w-56"><option value="">{t('cash.allCashiers')}</option>{cashiers.map((c) => <option key={c} value={c}>{c}</option>)}</Select>
             </label>
             <p className="ms-auto text-sm font-semibold">{t('cash.patientNet')} : {money(summary.patientNet, currency)}</p>

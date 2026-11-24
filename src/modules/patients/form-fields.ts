@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { SERVICE_KEYS } from '../_shared/demo-people';
+import { referenceFromApi } from '../_shared/reference-data';
 import type { FieldDef } from '../_shared/dynamic-form';
 import { usePatientCategories } from './category-data';
 import { FILE_NUMBER_PATTERN } from './duplicates';
@@ -18,7 +19,8 @@ export function usePatientFields(): FieldDef[] {
     { name: 'birthWeightKg', label: t('fields.birthWeight'), type: 'number', hint: t('fields.birthWeightHint') },
     { name: 'categoryId', label: t('fields.category'), type: 'select', required: true, options: categories.active.map((c) => ({ value: c.id, label: c.label })), hint: t('fields.categoryHint') },
     { name: 'fileNumber', label: t('fields.fileNumber'), type: 'text', hint: t('fields.fileNumberHint'), pattern: FILE_NUMBER_PATTERN, patternMessage: 'validation.fileNumber' },
-    { name: 'service', label: t('fields.service'), type: 'select', options: serviceOptions },
+    // Le serveur ne gère pas encore de service de rattachement : en production, ce champ fictif n'est pas proposé.
+    ...(referenceFromApi() ? [] : [{ name: 'service', label: t('fields.service'), type: 'select' as const, options: serviceOptions }]),
     { name: 'address', label: t('fields.address'), type: 'text', span: 2 },
     { name: 'insurer', label: t('fields.insurer'), type: 'text' },
     { name: 'emergencyContact', label: t('fields.emergencyContact'), type: 'text' },

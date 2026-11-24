@@ -10,6 +10,7 @@ import { clearDraft, fingerprint, loadDraft, saveDraft } from '@/core/drafts/dra
 import { useDirtySource } from '@/core/unsaved/use-dirty-source';
 import { PatientCombobox } from './patient-combobox';
 import { PractitionerCombobox } from './practitioner-combobox';
+import { CreatableOption, type CreatableConfig } from './creatable-option';
 
 export type FieldType = 'text' | 'textarea' | 'date' | 'time' | 'select' | 'number' | 'tel' | 'email' | 'patient' | 'practitioner';
 
@@ -21,6 +22,8 @@ export interface FieldDef {
   hint?: string;
   placeholder?: string;
   options?: readonly { value: string; label: string }[];
+  /** Liste de choix : permet d'ajouter une valeur en ligne (elle est créée côté serveur puis sélectionnée). */
+  creatable?: CreatableConfig;
   /** Format exigé (champ non vide) ; `patternMessage` est une clé i18n. */
   pattern?: RegExp;
   patternMessage?: string;
@@ -129,6 +132,16 @@ export function DynamicForm({
     formState: { errors },
   } = useForm<Values>({ resolver, defaultValues: initial });
 
+  // Valeurs ajoutées en ligne dans une liste de choix : affichées aussitôt, puis sélectionnées une fois présentes dans la liste.
+  const [added, setAdded] = useState<Record<string, { value: string; label: string }[]>>({});
+  const [toSelect, setToSelect] = useState<{ name: string; value: string } | null>(null);
+  useEffect(() => {
+    if (toSelect) {
+      setValue(toSelect.name, toSelect.value, { shouldValidate: true, shouldDirty: true });
+      setToSelect(null);
+    }
+  }, [toSelect, setValue]);
+
   const current = watch();
   const [submitted, setSubmitted] = useState(false);
   const changed = (values: Values) => fields.some((f) => (values[f.name] ?? '') !== (base[f.name] ?? ''));
@@ -191,15 +204,30 @@ export function DynamicForm({
                 return <Textarea {...control} {...bound} placeholder={field.placeholder} />;
               }
               if (field.type === 'select') {
+                const options = [
+                  ...(field.options ?? []),
+                  ...(added[field.name] ?? []).filter((x) => !(field.options ?? []).some((o) => o.value === x.value)),
+                ];
                 return (
-                  <Select {...control} {...bound} defaultValue="">
-                    <option value="">{t('module.choose')}</option>
-                    {field.options?.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
+                  <>
+                    <Select {...control} {...bound} defaultValue="">
+                      <option value="">{t('module.choose')}</option>
+                      {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                    {field.creatable && (
+                      <CreatableOption
+                        config={field.creatable}
+                        onAdded={(option) => {
+                          setAdded((prev) => ({ ...prev, [field.name]: [...(prev[field.name] ?? []), option] }));
+                          setToSelect({ name: field.name, value: option.value });
+                        }}
+                      />
+                    )}
+                  </>
                 );
               }
               if (field.type === 'patient') {

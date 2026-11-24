@@ -489,7 +489,8 @@
       "addExtra": "Add a sale unit",
       "derived": "Unit “{{unit}}” = {{perUnit}} of {{product}}",
       "editViaProduct": "Edit via the main product"
-    }
+    },
+    "noCurrency": "No billing currency is set for this establishment, so prices cannot be shown. Set the currency in billing."
   },
   "group": {
     "title": "Combined invoice payment",
@@ -581,6 +582,114 @@
       "priceInvalid": "Row {{row}}: price “{{value}}” is invalid (positive number, at most 2 decimals).",
       "activeInvalid": "Row {{row}}: status “{{value}}” not understood (yes / no).",
       "duplicateInFile": "Row {{row}}: “{{value}}” already appears above in the file."
+    },
+    "drop": {
+      "title": "Drop your Excel file here",
+      "browse": "or click to browse",
+      "hint": ".xlsx files only",
+      "change": "Change file"
+    }
+  },
+  "patientApi": {
+    "noAccess": "You do not have access to this patient's billing.",
+    "balance": "Outstanding balance",
+    "nothingDue": "Nothing to pay.",
+    "invoices": "Patient invoices",
+    "noInvoice": "No invoice for this patient",
+    "coverages": "Insurance coverage",
+    "noCoverage": "No insurance coverage.",
+    "until": "until {{date}}",
+    "coverageStatus": {
+      "active": "Active",
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "expired": "Expired",
+      "suspended": "Suspended"
+    }
+  },
+  "pharmacyImport": {
+    "title": "Import medicines, prices and units",
+    "help": "Add new medicines and update the prices, names, status and sale units (box, strip, tablet…) of existing ones. Stock lots are not imported. Everything is checked and previewed before saving: a single error blocks the import.",
+    "columns": "Columns: Code (optional — generated if missing), Name, Price of the main unit (required for a new medicine), Active (yes/no), then packaging: Unit (e.g. box), Base unit (e.g. tablet) and Content (number of base units in the main unit). Up to {{max}} other sale units: Sub-unit 1, Content 1 (in base units), Price 1, Sub-unit 2… An empty packaging cell keeps the product's current packaging; a row whose code or name already exists updates that medicine, and its sub-units missing from the file are kept.",
+    "templateFile": "medicines-import-template",
+    "templateSheet": "Medicines",
+    "done": "Medicine catalogue updated",
+    "yes": "yes",
+    "header": {
+      "code": "Code",
+      "label": "Name",
+      "price": "Price",
+      "active": "Active",
+      "unit": "Unit",
+      "baseUnit": "Base unit",
+      "perPack": "Content",
+      "extraUnit": "Sub-unit",
+      "extraContent": "Content",
+      "extraPrice": "Price",
+      "exBox": "Box",
+      "exTablet": "Tablet",
+      "exStrip": "Strip"
+    },
+    "fatal": {
+      "missingColumns": "Columns not found: at least “Name” (or “Code”) and “Price” are required. Use the template."
+    },
+    "problem": {
+      "itemMissing": "Row {{row}}: name missing.",
+      "codeInvalid": "Row {{row}}: code “{{value}}” is invalid (2–20 capital letters, digits or hyphens).",
+      "codeTaken": "Row {{row}}: code “{{value}}” is already used by a sale unit of another product.",
+      "codeMismatch": "Row {{row}}: this name already exists under a code other than “{{value}}”.",
+      "labelLength": "Row {{row}}: the name must be 2 to 120 characters.",
+      "labelTaken": "Row {{row}}: “{{value}}” is already used by another medicine.",
+      "priceRequired": "Row {{row}}: the price is required for “{{value}}”.",
+      "priceInvalid": "Row {{row}}: price “{{value}}” is invalid (positive number, at most 2 decimals).",
+      "activeInvalid": "Row {{row}}: status “{{value}}” not understood (yes / no).",
+      "duplicateInFile": "Row {{row}}: “{{value}}” already appears above in the file.",
+      "perPackInvalid": "Row {{row}}: content “{{value}}” is invalid (whole number from 1 to 100,000).",
+      "packagingLabelsRequired": "Row {{row}}: give the unit and the base unit when the content is above 1 (“{{value}}”).",
+      "packagingLabelsDifferent": "Row {{row}}: the unit and the base unit must differ (“{{value}}”).",
+      "extrasNeedPackaging": "Row {{row}}: sub-units are given but the unit content is 1 (“{{value}}”).",
+      "extraInvalid": "Row {{row}}: sub-unit “{{value}}” is invalid (name required, whole content smaller than the main unit's).",
+      "extraPriceInvalid": "Row {{row}}: price of sub-unit “{{value}}” is invalid (positive number, at most 2 decimals).",
+      "extraDuplicate": "Row {{row}}: sub-unit “{{value}}” has the same name or content as another unit of this product."
+    }
+  },
+  "servicesCatalog": {
+    "title": "Services",
+    "label": "Service name",
+    "add": "Add a service",
+    "addTitle": "Add a service",
+    "edit": "Edit the service",
+    "empty": "No service in the catalogue.",
+    "hint": "Billable acts (consultation, care, hospitalisation, imaging…) with their price. Laboratory exams and medicines are managed in their own modules.",
+    "noCurrency": "No default currency is set: set it in CERO ID to see prices.",
+    "import": {
+      "title": "Import services and their prices",
+      "help": "Add new services and update the prices, names and status of existing ones. Everything is checked and previewed before saving: a single error blocks the import.",
+      "columns": "Columns: Code (optional — an SRV-001… code is created if empty), Service, Price (required for a new service) and Active (yes/no, optional). A row whose code or name already exists updates that service.",
+      "templateFile": "services-import-template",
+      "templateSheet": "Services",
+      "example": "General consultation",
+      "done": "Services imported."
+    }
+  },
+  "labCatalog": {
+    "noCurrency": "No price is defined yet: prices will show as soon as an exam has one.",
+    "example": "Blood glucose"
+  },
+  "newArrival": {
+    "badge": "New",
+    "view": "View",
+    "close": "Close",
+    "none": "This addition is not part of this catalog.",
+    "failed": "Could not load the new addition. Try again.",
+    "item": {
+      "one": "A new item was added to the catalog",
+      "many": "{{count}} new items added to the catalog"
+    },
+    "lab": {
+      "one": "A new test was added",
+      "many": "{{count}} new tests added"
     }
   }
 }

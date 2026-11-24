@@ -9,6 +9,8 @@ import { useMarkNotifications, useNotifications } from '@/modules/notifications/
 import { unreadCount } from '@/modules/notifications/notification-rules';
 import { formatQty } from '@/utils/numbers';
 import { PersonName } from '@/components/ui/avatar';
+import { referenceFromApi } from '@/modules/_shared/reference-data';
+import { ApiNotificationCenter } from '@/modules/notifications/ApiNotificationCenter';
 
 /** Sélecteur d'établissement : squelette. Liste réelle et changement : phase 2 (dépend de CERO ID CORE). */
 export function FacilitySwitcher() {
@@ -62,7 +64,8 @@ function DemoFacilitySwitcher() {
 
 /** Centre de notifications. En mode local : les notifications adressées à l'utilisateur connecté (jamais envoyées hors de l'appareil). */
 export function NotificationCenter() {
-  return env.localMode ? <LocalNotificationCenter /> : <EmptyNotificationCenter />;
+  if (env.localMode) return <LocalNotificationCenter />;
+  return referenceFromApi() ? <ApiNotificationCenter /> : <EmptyNotificationCenter />;
 }
 
 function EmptyNotificationCenter() {

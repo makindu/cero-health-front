@@ -19,19 +19,23 @@
   "items": {
     "activity": {
       "title": "Activité de l'établissement",
-      "description": "Patients vus, consultations et passages par service."
+      "description": "Patients vus, consultations et passages par service.",
+      "descriptionApi": "Patients inscrits, rendez-vous, triage, consultations, analyses et hospitalisations."
     },
     "appointments": {
       "title": "Rendez-vous",
-      "description": "Taux de présence, annulations et absences."
+      "description": "Taux de présence, annulations et absences.",
+      "descriptionApi": "Rendez-vous par statut, service et jour."
     },
     "hospitalization": {
       "title": "Hospitalisation",
-      "description": "Taux d'occupation des lits et durées de séjour."
+      "description": "Taux d'occupation des lits et durées de séjour.",
+      "descriptionApi": "Hospitalisations par statut, service et jour."
     },
     "laboratory": {
       "title": "Laboratoire",
-      "description": "Examens demandés, délais et validations."
+      "description": "Examens demandés, délais et validations.",
+      "descriptionApi": "Demandes d’analyses, statuts et délai moyen."
     },
     "stock": {
       "title": "Stocks",
@@ -39,7 +43,8 @@
     },
     "finance": {
       "title": "Finances",
-      "description": "Facturation, encaissements et créances."
+      "description": "Facturation, encaissements et créances.",
+      "descriptionApi": "Factures et encaissements par devise."
     },
     "cash": {
       "title": "Caisse",
@@ -49,5 +54,85 @@
       "title": "Utilisation et audit",
       "description": "Accès aux dossiers et actions sensibles."
     }
-  }
+  },
+  "subtitleApi": "Comptages et totaux de l’établissement sur une période, sans aucune donnée clinique.",
+  "open": "Ouvrir l’écran",
+  "exportXlsx": "Exporter en Excel",
+  "loading": "Chargement du rapport…",
+  "empty": "Aucune donnée sur cette période.",
+  "minutes": "{{count}} min",
+  "period": {
+    "missing": "Choisissez les deux dates.",
+    "order": "La date de fin doit suivre la date de début.",
+    "tooLong": "La période ne peut pas dépasser un an."
+  },
+  "otherScreen": {
+    "cash": "Journal de caisse, totaux par mode de paiement et par caissier, avec leurs exports.",
+    "audit": "Accès aux dossiers et actions sensibles, avec filtres et exports."
+  },
+  "sections": {
+    "summary": "Résumé",
+    "byStatus": "Par statut",
+    "byUnit": "Par service",
+    "byDay": "Par jour",
+    "byPriority": "Par priorité",
+    "invoices": "Factures",
+    "payments": "Encaissements",
+    "cashflow": "Entrées, sorties et solde",
+    "expenses": "Dépenses",
+    "expensesByAccount": "Dépenses par catégorie"
+  },
+  "cols": {
+    "key": "Élément",
+    "count": "Nombre",
+    "currency": "Devise",
+    "status": "Statut",
+    "method": "Mode de paiement",
+    "total_minor": "Total facturé",
+    "paid_minor": "Déjà payé",
+    "amount_minor": "Montant encaissé",
+    "income_minor": "Entrées encaissées",
+    "expenses_minor": "Sorties (dépenses validées)",
+    "pending_minor": "Dépenses à valider",
+    "balance_minor": "Solde"
+  },
+  "metrics": {
+    "total": "Total",
+    "walkIn": "Sans rendez-vous",
+    "avgMinutes": "Délai moyen jusqu’à la validation",
+    "patients": "Nouveaux patients",
+    "appointments": "Rendez-vous",
+    "triage": "Passages au triage",
+    "consultations": "Consultations",
+    "labOrders": "Demandes d’analyses",
+    "admissions": "Hospitalisations"
+  },
+  "values": {
+    "scheduled": "Planifié",
+    "confirmed": "Confirmé",
+    "arrived": "Arrivé",
+    "inConsultation": "En consultation",
+    "completed": "Terminé",
+    "cancelled": "Annulé",
+    "noShow": "Absent",
+    "requested": "Demandée",
+    "collected": "Prélevée",
+    "inProgress": "En cours",
+    "resultsEntered": "Résultats saisis",
+    "validated": "Validée",
+    "routine": "Routine",
+    "urgent": "Urgente",
+    "admitted": "Hospitalisé",
+    "dischargePending": "Sortie demandée",
+    "discharged": "Sorti",
+    "active": "Active",
+    "cash": "Espèces",
+    "card": "Carte",
+    "mobile_money": "Mobile money",
+    "transfer": "Virement",
+    "pending": "À valider"
+  },
+  "exportPdf": "Exporter en PDF",
+  "pdfConfidential": "Document confidentiel : réservé à l’usage de l’établissement.",
+  "pdfPage": "Page"
 }

@@ -16,10 +16,13 @@ import { InsurerStatementTab } from './InsurerStatementTab';
 import { OrganizationsTab } from './OrganizationsTab';
 import { SubscriptionsTab } from './SubscriptionsTab';
 import { ValidityTab } from './ValidityTab';
+import { InsuranceApiScreen } from './InsuranceApiScreen';
 import { insuranceIndicators } from './indicators';
+import { referenceFromApi } from '../_shared/reference-data';
 
 export default function InsurancePage() {
   const { t } = useTranslation('finance');
+  if (referenceFromApi()) return <InsuranceApiScreen />;
   if (!FINANCE_AVAILABLE) return <LocalOnly title={t('insurance.title')} />;
   return <InsuranceScreen />;
 }

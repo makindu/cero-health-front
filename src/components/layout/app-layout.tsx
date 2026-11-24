@@ -10,6 +10,7 @@ import { UnsavedChangesGuard } from '@/core/unsaved/UnsavedChangesGuard';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { StatusBadge } from '@/components/ui/badge';
 import { ChatDock } from '@/modules/messaging/ChatDock';
+import { ConnectionBanner } from './connection-banner';
 import { LiveIndicator } from './live-indicator';
 import { LocalModeBanner } from './local-mode-banner';
 import { LanguageSwitcher } from './language-switcher';
@@ -53,6 +54,7 @@ export function AppLayout() {
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {env.localMode && <LocalModeBanner />}
+        {!env.localMode && <ConnectionBanner />}
         <header className="no-print relative z-20 flex h-[var(--header-h)] shrink-0 items-center gap-1 border-b border-border bg-surface px-2 sm:px-4">
           <Button
             variant="ghost"

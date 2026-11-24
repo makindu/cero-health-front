@@ -18,6 +18,7 @@ import { LabOrderDetail } from './LabOrderDetail';
 import { LAB_STATUSES, LabStatusBadge } from './LabStatusBadge';
 import { NewLabOrderDialog } from './NewLabOrderDialog';
 import { CatalogManager } from '../catalog/CatalogManager';
+import { LabCatalogTab } from './LabCatalogTab';
 import { Tabs } from '@/components/ui/tabs';
 import { LAB_AVAILABLE, useLabOrders } from './use-lab';
 import { PersonName } from '@/components/ui/avatar';
@@ -74,7 +75,7 @@ function LaboratoryScreen() {
         loading={orders.isPending} error={orders.error} onRetry={() => void orders.refetch()} emptyTitle={t('empty')} emptyDescription={t('emptyHint')}
         pagination={{ page, perPage: PER_PAGE, total: rows.length, onPageChange: setPage }} />
         </>) },
-        ...(apiMode ? [] : [{ id: 'catalog', label: t('tabs.catalog'), content: <CatalogManager category="laboratory" /> }]),
+        { id: 'catalog', label: t('tabs.catalog'), content: apiMode ? <LabCatalogTab /> : <CatalogManager category="laboratory" /> },
       ]} />
       {creating && <NewLabOrderDialog onClose={() => setCreating(false)} onCreated={(v) => { setCreating(false); setOpenId(v.order.id); }} />}
       {openId && <LabOrderDetail view={orders.data?.find((v) => v.order.id === openId)} onClose={() => setOpenId(null)} />}

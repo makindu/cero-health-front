@@ -19,19 +19,23 @@
   "items": {
     "activity": {
       "title": "Facility activity",
-      "description": "Patients seen, consultations and visits by department."
+      "description": "Patients seen, consultations and visits by department.",
+      "descriptionApi": "New patients, appointments, triage, consultations, lab requests and admissions."
     },
     "appointments": {
       "title": "Appointments",
-      "description": "Attendance rate, cancellations and no-shows."
+      "description": "Attendance rate, cancellations and no-shows.",
+      "descriptionApi": "Appointments by status, unit and day."
     },
     "hospitalization": {
       "title": "Hospitalization",
-      "description": "Bed occupancy and length of stay."
+      "description": "Bed occupancy and length of stay.",
+      "descriptionApi": "Admissions by status, unit and day."
     },
     "laboratory": {
       "title": "Laboratory",
-      "description": "Requested tests, turnaround and validations."
+      "description": "Requested tests, turnaround and validations.",
+      "descriptionApi": "Lab requests, statuses and average turnaround."
     },
     "stock": {
       "title": "Stock",
@@ -39,7 +43,8 @@
     },
     "finance": {
       "title": "Finance",
-      "description": "Billing, collections and receivables."
+      "description": "Billing, collections and receivables.",
+      "descriptionApi": "Invoices and payments by currency."
     },
     "cash": {
       "title": "Cash desk",
@@ -49,5 +54,85 @@
       "title": "Usage and audit",
       "description": "Record access and sensitive actions."
     }
-  }
+  },
+  "subtitleApi": "Facility counts and totals over a period, with no clinical data.",
+  "open": "Open the screen",
+  "exportXlsx": "Export to Excel",
+  "loading": "Loading the report…",
+  "empty": "No data for this period.",
+  "minutes": "{{count}} min",
+  "period": {
+    "missing": "Pick both dates.",
+    "order": "The end date must not be before the start date.",
+    "tooLong": "The period cannot exceed one year."
+  },
+  "otherScreen": {
+    "cash": "Cash journal, totals by payment method and cashier, with their exports.",
+    "audit": "Record access and sensitive actions, with filters and exports."
+  },
+  "sections": {
+    "summary": "Summary",
+    "byStatus": "By status",
+    "byUnit": "By unit",
+    "byDay": "By day",
+    "byPriority": "By priority",
+    "invoices": "Invoices",
+    "payments": "Payments received",
+    "cashflow": "Income, outflows and balance",
+    "expenses": "Expenses",
+    "expensesByAccount": "Expenses by category"
+  },
+  "cols": {
+    "key": "Item",
+    "count": "Count",
+    "currency": "Currency",
+    "status": "Status",
+    "method": "Payment method",
+    "total_minor": "Total invoiced",
+    "paid_minor": "Already paid",
+    "amount_minor": "Amount received",
+    "income_minor": "Income received",
+    "expenses_minor": "Outflows (approved expenses)",
+    "pending_minor": "Expenses awaiting approval",
+    "balance_minor": "Balance"
+  },
+  "metrics": {
+    "total": "Total",
+    "walkIn": "Walk-ins",
+    "avgMinutes": "Average time to validation",
+    "patients": "New patients",
+    "appointments": "Appointments",
+    "triage": "Triage visits",
+    "consultations": "Consultations",
+    "labOrders": "Lab requests",
+    "admissions": "Admissions"
+  },
+  "values": {
+    "scheduled": "Scheduled",
+    "confirmed": "Confirmed",
+    "arrived": "Arrived",
+    "inConsultation": "In consultation",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "noShow": "No-show",
+    "requested": "Requested",
+    "collected": "Collected",
+    "inProgress": "In progress",
+    "resultsEntered": "Results entered",
+    "validated": "Approved",
+    "routine": "Routine",
+    "urgent": "Urgent",
+    "admitted": "Admitted",
+    "dischargePending": "Discharge requested",
+    "discharged": "Discharged",
+    "active": "Active",
+    "cash": "Cash",
+    "card": "Card",
+    "mobile_money": "Mobile money",
+    "transfer": "Transfer",
+    "pending": "Awaiting approval"
+  },
+  "exportPdf": "Export to PDF",
+  "pdfConfidential": "Confidential document: for the facility's internal use only.",
+  "pdfPage": "Page"
 }

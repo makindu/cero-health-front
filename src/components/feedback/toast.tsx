@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -37,13 +38,29 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((list) => [...list.slice(-3), { ...toast, id: nextId++ }]);
   }, []);
 
+  // Une fenêtre modale native occupe la « couche supérieure » du navigateur : aucun z-index ne passe au-dessus.
+  // La zone des messages devient donc un popover manuel, ré-affiché à chaque nouveau message pour passer devant la modale.
+  const regionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = regionRef.current as (HTMLDivElement & { showPopover?: () => void; hidePopover?: () => void }) | null;
+    if (!el || typeof el.showPopover !== 'function') return;
+    try {
+      el.setAttribute('popover', 'manual');
+      if (el.matches(':popover-open')) el.hidePopover?.();
+      if (toasts.length > 0) el.showPopover();
+    } catch {
+      /* navigateur sans popover : la zone reste affichée normalement */
+    }
+  }, [toasts]);
+
   return (
     <ToastContext.Provider value={push}>
       {children}
       <div
+        ref={regionRef}
         role="region"
         aria-label={t('toast.region')}
-        className="no-print pointer-events-none fixed inset-x-3 bottom-3 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:end-4 sm:bottom-4 sm:w-96"
+        className="no-print pointer-events-none fixed inset-x-3 bottom-3 top-auto z-50 m-0 h-auto overflow-visible border-0 bg-transparent p-0 flex flex-col items-end gap-2 sm:inset-x-auto sm:end-4 sm:bottom-4 sm:w-96"
       >
         {toasts.map((toast) => (
           <ToastCard key={toast.id} toast={toast} onDismiss={dismiss} />

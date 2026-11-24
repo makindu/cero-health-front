@@ -16,6 +16,7 @@ import { RX_AVAILABLE, useRxList } from '../prescriptions/use-rx';
 import { SuggestInput } from '@/components/forms/suggest-input';
 import { FormField } from '@/components/forms/form-field';
 import { SERVICE_KEYS } from '../_shared/demo-people';
+import { referenceFromApi, useCareUnits } from '../_shared/reference-data';
 import { AreaField, Panel, RichField, SelectField, TextField } from './clinical/fields';
 import { addDiagnosis, computeBmi, principalDiagnosis, updateDiagnosis, vitalsOutOfRange, type DiagnosisError } from './clinical/logic';
 import { EMPTY_VITALS, type ConsultationDraft, type DiagnosisStatus, type DiagnosisType, type Vitals } from './clinical/model';
@@ -266,6 +267,8 @@ function LinkedOrders({ consultationId }: { consultationId?: string }) {
 export function PlanSection({ draft, update, readOnly, patientId, consultationId }: { draft: ConsultationDraft; update: Update; readOnly: boolean; patientId?: string; consultationId?: string }) {
   const { t } = useTranslation('consultations');
   const [ordering, setOrdering] = useState<'lab' | 'rx' | null>(null);
+  const careUnits = useCareUnits();
+  const serviceSuggestions = referenceFromApi() ? (careUnits.data ?? []).map((u) => ({ value: u.name })) : SERVICE_KEYS.map((k) => ({ value: t(`services.${k}`) }));
   const p = draft.plan;
   const set = <K extends keyof typeof p>(key: K, value: (typeof p)[K]) => update((d) => ({ ...d, plan: { ...d.plan, [key]: value } }));
   // L'éditeur ne relit pas sa valeur après son montage : on le remonte (clé) quand la synthèse est (re)générée.
@@ -311,7 +314,7 @@ export function PlanSection({ draft, update, readOnly, patientId, consultationId
           {p.orientation !== 'none' && p.orientation !== 'ambulatory' && (
             <FormField label={t(`clinical.plan.target.${p.orientation}`)} hint={t(`clinical.plan.targetHint.${p.orientation}`)}>
               {(c) => <SuggestInput {...c} value={p.orientationTarget} disabled={readOnly} onChange={(v) => set('orientationTarget', v)}
-                suggestions={p.orientation === 'referral' ? [] : SERVICE_KEYS.map((k) => ({ value: t(`services.${k}`) }))} />}
+                suggestions={p.orientation === 'referral' ? [] : serviceSuggestions} />}
             </FormField>
           )}
         </div>

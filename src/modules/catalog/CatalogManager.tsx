@@ -3,6 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Button } from '@/components/ui/button';
+import { NewArrivalsBanner } from '@/components/feedback/new-arrivals-banner';
+import { useArrivalFocus, useCatalogArrivals } from '@/core/live/new-arrivals';
+import { useToast } from '@/components/feedback/toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { usePreferences } from '@/core/preferences/preferences-store';
 import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/badge';
 import { DataTable, type Column } from '@/components/tables/data-table';
@@ -20,6 +25,9 @@ import { useFinanceMutation, useFinanceSnapshot, useMoney } from '../finance/use
 import { pharmacy } from '../pharmacy/pharmacy';
 import { holdsStock } from '../pharmacy/packaging';
 import { usePharmacyMutation } from '../pharmacy/use-pharmacy';
+import { loadPharmacyArrivals, usePharmacyCatalog } from '../pharmacy/catalog-api';
+import { PharmacyCatalogImportDialog } from '../pharmacy/PharmacyCatalogImportDialog';
+import { referenceFromApi } from '../_shared/reference-data';
 import { fromMinor, toMinor } from '../insurance/Shared';
 import { DraftNotice } from '@/components/feedback/draft-notice';
 import { fingerprint } from '@/core/drafts/draft-store';
@@ -35,18 +43,30 @@ export function CatalogManager({ category }: { category: ManagedCategory }) {
   const { t } = useTranslation('finance');
   const money = useMoney();
   const snapshot = useFinanceSnapshot();
+  // API réelle : le catalogue de la pharmacie vient du serveur (prix UZISHA) ; mode local : instantané local.
+  const apiPharmacy = referenceFromApi() && category === 'pharmacy';
+  const apiCatalog = usePharmacyCatalog();
+  const source = apiPharmacy ? apiCatalog : snapshot;
+  const currencyKnown = !apiPharmacy || Boolean(apiCatalog.data?.currency);
   const [editing, setEditing] = useState<CatalogItem | 'new' | null>(null);
   const [importing, setImporting] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const all = snapshot.data?.catalog ?? [];
-  const rows = all.filter((i) => i.category === category && matchesQuery(search, i.label, i.code)).sort((a, b) => a.label.localeCompare(b.label));
+  const all = apiPharmacy ? apiCatalog.data?.items ?? [] : snapshot.data?.catalog ?? [];
+  const byCategory = all.filter((i) => i.category === category).sort((a, b) => a.label.localeCompare(b.label));
+  const rows = byCategory.filter((i) => matchesQuery(search, i.label, i.code));
+  const { activeFacilityId } = usePreferences();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const arrivals = useCatalogArrivals({ entities: ['catalog_items'], load: (ids) => loadPharmacyArrivals(queryClient, activeFacilityId, ids) });
+  useArrivalFocus(arrivals, byCategory, { perPage: PER_PAGE, setPage, setSearch, onNone: () => toast({ tone: 'neutral', title: t('newArrival.none') }) });
+  const arrivalMessage = arrivals.ids.length === 1 ? t('newArrival.item.one') : t('newArrival.item.many', { count: arrivals.ids.length });
   const permission = PERMISSION[category];
   const columns: Column<CatalogItem>[] = [
     { id: 'code', header: t('insurance.catalog.code'), cell: (i) => <code className="text-xs">{i.code}</code> },
-    { id: 'label', header: t(`catalogManager.${category}.label`), cell: (i) => i.label, primary: true },
+    { id: 'label', header: t(`catalogManager.${category}.label`), cell: (i) => (arrivals.fresh.has(i.id) ? <span className="inline-flex flex-wrap items-center gap-2">{i.label}<StatusBadge tone="success">{t('newArrival.badge')}</StatusBadge></span> : i.label), primary: true },
     ...(category === 'pharmacy' ? [{ id: 'packaging', header: t('catalogManager.packaging.column'), cell: (i: CatalogItem) => packagingText(i, all, t) }] : []),
-    { id: 'price', header: t('catalogManager.price'), cell: (i) => money(i.price.minor, i.price.currency), className: 'text-end tabular-nums' },
+    { id: 'price', header: t('catalogManager.price'), cell: (i) => (i.price.currency && i.price.minor > 0 ? money(i.price.minor, i.price.currency) : '—'), className: 'text-end tabular-nums' },
     { id: 'active', header: t('columns.status'), cell: (i) => <StatusBadge tone={i.active ? 'success' : 'neutral'}>{i.active ? t('insurance.catalog.active') : t('insurance.catalog.inactive')}</StatusBadge> },
     { id: 'edit', header: '', cell: (i) => (holdsStock(i) ? <Can permission={permission}><Button size="sm" variant="outline" onClick={() => setEditing(i)}>{t('common.edit')}</Button></Can> : <span className="text-xs text-muted-foreground">{t('catalogManager.packaging.editViaProduct')}</span>) },
   ];
@@ -55,25 +75,27 @@ export function CatalogManager({ category }: { category: ManagedCategory }) {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">{t(`catalogManager.${category}.hint`)}</p>
         <div className="flex flex-wrap gap-2">
-          {category === 'laboratory' && <Can permission={permission}><Button variant="outline" leftIcon={<Upload className="size-4" />} onClick={() => setImporting(true)}>{t('catalogImport.open')}</Button></Can>}
+          {(category === 'laboratory' || apiPharmacy) && <Can permission={permission}><Button variant="outline" leftIcon={<Upload className="size-4" />} onClick={() => setImporting(true)}>{t('catalogImport.open')}</Button></Can>}
           <Can permission={permission}><Button leftIcon={<Plus className="size-4" />} onClick={() => setEditing('new')}>{t(`catalogManager.${category}.add`)}</Button></Can>
         </div>
       </div>
+      {apiPharmacy && apiCatalog.data && all.length > 0 && !currencyKnown && <p role="status" className="mb-3 text-sm text-muted-foreground">{t('catalogManager.noCurrency')}</p>}
+      {arrivals.ids.length > 0 && <NewArrivalsBanner message={arrivalMessage} viewLabel={t('newArrival.view')} closeLabel={t('newArrival.close')} loading={arrivals.viewing} onView={() => void arrivals.view().catch(() => toast({ tone: 'danger', title: t('newArrival.failed') }))} onClose={arrivals.dismiss} />}
       <div className="mb-3"><SearchInput label={t('catalogManager.search')} placeholder={t('catalogManager.search')} value={search} onChange={(v) => { setSearch(v); setPage(1); }} /></div>
-      <DataTable caption={t(`catalogManager.${category}.title`)} columns={columns} rows={rows.slice((page - 1) * PER_PAGE, page * PER_PAGE)} getRowId={(i) => i.id}
-        loading={snapshot.isPending} error={snapshot.error} onRetry={() => void snapshot.refetch()} emptyTitle={t(`catalogManager.${category}.empty`)}
+      <DataTable caption={t(`catalogManager.${category}.title`)} columns={columns} rows={rows.slice((page - 1) * PER_PAGE, page * PER_PAGE)} getRowId={(i) => i.id} rowClassName={(i) => (arrivals.fresh.has(i.id) ? 'bg-primary-soft' : undefined)}
+        loading={source.isPending} error={source.error} onRetry={() => void source.refetch()} emptyTitle={t(`catalogManager.${category}.empty`)}
         pagination={{ page, perPage: PER_PAGE, total: rows.length, onPageChange: setPage }} />
-      {importing && <CatalogImportDialog existing={all} onClose={() => setImporting(false)} />}
+      {importing && (apiPharmacy ? <PharmacyCatalogImportDialog existing={all} onClose={() => setImporting(false)} /> : <CatalogImportDialog existing={all} onClose={() => setImporting(false)} />)}
       {editing && (
         <CatalogItemForm key={editing === 'new' ? 'new' : editing.id} category={category} initial={editing === 'new' ? null : editing} existing={all}
-          currency={all[0]?.price.currency ?? 'USD'} onClose={() => setEditing(null)} />
+          currency={all[0]?.price.currency || 'USD'} currencyKnown={currencyKnown} onClose={() => setEditing(null)} />
       )}
     </Card>
   );
 }
 
-function CatalogItemForm({ category, initial, existing, currency, onClose }: {
-  category: ManagedCategory; initial: CatalogItem | null; existing: CatalogItem[]; currency: string; onClose: () => void;
+function CatalogItemForm({ category, initial, existing, currency, currencyKnown, onClose }: {
+  category: ManagedCategory; initial: CatalogItem | null; existing: CatalogItem[]; currency: string; currencyKnown: boolean; onClose: () => void;
 }) {
   const { t } = useTranslation('finance');
   // Brouillon automatique (clé : catégorie + fiche + état de la fiche à l'ouverture).
@@ -118,7 +140,7 @@ function CatalogItemForm({ category, initial, existing, currency, onClose }: {
         {(c) => <Input {...c} autoFocus maxLength={120} value={v.label} onChange={(e) => setV({ ...v, label: e.target.value })} />}
       </FormField>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label={t('catalogManager.priceWithCurrency', { currency })} required error={err('priceInvalid')}>
+        <FormField label={currencyKnown ? t('catalogManager.priceWithCurrency', { currency }) : t('catalogManager.price')} required error={err('priceInvalid')}>
           {(c) => <NumberInput {...c} decimal maxDecimals={2} value={v.price} onValueChange={(price) => setV({ ...v, price })} />}
         </FormField>
         <FormField label={t('insurance.catalog.code')} required hint={initial ? t('insurance.catalog.codeHint') : t('catalogManager.codeHint')} error={err('codeInvalid', 'codeTaken')}>
@@ -145,7 +167,7 @@ function CatalogItemForm({ category, initial, existing, currency, onClose }: {
                 <div key={e.key} className="grid grid-cols-[1fr_6rem_6rem_auto] items-end gap-2">
                   <FormField label={t('catalogManager.packaging.extraLabel')}>{(c) => <Input {...c} maxLength={30} placeholder={pack.baseUnit} value={e.label} onChange={(ev) => setPack({ ...pack, extras: pack.extras.map((x) => (x.key === e.key ? { ...x, label: ev.target.value } : x)) })} />}</FormField>
                   <FormField label={t('catalogManager.packaging.extraContent', { unit: pack.baseUnit || '…' })}>{(c) => <NumberInput {...c} value={e.perUnit} onValueChange={(perUnit) => setPack({ ...pack, extras: pack.extras.map((x) => (x.key === e.key ? { ...x, perUnit } : x)) })} />}</FormField>
-                  <FormField label={t('catalogManager.packaging.extraPrice', { currency })}>{(c) => <NumberInput {...c} decimal maxDecimals={2} value={e.price} onValueChange={(price) => setPack({ ...pack, extras: pack.extras.map((x) => (x.key === e.key ? { ...x, price } : x)) })} />}</FormField>
+                  <FormField label={currencyKnown ? t('catalogManager.packaging.extraPrice', { currency }) : t('catalogManager.price')}>{(c) => <NumberInput {...c} decimal maxDecimals={2} value={e.price} onValueChange={(price) => setPack({ ...pack, extras: pack.extras.map((x) => (x.key === e.key ? { ...x, price } : x)) })} />}</FormField>
                   <Button type="button" size="sm" variant="outline" onClick={() => setPack({ ...pack, extras: pack.extras.filter((x) => x.key !== e.key) })}>{t('catalogManager.packaging.remove')}</Button>
                 </div>
               ))}

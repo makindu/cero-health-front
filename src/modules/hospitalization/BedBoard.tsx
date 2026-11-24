@@ -54,7 +54,7 @@ export function BedBoard({ onAdmit, onOpen }: { onAdmit: (bedId: string) => void
         return (
           <section key={ward} aria-labelledby={`ward-${ward}`} className="space-y-2">
             <h3 id={`ward-${ward}`} className="text-sm font-semibold">{wardLabel(t, ward)} <span className="font-normal text-muted-foreground">· {t('beds.occupancy', { occupied: beds.filter((b) => b.room.ward === ward && b.bed.status === 'occupied').length, total: beds.filter((b) => b.room.ward === ward).length })}</span></h3>
-            <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr))]">
+            <div className="grid gap-3">
               {rooms.map((roomId) => {
                 const rb = wardBeds.filter((b) => b.room.id === roomId);
                 return (

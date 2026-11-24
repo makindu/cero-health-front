@@ -19,7 +19,10 @@ import { appointmentService } from '../appointments/data';
 import { ActionDialog } from '../finance/ActionDialog';
 import { useFinanceSnapshot, useMoney } from '../finance/use-finance';
 import { useLabOrders } from '../laboratory/use-lab';
+import { ApiError } from '@/core/api';
+import { apiBilling } from '../billing/billing-api';
 import { describeBusinessError } from '../_shared/business-error';
+import { referenceFromApi } from '../_shared/reference-data';
 import { useResourceList } from '../_shared/use-resource';
 import { MAIL_KINDS, isDue, isEmail, mailtoHref, reminderTime, type MailKind, type OutboxMail } from './mail-rules';
 import { patientMail } from './mail-service';
@@ -36,7 +39,12 @@ function useMailBox(patientId: string) {
   const { t } = useTranslation();
   const list = useQuery({ queryKey: key, queryFn: () => patientMail.list(patientId) });
   const refresh = (): void => { void queryClient.invalidateQueries({ queryKey: key }); };
-  const fail = (error: unknown): void => { toast({ tone: 'danger', title: describeBusinessError(t, error) ?? t('module.saveFailed') }); };
+  // Cause précise : règle locale, sinon refus clair du serveur (adresse absente, rappel déjà en file…), sinon message générique.
+  const fail = (error: unknown): void => {
+    const business = describeBusinessError(t, error);
+    const server = !business && error instanceof ApiError && error.status && error.status < 500 && error.status !== 403 ? error.message : undefined;
+    toast({ tone: 'danger', title: business ?? server ?? t('module.saveFailed') });
+  };
   return { list, refresh, fail, toast };
 }
 
@@ -46,19 +54,33 @@ export function PatientMail({ patientId, patientName, email }: { patientId: stri
   const f = useFormatters();
   const box = useMailBox(patientId);
   const [composing, setComposing] = useState(false);
-  const handOff = useMutation({ mutationFn: (m: OutboxMail) => { window.open(mailtoHref(m), '_self'); return patientMail.markHandedOff({ id: m.id }); }, onSuccess: box.refresh, onError: box.fail });
+  const api = referenceFromApi();
+  // Avec le serveur : envoi réel. En mode local : remise à la messagerie de l'utilisateur (lien mailto).
+  const handOff = useMutation({
+    mutationFn: async (m: OutboxMail): Promise<OutboxMail | null> => {
+      if (api) return patientMail.send({ id: m.id });
+      window.open(mailtoHref(m), '_self');
+      await patientMail.markHandedOff({ id: m.id });
+      return null;
+    },
+    onSuccess: (r) => {
+      if (r) box.toast(r.status === 'sent' ? { tone: 'success', title: t('mail.sent') } : { tone: 'danger', title: t('mail.sendFailed') });
+      box.refresh();
+    },
+    onError: box.fail,
+  });
   const cancel = useMutation({ mutationFn: (id: string) => patientMail.cancel({ id }), onSuccess: box.refresh, onError: box.fail });
   const nowIso = new Date().toISOString();
   const columns: Column<OutboxMail>[] = [
     { id: 'kind', header: t('mail.col.kind'), cell: (m) => t(`mail.kind.${m.kind}`), primary: true },
     { id: 'subject', header: t('mail.col.subject'), cell: (m) => m.subject },
     { id: 'when', header: t('mail.col.when'), cell: (m) => (m.scheduledFor ? f.dateTime(m.scheduledFor) : f.dateTime(m.createdAt)) },
-    { id: 'status', header: t('mail.col.status'), cell: (m) => <StatusBadge tone={m.status === 'handedOff' ? 'success' : m.status === 'cancelled' ? 'neutral' : isDue(m, nowIso) ? 'warning' : 'info'}>{m.status === 'queued' && !isDue(m, nowIso) ? t('mail.status.scheduled') : t(`mail.status.${m.status}`)}</StatusBadge> },
+    { id: 'status', header: t('mail.col.status'), cell: (m) => <StatusBadge tone={m.status === 'handedOff' || m.status === 'sent' ? 'success' : m.status === 'failed' ? 'danger' : m.status === 'cancelled' ? 'neutral' : isDue(m, nowIso) ? 'warning' : 'info'}>{m.status === 'queued' && !isDue(m, nowIso) ? t('mail.status.scheduled') : t(`mail.status.${m.status}`)}</StatusBadge> },
     {
-      id: 'actions', header: '', cell: (m) => m.status === 'queued' ? (
+      id: 'actions', header: '', cell: (m) => m.status === 'queued' || m.status === 'failed' ? (
         <Can permission={P.patients.update}>
           <span className="flex gap-1">
-            <Button size="sm" onClick={() => handOff.mutate(m)}>{t('mail.send')}</Button>
+            <Button size="sm" loading={handOff.isPending && handOff.variables?.id === m.id} onClick={() => handOff.mutate(m)}>{m.status === 'failed' ? t('mail.retry') : t('mail.send')}</Button>
             <Button size="sm" variant="ghost" onClick={() => cancel.mutate(m.id)}>{t('mail.cancel')}</Button>
           </span>
         </Can>
@@ -71,7 +93,7 @@ export function PatientMail({ patientId, patientName, email }: { patientId: stri
         <p className="text-sm text-muted-foreground">{isEmail(email) ? t('mail.recipient', { email }) : t('mail.noEmail')}</p>
         <Can permission={P.patients.update}><Button leftIcon={<Mail className="size-4" />} disabled={!isEmail(email)} onClick={() => setComposing(true)}>{t('mail.compose')}</Button></Can>
       </div>
-      <p className="text-xs text-muted-foreground">{t('mail.localNotice')}</p>
+      <p className="text-xs text-muted-foreground">{api ? t('mail.apiNotice') : t('mail.localNotice')}</p>
       <DataTable caption={t('mail.title')} columns={columns} rows={box.list.data ?? []} getRowId={(m) => m.id} loading={box.list.isPending} emptyTitle={t('mail.empty')} />
       {composing && isEmail(email) && <ComposeDialog t={t} patientId={patientId} patientName={patientName} email={email} onClose={() => setComposing(false)} onQueued={box.refresh} onFail={box.fail} />}
     </div>
@@ -83,14 +105,25 @@ function ComposeDialog({ t, patientId, patientName, email, onClose, onQueued, on
 }) {
   const f = useFormatters();
   const money = useMoney();
+  const api = referenceFromApi();
+  const { activeFacilityId } = usePreferences();
   const snap = useFinanceSnapshot();
   const labs = useLabOrders();
+  const apiDues = useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'billing', 'patient-dues', patientId),
+    queryFn: () => apiBilling.list({ patientId, status: 'active', page: 1 }),
+    enabled: api,
+  });
   const appts = useResourceList('appointments', appointmentService, { page: 1, perPage: 200, search: '', filters: { patientId }, sort: null });
   const now = new Date().toISOString();
   const upcoming = (appts.data?.rows ?? []).filter((a) => a.patientId === patientId && a.startsAt > now && a.status !== 'cancelled' && a.status !== 'noShow').sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-  const invoices = (snap.data?.invoices ?? []).filter((v) => v.invoice.patientId === patientId);
-  const dues = unpaidDues(invoices.map((v) => v.invoice), invoices.flatMap((v) => v.ledger));
+  const invoices = api ? [] : (snap.data?.invoices ?? []).filter((v) => v.invoice.patientId === patientId);
   const currency = invoices[0]?.invoice.currency ?? '';
+  // Montants dus : en démo calculés localement ; avec le serveur, reste à payer de chaque facture en cours.
+  const dues: { number: string; due: number; currency: string }[] = api
+    ? (apiDues.data?.rows ?? []).filter((l) => l.remainingMinor > 0).map((l) => ({ number: `${t(`mail.dueSource.${l.sourceType}`, { defaultValue: l.sourceType })} ${f.date(l.createdAt)}`, due: l.remainingMinor, currency: l.currency }))
+    : unpaidDues(invoices.map((v) => v.invoice), invoices.flatMap((v) => v.ledger)).map((d) => ({ number: d.number, due: d.due, currency }));
+  const loading = (!api && snap.isPending) || labs.isPending || appts.isPending || (api && apiDues.isPending);
   const readyLabs = (labs.data ?? []).filter((l) => l.order.patientId === patientId && l.order.status === 'validated');
 
   const [kind, setKind] = useState<MailKind>('appointment');
@@ -111,8 +144,10 @@ function ComposeDialog({ t, patientId, patientName, email, onClose, onQueued, on
       setSubject(t('mail.tpl.appointment.subject', { when: f.dateTime(a.startsAt) }));
       setBody(`${greeting}\n\n${t('mail.tpl.appointment.body', { when: f.dateTime(a.startsAt), practitioner: a.practitioner })}\n\n${signature}`);
     } else if (k === 'unpaidInvoices') {
-      const lines = dues.map((d) => `- ${d.number} : ${money(d.due, currency)}`).join('\n');
-      const total = money(dues.reduce((s, d) => s + d.due, 0), currency);
+      const lines = dues.map((d) => `- ${d.number} : ${money(d.due, d.currency)}`).join('\n');
+      const sums = new Map<string, number>();
+      for (const d of dues) sums.set(d.currency, (sums.get(d.currency) ?? 0) + d.due);
+      const total = [...sums].map(([cur, sum]) => money(sum, cur)).join(' + ');
       setSubject(t('mail.tpl.unpaid.subject'));
       setBody(`${greeting}\n\n${t('mail.tpl.unpaid.body', { total })}\n${lines}\n\n${signature}`);
     } else if (k === 'labResult') {
@@ -123,7 +158,7 @@ function ComposeDialog({ t, patientId, patientName, email, onClose, onQueued, on
   };
   const [filled, setFilled] = useState('');
   const sig = `${kind}|${source}|${upcoming.length}|${dues.length}|${readyLabs.length}`;
-  if (filled !== sig && (!snap.isPending && !labs.isPending && !appts.isPending)) { setFilled(sig); fill(kind, source); }
+  if (filled !== sig && !loading) { setFilled(sig); fill(kind, source); }
 
   const appt = kind === 'appointment' ? upcoming.find((a) => a.id === source) : undefined;
   const scheduledFor = appt && lead ? reminderTime(appt.startsAt, leadOf(lead)) : undefined;

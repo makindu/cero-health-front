@@ -489,7 +489,8 @@
       "addExtra": "Ajouter une unité de vente",
       "derived": "Unité « {{unit}} » = {{perUnit}} de {{product}}",
       "editViaProduct": "Modifier via le produit principal"
-    }
+    },
+    "noCurrency": "Aucune devise de facturation n'est réglée pour cet établissement : les prix ne peuvent pas s'afficher. Réglez la devise dans la facturation."
   },
   "group": {
     "title": "Règlement groupé des factures",
@@ -581,6 +582,114 @@
       "priceInvalid": "Ligne {{row}} : prix « {{value}} » invalide (nombre positif, 2 décimales au plus).",
       "activeInvalid": "Ligne {{row}} : état « {{value}} » illisible (oui / non).",
       "duplicateInFile": "Ligne {{row}} : « {{value}} » apparaît déjà plus haut dans le fichier."
+    },
+    "drop": {
+      "title": "Glissez votre fichier Excel ici",
+      "browse": "ou cliquez pour parcourir",
+      "hint": "Format .xlsx uniquement",
+      "change": "Changer de fichier"
+    }
+  },
+  "patientApi": {
+    "noAccess": "Vous n'avez pas accès à la facturation de ce patient.",
+    "balance": "Solde dû",
+    "nothingDue": "Rien à payer.",
+    "invoices": "Factures du patient",
+    "noInvoice": "Aucune facture pour ce patient",
+    "coverages": "Couvertures d'assurance",
+    "noCoverage": "Aucune couverture d'assurance.",
+    "until": "jusqu'au {{date}}",
+    "coverageStatus": {
+      "active": "Active",
+      "approved": "Approuvée",
+      "pending": "En attente",
+      "rejected": "Refusée",
+      "expired": "Expirée",
+      "suspended": "Suspendue"
+    }
+  },
+  "pharmacyImport": {
+    "title": "Importer les médicaments, leurs prix et leurs unités",
+    "help": "Ajoutez de nouveaux médicaments et mettez à jour les prix, les désignations, l'état et les unités de vente (boîte, plaquette, comprimé…) de ceux qui existent déjà. Les lots ne sont pas importés. Tout est vérifié et prévisualisé avant l'enregistrement : une seule erreur bloque l'importation.",
+    "columns": "Colonnes : Code (facultatif — créé si absent), Désignation, Prix de l'unité principale (obligatoire pour un nouveau médicament), Actif (oui/non), puis le conditionnement : Unité (ex. boîte), Unité de base (ex. comprimé) et Contenu (nombre d'unités de base dans l'unité principale). Jusqu'à {{max}} autres unités de vente : Sous-unité 1, Contenu 1 (en unités de base), Prix 1, Sous-unité 2… Une cellule de conditionnement vide conserve celui du produit ; une ligne dont le code ou la désignation existe déjà met à jour le médicament, et ses sous-unités absentes du fichier sont conservées.",
+    "templateFile": "modele-import-medicaments",
+    "templateSheet": "Médicaments",
+    "done": "Catalogue des médicaments mis à jour",
+    "yes": "oui",
+    "header": {
+      "code": "Code",
+      "label": "Désignation",
+      "price": "Prix",
+      "active": "Actif",
+      "unit": "Unité",
+      "baseUnit": "Unité de base",
+      "perPack": "Contenu",
+      "extraUnit": "Sous-unité",
+      "extraContent": "Contenu",
+      "extraPrice": "Prix",
+      "exBox": "Boîte",
+      "exTablet": "Comprimé",
+      "exStrip": "Plaquette"
+    },
+    "fatal": {
+      "missingColumns": "Colonnes introuvables : il faut au moins « Désignation » (ou « Code ») et « Prix ». Utilisez le modèle."
+    },
+    "problem": {
+      "itemMissing": "Ligne {{row}} : désignation manquante.",
+      "codeInvalid": "Ligne {{row}} : code « {{value}} » invalide (2 à 20 lettres majuscules, chiffres ou tirets).",
+      "codeTaken": "Ligne {{row}} : le code « {{value}} » est déjà utilisé par une unité de vente d'un autre produit.",
+      "codeMismatch": "Ligne {{row}} : cette désignation existe déjà sous un autre code que « {{value}} ».",
+      "labelLength": "Ligne {{row}} : la désignation doit avoir entre 2 et 120 caractères.",
+      "labelTaken": "Ligne {{row}} : « {{value}} » est déjà utilisé par un autre médicament.",
+      "priceRequired": "Ligne {{row}} : le prix est obligatoire pour « {{value}} ».",
+      "priceInvalid": "Ligne {{row}} : prix « {{value}} » invalide (nombre positif, 2 décimales au plus).",
+      "activeInvalid": "Ligne {{row}} : état « {{value}} » illisible (oui / non).",
+      "duplicateInFile": "Ligne {{row}} : « {{value}} » apparaît déjà plus haut dans le fichier.",
+      "perPackInvalid": "Ligne {{row}} : contenu « {{value}} » invalide (nombre entier de 1 à 100 000).",
+      "packagingLabelsRequired": "Ligne {{row}} : indiquez l'unité et l'unité de base quand le contenu dépasse 1 (« {{value}} »).",
+      "packagingLabelsDifferent": "Ligne {{row}} : l'unité et l'unité de base doivent être différentes (« {{value}} »).",
+      "extrasNeedPackaging": "Ligne {{row}} : des sous-unités sont indiquées mais le contenu de l'unité est 1 (« {{value}} »).",
+      "extraInvalid": "Ligne {{row}} : sous-unité « {{value}} » invalide (nom obligatoire, contenu entier inférieur à celui de l'unité principale).",
+      "extraPriceInvalid": "Ligne {{row}} : prix de la sous-unité « {{value}} » invalide (nombre positif, 2 décimales au plus).",
+      "extraDuplicate": "Ligne {{row}} : la sous-unité « {{value}} » a le même nom ou le même contenu qu'une autre unité de ce produit."
+    }
+  },
+  "servicesCatalog": {
+    "title": "Prestations",
+    "label": "Désignation de la prestation",
+    "add": "Ajouter une prestation",
+    "addTitle": "Ajouter une prestation",
+    "edit": "Modifier la prestation",
+    "empty": "Aucune prestation au catalogue.",
+    "hint": "Les actes facturés (consultation, soins, hospitalisation, imagerie…) avec leur tarif. Les examens de laboratoire et les médicaments se gèrent dans leurs modules.",
+    "noCurrency": "Aucune devise par défaut n'est définie : réglez-la dans CERO ID pour voir les tarifs.",
+    "import": {
+      "title": "Importer les prestations et leurs tarifs",
+      "help": "Ajoutez de nouvelles prestations et mettez à jour les tarifs, les désignations et l'état de celles qui existent déjà. Tout est vérifié et prévisualisé avant l'enregistrement : une seule erreur bloque l'importation.",
+      "columns": "Colonnes : Code (facultatif — un code SRV-001… est créé si absent), Prestation, Prix (obligatoire pour une nouvelle prestation) et Actif (oui/non, facultatif). Une ligne dont le code ou la désignation existe déjà met à jour la prestation.",
+      "templateFile": "modele-import-prestations",
+      "templateSheet": "Prestations",
+      "example": "Consultation générale",
+      "done": "Prestations importées."
+    }
+  },
+  "labCatalog": {
+    "noCurrency": "Aucun tarif n'est défini pour l'instant : les prix s'afficheront dès qu'un examen aura un prix.",
+    "example": "Glycémie"
+  },
+  "newArrival": {
+    "badge": "Nouveau",
+    "view": "Voir",
+    "close": "Fermer",
+    "none": "Cet ajout ne concerne pas ce catalogue.",
+    "failed": "Impossible d'afficher le nouvel ajout. Réessayez.",
+    "item": {
+      "one": "Un nouvel article a été ajouté au catalogue",
+      "many": "{{count}} nouveaux articles ajoutés au catalogue"
+    },
+    "lab": {
+      "one": "Un nouvel examen a été ajouté",
+      "many": "{{count}} nouveaux examens ajoutés"
     }
   }
 }

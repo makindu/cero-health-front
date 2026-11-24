@@ -100,7 +100,11 @@
       "out": "Zilizoisha",
       "expired": "Zenye bechi iliyoisha muda"
     },
-    "quantityIn": "Idadi katika {{unit}}"
+    "quantityIn": "Idadi katika {{unit}}",
+    "inUzishaTitle": "Hifadhi inasimamiwa ndani ya UZISHA",
+    "inUzishaBody": "Mapokezi, makundi (lots), tarehe za kuisha na marekebisho ya hesabu hufanywa ndani ya UZISHA. Hapa duka la dawa huandaa na kukabidhi dawa zilizoandikwa: seva huchagua makundi na hukataa hifadhi isiyotosha. Dawa, bei zake na vipimo vya kuuza husimamiwa kwenye kichupo cha « Orodha na bei ».",
+    "catalogCount_one": "Bidhaa {{count}} kwenye orodha.",
+    "catalogCount_other": "Bidhaa {{count}} kwenye orodha."
   },
   "columns": {
     "prescription": "Agizo",

@@ -4,7 +4,6 @@
   "tabs": {
     "facility": "Facility",
     "users": "Staff",
-    "roles": "Roles and permissions",
     "services": "Departments"
   },
   "facility": {
@@ -25,7 +24,20 @@
     "timeZoneHint": "E.g. Africa/Lubumbashi",
     "currency": "Currency",
     "currencyHint": "ISO 4217 code, e.g. USD or CDF",
-    "save": "Save settings"
+    "save": "Save settings",
+    "viewTitle": "Facility profile",
+    "viewDescription": "Information about the active facility. Read-only.",
+    "managedByIdCore": "The facility can only be edited in CERO ID.",
+    "contact": "Contact",
+    "legal": "Legal identification",
+    "social": "Social media",
+    "website": "Website",
+    "rccm": "Trade register (RCCM)",
+    "nationalId": "National identification",
+    "taxNumber": "Tax number",
+    "authorization": "Operating authorisation",
+    "logoAlt": "Logo of {{name}}",
+    "unavailable": "Facility information is not available right now."
   },
   "users": {
     "name": "Name",
@@ -53,7 +65,15 @@
     "suspendTitle": "Suspend this staff member?",
     "suspendBody": "They will no longer be offered in doctor lists. Their history is kept.",
     "reactivate": "Reactivate",
-    "reactivateTitle": "Reactivate this staff member?"
+    "reactivateTitle": "Reactivate this staff member?",
+    "edit": "Edit",
+    "createProfile": "Create profile",
+    "editTitle": "Edit staff profile",
+    "createTitle": "Create staff profile",
+    "saved": "Profile saved.",
+    "pickAccount": "Choose an account",
+    "pickType": "Choose a role",
+    "noCandidates": "Every member already has a profile. Add the person in the CERO ID portal first."
   },
   "roles": {
     "note": "Proposed standard roles, to be validated with CERO ID CORE. Permission codes are real; the assignment to roles is illustrative and not enforced.",
@@ -85,7 +105,8 @@
       "inventory": "Inventory",
       "reports": "Reports",
       "administration": "Administration",
-      "audit": "Audit"
+      "audit": "Audit",
+      "expenses": "Expenses"
     },
     "permissions": {
       "dashboard": {
@@ -193,6 +214,12 @@
       },
       "audit": {
         "view": "View the audit log"
+      },
+      "expenses": {
+        "view": "View expenses",
+        "create": "Record an expense",
+        "validate": "Approve an expense",
+        "cancel": "Cancel an expense"
       }
     },
     "reset": "Reset"
@@ -218,7 +245,13 @@
       "inpatient": "Inpatient",
       "surgery": "Surgery",
       "other": "Other"
-    }
+    },
+    "addType": "Add a type",
+    "newTypeLabel": "Name of the new type",
+    "newTypePlaceholder": "E.g. Dialysis",
+    "addTypeConfirm": "Add",
+    "addTypeCancel": "Cancel",
+    "addTypeError": "Could not add this type. Try again."
   },
   "serviceNames": {
     "generalMedicine": "General medicine",
@@ -226,5 +259,50 @@
     "maternity": "Maternity",
     "emergency": "Emergency",
     "surgery": "Surgery"
+  },
+  "staff": {
+    "type": "Role",
+    "account": "Facility account",
+    "accountHint": "Only members without a staff profile are listed. Add the person in the CERO ID portal first.",
+    "title": "Professional title",
+    "managedByIdCore": "Accounts and access are managed in the CERO ID portal. Here you describe the person's role in the facility.",
+    "types": {
+      "doctor": "Doctor",
+      "nurse": "Nurse",
+      "midwife": "Midwife",
+      "lab_technician": "Lab technician",
+      "pharmacist": "Pharmacist",
+      "receptionist": "Receptionist",
+      "cashier": "Cashier",
+      "administrator": "Administrator",
+      "other": "Other"
+    },
+    "noProfile": "No HEALTH profile",
+    "owner": "Owner"
+  },
+  "functions": {
+    "manage": "Roles",
+    "title": "Staff roles",
+    "hint": "Add the roles specific to your facility. Each one behaves like one of the standard roles.",
+    "standard": "Standard roles",
+    "custom": "Facility roles",
+    "empty": "No role added yet.",
+    "label": "Role name",
+    "baseType": "Behaves like",
+    "baseTypeHint": "Decides the business rules: “Doctor” to appear in doctor lists, and so on.",
+    "add": "Add",
+    "added": "Role added.",
+    "deleted": "Role deleted.",
+    "delete": "Delete",
+    "inUse": "in use: {{count}}",
+    "inUseHint": "Used by staff: change their role first.",
+    "suggested": "Common roles",
+    "suggestedHint": "Tick the ones you need; you can add more later.",
+    "allAdded": "All common roles are already added.",
+    "selectAll": "Select all",
+    "selectNone": "Clear all",
+    "addSelected": "Add selection ({{count}})",
+    "close": "Close",
+    "addTitle": "Add a role"
   }
 }

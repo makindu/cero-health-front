@@ -1,5 +1,5 @@
 import type { CatalogItem } from '@/core/pricing/types';
-import { CODE_PATTERN, labelKey, parsePrice, suggestCode, type ManagedCategory } from './catalog-rules';
+import { CODE_PATTERN, labelKey, parsePrice, suggestCode, type CatalogCategory } from './catalog-rules';
 
 /** Importation du catalogue et des prix depuis un tableau (feuille Excel déjà lue). Tout est analysé AVANT d'écrire. */
 
@@ -29,7 +29,7 @@ type Existing = Pick<CatalogItem, 'id' | 'code' | 'label' | 'category' | 'active
 const norm = (s: string): string => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const HEADERS = {
   code: ['code', 'codeexamen', 'codeproduit', 'reference', 'ref'],
-  label: ['examen', 'designation', 'analyse', 'test', 'nom', 'libelle', 'name', 'label', 'produit', 'medicament'],
+  label: ['examen', 'designation', 'analyse', 'test', 'nom', 'libelle', 'name', 'label', 'produit', 'medicament', 'prestation', 'acte', 'service', 'intitule', 'designationdelexamen', 'designationdelaprestation', 'designationdumedicament'],
   price: ['prix', 'tarif', 'pu', 'prixunitaire', 'price', 'unitprice'],
   active: ['actif', 'active', 'statut', 'status', 'etat'],
 } as const;
@@ -48,7 +48,7 @@ export function parseActive(text: string): boolean | undefined {
  * Compare chaque ligne du tableau au catalogue de la catégorie : création (nouveau code ou nouvelle désignation), mise à jour du prix /
  * de la désignation / de l'état (ligne retrouvée par son code, sinon par sa désignation) ou « inchangé ». Chaque erreur porte son numéro de ligne Excel.
  */
-export function planCatalogImport(table: readonly (readonly string[])[], existing: readonly Existing[], category: ManagedCategory): CatalogImportPlan {
+export function planCatalogImport(table: readonly (readonly string[])[], existing: readonly Existing[], category: CatalogCategory): CatalogImportPlan {
   const none = (fatal: CatalogImportFatal): CatalogImportPlan => ({ rows: [], errors: [], fatal });
   const [head, ...body] = table;
   if (!head) return none('empty');

@@ -172,7 +172,9 @@
       "queued": "À envoyer",
       "scheduled": "Programmé",
       "handedOff": "Remis à la messagerie",
-      "cancelled": "Annulé"
+      "cancelled": "Annulé",
+      "sent": "Envoyé",
+      "failed": "Échec d’envoi"
     },
     "source": {
       "appointment": "Rendez-vous",
@@ -209,6 +211,15 @@
         "subject": "Vos résultats d'examens sont disponibles",
         "body": "Les résultats de votre demande d'examens {{number}} sont disponibles. Par confidentialité, ils ne sont pas joints à ce message : merci de passer les retirer ou d'en parler avec votre médecin."
       }
+    },
+    "apiNotice": "Les e-mails partent du serveur vers l'adresse de la fiche patient. Un rappel programmé est envoyé automatiquement à l'heure choisie.",
+    "sendFailed": "Envoi impossible : le message est conservé, réessayez plus tard.",
+    "sent": "E-mail envoyé",
+    "retry": "Réessayer",
+    "dueSource": {
+      "consultation": "Consultation",
+      "lab_order": "Examen",
+      "dispensation": "Pharmacie"
     }
   }
 }

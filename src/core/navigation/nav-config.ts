@@ -2,6 +2,7 @@ import {
   BedDouble,
   Boxes,
   Building2,
+  Coins,
   CalendarClock,
   ClipboardList,
   FlaskConical,
@@ -174,6 +175,14 @@ export const NAV_GROUPS: NavGroup[] = [
         labelKey: 'nav.cash',
         icon: Wallet,
         permission: PERMISSIONS.cash.view,
+        phase: 5,
+      },
+      {
+        id: 'expenses',
+        path: '/expenses',
+        labelKey: 'nav.expenses',
+        icon: Coins,
+        permission: PERMISSIONS.expenses.view,
         phase: 5,
       },
       {

@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
+import { OfflineState } from '@/components/feedback/offline-state';
 import { Skeleton } from '@/components/feedback/spinner';
+import { useDataUnavailable } from '@/core/connectivity/connectivity';
 import { cn } from '@/utils/cn';
 import { Pagination } from './pagination';
 
@@ -28,6 +30,8 @@ interface DataTableProps<T> {
   columns: readonly Column<T>[];
   rows: readonly T[];
   getRowId: (row: T) => string;
+  /** Classe ajoutée à une ligne (ex. surbrillance d'un élément arrivé en direct). */
+  rowClassName?: (row: T) => string | undefined;
   loading?: boolean;
   error?: unknown;
   onRetry?: () => void;
@@ -47,6 +51,7 @@ export function DataTable<T>({
   columns,
   rows,
   getRowId,
+  rowClassName,
   loading,
   error,
   onRetry,
@@ -57,8 +62,10 @@ export function DataTable<T>({
   pagination,
 }: DataTableProps<T>) {
   const { t } = useTranslation();
+  const unavailable = useDataUnavailable();
 
   if (error) return <ErrorState error={error} onRetry={onRetry} />;
+  if (loading && unavailable) return <OfflineState />;
   if (loading) {
     return (
       <div className="space-y-2 p-4" aria-busy="true">
@@ -126,7 +133,7 @@ export function DataTable<T>({
           </thead>
           <tbody className="divide-y divide-border">
             {rows.map((row) => (
-              <tr key={getRowId(row)} className="hover:bg-surface-muted/60">
+              <tr key={getRowId(row)} data-row-id={getRowId(row)} className={cn('hover:bg-surface-muted/60', rowClassName?.(row))}>
                 {columns.map((column) => (
                   <td key={column.id} className={cn('px-4 py-[var(--cell-py)]', column.className)}>
                     {column.cell(row)}
@@ -140,7 +147,7 @@ export function DataTable<T>({
 
       <ul className="divide-y divide-border md:hidden" aria-label={caption}>
         {rows.map((row) => (
-          <li key={getRowId(row)} className="space-y-2 px-4 py-3">
+          <li key={getRowId(row)} data-row-id={getRowId(row)} className={cn('space-y-2 px-4 py-3', rowClassName?.(row))}>
             {primary && <div className="font-medium text-foreground">{primary.cell(row)}</div>}
             <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
               {columns

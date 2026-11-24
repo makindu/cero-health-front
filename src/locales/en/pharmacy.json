@@ -100,7 +100,11 @@
       "out": "Out of stock",
       "expired": "With an expired lot"
     },
-    "quantityIn": "Quantity in {{unit}}"
+    "quantityIn": "Quantity in {{unit}}",
+    "inUzishaTitle": "Stock is managed in UZISHA",
+    "inUzishaBody": "Receipts, lots, expiry dates and inventory corrections are done in UZISHA. Here the pharmacy prepares and hands over prescriptions: the server picks the lots and refuses insufficient stock. Medicines, their prices and sale units are managed in the “Catalogue and prices” tab.",
+    "catalogCount_one": "{{count}} product in the catalogue.",
+    "catalogCount_other": "{{count}} products in the catalogue."
   },
   "columns": {
     "prescription": "Prescription",

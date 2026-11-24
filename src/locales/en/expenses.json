@@ -1,0 +1,86 @@
+{
+  "title": "Expenses",
+  "subtitle": "Facility expenses, recorded in the UZISHA accounts",
+  "columns": {
+    "date": "Date",
+    "account": "Category",
+    "unit": "Unit",
+    "motif": "Reason",
+    "amount": "Amount",
+    "status": "Status",
+    "by": "Entered by"
+  },
+  "state": {
+    "pending": "Awaiting approval",
+    "validated": "Approved",
+    "cancelled": "Cancelled"
+  },
+  "cancelReason": "Cancelled: {{reason}}",
+  "actions": {
+    "new": "New expense",
+    "validate": "Approve",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "totals": {
+    "validated": "Approved",
+    "validatedHint": "Counted in the cash balance",
+    "pending": "Awaiting approval",
+    "pendingHint": "Not yet counted in the balance",
+    "total": "Period total",
+    "none": "No expenses in this period."
+  },
+  "filters": {
+    "from": "From",
+    "to": "To",
+    "allStatuses": "All statuses",
+    "allAccounts": "All categories",
+    "allUnits": "All units",
+    "search": "Reason contains",
+    "periodInvalid": "The end date is before the start date."
+  },
+  "empty": "No expenses",
+  "emptyHint": "Change the period or the filters, or record a new expense.",
+  "failed": "Operation failed",
+  "failedHint": "Check the details and try again.",
+  "created": "Expense recorded",
+  "validated": "Expense approved",
+  "cancelled": "Expense cancelled",
+  "errors": {
+    "account": "Choose a category.",
+    "amount": "Enter an amount greater than zero.",
+    "amountUnreadable": "Unreadable amount or too many decimals.",
+    "motif": "Enter the reason for the expense.",
+    "currency": "No currency is defined in the accounts."
+  },
+  "new": {
+    "title": "New expense",
+    "description": "The expense is recorded in the accounts and stays awaiting approval until a manager decides.",
+    "submit": "Record expense",
+    "chooseAccount": "Choose a category",
+    "noAccount": "No expense category is defined in the accounts.",
+    "unitHint": "Optional: the unit that incurred the expense.",
+    "noUnit": "No unit",
+    "currency": "Currency"
+  },
+  "validate": {
+    "title": "Approve this expense?",
+    "description": "{{amount}} — {{account}}. An approved expense counts in the cash balance and can no longer be cancelled."
+  },
+  "cancel": {
+    "title": "Cancel this expense?",
+    "description": "{{amount}} — {{account}}. It will be removed from the accounts and will no longer count.",
+    "confirm": "Cancel expense",
+    "reason": "Reason for cancelling",
+    "hint": "The reason is kept in the audit log."
+  },
+  "cash": {
+    "title": "Today's income and outflows ({{currency}})",
+    "income": "Income received",
+    "out": "Outflows (approved expenses)",
+    "outHint": "Approved expenses of the day",
+    "pending": "Expenses awaiting approval",
+    "pendingHint": "Not in the balance until approved",
+    "balance": "Balance of the day"
+  }
+}

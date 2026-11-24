@@ -38,7 +38,8 @@
     "audit": "Ukaguzi",
     "insurance": "Bima na bei",
     "patientFlowBoard": "Ufuatiliaji wa wagonjwa",
-    "messages": "Ujumbe"
+    "messages": "Ujumbe",
+    "expenses": "Matumizi"
   },
   "actions": {
     "save": "Hifadhi",
@@ -254,7 +255,16 @@
     "patientSearchPlaceholder": "Andika jina au namba ya faili…",
     "itemNoMatch": "Hakuna matokeo. Angalia tahajia au msimbo.",
     "itemSearchPlaceholder": "Andika jina au msimbo…",
-    "remove": "Ondoa"
+    "remove": "Ondoa",
+    "errNetwork": "Seva haipatikani. Taarifa zako zimehifadhiwa: jaribu tena mtandao ukirudi.",
+    "errTimeout": "Seva inachelewa kujibu. Jaribu tena baada ya muda mfupi; hakuna nakala itakayoundwa.",
+    "errServer": "Seva imepata hitilafu. Jaribu tena; ikiendelea, wasiliana na msaada.",
+    "errRateLimited": "Maombi mengi sana kwa muda mfupi. Subiri sekunde chache kisha ujaribu tena.",
+    "errForbidden": "Huna ruhusa ya kufanya kitendo hiki.",
+    "notConnected": {
+      "title": "Bado haijaunganishwa na seva",
+      "description": "Sehemu hii bado haipatikani na seva ya CERO HEALTH. Hakuna data ya mfano inayoonyeshwa."
+    }
   },
   "sex": {
     "F": "Mwanamke",
@@ -595,5 +605,18 @@
     "onHint": "Wakati halisi umewashwa: skrini husasishwa zenyewe.",
     "connecting": "Inaunganisha…",
     "connectingHint": "Inaunganisha na wakati halisi."
+  },
+  "connection": {
+    "lostText": "Unachoandika kinabaki kwenye kifaa hiki. Jaribu kuhifadhi tena muunganisho ukirudi.",
+    "backTitle": "Muunganisho umerudi",
+    "backText": "Skrini zinasasishwa.",
+    "browser": "Kompyuta hii haijaunganishwa tena kwenye mtandao.",
+    "server": {
+      "health": "Seva ya HEALTH haijibu.",
+      "idCore": "Seva ya utambulisho (CERO ID) haijibu.",
+      "uzisha": "Seva ya UZISHA (malipo, hisa) haijibu."
+    },
+    "unavailable": "Muunganisho haupatikani",
+    "unavailableText": "Data itaonekana yenyewe muunganisho ukirudi."
   }
 }

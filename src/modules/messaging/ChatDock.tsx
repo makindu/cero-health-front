@@ -8,7 +8,7 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { usePermissions } from '@/core/permissions/PermissionsProvider';
 import { cn } from '@/utils/cn';
 import { disablePush, enablePush, pushSupported, rememberChatLink, takeChatLink } from './chat-push';
-import { desktopDenied, desktopSupported, incoming, loadPrefs, notifyDesktop, playChime, requestDesktop, savePrefs, titleWithCount, unlockAudio, type AlertPrefs } from './chat-alerts';
+import { desktopDenied, desktopGranted, desktopSupported, incoming, loadPrefs, notifyDesktop, playChime, requestDesktop, savePrefs, titleWithCount, unlockAudio, type AlertPrefs } from './chat-alerts';
 import { MAX_MESSAGE_LENGTH, type Message, presenceOf, readersOf, totalUnread, type ConversationSummary } from './messaging-rules';
 import { referenceFromApi } from '../_shared/reference-data';
 import { MembersPanel, NewGroupForm } from './GroupPanels';
@@ -168,6 +168,14 @@ function Dock() {
     // Réveil même application fermée (Web Push) : seulement avec l'API, et sans bloquer l'alerte locale si le serveur ne l'offre pas.
     if (ok && referenceFromApi() && pushSupported()) void enablePush();
   };
+
+  // Appareil abonné au compte connecté : la case « Notifications » peut déjà être cochée par un autre compte de ce navigateur,
+  // et l'abonnement appartient à UN utilisateur. Silencieux, sans nouvelle autorisation (jamais demandée ici).
+  useEffect(() => {
+    if (!meOrNull?.id || !referenceFromApi() || !prefs.desktop || !pushSupported() || !desktopGranted()) return;
+    void enablePush();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meOrNull?.id, prefs.desktop]);
 
   // Un clic sur une notification Web Push ouvre la conversation concernée (application déjà ouverte ou lancée via #chat=ID).
   useEffect(() => {

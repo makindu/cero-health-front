@@ -5,6 +5,9 @@ import { useFormatters } from '@/core/i18n/useFormatters';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
+import { PageHeader } from '@/components/layout/page-header';
+import { StockTab } from '../pharmacy/StockTab';
+import { referenceFromApi } from '../_shared/reference-data';
 import { useResourceList } from '../_shared/use-resource';
 import { STOCK_LEVELS, StockLevelBadge, useProductColumns } from './columns';
 import { CATEGORIES, productService, stockLevel, type Product } from './data';
@@ -26,6 +29,18 @@ function StockSummary() {
 }
 
 export default function InventoryPage() {
+  const { t } = useTranslation('inventory');
+  // En production (API) : le stock réel est celui de la pharmacie ; le catalogue de démonstration n'est jamais affiché.
+  if (!referenceFromApi()) return <InventoryScreen />;
+  return (
+    <>
+      <PageHeader title={t('title')} />
+      <StockTab />
+    </>
+  );
+}
+
+function InventoryScreen() {
   const { t } = useTranslation('inventory');
   const f = useFormatters();
   const columns = useProductColumns();

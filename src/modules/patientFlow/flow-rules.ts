@@ -112,7 +112,7 @@ export interface FlowRow {
  * Tableau du jour : patients ayant au moins un événement aujourd'hui, ou actuellement hospitalisés.
  * Trié par dernière activité (la plus récente d'abord).
  */
-export function buildBoard(events: readonly FlowEvent[], admissions: readonly SrcAdmission[], now: Date): FlowRow[] {
+export function buildBoard(events: readonly FlowEvent[], admissions: readonly Pick<SrcAdmission, 'patientId' | 'status' | 'ward'>[], now: Date): FlowRow[] {
   const today = dayKey(now.toISOString());
   const inpatient = new Map<string, string>();
   for (const a of admissions) if (a.status === 'admitted' || a.status === 'dischargePending') inpatient.set(a.patientId, a.ward);

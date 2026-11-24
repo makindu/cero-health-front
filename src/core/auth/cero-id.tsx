@@ -3,6 +3,7 @@ import { apiContext } from '@/core/api/api-context';
 import { registerAuthStrategy, type AuthStrategy } from '@/core/api/auth-strategies';
 import { sessionEvents } from '@/core/api/session-events';
 import { env } from '@/core/config/env';
+import { preferencesStore } from '@/core/preferences/preferences-store';
 import { challengeFor, randomString } from './pkce';
 import { toUiPermissions } from './permission-map';
 
@@ -240,6 +241,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const selectFacility = useCallback((id: number) => {
+    // Synchrone, avant le rendu suivant : l'en-tête X-Enterprise-Id et les clés de cache changent en même temps,
+    // sinon une requête partirait avec l'ancien établissement ou serait rangée sous l'ancienne clé.
+    apiContext.set({ facilityId: String(id) });
+    preferencesStore.set({ activeFacilityId: String(id) });
     setActiveId(id);
     set(window.localStorage, FACILITY_KEY, String(id));
   }, []);
@@ -251,7 +256,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // L'API de HEALTH reçoit l'établissement actif dans X-Enterprise-Id.
   useEffect(() => {
-    apiContext.set({ facilityId: activeFacility ? String(activeFacility.id) : null });
+    const id = activeFacility ? String(activeFacility.id) : null;
+    apiContext.set({ facilityId: id });
+    // Les clés de cache (queryKeys.scoped) lisent cette préférence : elle doit toujours suivre l'établissement actif.
+    preferencesStore.set({ activeFacilityId: id });
   }, [activeFacility]);
 
   const value = useMemo<AuthValue>(

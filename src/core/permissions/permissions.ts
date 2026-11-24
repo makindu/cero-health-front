@@ -99,6 +99,8 @@ export const PERMISSIONS = {
     validate: 'health.insurance.validate',
     /** Accorder une autorisation préalable. */
     authorize: 'health.insurance.authorize',
+    /** Gérer le catalogue des prestations (actes) et leurs tarifs. */
+    catalog: 'health.insurance.catalog',
   },
   cash: { view: 'health.cash.view', record: 'health.cash.record', close: 'health.cash.close' },
   inventory: {
@@ -106,6 +108,8 @@ export const PERMISSIONS = {
     receive: 'health.stock.receive',
     adjust: 'health.stock.adjust',
   },
+  /** Dépenses de l'établissement (écrites dans la comptabilité UZISHA) : saisir, valider par un responsable, annuler tant que non validée. */
+  expenses: { view: 'health.expenses.view', create: 'health.expenses.create', validate: 'health.expenses.validate', cancel: 'health.expenses.cancel' },
   reports: { view: 'health.reports.view' },
   administration: {
     view: 'health.administration.view',

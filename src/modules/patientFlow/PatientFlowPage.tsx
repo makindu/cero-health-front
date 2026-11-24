@@ -7,6 +7,7 @@ import { SearchInput } from '@/components/forms/search-input';
 import { PageHeader } from '@/components/layout/page-header';
 import { StatusBadge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { env } from '@/core/config/env';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { DemoNotice } from '../_shared/demo-notice';
 import { PlaceBadge, useFlowText } from './flow-labels';
@@ -58,7 +59,7 @@ export default function PatientFlowPage() {
         <ErrorState error={q.error} onRetry={() => void q.refetch()} />
       ) : (
         <div className="space-y-4">
-          <p role="note" className="rounded-md bg-surface-muted px-3 py-2 text-sm text-muted-foreground">{t('note')}</p>
+          <p role="note" className="rounded-md bg-surface-muted px-3 py-2 text-sm text-muted-foreground">{t(env.localMode ? 'note' : 'noteApi')}</p>
           <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('filter.label')}>
             <button type="button" aria-pressed={place === 'all'} onClick={() => setPlace('all')}
               className={`rounded-full border px-3 py-1 text-sm ${place === 'all' ? 'border-primary bg-primary-soft font-medium' : 'border-border'}`}>{t('filter.all')} ({rows.length})</button>

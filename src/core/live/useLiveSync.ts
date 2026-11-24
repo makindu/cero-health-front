@@ -5,7 +5,8 @@ import { healthClient, queryKeys } from '@/core/api';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { env } from '@/core/config/env';
 import { setLiveState } from './live-status';
-import { queriesToRefresh, type LiveEvent } from './live-sync';
+import { publishArrivals } from './new-arrivals';
+import { queriesToRefresh, splitArrivals, type LiveEvent } from './live-sync';
 
 type Row = Record<string, unknown>;
 const rec = (v: unknown): Row => (typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Row) : {});
@@ -41,6 +42,7 @@ export function useLiveSync(): void {
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cursor = 0;
     const pending = new Set<string>();
+    const recentCreations = new Map<string, number>();
 
     const flush = () => {
       flushTimer = undefined;
@@ -52,6 +54,13 @@ export function useLiveSync(): void {
       if (!flushTimer) flushTimer = setTimeout(flush, 250);
     };
 
+    /** Signaux reçus : relit les écrans concernés ; une création de catalogue est seulement annoncée (bandeau), sans relire la liste. */
+    const handle = (events: readonly LiveEvent[]) => {
+      const { refresh, arrivals } = splitArrivals(events, recentCreations, Date.now());
+      queue(queriesToRefresh(refresh));
+      if (arrivals.length > 0) publishArrivals(activeFacilityId, arrivals);
+    };
+
     /** Après une coupure : relit ce qui a changé entre-temps ; si le serveur ne s'en souvient plus, tout est relu. */
     const catchUp = async () => {
       if (!cursor) return;
@@ -60,7 +69,7 @@ export function useLiveSync(): void {
         const d = rec(res.data);
         cursor = Number(d.cursor) || cursor;
         if (d.reset === true) void queryClient.invalidateQueries({ queryKey: ['facility', activeFacilityId ?? 'none'] });
-        else queue(queriesToRefresh(Array.isArray(d.events) ? (d.events as LiveEvent[]) : []));
+        else handle(Array.isArray(d.events) ? (d.events as LiveEvent[]) : []);
       } catch {
         /* le prochain signal ou rechargement rattrapera */
       }
@@ -115,7 +124,7 @@ export function useLiveSync(): void {
       });
       socket.on('changes', (p: { cursor?: number; events?: LiveEvent[] }) => {
         if (typeof p?.cursor === 'number') cursor = p.cursor;
-        queue(queriesToRefresh(Array.isArray(p?.events) ? p.events : []));
+        handle(Array.isArray(p?.events) ? p.events : []);
       });
       socket.on('disconnect', () => setLiveState('connecting'));
       socket.io.on('reconnect', () => void catchUp());

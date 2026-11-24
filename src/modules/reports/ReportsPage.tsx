@@ -19,6 +19,8 @@ import { env } from '@/core/config/env';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { FormDialog } from '../_shared/form-dialog';
+import { ReportsApiScreen } from './ReportsApiScreen';
+import { referenceFromApi } from '../_shared/reference-data';
 import { createResourceService } from '../_shared/resource-service';
 
 type ReportId = 'activity' | 'appointments' | 'stock' | 'finance' | 'cash' | 'laboratory' | 'hospitalization' | 'audit';
@@ -36,6 +38,11 @@ const REPORTS: readonly { id: ReportId; icon: LucideIcon }[] = [
 
 /** Catalogue de rapports. La génération dépend d'un endpoint de rapport (contrat à valider). */
 export default function ReportsPage() {
+  // API réelle : rapports calculés par le serveur (comptages et totaux, sans donnée clinique).
+  return referenceFromApi() ? <ReportsApiScreen /> : <ReportsScreen />;
+}
+
+function ReportsScreen() {
   const { t } = useTranslation('reports');
   const [running, setRunning] = useState<ReportId | null>(null);
 

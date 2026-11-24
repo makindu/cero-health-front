@@ -6,13 +6,12 @@ import type { CatalogItem } from '@/core/pricing/types';
 import { XLSX_MIME, downloadBytes } from '../_shared/export/download';
 import { buildXlsx } from '../_shared/export/xlsx';
 import { readXlsx, XlsxReadError } from '../_shared/export/xlsx-read';
+import { FileDropzone } from '../_shared/file-dropzone';
 import { ActionDialog } from '../finance/ActionDialog';
 import { finance } from '../finance/finance';
 import { useFinanceMutation } from '../finance/use-finance';
 import { planCatalogImport, type CatalogImportPlan } from './catalog-sheet';
 
-const SHOWN_ERRORS = 15;
-const SHOWN_ROWS = 12;
 const fmt = (n: number): string => n.toFixed(2).replace('.', ',');
 
 /** Importation des examens de laboratoire et de leurs prix depuis un classeur Excel : tout est vérifié et prévisualisé AVANT d'écrire. */
@@ -49,11 +48,12 @@ export function CatalogImportDialog({ existing, onClose }: { existing: readonly 
     <ActionDialog open wide onClose={onClose} title={t('catalogImport.title')} description={t('catalogImport.help')}
       submitLabel={t('catalogImport.submit', { count: changes.length })} pending={run.isPending} canSubmit={ready}
       onSubmit={() => run.mutate({ items: changes.map((r) => ({ ...(r.id ? { id: r.id } : {}), code: r.code, label: r.label, price: Math.round(r.price * 100), active: r.active })) })}>
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="text-sm font-medium">
-          <span className="mb-1 block">{t('catalogImport.file')}</span>
-          <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => void pick(e.target.files?.[0])} className="block text-sm" />
-        </label>
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-64 flex-1">
+          <span className="mb-1 block text-sm font-medium">{t('catalogImport.file')}</span>
+          <FileDropzone accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" fileName={fileName} title={t('catalogImport.drop.title')} hint={t('catalogImport.drop.hint')}
+            browseLabel={t('catalogImport.drop.browse')} changeLabel={t('catalogImport.drop.change')} onFile={(f) => void pick(f)} />
+        </div>
         <Button type="button" variant="outline" size="sm" onClick={template}>{t('catalogImport.template')}</Button>
       </div>
       <p className="text-xs text-muted-foreground">{t('catalogImport.columns')}</p>
@@ -68,18 +68,18 @@ export function CatalogImportDialog({ existing, onClose }: { existing: readonly 
           {errors.length > 0 && (
             <div role="alert" className="rounded-card border border-border p-3 text-sm">
               <p className="mb-1 font-medium text-danger-ink">{t('catalogImport.errorsTitle')}</p>
-              <ul className="list-disc space-y-0.5 ps-5">
-                {errors.slice(0, SHOWN_ERRORS).map((e, i) => <li key={`${e.row}-${i}`}>{t(`catalogImport.problem.${e.problem}`, { row: e.row, value: e.value ?? '' })}</li>)}
+              <ul className="max-h-48 list-disc space-y-0.5 overflow-y-auto ps-5">
+                {errors.map((e, i) => <li key={`${e.row}-${i}`}>{t(`catalogImport.problem.${e.problem}`, { row: e.row, value: e.value ?? '' })}</li>)}
               </ul>
-              {errors.length > SHOWN_ERRORS && <p className="mt-1 text-xs text-muted-foreground">{t('catalogImport.moreErrors', { count: errors.length - SHOWN_ERRORS })}</p>}
             </div>
           )}
           {rows.length > 0 && (
+            <div className="max-h-80 overflow-y-auto">
             <table className="w-full text-xs">
               <caption className="mb-1 text-start font-medium">{t('catalogImport.preview')}</caption>
-              <thead><tr><th className="text-start">{t('insurance.catalog.code')}</th><th className="text-start">{t('catalogManager.laboratory.label')}</th><th className="text-end">{t('catalogManager.price')}</th><th className="text-start ps-3">{t('columns.status')}</th></tr></thead>
+              <thead className="sticky top-0 bg-card"><tr><th className="text-start">{t('insurance.catalog.code')}</th><th className="text-start">{t('catalogManager.laboratory.label')}</th><th className="text-end">{t('catalogManager.price')}</th><th className="text-start ps-3">{t('columns.status')}</th></tr></thead>
               <tbody>
-                {rows.slice(0, SHOWN_ROWS).map((r) => (
+                {rows.map((r) => (
                   <tr key={r.row}>
                     <td><code>{r.code}</code></td>
                     <td>{r.label}</td>
@@ -89,8 +89,8 @@ export function CatalogImportDialog({ existing, onClose }: { existing: readonly 
                 ))}
               </tbody>
             </table>
+            </div>
           )}
-          {rows.length > SHOWN_ROWS && <p className="text-xs text-muted-foreground">{t('catalogImport.moreRows', { count: rows.length - SHOWN_ROWS })}</p>}
           {errors.length > 0 && <p className="text-xs text-muted-foreground">{t('catalogImport.fixFirst')}</p>}
         </>
       )}

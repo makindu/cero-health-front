@@ -17,6 +17,8 @@ import { usePatientCategories } from './category-data';
 import { PatientPosition } from '../patientFlow/PatientPosition';
 import { PatientAppointmentsTable } from '../appointments/AppointmentsTable';
 import { PatientFinance } from '../finance/PatientFinance';
+import { FINANCE_AVAILABLE } from '../finance/use-finance';
+import { PatientBillingApi } from '../billing/PatientBillingApi';
 import { PatientMail } from '../patient-mail/PatientMail';
 import { PatientConsultations } from '../consultations/PatientConsultations';
 import { PatientAdmissions } from '../hospitalization/PatientAdmissions';
@@ -196,12 +198,13 @@ export default function PatientDetailPage() {
               </GatedHistory>
             ),
           },
+          // Facturation patient : écran local en démo, écran API (solde, factures, couvertures) en production.
           {
             id: 'billing',
             label: t('detail.tabs.billing'),
             content: (
               <Card className="[&>div]:p-0">
-                <PatientFinance patientId={patient.id} />
+                {FINANCE_AVAILABLE ? <PatientFinance patientId={patient.id} /> : <PatientBillingApi patientId={patient.id} />}
               </Card>
             ),
           },

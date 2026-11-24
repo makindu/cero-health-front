@@ -2,6 +2,9 @@ import { ApiError, healthClient } from '@/core/api';
 import { authorName } from '../consultations/record-api';
 import { ensureReference } from '../_shared/reference-data';
 import { rxFromApi } from '../prescriptions/rx-api';
+import type { CatalogItem } from '@/core/pricing/types';
+import { importPharmacyCatalog, productToImport } from './catalog-api';
+import { checkPackaging, type PackagingInput } from './packaging';
 import type { Dispensation, DispensationLine, DeviationKind } from './pharmacy-rules';
 import type { DispensationView, PharmacyService, QueueRow, StockItemView } from './pharmacy-service';
 
@@ -140,9 +143,12 @@ export const apiPharmacy = {
   cancel: (input: { id: string; reason: string }): Promise<DispensationView> =>
     wrapOne(healthClient.post<Row>(`/dispensations/${encodeURIComponent(input.id)}/actions/cancel`, { reason: input.reason })),
 
-  /** Les réceptions, imports et corrections de stock se font dans UZISHA. */
+  /** Les réceptions, imports de lots et corrections de stock se font dans UZISHA ; le catalogue et les prix, ici. */
   receiveLot: (): Promise<never> => Promise.reject(new ApiError('validation', 'Le stock se gère dans UZISHA.', { source: 'health', status: 422, code: 'stock_in_uzisha' })),
   importLots: (): Promise<never> => Promise.reject(new ApiError('validation', 'Le stock se gère dans UZISHA.', { source: 'health', status: 422, code: 'stock_in_uzisha' })),
-  saveProduct: (): Promise<never> => Promise.reject(new ApiError('validation', 'Le catalogue se gère dans UZISHA.', { source: 'health', status: 422, code: 'stock_in_uzisha' })),
+  /** Ajout ou modification d'un médicament (prix et unités de vente) : même chemin que l'importation, avec une seule ligne. */
+  async saveProduct(input: { item: CatalogItem; packaging: PackagingInput }): Promise<{ created: number; updated: number; unchanged: number }> {
+    return importPharmacyCatalog({ items: [productToImport(input.item, checkPackaging(input.packaging))] });
+  },
   adjust: (): Promise<never> => Promise.reject(new ApiError('validation', 'Le stock se gère dans UZISHA.', { source: 'health', status: 422, code: 'stock_in_uzisha' })),
 };

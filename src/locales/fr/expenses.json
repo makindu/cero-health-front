@@ -1,0 +1,86 @@
+{
+  "title": "Dépenses",
+  "subtitle": "Dépenses de l'établissement, enregistrées dans la comptabilité UZISHA",
+  "columns": {
+    "date": "Date",
+    "account": "Catégorie",
+    "unit": "Service",
+    "motif": "Motif",
+    "amount": "Montant",
+    "status": "Statut",
+    "by": "Saisi par"
+  },
+  "state": {
+    "pending": "À valider",
+    "validated": "Validée",
+    "cancelled": "Annulée"
+  },
+  "cancelReason": "Annulée : {{reason}}",
+  "actions": {
+    "new": "Nouvelle dépense",
+    "validate": "Valider",
+    "cancel": "Annuler",
+    "close": "Fermer"
+  },
+  "totals": {
+    "validated": "Validées",
+    "validatedHint": "Comptées dans le solde de la caisse",
+    "pending": "À valider",
+    "pendingHint": "Pas encore comptées dans le solde",
+    "total": "Total de la période",
+    "none": "Aucune dépense sur cette période."
+  },
+  "filters": {
+    "from": "Du",
+    "to": "Au",
+    "allStatuses": "Tous les statuts",
+    "allAccounts": "Toutes les catégories",
+    "allUnits": "Tous les services",
+    "search": "Motif contient",
+    "periodInvalid": "La date de fin précède la date de début."
+  },
+  "empty": "Aucune dépense",
+  "emptyHint": "Modifiez la période ou les filtres, ou enregistrez une nouvelle dépense.",
+  "failed": "Opération impossible",
+  "failedHint": "Vérifiez les informations et réessayez.",
+  "created": "Dépense enregistrée",
+  "validated": "Dépense validée",
+  "cancelled": "Dépense annulée",
+  "errors": {
+    "account": "Choisissez une catégorie.",
+    "amount": "Saisissez un montant supérieur à zéro.",
+    "amountUnreadable": "Montant illisible ou avec trop de décimales.",
+    "motif": "Indiquez le motif de la dépense.",
+    "currency": "Aucune devise n'est définie dans la comptabilité."
+  },
+  "new": {
+    "title": "Nouvelle dépense",
+    "description": "La dépense est enregistrée dans la comptabilité et reste « à valider » jusqu'à la décision d'un responsable.",
+    "submit": "Enregistrer la dépense",
+    "chooseAccount": "Choisir une catégorie",
+    "noAccount": "Aucune catégorie de dépense n'est définie dans la comptabilité.",
+    "unitHint": "Facultatif : le service qui a engagé la dépense.",
+    "noUnit": "Aucun service",
+    "currency": "Devise"
+  },
+  "validate": {
+    "title": "Valider cette dépense ?",
+    "description": "{{amount}} — {{account}}. Une dépense validée est comptée dans la caisse et ne peut plus être annulée."
+  },
+  "cancel": {
+    "title": "Annuler cette dépense ?",
+    "description": "{{amount}} — {{account}}. Elle sera retirée de la comptabilité et ne comptera plus.",
+    "confirm": "Annuler la dépense",
+    "reason": "Motif de l'annulation",
+    "hint": "Le motif est conservé dans le journal d'audit."
+  },
+  "cash": {
+    "title": "Entrées et sorties du jour ({{currency}})",
+    "income": "Entrées encaissées",
+    "out": "Sorties (dépenses validées)",
+    "outHint": "Dépenses validées du jour",
+    "pending": "Dépenses à valider",
+    "pendingHint": "Hors solde tant qu'elles ne sont pas validées",
+    "balance": "Solde du jour"
+  }
+}
