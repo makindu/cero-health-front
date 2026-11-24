@@ -18,6 +18,7 @@ import { wardLabel } from './ward';
 import { AccountSection } from './AccountSection';
 import { ApiAccountSection } from './ApiAccountSection';
 import { VisitsSection } from './VisitsSection';
+import { ApiVisitsSection } from './ApiVisitsSection';
 import { AdmissionStatusBadge } from './StatusBadges';
 import { useHospitalBoard, useHospitalMutation } from './use-hospital';
 import { Avatar } from '@/components/ui/avatar';
@@ -48,7 +49,7 @@ export function AdmissionDetail({ admission, onClose }: { admission: Admission |
         <DetailSection title={t('detail.summary')}>
           <DescriptionList items={[
             { label: t('columns.status'), value: <AdmissionStatusBadge status={a.status} /> },
-            { label: t('columns.ward'), value: wardLabel(t, a.ward) },
+            { label: t('columns.ward'), value: a.wardName ?? wardLabel(t, a.ward) },
             { label: t('columns.bed'), value: cur ? label(cur.bedId) : '—' },
             { label: t('columns.admittedAt'), value: `${f.dateTime(a.admittedAt)} · ${a.admittedBy}` },
             { label: t('columns.expectedDischarge'), value: a.expectedDischarge ? f.date(a.expectedDischarge) : '' },
@@ -67,6 +68,7 @@ export function AdmissionDetail({ admission, onClose }: { admission: Admission |
           </ol>
         </DetailSection>
         {!referenceFromApi() && a.status !== 'cancelled' && <Can permission={P.hospitalization.visitView}><VisitsSection admissionId={a.id} /></Can>}
+        {referenceFromApi() && a.status !== 'cancelled' && <Can permission={P.hospitalization.visitView}><ApiVisitsSection admission={a} /></Can>}
         {!referenceFromApi() && a.status !== 'cancelled' && <AccountSection admissionId={a.id} />}
         {referenceFromApi() && a.status !== 'cancelled' && <Can permission={P.hospitalization.view}><ApiAccountSection admission={a} /></Can>}
         {a.discharge && (

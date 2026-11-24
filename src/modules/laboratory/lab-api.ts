@@ -45,6 +45,7 @@ export function labOrderFrom(r: Row): LabOrderView {
     patientId: str(r.patient_id),
     patientName: str(patient.full_name) || `Patient n°${str(r.patient_id)}`,
     consultationId: r.consultation_id ? str(r.consultation_id) : undefined,
+    admissionVisitId: r.admission_visit_id ? str(r.admission_visit_id) : undefined,
     requestedBy: author(r.requested_by_user_id),
     requestedAt: str(r.requested_at),
     priority: (r.priority === 'urgent' ? 'urgent' : 'routine') as LabPriority,
@@ -99,11 +100,12 @@ export const apiLab = {
     return { id: str(t.id), code: str(t.code), label: str(t.label) };
   },
 
-  order: async (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string }): Promise<LabOrderView> => {
+  order: async (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string; visitId?: string }): Promise<LabOrderView> => {
     await ensureReference();
     return one(await healthClient.post('/lab-orders', {
       patient_id: Number(input.patientId),
       consultation_id: input.consultationId ? Number(input.consultationId) : null,
+      ...(input.visitId ? { admission_visit_id: Number(input.visitId) } : {}),
       priority: input.priority,
       clinical_note: input.clinicalNote.trim() || null,
       test_ids: input.testItemIds.map(Number),

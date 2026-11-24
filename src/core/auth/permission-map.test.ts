@@ -12,6 +12,17 @@ describe('permissions du catalogue vers l\'interface', () => {
       expect(toUiPermissions([code])).toContain('health.administration.view');
     }
   });
+  it('les droits de dépôt et de mouvement de stock ouvrent le menu Stock, pas l\'Administration', () => {
+    for (const code of ['health.deposits.read', 'health.deposits.manage', 'health.stock.move']) {
+      const ui = toUiPermissions([code]);
+      expect(ui).toContain('health.stock.view');
+      expect(ui).toContain(code);
+      expect(ui).not.toContain('health.administration.view');
+    }
+    // qui gère les dépôts ou passe des entrées peut aussi les voir (le serveur l'accepte de même)
+    expect(toUiPermissions(['health.stock.move'])).toContain('health.deposits.read');
+    expect(toUiPermissions(['health.deposits.manage'])).toContain('health.deposits.read');
+  });
   it('gérer le personnel donne aussi la gestion des utilisateurs', () => {
     expect(toUiPermissions(['health.staff.manage'])).toContain('health.users.manage');
   });

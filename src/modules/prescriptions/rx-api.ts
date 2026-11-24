@@ -20,6 +20,7 @@ export function rxFromApi(r: Record<string, unknown>): Rx {
     patientId: text(r.patient_id),
     patientName: patient?.full_name ?? `Patient n°${text(r.patient_id)}`,
     consultationId: r.consultation_id ? text(r.consultation_id) : undefined,
+    admissionVisitId: r.admission_visit_id ? text(r.admission_visit_id) : undefined,
     prescriber: staffById(text(r.prescriber_staff_id))?.name ?? '',
     prescriberId: r.prescriber_user_id ? text(r.prescriber_user_id) : undefined,
     prescribedAt: text(r.prescribed_at),
@@ -41,7 +42,7 @@ export function rxFromApi(r: Record<string, unknown>): Rx {
   return rx;
 }
 
-export function rxToApi(input: { patientId: string; items: RxItem[]; note: string; consultationId?: string }): Record<string, unknown> {
+export function rxToApi(input: { patientId: string; items: RxItem[]; note: string; consultationId?: string; visitId?: string }): Record<string, unknown> {
   const patient = Number(input.patientId);
   if (!Number.isInteger(patient) || patient <= 0) {
     throw new ApiError('validation', 'Choisissez un patient dans la liste.', { source: 'health', status: 422, code: 'invalid_input' });
@@ -60,6 +61,8 @@ export function rxToApi(input: { patientId: string; items: RxItem[]; note: strin
   if (input.note.trim()) body.note = input.note.trim().slice(0, 255);
   const consultation = Number(input.consultationId);
   if (input.consultationId && Number.isInteger(consultation) && consultation > 0) body.consultation_id = consultation;
+  const visit = Number(input.visitId);
+  if (input.visitId && Number.isInteger(visit) && visit > 0) body.admission_visit_id = visit;
   return body;
 }
 

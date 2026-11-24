@@ -6,6 +6,9 @@ import { PERMISSIONS } from '@/core/permissions/permissions';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { PageHeader } from '@/components/layout/page-header';
+import { Tabs } from '@/components/ui/tabs';
+import { usePermissions } from '@/core/permissions/PermissionsProvider';
+import { DepositsTab } from '../administration/DepositsTab';
 import { StockTab } from '../pharmacy/StockTab';
 import { referenceFromApi } from '../_shared/reference-data';
 import { useResourceList } from '../_shared/use-resource';
@@ -30,12 +33,19 @@ function StockSummary() {
 
 export default function InventoryPage() {
   const { t } = useTranslation('inventory');
+  const { can } = usePermissions();
   // En production (API) : le stock réel est celui de la pharmacie ; le catalogue de démonstration n'est jamais affiché.
   if (!referenceFromApi()) return <InventoryScreen />;
+  // Deux vues selon les droits : le stock de la pharmacie (lots) et les dépôts (stock par dépôt, entrées, membres).
+  // Un gestionnaire de stock sans droit pharmacie ne voit que les dépôts, sans erreur d'accès.
+  const tabs = [
+    ...(can(PERMISSIONS.pharmacy.view) ? [{ id: 'pharmacy', label: t('tabs.pharmacy'), content: <StockTab /> }] : []),
+    { id: 'deposits', label: t('tabs.deposits'), content: <DepositsTab /> },
+  ];
   return (
     <>
       <PageHeader title={t('title')} />
-      <StockTab />
+      <Tabs ariaLabel={t('title')} tabs={tabs} />
     </>
   );
 }

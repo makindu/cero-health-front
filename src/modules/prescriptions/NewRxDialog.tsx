@@ -58,10 +58,10 @@ function DrugField({ local, value, onChange, ...rest }: Omit<ComponentProps<'inp
   );
 }
 
-export function NewRxDialog({ onClose, onCreated, initialPatientId, consultationId }: { onClose: () => void; onCreated: (r: Rx) => void; initialPatientId?: string; consultationId?: string }) {
+export function NewRxDialog({ onClose, onCreated, initialPatientId, consultationId, visitId }: { onClose: () => void; onCreated: (r: Rx) => void; initialPatientId?: string; consultationId?: string; visitId?: string }) {
   const { t } = useTranslation('prescriptions');
   // Brouillon automatique : la saisie survit à une fermeture involontaire ou à une coupure (clé : patient + consultation d'origine).
-  const [form, setForm, draft] = usePersistentState(`rx:new:${initialPatientId ?? ''}:${consultationId ?? ''}`, {
+  const [form, setForm, draft] = usePersistentState(`rx:new:${initialPatientId ?? ''}:${consultationId ?? ''}:${visitId ?? ''}`, {
     patientId: initialPatientId ?? '', rows: [empty(1)] as Row[], note: '', consult: consultationId ?? '',
   });
   const { patientId, rows, note, consult } = form;
@@ -81,7 +81,7 @@ export function NewRxDialog({ onClose, onCreated, initialPatientId, consultation
     <Dialog open onClose={onClose} title={t('create.title')} description={t('create.description')}
       footer={<>
         <Button variant="outline" onClick={() => { draft.clear(); onClose(); }}>{t('create.cancel')}</Button>
-        <Button loading={create.isPending} disabled={!ready} onClick={() => create.mutate({ patientId, items, note, consultationId: consult.trim() || undefined })}>{t('create.submit')}</Button>
+        <Button loading={create.isPending} disabled={!ready} onClick={() => create.mutate({ patientId, items, note, consultationId: consult.trim() || undefined, visitId })}>{t('create.submit')}</Button>
       </>}>
       <div className="space-y-4">
         {draft.restored && <DraftNotice onDiscard={draft.discard} />}
@@ -109,7 +109,7 @@ export function NewRxDialog({ onClose, onCreated, initialPatientId, consultation
         ))}
         <Button size="sm" variant="outline" leftIcon={<Plus className="size-4" />} onClick={() => setRows([...rows, empty(Math.max(...rows.map((x) => x.key)) + 1)])}>{t('create.addLine')}</Button>
         <div className="grid gap-3 sm:grid-cols-2">
-          <FormField label={t('create.consultation')} hint={t('create.consultationHint')}>{(c) => <Input {...c} value={consult} onChange={(e) => setConsult(e.target.value)} />}</FormField>
+          {!visitId && <FormField label={t('create.consultation')} hint={t('create.consultationHint')}>{(c) => <Input {...c} value={consult} onChange={(e) => setConsult(e.target.value)} />}</FormField>}
           <FormField label={t('create.note')}>{(c) => <Textarea {...c} rows={2} value={note} onChange={(e) => setNote(e.target.value)} />}</FormField>
         </div>
       </div>

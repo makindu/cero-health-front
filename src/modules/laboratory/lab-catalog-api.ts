@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/components/feedback/toast';
 import { ApiError, healthClient } from '@/core/api';
 import { queryKeys } from '@/core/api/query-client';
+import { mergeItems } from '@/core/live/new-arrivals';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import type { CatalogItem } from '@/core/pricing/types';
 import { referenceFromApi } from '../_shared/reference-data';
@@ -64,9 +65,32 @@ export function useLabCatalog() {
   });
 }
 
-/** Après « Voir » d'un bandeau « nouvel examen » : le catalogue des examens est petit, on le relit une fois (le tarif vient d'un autre appel). */
-export async function loadLabArrivals(queryClient: QueryClient, facilityId: string | null): Promise<void> {
-  await queryClient.refetchQueries({ queryKey: queryKeys.scoped(facilityId, 'lab-catalog', 'list') });
+/**
+ * Après « Voir » d'un bandeau « nouvel examen » : lit UNIQUEMENT les examens annoncés et le tarif de leur élément de catalogue (deux appels ciblés),
+ * puis les range dans la liste affichée. Sans liste en mémoire, ou pour un très gros import, la liste est relue.
+ */
+export async function loadLabArrivals(queryClient: QueryClient, facilityId: string | null, ids: readonly number[]): Promise<void> {
+  const key = queryKeys.scoped(facilityId, 'lab-catalog', 'list');
+  const cached = queryClient.getQueryData<ApiLabCatalog>(key);
+  const have = new Set(cached?.items.map((i) => i.id) ?? []);
+  const missing = ids.filter((id) => !have.has(String(id)));
+  if (missing.length === 0) return;
+  if (!cached || missing.length > 300) {
+    await queryClient.invalidateQueries({ queryKey: key });
+    return;
+  }
+  const found: CatalogItem[] = [];
+  for (let i = 0; i < missing.length; i += 100) {
+    const exams = list((await healthClient.get<Row[]>('/lab-tests', { params: { ids: missing.slice(i, i + 100).join(',') } })).data);
+    const itemIds = exams.map((e) => text(e.catalog_item_id)).filter((v) => v !== '');
+    const priceByItem = new Map<string, { minor: number; currency: string }>();
+    if (itemIds.length > 0) {
+      const res = await healthClient.get<Row[]>('/catalog-items', { params: { ids: itemIds.join(','), per_page: 100, kind: 'lab' } });
+      for (const r of list(res.data)) priceByItem.set(text(r.id), { minor: Number(r.price_minor) || 0, currency: text(r.currency) });
+    }
+    for (const e of exams) found.push(labExamFromApi(e, priceByItem, cached.currency ?? ''));
+  }
+  if (found.length > 0) queryClient.setQueryData<ApiLabCatalog>(key, (old) => (old ? { ...old, items: mergeItems(old.items, found, (a, b) => a.label.localeCompare(b.label)) } : old));
 }
 
 export interface ImportLabExam {

@@ -17,11 +17,15 @@ import { AdmissionDetail } from './AdmissionDetail';
 import { AdmitDialog } from './AdmitDialog';
 import { BedBoard } from './BedBoard';
 import { RoomsConfig } from './RoomsConfig';
-import type { AdmissionRequestRow } from './hospital-api';
+import { apiHospital, type AdmissionRequestRow, type HospRequestRow } from './hospital-api';
+import { HospRequestDialog } from './HospRequestDialog';
+import { ActionDialog } from '../finance/ActionDialog';
+import { FormField } from '@/components/forms/form-field';
+import { Textarea } from '@/components/forms/controls';
 import { referenceFromApi } from '../_shared/reference-data';
 import { currentStay, type Admission, type AdmissionStatus } from './hospital-rules';
-import { ADMISSION_STATUSES, AdmissionStatusBadge } from './StatusBadges';
-import { HOSPITAL_AVAILABLE, useAdmissionRequests, useHospitalBoard } from './use-hospital';
+import { ADMISSION_STATUSES, AdmissionStatusBadge, RequestStatusBadge } from './StatusBadges';
+import { HOSPITAL_AVAILABLE, useAdmissionRequests, useHospRequests, useHospitalBoard, useHospitalMutation } from './use-hospital';
 import { PersonName } from '@/components/ui/avatar';
 
 const PER_PAGE = 10;
@@ -38,7 +42,14 @@ function HospitalizationScreen() {
   const board = useHospitalBoard();
   const { can } = usePermissions();
   const requests = useAdmissionRequests();
-  const [admitting, setAdmitting] = useState<{ bedId?: string; patientId?: string; consultationId?: string } | null>(null);
+  const hospReqs = useHospRequests();
+  const [asking, setAsking] = useState(false);
+  const [deciding, setDeciding] = useState<{ req: HospRequestRow; mode: 'approve' | 'reject' | 'cancel' } | null>(null);
+  const [note, setNote] = useState('');
+  const closeDecision = (): void => { setDeciding(null); setNote(''); };
+  const decide = useHospitalMutation(apiHospital.decideRequest, { successTitle: t('hospReq.done.decided'), onDone: closeDecision });
+  const cancelReq = useHospitalMutation(apiHospital.cancelRequest, { successTitle: t('hospReq.done.cancelled'), onDone: closeDecision });
+  const [admitting, setAdmitting] = useState<{ bedId?: string; patientId?: string; consultationId?: string; requestId?: string } | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'' | AdmissionStatus>('');
@@ -55,10 +66,30 @@ function HospitalizationScreen() {
                 { id: 'at', header: t('requests.at', { defaultValue: 'Demandée le' }), cell: (r) => (r.at ? f.dateTime(r.at) : '—') },
                 { id: 'go', header: '', cell: (r) => <Button size="sm" onClick={() => setAdmitting({ patientId: r.patientId, consultationId: r.consultationId })}>{t('requests.admit', { defaultValue: 'Admettre' })}</Button> },
   ];
+  // L'admission et le retrait d'une demande reviennent au service des admissions ; celui qui valide les demandes (médecin) ne fait que décider.
+  const mayAdmit = can(P.hospitalization.create) && !can(P.hospitalization.decide);
+  const hospReqColumns: Column<HospRequestRow>[] = [
+    { id: 'patient', header: t('columns.patient'), cell: (r) => <PersonName name={r.patientName} />, primary: true },
+    { id: 'service', header: t('hospReq.service'), cell: (r) => wardLabel(t, r.careUnitId) },
+    { id: 'reason', header: t('hospReq.reason'), cell: (r) => <span title={r.decisionNote}>{r.reason}{r.decisionNote ? ` — ${r.decisionNote}` : ''}</span> },
+    { id: 'status', header: t('columns.status'), cell: (r) => <RequestStatusBadge status={r.status} /> },
+    { id: 'at', header: t('hospReq.requestedAt'), cell: (r) => (r.requestedAt ? f.dateTime(r.requestedAt) : '—') },
+    { id: 'go', header: '', cell: (r) => (
+      <div className="flex flex-wrap justify-end gap-2">
+        {r.status === 'pending' && r.canDecide && <>
+          <Button size="sm" onClick={() => { setNote(''); setDeciding({ req: r, mode: 'approve' }); }}>{t('hospReq.actions.approve')}</Button>
+          <Button size="sm" variant="outline" onClick={() => { setNote(''); setDeciding({ req: r, mode: 'reject' }); }}>{t('hospReq.actions.reject')}</Button>
+        </>}
+        {r.status === 'pending' && !r.canDecide && <span className="self-center text-xs text-muted-foreground">{t('hospReq.waiting', { service: wardLabel(t, r.careUnitId) })}</span>}
+        {r.status === 'approved' && mayAdmit && <Button size="sm" onClick={() => setAdmitting({ patientId: r.patientId, requestId: r.id })}>{t('hospReq.actions.admit')}</Button>}
+        {r.status === 'pending' && mayAdmit && <Can permission={P.hospitalization.create}><Button size="sm" variant="outline" onClick={() => { setNote(''); setDeciding({ req: r, mode: 'cancel' }); }}>{t('hospReq.actions.cancel')}</Button></Can>}
+      </div>
+    ) },
+  ];
   const columns: Column<Admission>[] = [
     { id: 'number', header: t('columns.number'), cell: (a) => a.number },
     { id: 'patient', header: t('columns.patient'), cell: (a) => <PersonName name={a.patientName} />, primary: true },
-    { id: 'ward', header: t('columns.ward'), cell: (a) => wardLabel(t, a.ward) },
+    { id: 'ward', header: t('columns.ward'), cell: (a) => a.wardName ?? wardLabel(t, a.ward) },
     { id: 'bed', header: t('columns.bed'), cell: (a) => { const s = currentStay(a); return s ? bedLabel(s.bedId) : '—'; } },
     { id: 'admittedAt', header: t('columns.admittedAt'), cell: (a) => f.date(a.admittedAt) },
     { id: 'status', header: t('columns.status'), cell: (a) => <AdmissionStatusBadge status={a.status} /> },
@@ -66,15 +97,22 @@ function HospitalizationScreen() {
   ];
   return (
     <>
-      <PageHeader title={t('title')} description={t('subtitle')} actions={<Can permission={P.hospitalization.create}><Button leftIcon={<Plus className="size-4" />} onClick={() => setAdmitting({})}>{t('create.button')}</Button></Can>} />
+      <PageHeader title={t('title')} description={t('subtitle')} actions={<Can permission={P.hospitalization.create}>{referenceFromApi() ? <Button leftIcon={<Plus className="size-4" />} onClick={() => setAsking(true)}>{t('hospReq.button')}</Button> : <Button leftIcon={<Plus className="size-4" />} onClick={() => setAdmitting({})}>{t('create.button')}</Button>}</Can>} />
       <Tabs ariaLabel={t('title')} tabs={[
-        ...(referenceFromApi() && can(P.hospitalization.create) ? [{ id: 'requests', label: `${t('tabs.requests', { defaultValue: 'À admettre' })}${requests.data?.length ? ` (${requests.data.length})` : ''}`, content: (
+        ...(referenceFromApi() && can(P.hospitalization.create) ? [{ id: 'requests', label: `${t('tabs.requests', { defaultValue: 'À admettre' })}${(requests.data?.length ?? 0) + (hospReqs.data?.filter((r) => r.status === 'approved' || r.canDecide).length ?? 0) ? ` (${(requests.data?.length ?? 0) + (hospReqs.data?.filter((r) => r.status === 'approved' || r.canDecide).length ?? 0)})` : ''}`, content: (
+          <>
           <Card>
+            <p className="border-b border-border p-4 text-sm text-muted-foreground">{t('hospReq.hint')}</p>
+            <DataTable caption={t('hospReq.title')} getRowId={(r) => r.id} loading={hospReqs.isPending} error={hospReqs.error} onRetry={() => void hospReqs.refetch()}
+              rows={hospReqs.data ?? []} emptyTitle={t('hospReq.empty')} columns={hospReqColumns} />
+          </Card>
+          <Card className="mt-4">
             <p className="border-b border-border p-4 text-sm text-muted-foreground">{t('requests.hint', { defaultValue: 'Patients pour lesquels un médecin a demandé une hospitalisation. Choisissez le lit pour terminer l’admission.' })}</p>
             <DataTable caption={t('tabs.requests', { defaultValue: 'À admettre' })} getRowId={(r) => r.consultationId} loading={requests.isPending} error={requests.error} onRetry={() => void requests.refetch()}
               rows={requests.data ?? []} emptyTitle={t('requests.empty', { defaultValue: 'Aucune demande d’hospitalisation en attente.' })}
               columns={requestColumns} />
           </Card>
+          </>
         ) }] : []),
         { id: 'beds', label: t('tabs.beds'), content: <BedBoard onAdmit={(bedId) => setAdmitting({ bedId })} onOpen={setOpenId} /> },
         { id: 'admissions', label: t('tabs.admissions'), content: (
@@ -92,7 +130,15 @@ function HospitalizationScreen() {
         ) },
         ...(referenceFromApi() && can(P.hospitalization.assignBed) ? [{ id: 'config', label: t('tabs.config', { defaultValue: 'Configuration' }), content: <RoomsConfig /> }] : []),
       ]} />
-      {admitting && <AdmitDialog bedId={admitting.bedId} initialPatientId={admitting.patientId} consultationId={admitting.consultationId} onClose={() => setAdmitting(null)} onDone={(a) => { setAdmitting(null); setOpenId(a.id); }} />}
+      {asking && <HospRequestDialog onClose={() => setAsking(false)} />}
+      {deciding && (
+        <ActionDialog open onClose={closeDecision} tone={deciding.mode === 'approve' ? 'primary' : 'danger'} title={t(`hospReq.${deciding.mode}Title`)} description={t(`hospReq.${deciding.mode}Body`, { patient: deciding.req.patientName, service: wardLabel(t, deciding.req.careUnitId) })}
+          submitLabel={t(`hospReq.actions.${deciding.mode}`)} pending={decide.isPending || cancelReq.isPending} canSubmit={note.trim().length >= 5}
+          onSubmit={() => (deciding.mode === 'cancel' ? cancelReq.mutate({ id: deciding.req.id, note }) : decide.mutate({ id: deciding.req.id, approve: deciding.mode === 'approve', note }))}>
+          <FormField label={t('hospReq.noteLabel')} required hint={t('hospReq.noteHint')}>{(c) => <Textarea {...c} rows={3} value={note} onChange={(e) => setNote(e.target.value)} />}</FormField>
+        </ActionDialog>
+      )}
+      {admitting && <AdmitDialog bedId={admitting.bedId} initialPatientId={admitting.patientId} consultationId={admitting.consultationId} requestId={admitting.requestId} onClose={() => setAdmitting(null)} onDone={(a) => { setAdmitting(null); setOpenId(a.id); }} />}
       {openId && <AdmissionDetail admission={board.data?.admissions.find((a) => a.id === openId)} onClose={() => setOpenId(null)} />}
     </>
   );

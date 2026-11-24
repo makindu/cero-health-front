@@ -28,6 +28,27 @@ export function useAdmissionRequests() {
   });
 }
 
+/** Visites et consommations d'un séjour (mode API) ; rafraîchi par les signaux « hospital » (visites, consommations, factures). */
+export function useApiVisits(admissionId: string | undefined) {
+  const { activeFacilityId } = usePreferences();
+  return useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'hospital', 'visits', admissionId),
+    queryFn: () => apiHospital.visitsLedger(admissionId ?? ''),
+    enabled: HOSPITAL_AVAILABLE && referenceFromApi() && Boolean(admissionId),
+  });
+}
+
+/** Demandes d'hospitalisation ouvertes (à valider par un médecin du service, ou validées et prêtes pour l'admission). */
+export function useHospRequests() {
+  const { activeFacilityId } = usePreferences();
+  return useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'hospital', 'hosp-requests'),
+    queryFn: () => apiHospital.hospRequests(),
+    enabled: HOSPITAL_AVAILABLE && referenceFromApi(),
+    refetchInterval: 30_000,
+  });
+}
+
 /** Compte d'une admission ; sous la portée `finance` pour se rafraîchir dès qu'un paiement est encaissé. */
 export function useAdmissionAccount(admissionId: string | undefined) {
   const { activeFacilityId } = usePreferences();

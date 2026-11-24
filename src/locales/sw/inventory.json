@@ -50,5 +50,9 @@
     "reference": "Rejea",
     "supplier": "Msambazaji",
     "location": "Mahali"
+  },
+  "tabs": {
+    "pharmacy": "Hisa ya famasia",
+    "deposits": "Maghala"
   }
 }

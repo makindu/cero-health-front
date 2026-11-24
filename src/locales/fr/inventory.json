@@ -50,5 +50,9 @@
     "reference": "Référence",
     "supplier": "Fournisseur",
     "location": "Emplacement"
+  },
+  "tabs": {
+    "pharmacy": "Stock pharmacie",
+    "deposits": "Dépôts"
   }
 }

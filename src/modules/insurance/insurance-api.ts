@@ -36,7 +36,7 @@ export interface SettleInput { amountMinor: number; currency: string; mode: Sett
 export interface SettleResult { settlementId: string; allocations: { dueId: string; amountMinor: number }[] }
 
 export interface ApiRule {
-  category: string; itemCode: string; coverageBp: number; excluded: boolean; negotiatedUnitMinor: number | null;
+  category: string; itemCode: string; catalogItemId: string; coverageBp: number; excluded: boolean; negotiatedUnitMinor: number | null;
   ceilingPerLineMinor: number | null; quota: number | null; requiresAuthorization: boolean;
 }
 export interface ApiContract {
@@ -50,13 +50,17 @@ export interface ApiSubscription {
 export interface ApiCoverage {
   id: string; patientId: string; organizationId: string; contractId: string; kind: string; policyNumber: string; cardNumber: string; memberNumber: string;
   coverageType: string; validFrom: string; validTo: string; status: string; ceilingRemainingMinor: number | null; priority: number; beneficiaryIds: string[];
+  /** Nom du patient (liste globale) ; vide si l'utilisateur n'a pas le droit de lire les patients. */
+  patientName: string;
 }
-export interface ApiAuthorization { id: string; itemCode: string; grantedAt: string; note: string }
+export interface ApiAuthorization { id: string; itemCode: string; catalogItemId: string; grantedAt: string; note: string }
+/** Acte du catalogue proposé par la recherche (prestation, examen ou médicament). */
+export interface ApiCatalogHit { id: string; label: string; code: string; kind: string }
 const numOrNull = (v: unknown): number | null => (v === null || v === undefined || v === '' ? null : num(v));
 
 export function ruleFrom(r: Row): ApiRule {
   return {
-    category: text(r.category), itemCode: text(r.item_code), coverageBp: num(r.coverage_bp), excluded: Boolean(r.excluded),
+    category: text(r.category), itemCode: text(r.item_code), catalogItemId: text(r.catalog_item_id), coverageBp: num(r.coverage_bp), excluded: Boolean(r.excluded),
     negotiatedUnitMinor: numOrNull(r.negotiated_unit_minor), ceilingPerLineMinor: numOrNull(r.ceiling_per_line_minor), quota: numOrNull(r.quota),
     requiresAuthorization: Boolean(r.requires_authorization),
   };
@@ -83,10 +87,11 @@ export function coverageFrom(r: Row): ApiCoverage {
     id: text(r.id), patientId: text(r.patient_id), organizationId: text(r.organization_id), contractId: text(r.contract_id), kind: text(r.kind),
     policyNumber: text(r.policy_number), cardNumber: text(r.card_number), memberNumber: text(r.member_number), coverageType: text(r.coverage_type),
     validFrom: text(r.valid_from), validTo: text(r.valid_to), status: text(r.status), ceilingRemainingMinor: numOrNull(r.ceiling_remaining_minor),
-    priority: num(r.priority) || 1, beneficiaryIds: Array.isArray(r.beneficiary_ids) ? r.beneficiary_ids.map(text) : [],
+    priority: num(r.priority) || 1, beneficiaryIds: Array.isArray(r.beneficiary_ids) ? r.beneficiary_ids.map(text) : [], patientName: text(r.patient_name),
   };
 }
-export function authorizationFrom(r: Row): ApiAuthorization { return { id: text(r.id), itemCode: text(r.item_code), grantedAt: text(r.granted_at), note: text(r.note) }; }
+export function catalogHitFrom(r: Row): ApiCatalogHit { return { id: text(r.id), label: text(r.label), code: text(r.code), kind: text(r.kind) }; }
+export function authorizationFrom(r: Row): ApiAuthorization { return { id: text(r.id), itemCode: text(r.item_code), catalogItemId: text(r.catalog_item_id), grantedAt: text(r.granted_at), note: text(r.note) }; }
 
 export function organizationFrom(r: Row): ApiOrganization {
   return {
@@ -145,7 +150,24 @@ export function settleResultFrom(r: Row): SettleResult {
   return { settlementId: text(rec(r.settlement).id), allocations: rows(r.allocations).map((a) => ({ dueId: text(a.due_id), amountMinor: num(a.amount_minor) })) };
 }
 
+/** Monnaie de l'établissement (celles de la comptabilité), proposée pour un contrat ou un abonnement. */
+export interface ApiCurrency {
+  code: string;
+  isDefault: boolean;
+}
+
+export function currencyFrom(r: Row): ApiCurrency {
+  return { code: text(r.code).toUpperCase(), isDefault: r.is_default === true };
+}
+
+/** Monnaie à présélectionner : la principale, sinon la première ; vide si l'établissement n'en a aucune. */
+export function defaultCurrency(list: readonly ApiCurrency[]): string {
+  return (list.find((c) => c.isDefault) ?? list[0])?.code ?? '';
+}
+
 export const apiInsurance = {
+  currencies: async (): Promise<ApiCurrency[]> => rows((await healthClient.get<Row[]>('/insurance/currencies')).data).map(currencyFrom).filter((c) => c.code !== ''),
+
   organizations: async (): Promise<ApiOrganization[]> => rows((await healthClient.get<Row[]>('/insurance/organizations')).data).map(organizationFrom),
 
   saveOrganization: async (id: string | null, v: OrganizationInput): Promise<ApiOrganization> => {
@@ -170,6 +192,13 @@ export const apiInsurance = {
 
   coverages: async (patientId: string): Promise<ApiCoverage[]> => rows((await healthClient.get<Row[]>(`/patients/${patientId}/insurance-coverages`)).data).map(coverageFrom),
 
+  /** Toutes les couvertures de l'établissement, paginées côté serveur (plus récentes d'abord). */
+  coveragePage: async (p: { page: number; perPage: number; status?: string; q?: string; patientId?: string }): Promise<{ rows: ApiCoverage[]; total: number }> => {
+    const res = await healthClient.get<Row[]>('/insurance/coverages', { params: { page: p.page, per_page: p.perPage, ...(p.status ? { status: p.status } : {}), ...(p.q ? { q: p.q } : {}), ...(p.patientId ? { patient_id: p.patientId } : {}) } });
+    const list = rows(res.data).map(coverageFrom);
+    return { rows: list, total: res.meta?.total ?? list.length };
+  },
+
   saveCoverage: async (patientId: string, id: string | null, body: Record<string, unknown>): Promise<ApiCoverage> => {
     const res = id === null ? await healthClient.post<Row>(`/patients/${patientId}/insurance-coverages`, body) : await healthClient.patch<Row>(`/insurance/coverages/${id}`, body);
     return coverageFrom(rec(res.data));
@@ -180,8 +209,16 @@ export const apiInsurance = {
 
   authorizations: async (coverageId: string): Promise<ApiAuthorization[]> => rows((await healthClient.get<Row[]>(`/insurance/coverages/${coverageId}/authorizations`)).data).map(authorizationFrom),
 
-  grantAuthorization: async (coverageId: string, itemCode: string, note: string): Promise<ApiAuthorization> =>
-    authorizationFrom(rec((await healthClient.post<Row>(`/insurance/coverages/${coverageId}/authorizations`, note.trim() ? { item_code: itemCode.trim(), note: note.trim() } : { item_code: itemCode.trim() })).data)),
+  /** Accord préalable : l'acte est désigné par son identifiant dans le catalogue (le code seul reste possible pour d'anciens accords). */
+  grantAuthorization: async (coverageId: string, target: { catalogItemId?: string; itemCode?: string }, note: string): Promise<ApiAuthorization> =>
+    authorizationFrom(rec((await healthClient.post<Row>(`/insurance/coverages/${coverageId}/authorizations`, {
+      ...(target.catalogItemId ? { catalog_item_id: Number(target.catalogItemId) } : { item_code: (target.itemCode ?? '').trim() }), ...(note.trim() ? { note: note.trim() } : {}),
+    })).data)),
+
+  /** Recherche d'actes par nom ou code d'examen (autocomplétion) ; 15 résultats au plus, rien avant 2 caractères. */
+  searchActs: async (q: string): Promise<ApiCatalogHit[]> => (q.trim().length < 2 ? [] : rows((await healthClient.get<Row[]>('/insurance/catalog-search', { params: { q: q.trim() } })).data).map(catalogHitFrom)),
+  /** Relit des actes connus par leur identifiant (affichage des règles et accords déjà enregistrés). */
+  actsByIds: async (ids: string[]): Promise<ApiCatalogHit[]> => (ids.length === 0 ? [] : rows((await healthClient.get<Row[]>('/insurance/catalog-search', { params: { ids: ids.slice(0, 100).join(',') } })).data).map(catalogHitFrom)),
 
   statement: async (orgId: string, from: string, to: string): Promise<Statement> =>
     statementFrom(rec((await healthClient.get<Row>(`/insurance/organizations/${orgId}/statement`, { params: { from, to } })).data)),

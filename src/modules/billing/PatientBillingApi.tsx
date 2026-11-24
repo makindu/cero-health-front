@@ -13,6 +13,7 @@ import { useMoney } from '../finance/use-finance';
 import { apiInsurance, type ApiCoverage } from '../insurance/insurance-api';
 import { PAGE, apiBilling, type BillingLink } from './billing-api';
 import { LinkDetail, SOURCES, StateBadge } from './BillingApiScreen';
+import { CustomerLinkSection } from './CustomerLinkSection';
 
 /** Onglet « Facturation » de la fiche patient (API) : solde dû, factures du patient et couvertures d'assurance. */
 export function PatientBillingApi({ patientId }: { patientId: string }) {
@@ -58,6 +59,7 @@ export function PatientBillingApi({ patientId }: { patientId: string }) {
     <div className="space-y-5 p-4">
       {canBilling && (
         <>
+          <CustomerLinkSection patientId={patientId} />
           <section aria-label={t('patientApi.balance')}>
             <h3 className="mb-1 text-sm font-semibold">{t('patientApi.balance')}</h3>
             {balance.isPending ? <p className="text-sm text-muted-foreground">{t('apiBilling.loading', { defaultValue: 'Chargement…' })}</p>

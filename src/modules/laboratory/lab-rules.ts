@@ -36,6 +36,8 @@ export interface LabOrder {
   patientId: string;
   patientName: string;
   consultationId?: string;
+  /** Visite d'hospitalisation à l'origine de la demande (mode API). */
+  admissionVisitId?: string;
   requestedBy: string;
   requestedAt: string;
   priority: LabPriority;

@@ -25,7 +25,7 @@ export function createRxService(deps: FinanceDeps) {
   return {
     list: (): Promise<Rx[]> => deps.run(async (u) => (await u.list(rxRef)).sort((a, b) => b.prescribedAt.localeCompare(a.prescribedAt))),
 
-    create: (input: { patientId: string; items: RxItem[]; note: string; consultationId?: string }): Promise<Rx> => deps.run(async (u) => {
+    create: (input: { patientId: string; items: RxItem[]; note: string; consultationId?: string; visitId?: string }): Promise<Rx> => deps.run(async (u) => {
       deps.require(P.prescriptions.create);
       const patient = await deps.patient(u, input.patientId);
       if (!patient) refuse('patientNotFound');

@@ -60,6 +60,8 @@ export const PERMISSIONS = {
   hospitalization: {
     view: 'health.admissions.view',
     create: 'health.admissions.create',
+    /** Valider ou refuser une demande d'hospitalisation (médecin du service d'accueil, avec un motif). */
+    decide: 'health.admissions.decide',
     assignBed: 'health.beds.assign',
     discharge: 'health.discharges.validate',
     /** Sortie malgré un solde patient dû (exception motivée, tracée). */
@@ -76,6 +78,8 @@ export const PERMISSIONS = {
     view: 'health.billing.view',
     create: 'health.billing.create',
     pay: 'health.billing.pay',
+    /** Lier un patient à une fiche client (ou la créer) : préalable à toute facture. */
+    linkCustomer: 'health.billing.link-customer',
     /** Corrections sensibles (toujours avec motif, toujours tracées). */
     refund: 'health.billing.refund',
     cancel: 'health.billing.cancel',
@@ -115,6 +119,11 @@ export const PERMISSIONS = {
     view: 'health.administration.view',
     manageUsers: 'health.users.manage',
     manageServices: 'health.services.manage',
+    /** Dépôts de stock : voir, puis créer et gérer les membres (droits de mouvement, chef). */
+    viewDeposits: 'health.deposits.read',
+    manageDeposits: 'health.deposits.manage',
+    /** Entrées de stock (approvisionnement) : s'ajoute au niveau du membre dans le dépôt. */
+    moveStock: 'health.stock.move',
     /** Paramètres de l'établissement (durée de consultation, catégories de patients…). */
     manageSettings: 'health.settings.manage',
   },

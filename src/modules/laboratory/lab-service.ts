@@ -73,7 +73,7 @@ export function createLabService(deps: FinanceDeps, finance: FinanceService) {
       (await u.list(catalogRef)).filter((c) => c.category === 'laboratory' && c.active).map((c) => ({ id: c.id, code: c.code, label: c.label }))),
 
     /** Demande d'examens + facture (tarification complète) dans UNE transaction : les deux existent ou aucune. */
-    order: (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string; primaryCoverageId?: string; secondaryCoverageId?: string }): Promise<LabOrderView> => deps.run(async (u) => {
+    order: (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string; visitId?: string; primaryCoverageId?: string; secondaryCoverageId?: string }): Promise<LabOrderView> => deps.run(async (u) => {
       deps.require(P.laboratory.order);
       if (input.testItemIds.length === 0) refuse('testsRequired');
       if (new Set(input.testItemIds).size !== input.testItemIds.length) refuse('duplicateTest');

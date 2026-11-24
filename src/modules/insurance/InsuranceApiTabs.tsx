@@ -1,8 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Input, Select, Textarea } from '@/components/forms/controls';
+import { SearchInput } from '@/components/forms/search-input';
 import { FormField } from '@/components/forms/form-field';
 import { useToast } from '@/components/feedback/toast';
 import { DataTable, type Column } from '@/components/tables/data-table';
@@ -16,19 +17,21 @@ import { usePreferences } from '@/core/preferences/preferences-store';
 import { dayOf } from '../billing/billing-rules';
 import { ActionDialog } from '../finance/ActionDialog';
 import { useMoney } from '../finance/use-finance';
+import { ActCombobox, ActsPicker, useActLabels } from './ActCombobox';
 import { ApiMembersPicker, usePatientLabel } from './ApiMembersPicker';
-import { apiInsurance, type ApiContract, type ApiCoverage, type ApiOrganization, type ApiRule, type ApiSubscription } from './insurance-api';
+import { apiInsurance, defaultCurrency, type ApiContract, type ApiCoverage, type ApiOrganization, type ApiRule, type ApiSubscription } from './insurance-api';
 import { PatientCombobox } from '../_shared/patient-combobox';
 import type { ValidationStatus } from '@/core/pricing/types';
 import { ValidationBadge } from './Shared';
 import {
-  CATEGORIES, COVERAGE_KINDS, CONTRACT_STATUSES, allowedDecisions, authorizationCodeOk, coverageBody, decisionOk, SUB_STATUSES, SUB_TYPES, blankRule, bpToPercent, contractBody, minorToText, subscriptionBody,
+  CATEGORIES, COVERAGE_KINDS, CONTRACT_STATUSES, allowedDecisions, coverageBody, decisionOk, draftsOfRules, SUB_STATUSES, SUB_TYPES, blankRule, bpToPercent, contractBody, minorToText, subscriptionBody,
   type ContractDraft, type CoverageDraft, type RuleDraft, type SubscriptionDraft,
 } from './insurance-rules';
 
 const CATEGORY_LABEL: Record<string, string> = {
   consultation: 'Consultation', laboratory: 'Laboratoire', pharmacy: 'Pharmacie', hospitalization: 'Hospitalisation', room: 'Chambre', procedure: 'Acte', nursing: 'Soins infirmiers', consumable: 'Consommable',
 };
+const PER_PAGE = 15;
 const STATUS_LABEL: Record<string, string> = { active: 'Actif', suspended: 'Suspendu', terminated: 'Résilié', cancelled: 'Résilié' };
 const TYPE_LABEL: Record<string, string> = { individual: 'Individuel', family: 'Famille', company: 'Entreprise' };
 
@@ -54,7 +57,7 @@ export function ContractsApiTab({ organizations }: { organizations: ApiOrganizat
   const list = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'contracts'), queryFn: () => apiInsurance.contracts() });
   const canManage = can(P.insurance.manage);
   const orgName = (id: string): string => organizations.find((o) => o.id === id)?.name ?? `#${id}`;
-  const general = (c: ApiContract): ApiRule | undefined => c.rules.find((r) => !r.category && !r.itemCode);
+  const general = (c: ApiContract): ApiRule | undefined => c.rules.find((r) => !r.category && !r.itemCode && !r.catalogItemId);
   const columns: Column<ApiContract>[] = [
     { id: 'label', header: t('insurance.contract.label'), cell: (c) => c.label, primary: true },
     { id: 'org', header: t('insurance.contract.organization'), cell: (c) => orgName(c.organizationId) },
@@ -74,35 +77,55 @@ export function ContractsApiTab({ organizations }: { organizations: ApiOrganizat
   );
 }
 
-const draftOfRule = (r: ApiRule, currency: string): RuleDraft => ({
-  category: r.category, itemCode: r.itemCode, rate: bpToPercent(r.coverageBp), negotiated: minorToText(r.negotiatedUnitMinor, currency), ceilingLine: minorToText(r.ceilingPerLineMinor, currency),
-  quota: r.quota === null ? '' : String(r.quota), excluded: r.excluded, auth: r.requiresAuthorization,
-});
+/** Monnaies de l'établissement ; la principale est présélectionnée à la création. */
+function useEnterpriseCurrencies() {
+  const { activeFacilityId } = usePreferences();
+  const q = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'currencies'), queryFn: () => apiInsurance.currencies(), staleTime: 5 * 60_000 });
+  return q.data ?? [];
+}
+
+function CurrencyField({ value, locked, onChange, currencies }: { value: string; locked: boolean; onChange: (code: string) => void; currencies: readonly { code: string; isDefault: boolean }[] }) {
+  const { t } = useTranslation('finance');
+  // en modification, la devise reste celle du contrat (affichée même si l'établissement ne la propose plus)
+  const options = currencies.some((c) => c.code === value) || value === '' ? currencies : [...currencies, { code: value, isDefault: false }];
+  return (
+    <FormField label={t('apiInsurance.currency', { defaultValue: 'Devise' })} required hint={!locked && currencies.length === 0 ? t('apiInsurance.noCurrency', { defaultValue: "Aucune monnaie n'est définie pour cet établissement." }) : undefined}>
+      {(c) => (
+        <Select {...c} value={value} disabled={locked || currencies.length === 0} onChange={(e) => onChange(e.target.value)}>
+          {value === '' && <option value="" disabled>{t('apiInsurance.pickCurrency', { defaultValue: 'Choisir' })}</option>}
+          {options.map((o) => <option key={o.code} value={o.code}>{o.isDefault ? `${o.code} · ${t('apiInsurance.mainCurrency', { defaultValue: 'principale' })}` : o.code}</option>)}
+        </Select>
+      )}
+    </FormField>
+  );
+}
 
 function ContractForm({ initial, organizations, onClose }: { initial: ApiContract | null; organizations: ApiOrganization[]; onClose: () => void }) {
   const { t } = useTranslation('finance');
   const fb = useSaveFeedback();
   const currency0 = initial?.currency ?? 'USD';
+  const currencies = useEnterpriseCurrencies();
   const [v, setV] = useState<ContractDraft>({
-    organizationId: initial?.organizationId ?? organizations[0]?.id ?? '', label: initial?.label ?? '', currency: currency0, validFrom: initial?.validFrom || dayOf(new Date()), validTo: initial?.validTo ?? '',
+    organizationId: initial?.organizationId ?? organizations[0]?.id ?? '', label: initial?.label ?? '', currency: initial?.currency ?? '', validFrom: initial?.validFrom || dayOf(new Date()), validTo: initial?.validTo ?? '',
     status: initial?.status ?? 'active', franchise: minorToText(initial?.franchiseMinor ?? null, currency0), ceiling: minorToText(initial?.ceilingMinor ?? null, currency0),
     allowsComplementary: initial?.allowsComplementary ?? false, canBeComplementary: initial?.canBeComplementary ?? false, conditions: initial?.conditions ?? '',
   });
-  const [rules, setRules] = useState<RuleDraft[]>(initial ? initial.rules.map((r) => draftOfRule(r, currency0)) : [blankRule()]);
+  const [rules, setRules] = useState<RuleDraft[]>(initial ? draftsOfRules(initial.rules, currency0) : [blankRule()]);
   const [touched, setTouched] = useState(false);
+  useEffect(() => {
+    if (initial === null && currencies.length > 0) setV((p) => (p.currency === '' ? { ...p, currency: defaultCurrency(currencies) } : p));
+  }, [initial, currencies]);
   const set = <K extends keyof ContractDraft>(k: K, value: ContractDraft[K]) => setV({ ...v, [k]: value });
   const setRule = (i: number, patch: Partial<RuleDraft>) => { setTouched(true); setRules(rules.map((r, k) => (k === i ? { ...r, ...patch } : r))); };
   const body = contractBody(v, rules, touched, initial === null);
   const save = useMutation({ mutationFn: () => apiInsurance.saveContract(initial?.id ?? null, body ?? {}), onSuccess: () => { fb.done(); onClose(); }, onError: fb.fail });
   return (
-    <ActionDialog open onClose={onClose} title={initial ? t('insurance.contract.edit') : t('insurance.contract.add')} submitLabel={t('common.save')} pending={save.isPending} canSubmit={body !== null} onSubmit={() => save.mutate()}>
+    <ActionDialog open wide onClose={onClose} title={initial ? t('insurance.contract.edit') : t('insurance.contract.add')} submitLabel={t('common.save')} pending={save.isPending} canSubmit={body !== null} onSubmit={() => save.mutate()}>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label={t('insurance.contract.organization')} required>
           {(c) => <Select {...c} value={v.organizationId} disabled={initial !== null} onChange={(e) => set('organizationId', e.target.value)}>{organizations.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}</Select>}
         </FormField>
-        <FormField label={t('apiInsurance.currency', { defaultValue: 'Devise' })} required>
-          {(c) => <Input {...c} value={v.currency} maxLength={3} disabled={initial !== null} onChange={(e) => set('currency', e.target.value.toUpperCase())} />}
-        </FormField>
+        <CurrencyField value={v.currency} locked={initial !== null} currencies={currencies} onChange={(code) => set('currency', code)} />
       </div>
       <FormField label={t('insurance.contract.label')} required>{(c) => <Input {...c} value={v.label} maxLength={120} onChange={(e) => set('label', e.target.value)} />}</FormField>
       <div className="grid gap-3 sm:grid-cols-3">
@@ -122,18 +145,20 @@ function ContractForm({ initial, organizations, onClose }: { initial: ApiContrac
         <p className="text-xs text-muted-foreground">{t('insurance.contract.rulesHint')}</p>
         {rules.map((r, i) => (
           <div key={i} className="space-y-2 rounded-md border border-border p-3">
-            <div className="grid gap-2 sm:grid-cols-[1fr_1fr_6rem_auto]">
+            <div className="grid gap-2 sm:grid-cols-[1fr_8rem_auto]">
               <FormField label={t('insurance.contract.scope')}>
                 {(c) => <Select {...c} value={r.category} onChange={(e) => setRule(i, { category: e.target.value })}><option value="">{t('insurance.contract.scopeGeneral')}</option>{CATEGORIES.map((k) => <option key={k} value={k}>{t(`category.${k}`, { defaultValue: CATEGORY_LABEL[k] })}</option>)}</Select>}
               </FormField>
-              <FormField label={t('apiInsurance.itemCode', { defaultValue: 'Code de prestation' })}>{(c) => <Input {...c} value={r.itemCode} maxLength={40} onChange={(e) => setRule(i, { itemCode: e.target.value })} />}</FormField>
               <FormField label={t('insurance.contract.rate')}>{(c) => <Input {...c} inputMode="decimal" disabled={r.excluded} value={r.rate} onChange={(e) => setRule(i, { rate: e.target.value })} />}</FormField>
               <Button variant="ghost" size="icon" aria-label={t('insurance.contract.removeRule')} disabled={rules.length === 1} className="self-end" onClick={() => { setTouched(true); setRules(rules.filter((_, k) => k !== i)); }}><Trash2 className="size-4" /></Button>
             </div>
+              <FormField label={t('apiInsurance.acts', { defaultValue: 'Actes précis (facultatif)' })} hint={t('apiInsurance.actsHint', { defaultValue: 'Un ou plusieurs actes, mêmes conditions. Vide : toute la catégorie.' })}>
+                {(c) => <ActsPicker id={c.id} aria-describedby={c['aria-describedby']} value={r.catalogItemIds} legacyCode={r.itemCode} onChange={(ids) => setRule(i, { catalogItemIds: ids, itemCode: '' })} />}
+              </FormField>
             <div className="grid gap-2 sm:grid-cols-3">
               <FormField label={t('insurance.contract.negotiated')}>{(c) => <Input {...c} inputMode="decimal" value={r.negotiated} onChange={(e) => setRule(i, { negotiated: e.target.value })} />}</FormField>
               <FormField label={t('insurance.contract.ceilingLine')}>{(c) => <Input {...c} inputMode="decimal" value={r.ceilingLine} onChange={(e) => setRule(i, { ceilingLine: e.target.value })} />}</FormField>
-              <FormField label={t('insurance.contract.quota')}>{(c) => <Input {...c} inputMode="numeric" value={r.quota} onChange={(e) => setRule(i, { quota: e.target.value })} />}</FormField>
+              <FormField label={t('insurance.contract.quota')} hint={t('apiInsurance.quotaPerAct', { defaultValue: 'Par acte' })}>{(c) => <Input {...c} inputMode="numeric" value={r.quota} onChange={(e) => setRule(i, { quota: e.target.value })} />}</FormField>
             </div>
             <div className="flex gap-4 text-sm">
               <label className="flex items-center gap-2"><input type="checkbox" checked={r.excluded} onChange={(e) => setRule(i, { excluded: e.target.checked })} />{t('insurance.contract.excluded')}</label>
@@ -181,22 +206,26 @@ function SubscriptionForm({ initial, onClose }: { initial: ApiSubscription | nul
   const { t } = useTranslation('finance');
   const fb = useSaveFeedback();
   const currency0 = initial?.currency ?? 'USD';
+  const currencies = useEnterpriseCurrencies();
   const { laboratory, ...otherDiscounts } = initial?.discounts ?? {};
   const [v, setV] = useState<SubscriptionDraft>({
-    type: initial?.type ?? 'individual', holderName: initial?.holderName ?? '', patientIds: initial?.patientIds ?? [], price: minorToText(initial?.priceMinor ?? null, currency0), currency: currency0,
+    type: initial?.type ?? 'individual', holderName: initial?.holderName ?? '', patientIds: initial?.patientIds ?? [], price: minorToText(initial?.priceMinor ?? null, currency0), currency: initial?.currency ?? '',
     validFrom: initial?.validFrom || dayOf(new Date()), validTo: initial?.validTo ?? '', status: initial?.status ?? 'active', free: initial === null ? '0' : initial.freeConsultations === null ? '' : String(initial.freeConsultations),
     labDiscount: laboratory ? bpToPercent(laboratory) : '', included: initial?.includedCategories ?? [],
   });
+  useEffect(() => {
+    if (initial === null && currencies.length > 0) setV((p) => (p.currency === '' ? { ...p, currency: defaultCurrency(currencies) } : p));
+  }, [initial, currencies]);
   const set = <K extends keyof SubscriptionDraft>(k: K, value: SubscriptionDraft[K]) => setV({ ...v, [k]: value });
   const body = subscriptionBody(v, otherDiscounts, initial === null);
   const save = useMutation({ mutationFn: () => apiInsurance.saveSubscription(initial?.id ?? null, body ?? {}), onSuccess: () => { fb.done(); onClose(); }, onError: fb.fail });
   return (
-    <ActionDialog open onClose={onClose} title={initial ? t('insurance.sub.edit') : t('insurance.sub.add')} submitLabel={t('common.save')} pending={save.isPending} canSubmit={body !== null} onSubmit={() => save.mutate()}>
+    <ActionDialog open wide onClose={onClose} title={initial ? t('insurance.sub.edit') : t('insurance.sub.add')} submitLabel={t('common.save')} pending={save.isPending} canSubmit={body !== null} onSubmit={() => save.mutate()}>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label={t('insurance.sub.holder')} required>{(c) => <Input {...c} value={v.holderName} maxLength={120} onChange={(e) => set('holderName', e.target.value)} />}</FormField>
         <FormField label={t('insurance.sub.type')}>{(c) => <Select {...c} value={v.type} disabled={initial !== null} onChange={(e) => set('type', e.target.value)}>{SUB_TYPES.map((x) => <option key={x} value={x}>{t(`insurance.subType.${x}`, { defaultValue: TYPE_LABEL[x] })}</option>)}</Select>}</FormField>
         <FormField label={t('insurance.sub.price')} required>{(c) => <Input {...c} inputMode="decimal" value={v.price} onChange={(e) => set('price', e.target.value)} />}</FormField>
-        <FormField label={t('apiInsurance.currency', { defaultValue: 'Devise' })} required>{(c) => <Input {...c} value={v.currency} maxLength={3} disabled={initial !== null} onChange={(e) => set('currency', e.target.value.toUpperCase())} />}</FormField>
+        <CurrencyField value={v.currency} locked={initial !== null} currencies={currencies} onChange={(code) => set('currency', code)} />
         <FormField label={t('insurance.contract.from')} required>{(c) => <Input {...c} type="date" value={v.validFrom} onChange={(e) => set('validFrom', e.target.value)} />}</FormField>
         <FormField label={t('insurance.contract.to')} required>{(c) => <Input {...c} type="date" value={v.validTo} min={v.validFrom} onChange={(e) => set('validTo', e.target.value)} />}</FormField>
         {initial && <FormField label={t('columns.status')}>{(c) => <Select {...c} value={v.status} onChange={(e) => set('status', e.target.value)}>{SUB_STATUSES.map((x) => <option key={x} value={x}>{t(`insurance.subStatus.${x}`, { defaultValue: STATUS_LABEL[x] })}</option>)}</Select>}</FormField>}
@@ -214,28 +243,33 @@ function SubscriptionForm({ initial, onClose }: { initial: ApiSubscription | nul
 // ------------------------------------------------------------------ couvertures des patients
 
 const KIND_LABEL: Record<string, string> = { insurance: 'Assurance', mutuelle: 'Mutuelle' };
-const DECISION_LABEL: Record<string, string> = { validated: 'Valider', rejected: 'Rejeter', suspended: 'Suspendre' };
+const DECISION_LABEL: Record<string, string> = { pending: 'En attente', validated: 'Valider', rejected: 'Rejeter', suspended: 'Suspendre' };
 
 export function CoveragesApiTab({ organizations }: { organizations: ApiOrganization[] }) {
   const { t } = useTranslation('finance');
   const money = useMoney();
   const { can } = usePermissions();
   const { activeFacilityId } = usePreferences();
-  const [typed, setTyped] = useState('');
-  const patientId = /^\d+$/.test(typed) ? typed : '';
-  const patient = usePatientLabel(patientId);
+  const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<ApiCoverage | 'new' | null>(null);
   const [deciding, setDeciding] = useState<ApiCoverage | null>(null);
   const [authFor, setAuthFor] = useState<ApiCoverage | null>(null);
-  const enabled = patientId !== '' && patient.found;
-  const list = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'coverages', patientId), queryFn: () => apiInsurance.coverages(patientId), enabled });
+  // Liste globale paginée : toujours visible, rafraîchie en direct (le signal « insurance » invalide toute la famille de requêtes).
+  const list = useQuery({
+    queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'coverages', 'page', { page, status, search }),
+    queryFn: () => apiInsurance.coveragePage({ page, perPage: PER_PAGE, status, q: search.trim() }),
+    placeholderData: keepPreviousData,
+  });
   const contracts = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'contracts'), queryFn: () => apiInsurance.contracts() });
   const canManage = can(P.insurance.manage);
   const canValidate = can(P.insurance.validate);
   const orgName = (id: string): string => organizations.find((o) => o.id === id)?.name ?? `#${id}`;
   const contractOf = (id: string): ApiContract | undefined => contracts.data?.find((c) => c.id === id);
   const columns: Column<ApiCoverage>[] = [
-    { id: 'org', header: t('insurance.contract.organization'), cell: (c) => orgName(c.organizationId), primary: true },
+    { id: 'patient', header: t('columns.patient'), cell: (c) => c.patientName || `#${c.patientId}`, primary: true },
+    { id: 'org', header: t('insurance.contract.organization'), cell: (c) => orgName(c.organizationId) },
     { id: 'contract', header: t('insurance.cov.contract'), cell: (c) => contractOf(c.contractId)?.label ?? `#${c.contractId}` },
     { id: 'kind', header: t('insurance.cov.kind'), cell: (c) => t(`insurance.covKind.${c.kind}`, { defaultValue: KIND_LABEL[c.kind] ?? c.kind }) },
     { id: 'card', header: t('insurance.cov.card'), cell: (c) => c.cardNumber || c.policyNumber || c.memberNumber || '—' },
@@ -246,52 +280,65 @@ export function CoveragesApiTab({ organizations }: { organizations: ApiOrganizat
     { id: 'actions', header: '', cell: (c) => (
       <div className="flex flex-wrap justify-end gap-2">
         {canValidate && allowedDecisions(c.status).length > 0 && <Button size="sm" variant="outline" onClick={() => setDeciding(c)}>{t('apiInsurance.decide', { defaultValue: 'Décider…' })}</Button>}
-        <Button size="sm" variant="outline" onClick={() => setAuthFor(c)}>{t('insurance.cov.authorize')}</Button>
-        {canManage && <Button size="sm" variant="outline" onClick={() => setEditing(c)}>{t('common.edit')}</Button>}
+        {c.status === 'validated' && <Button size="sm" variant="outline" onClick={() => setAuthFor(c)}>{t('insurance.cov.authorize')}</Button>}
+        {canManage && c.status !== 'rejected' && <Button size="sm" variant="outline" onClick={() => setEditing(c)}>{t('common.edit')}</Button>}
       </div>
     ) },
   ];
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-end gap-3">
-        <div className="w-80 max-w-full">
-          <FormField label={t('columns.patient')} hint={enabled ? patient.label : undefined}>
-            {(c) => <PatientCombobox id={c.id} aria-describedby={c['aria-describedby']} onValueChange={setTyped} />}
+        <div className="w-64 max-w-full"><SearchInput label={t('apiInsurance.searchCoverage', { defaultValue: 'Rechercher' })} placeholder={t('apiInsurance.searchCoveragePh', { defaultValue: 'Patient, n° de carte, de police…' })} value={search} onChange={(v) => { setSearch(v); setPage(1); }} /></div>
+        <div className="w-44 max-w-full">
+          <FormField label={t('columns.status')}>
+            {(c) => <Select {...c} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
+              <option value="">{t('apiInsurance.allStatuses', { defaultValue: 'Tous' })}</option>
+              {['pending', 'validated', 'suspended', 'rejected'].map((o) => <option key={o} value={o}>{t(`validation.${o}`, { defaultValue: DECISION_LABEL[o] ?? o })}</option>)}
+            </Select>}
           </FormField>
         </div>
-        {canManage && <Button className="ms-auto" disabled={!enabled || organizations.length === 0} onClick={() => setEditing('new')}>{t('insurance.cov.add')}</Button>}
+        {canManage && <Button className="ms-auto" disabled={organizations.length === 0} onClick={() => setEditing('new')}>{t('insurance.cov.add')}</Button>}
       </div>
-      {!enabled && <p className="text-sm text-muted-foreground">{t('apiInsurance.pickPatient', { defaultValue: 'Choisissez un patient pour voir ses couvertures.' })}</p>}
-      {enabled && <DataTable caption={t('insurance.tabs.coverages')} columns={columns} rows={list.data ?? []} getRowId={(c) => c.id} loading={list.isPending} error={list.error} onRetry={() => void list.refetch()}
-        emptyTitle={t('apiInsurance.noCoverage', { defaultValue: 'Aucune couverture pour ce patient' })} />}
+      <DataTable caption={t('insurance.tabs.coverages')} columns={columns} rows={list.data?.rows ?? []} getRowId={(c) => c.id} loading={list.isPending} error={list.error} onRetry={() => void list.refetch()}
+        emptyTitle={t('apiInsurance.noCoverageAny', { defaultValue: 'Aucune couverture' })}
+        pagination={{ page, perPage: PER_PAGE, total: list.data?.total ?? 0, onPageChange: setPage }} />
       <p className="text-xs text-muted-foreground">{t('insurance.cov.neverConfirmed')}</p>
-      {editing && enabled && <CoverageForm key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? null : editing} patientId={patientId} organizations={organizations} contracts={contracts.data ?? []} onClose={() => setEditing(null)} />}
+      {editing && canManage && <CoverageForm key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? null : editing} organizations={organizations} contracts={contracts.data ?? []} onClose={() => setEditing(null)} />}
       {deciding && <DecisionDialog coverage={deciding} onClose={() => setDeciding(null)} />}
       {authFor && <AuthorizationsDialog coverage={authFor} canGrant={can(P.insurance.authorize)} onClose={() => setAuthFor(null)} />}
     </div>
   );
 }
 
-function CoverageForm({ initial, patientId, organizations, contracts, onClose }: { initial: ApiCoverage | null; patientId: string; organizations: ApiOrganization[]; contracts: ApiContract[]; onClose: () => void }) {
+function CoverageForm({ initial, organizations, contracts, onClose }: { initial: ApiCoverage | null; organizations: ApiOrganization[]; contracts: ApiContract[]; onClose: () => void }) {
   const { t } = useTranslation('finance');
   const fb = useSaveFeedback();
+  const [typed, setTyped] = useState('');
+  const patientId = initial?.patientId ?? (/^\d+$/.test(typed) ? typed : '');
+  const patient = usePatientLabel(initial ? '' : patientId);
+  const patientOk = initial !== null || (patientId !== '' && patient.found);
   const [v, setV] = useState<CoverageDraft>(() => {
     const org = initial?.organizationId ?? organizations[0]?.id ?? '';
     const cur = contracts.find((c) => c.id === initial?.contractId)?.currency ?? 'USD';
     return {
       organizationId: org, contractId: initial?.contractId ?? contracts.find((c) => c.organizationId === org && c.status === 'active')?.id ?? '', kind: initial?.kind ?? 'insurance',
       validFrom: initial?.validFrom || dayOf(new Date()), validTo: initial?.validTo ?? '', policy: initial?.policyNumber ?? '', card: initial?.cardNumber ?? '', member: initial?.memberNumber ?? '',
-      coverageType: initial?.coverageType ?? '', ceilingRemaining: minorToText(initial?.ceilingRemainingMinor ?? null, cur), priority: String(initial?.priority ?? 1), beneficiaryIds: initial?.beneficiaryIds ?? [patientId],
+      coverageType: initial?.coverageType ?? '', ceilingRemaining: minorToText(initial?.ceilingRemainingMinor ?? null, cur), priority: String(initial?.priority ?? 1), beneficiaryIds: initial?.beneficiaryIds ?? [],
     };
   });
   const set = <K extends keyof CoverageDraft>(k: K, value: CoverageDraft[K]) => setV({ ...v, [k]: value });
   const orgContracts = contracts.filter((c) => c.organizationId === v.organizationId && (c.status === 'active' || c.id === initial?.contractId));
   const currency = contracts.find((c) => c.id === v.contractId)?.currency ?? 'USD';
-  const body = coverageBody(v, currency, initial === null);
+  const body = patientOk ? coverageBody(v.beneficiaryIds.length === 0 && patientId !== '' ? { ...v, beneficiaryIds: [patientId] } : v, currency, initial === null) : null;
   const save = useMutation({ mutationFn: () => apiInsurance.saveCoverage(patientId, initial?.id ?? null, body ?? {}), onSuccess: () => { fb.done(); onClose(); }, onError: fb.fail });
   return (
-    <ActionDialog open onClose={onClose} title={initial ? t('apiInsurance.editCoverage', { defaultValue: 'Modifier la couverture' }) : t('insurance.cov.add')} description={initial ? undefined : t('insurance.cov.createHint')}
+    <ActionDialog open wide onClose={onClose} title={initial ? t('apiInsurance.editCoverage', { defaultValue: 'Modifier la couverture' }) : t('insurance.cov.add')} description={initial ? undefined : t('insurance.cov.createHint')}
       submitLabel={t('common.save')} pending={save.isPending} canSubmit={body !== null} onSubmit={() => save.mutate()}>
+      {initial === null && (
+        <FormField label={t('columns.patient')} required hint={patientOk ? patient.label : t('apiInsurance.pickPatientHint', { defaultValue: 'Choisissez le patient (le titulaire) à couvrir.' })}>
+          {(c) => <PatientCombobox id={c.id} aria-describedby={c['aria-describedby']} onValueChange={(x) => { setTyped(x); setV((cur) => ({ ...cur, beneficiaryIds: /^\d+$/.test(x) ? [x] : [] })); }} />}
+        </FormField>
+      )}
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label={t('insurance.contract.organization')} required>
           {(c) => <Select {...c} value={v.organizationId} disabled={initial !== null} onChange={(e) => setV({ ...v, organizationId: e.target.value, contractId: contracts.find((k) => k.organizationId === e.target.value && k.status === 'active')?.id ?? '' })}>{organizations.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}</Select>}
@@ -335,26 +382,29 @@ function AuthorizationsDialog({ coverage, canGrant, onClose }: { coverage: ApiCo
   const fb = useSaveFeedback();
   const { activeFacilityId } = usePreferences();
   const list = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'authorizations', coverage.id), queryFn: () => apiInsurance.authorizations(coverage.id) });
-  const [code, setCode] = useState('');
+  const [actId, setActId] = useState('');
   const [note, setNote] = useState('');
+  const labels = useActLabels((list.data ?? []).map((a) => a.catalogItemId));
   const grant = useMutation({
-    mutationFn: () => apiInsurance.grantAuthorization(coverage.id, code, note),
-    onSuccess: () => { fb.done(); setCode(''); setNote(''); },
+    mutationFn: () => apiInsurance.grantAuthorization(coverage.id, { catalogItemId: actId }, note),
+    onSuccess: () => { fb.done(); setActId(''); setNote(''); },
     onError: fb.fail,
   });
   const usable = coverage.status === 'validated';
   return (
     <ActionDialog open onClose={onClose} title={t('insurance.cov.authorize')} submitLabel={t('apiInsurance.grant', { defaultValue: 'Accorder' })} pending={grant.isPending}
-      canSubmit={canGrant && usable && authorizationCodeOk(code)} onSubmit={() => grant.mutate()}>
+      canSubmit={canGrant && usable && actId !== ''} onSubmit={() => grant.mutate()}>
       {list.isPending && <p className="text-sm text-muted-foreground">{t('common.loading')}</p>}
       {list.error && <p role="alert" className="text-sm text-danger-ink">{list.error instanceof ApiError ? list.error.message : t('module.saveFailed')}</p>}
       {list.data && (list.data.length === 0
         ? <p className="text-sm text-muted-foreground">{t('apiInsurance.noAuthorization', { defaultValue: 'Aucune autorisation accordée.' })}</p>
-        : <ul className="divide-y divide-border text-sm">{list.data.map((a) => <li key={a.id} className="flex justify-between gap-2 py-1.5"><span className="font-medium">{a.itemCode}</span><span className="text-muted-foreground">{a.note}</span></li>)}</ul>)}
+        : <ul className="divide-y divide-border text-sm">{list.data.map((a) => <li key={a.id} className="flex justify-between gap-2 py-1.5"><span className="font-medium">{labels.get(a.catalogItemId)?.label ?? a.itemCode}</span><span className="text-muted-foreground">{a.note}</span></li>)}</ul>)}
       {canGrant && !usable && <p className="text-sm text-muted-foreground">{t('apiInsurance.authNeedsValidated', { defaultValue: 'Seule une couverture validée peut recevoir une autorisation.' })}</p>}
       {canGrant && usable && (
         <>
-          <FormField label={t('apiInsurance.itemCode', { defaultValue: 'Code de prestation' })} required hint={t('insurance.cov.authHint')}>{(c) => <Input {...c} value={code} maxLength={40} onChange={(e) => setCode(e.target.value)} />}</FormField>
+          <FormField label={t('apiInsurance.act', { defaultValue: 'Acte précis' })} required hint={t('apiInsurance.authActHint', { defaultValue: "Choisissez l'acte pour lequel l'assureur a donné son accord." })}>
+            {(c) => <ActCombobox id={c.id} aria-describedby={c['aria-describedby']} value={actId} onChange={setActId} />}
+          </FormField>
           <FormField label={t('apiInsurance.note', { defaultValue: 'Note' })}>{(c) => <Input {...c} value={note} maxLength={255} onChange={(e) => setNote(e.target.value)} />}</FormField>
         </>
       )}

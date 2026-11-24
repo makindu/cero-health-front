@@ -15,7 +15,7 @@ import { lab } from './lab';
 import type { LabOrderView } from './lab-service';
 import { useLabCatalog, useLabMutation } from './use-lab';
 
-export function NewLabOrderDialog({ onClose, onCreated, initialPatientId, consultationId }: { onClose: () => void; onCreated: (v: LabOrderView) => void; initialPatientId?: string; consultationId?: string }) {
+export function NewLabOrderDialog({ onClose, onCreated, initialPatientId, consultationId, visitId }: { onClose: () => void; onCreated: (v: LabOrderView) => void; initialPatientId?: string; consultationId?: string; visitId?: string }) {
   const { t } = useTranslation('laboratory');
   const catalog = useLabCatalog();
   const [patientId, setPatientId] = useState(initialPatientId ?? '');
@@ -37,7 +37,7 @@ export function NewLabOrderDialog({ onClose, onCreated, initialPatientId, consul
     <Dialog open onClose={onClose} title={t('create.title')} description={t('create.description')}
       footer={<>
         <Button variant="outline" onClick={onClose}>{t('create.cancel')}</Button>
-        <Button loading={create.isPending} disabled={!ready} onClick={() => create.mutate({ patientId, testItemIds: selected, priority, clinicalNote: note, consultationId: consult.trim() || undefined })}>{t('create.submit')}</Button>
+        <Button loading={create.isPending} disabled={!ready} onClick={() => create.mutate({ patientId, testItemIds: selected, priority, clinicalNote: note, consultationId: consult.trim() || undefined, visitId })}>{t('create.submit')}</Button>
       </>}>
       <div className="space-y-4">
         <FormField label={t('columns.patient')} required>
@@ -61,7 +61,7 @@ export function NewLabOrderDialog({ onClose, onCreated, initialPatientId, consul
               </Select>
             )}
           </FormField>
-          <FormField label={t('create.consultation')} hint={t('create.consultationHint')}>{(c) => <Input {...c} value={consult} onChange={(e) => setConsult(e.target.value)} />}</FormField>
+          {!visitId && <FormField label={t('create.consultation')} hint={t('create.consultationHint')}>{(c) => <Input {...c} value={consult} onChange={(e) => setConsult(e.target.value)} />}</FormField>}
         </div>
         <FormField label={t('create.note')}>{(c) => <Textarea {...c} rows={2} value={note} onChange={(e) => setNote(e.target.value)} />}</FormField>
         {!referenceFromApi() && <p className="text-xs text-muted-foreground">{t('create.invoiceNotice')}</p>}

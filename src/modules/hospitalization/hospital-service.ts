@@ -40,7 +40,7 @@ export function createHospitalService(deps: FinanceDeps, hooks: HospitalHooks = 
     }),
 
     /** Admission + occupation du lit dans la même transaction (jamais deux patients sur un lit, jamais deux admissions actives pour un patient). */
-    admit: (input: { patientId: string; bedId: string; reason: string; attending: string; expectedDischarge?: string; consultationId?: string }): Promise<Admission> => deps.run(async (u) => {
+    admit: (input: { patientId: string; bedId: string; reason: string; attending: string; expectedDischarge?: string; consultationId?: string; requestId?: string }): Promise<Admission> => deps.run(async (u) => {
       deps.require(P.hospitalization.create);
       const patient = await deps.patient(u, input.patientId);
       if (!patient) return refuse('patientNotFound');

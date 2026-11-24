@@ -15,6 +15,20 @@ export function AdmissionStatusBadge({ status }: { status: AdmissionStatus }) {
   return <StatusBadge tone={ADM[status].tone} icon={ADM[status].icon}>{t(`admissionStatus.${status}`)}</StatusBadge>;
 }
 
+/** État d'une demande d'hospitalisation (mode API). */
+export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'admitted';
+const REQ: Record<RequestStatus, { tone: StatusTone; icon: LucideIcon }> = {
+  pending: { tone: 'warning', icon: Hourglass },
+  approved: { tone: 'success', icon: CircleCheck },
+  rejected: { tone: 'danger', icon: Ban },
+  cancelled: { tone: 'neutral', icon: Ban },
+  admitted: { tone: 'info', icon: BedDouble },
+};
+export function RequestStatusBadge({ status }: { status: RequestStatus }) {
+  const { t } = useTranslation('hospitalization');
+  return <StatusBadge tone={REQ[status].tone} icon={REQ[status].icon}>{t(`hospReq.status.${status}`)}</StatusBadge>;
+}
+
 export const BED_STYLE: Record<BedStatus, { tone: StatusTone; icon: LucideIcon; ring: string }> = {
   free: { tone: 'success', icon: CircleCheck, ring: 'border-success' },
   occupied: { tone: 'info', icon: BedDouble, ring: 'border-info' },

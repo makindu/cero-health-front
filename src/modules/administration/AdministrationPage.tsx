@@ -11,6 +11,7 @@ import { SERVICE_KEYS } from '../_shared/demo-people';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { referenceFromApi } from '../_shared/reference-data';
 import { StaffApiScreen } from './StaffApiScreen';
+import { ServiceDepositCell } from './ServiceDeposit';
 import { FacilityForm } from './FacilityForm';
 import { careUnitTypeOptions, createCareUnitType, useCareUnitTypes, useRefreshCareUnitTypes } from './care-unit-types';
 import { ReviewQueue } from '../review/ReviewQueue';
@@ -91,6 +92,7 @@ function ServicesTab() {
     { id: 'key', header: t('services.name'), cell: (s) => <span className="font-medium">{s.name || t(`serviceNames.${s.key}`)}</span>, primary: true },
     { id: 'head', header: t('services.head'), cell: (s) => s.head },
     { id: 'beds', header: t('services.beds'), cell: (s) => s.beds, sortable: true, className: 'text-end tabular-nums' },
+    ...(referenceFromApi() ? [{ id: 'deposit', header: t('services.deposit'), cell: (s: HospitalService) => <ServiceDepositCell service={s} /> }] : []),
     { id: 'status', header: t('users.status'), cell: (s) => t(`users.statuses.${s.status === 'active' ? 'active' : 'suspended'}`) },
   ];
   return (

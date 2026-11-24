@@ -35,6 +35,7 @@ const MAP: Record<string, readonly string[]> = {
   'health.pharmacy.exception': ['health.pharmacy.exception'],
   'health.admissions.read': ['health.admissions.view'],
   'health.admissions.manage': ['health.admissions.create'],
+  'health.admissions.decide': ['health.admissions.decide'],
   'health.beds.manage': ['health.beds.assign'],
   'health.discharge.approve': ['health.discharges.validate'],
   'health.billing.read': ['health.billing.view', 'health.cash.view'],
@@ -50,6 +51,10 @@ const MAP: Record<string, readonly string[]> = {
   // Le menu Administration s'ouvre pour qui peut gérer le personnel, les unités de soins ou les paramètres.
   'health.staff.manage': ['health.users.manage', 'health.administration.view'],
   'health.care-units.manage': ['health.services.manage', 'health.administration.view'],
+  // Les dépôts et leurs entrées vivent dans la page Stock : leurs droits ouvrent ce menu, pas l'Administration.
+  'health.deposits.read': ['health.stock.view'],
+  'health.deposits.manage': ['health.stock.view', 'health.deposits.read'],
+  'health.stock.move': ['health.stock.view', 'health.deposits.read'],
   'health.audit.read': ['health.audit.view', 'health.reports.view'],
   'health.patients.categories': ['health.settings.manage', 'health.administration.view'],
   'health.visits.read': ['health.visits.view'],

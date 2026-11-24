@@ -35,6 +35,8 @@ export interface Stay {
   reason?: string;
 }
 export interface Admission {
+  /** Nom du service renvoyé par le serveur (mode API) : évite d'afficher un numéro. */
+  wardName?: string;
   id: string;
   number: string;
   patientId: string;

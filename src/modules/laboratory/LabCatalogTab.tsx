@@ -41,7 +41,7 @@ export function LabCatalogTab() {
   const { activeFacilityId } = usePreferences();
   const queryClient = useQueryClient();
   const toast = useToast();
-  const arrivals = useCatalogArrivals({ entities: ['lab_tests'], load: () => loadLabArrivals(queryClient, activeFacilityId) });
+  const arrivals = useCatalogArrivals({ entities: ['lab_tests'], load: (ids) => loadLabArrivals(queryClient, activeFacilityId, ids) });
   useArrivalFocus(arrivals, all, { perPage: PER_PAGE, setPage, setSearch, onNone: () => toast({ tone: 'neutral', title: t('newArrival.none') }) });
   const arrivalMessage = arrivals.ids.length === 1 ? t('newArrival.lab.one') : t('newArrival.lab.many', { count: arrivals.ids.length });
   const columns: Column<CatalogItem>[] = [

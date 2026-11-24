@@ -1,4 +1,5 @@
 import { MoneyError, decimalsOf, parseMoney } from '@/core/money/money';
+import type { ApiRule } from './insurance-api';
 
 /**
  * Règles de saisie des contrats et abonnements, sans interface : testables seules.
@@ -36,29 +37,63 @@ export const minorToText = (minor: number | null, currency: string): string => {
 };
 
 export interface RuleDraft {
-  category: string; itemCode: string; rate: string; negotiated: string; ceilingLine: string; quota: string; excluded: boolean; auth: boolean;
+  category: string; itemCode: string; /** Actes du catalogue visés (une règle serveur par acte, mêmes conditions) */ catalogItemIds: string[]; rate: string; negotiated: string; ceilingLine: string; quota: string; excluded: boolean; auth: boolean;
 }
-export const blankRule = (): RuleDraft => ({ category: '', itemCode: '', rate: '80', negotiated: '', ceilingLine: '', quota: '', excluded: false, auth: false });
+export const blankRule = (): RuleDraft => ({ category: '', itemCode: '', catalogItemIds: [], rate: '80', negotiated: '', ceilingLine: '', quota: '', excluded: false, auth: false });
 
 export interface RuleBody {
-  category: string | null; item_code: string | null; coverage_bp: number; excluded: boolean; negotiated_unit_minor: number | null;
+  category: string | null; item_code: string | null; catalog_item_id: number | null; coverage_bp: number; excluded: boolean; negotiated_unit_minor: number | null;
   ceiling_per_line_minor: number | null; quota: number | null; requires_authorization: boolean;
 }
 
-/** Une règle saisie → corps serveur, ou null si un champ est invalide. Une règle « exclue » ne couvre rien (0 %). */
-export function ruleBody(d: RuleDraft, currency: string): RuleBody | null {
+/**
+ * Une règle saisie → un corps serveur par acte choisi dans le catalogue (mêmes conditions pour chacun), ou un seul corps
+ * (catégorie, règle générale ou ancien code). Null si un champ est invalide. Une règle « exclue » ne couvre rien (0 %).
+ * Le quota s'applique PAR ACTE.
+ */
+export function ruleBodies(d: RuleDraft, currency: string): RuleBody[] | null {
   const bp = d.excluded ? 0 : percentToBp(d.rate);
   const negotiated = optionalMinor(d.negotiated, currency);
   const ceiling = optionalMinor(d.ceilingLine, currency);
   const quota = d.quota.trim() === '' ? null : Number(d.quota);
   if (bp === null || negotiated === undefined || ceiling === undefined) return null;
   if (quota !== null && (!Number.isInteger(quota) || quota < 1 || quota > 100_000)) return null;
-  const item = d.itemCode.trim();
+  // Un acte choisi dans le catalogue (identifiant stable) remplace tout code saisi ; le code seul ne reste que pour les anciennes règles.
+  const ids = [...new Set(d.catalogItemIds.map((i) => i.trim()).filter((i) => i !== ''))];
+  const numbers = ids.map(Number);
+  if (numbers.some((n) => !Number.isInteger(n) || n < 1)) return null;
+  const item = ids.length > 0 ? '' : d.itemCode.trim();
   if (item !== '' && !/^[A-Za-z0-9._-]{1,40}$/.test(item)) return null;
-  return {
-    category: d.category === '' ? null : d.category, item_code: item === '' ? null : item, coverage_bp: bp, excluded: d.excluded,
+  const make = (code: string, catalogId: number | null): RuleBody => ({
+    category: d.category === '' ? null : d.category, item_code: code === '' ? null : code, catalog_item_id: catalogId, coverage_bp: bp, excluded: d.excluded,
     negotiated_unit_minor: negotiated, ceiling_per_line_minor: ceiling, quota, requires_authorization: d.auth,
-  };
+  });
+  return numbers.length > 0 ? numbers.map((n) => make('', n)) : [make(item, null)];
+}
+
+/** Règle visant un seul acte (ou aucun) → son corps serveur ; null si invalide ou si plusieurs actes sont choisis. */
+export function ruleBody(d: RuleDraft, currency: string): RuleBody | null {
+  const bodies = ruleBodies(d, currency);
+  return bodies !== null && bodies.length === 1 ? (bodies[0] ?? null) : null;
+}
+
+/** Règles du serveur → règles saisies : les règles par acte aux conditions identiques sont regroupées en une seule ligne. */
+export function draftsOfRules(rules: readonly ApiRule[], currency: string): RuleDraft[] {
+  const out: RuleDraft[] = [];
+  const groups = new Map<string, RuleDraft>();
+  for (const r of rules) {
+    const draft: RuleDraft = {
+      category: r.category, itemCode: r.itemCode, catalogItemIds: r.catalogItemId ? [r.catalogItemId] : [], rate: bpToPercent(r.coverageBp),
+      negotiated: minorToText(r.negotiatedUnitMinor, currency), ceilingLine: minorToText(r.ceilingPerLineMinor, currency),
+      quota: r.quota === null ? '' : String(r.quota), excluded: r.excluded, auth: r.requiresAuthorization,
+    };
+    if (!r.catalogItemId) { out.push(draft); continue; }
+    const key = JSON.stringify([draft.category, draft.rate, draft.negotiated, draft.ceilingLine, draft.quota, draft.excluded, draft.auth]);
+    const same = groups.get(key);
+    if (same) same.catalogItemIds.push(r.catalogItemId);
+    else { groups.set(key, draft); out.push(draft); }
+  }
+  return out;
 }
 
 export interface ContractDraft {
@@ -83,9 +118,9 @@ export function contractBody(d: ContractDraft, rules: RuleDraft[], rulesTouched:
     body.currency = d.currency.toUpperCase();
   } else body.status = d.status;
   if (creating || rulesTouched) {
-    const bodies = rules.map((r) => ruleBody(r, d.currency));
+    const bodies = rules.map((r) => ruleBodies(r, d.currency));
     if (bodies.some((b) => b === null)) return null;
-    body.rules = bodies;
+    body.rules = bodies.flatMap((b) => b ?? []);
   }
   return body;
 }

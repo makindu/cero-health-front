@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorizationFrom, coverageFrom, contractFrom, subscriptionFrom, dueFrom, isOpenDue, organizationFrom, organizationPayload, settlePayload, settleResultFrom, statementFrom } from './insurance-api';
+import { catalogHitFrom, currencyFrom, defaultCurrency, authorizationFrom, coverageFrom, contractFrom, subscriptionFrom, dueFrom, isOpenDue, organizationFrom, organizationPayload, settlePayload, settleResultFrom, statementFrom } from './insurance-api';
 
 describe('assurance API', () => {
   it('traduit un organisme', () => {
@@ -63,7 +63,7 @@ describe('assurance API', () => {
       rules: [{ category: null, item_code: null, coverage_bp: 8000, excluded: false, negotiated_unit_minor: null, ceiling_per_line_minor: 500, quota: 4, requires_authorization: true }],
     });
     expect(c).toMatchObject({ id: '2', organizationId: '3', franchiseMinor: null, ceilingMinor: 100000, allowsComplementary: true, canBeComplementary: false });
-    expect(c.rules).toEqual([{ category: '', itemCode: '', coverageBp: 8000, excluded: false, negotiatedUnitMinor: null, ceilingPerLineMinor: 500, quota: 4, requiresAuthorization: true }]);
+    expect(c.rules).toEqual([{ category: '', itemCode: '', catalogItemId: '', coverageBp: 8000, excluded: false, negotiatedUnitMinor: null, ceilingPerLineMinor: 500, quota: 4, requiresAuthorization: true }]);
     expect(contractFrom({}).rules).toEqual([]);
   });
 
@@ -81,9 +81,25 @@ describe('assurance API', () => {
     const c = coverageFrom({ id: 5, patient_id: 9, organization_id: 3, contract_id: 7, kind: 'insurance', policy_number: 'POL-1', card_number: null, valid_from: '2026-01-01', valid_to: '2026-12-31', status: 'pending', ceiling_remaining_minor: null, priority: 2, beneficiary_ids: [9, 11] });
     expect(c).toMatchObject({ id: '5', patientId: '9', contractId: '7', policyNumber: 'POL-1', cardNumber: '', status: 'pending', ceilingRemainingMinor: null, priority: 2, beneficiaryIds: ['9', '11'] });
     expect(coverageFrom({}).priority).toBe(1);
+    expect(coverageFrom({ patient_name: 'Alice' }).patientName).toBe('Alice');
+    expect(coverageFrom({}).patientName).toBe('');
+  });
+
+  it("lit l'acte du catalogue d'une règle, d'un accord et d'un résultat de recherche", () => {
+    expect(authorizationFrom({ id: 2, item_code: 'CAT-42', catalog_item_id: 42, granted_at: 'x', note: null }).catalogItemId).toBe('42');
+    expect(contractFrom({ id: 1, rules: [{ catalog_item_id: 42, coverage_bp: 10000 }] }).rules[0]?.catalogItemId).toBe('42');
+    expect(catalogHitFrom({ id: 42, label: 'Césarienne', code: null, kind: 'service' })).toEqual({ id: '42', label: 'Césarienne', code: '', kind: 'service' });
   });
 
   it('lit une autorisation préalable', () => {
-    expect(authorizationFrom({ id: 1, coverage_id: 5, item_code: 'LAB-001', granted_at: '2026-11-22 09:00:00', note: null })).toEqual({ id: '1', itemCode: 'LAB-001', grantedAt: '2026-11-22 09:00:00', note: '' });
+    expect(authorizationFrom({ id: 1, coverage_id: 5, item_code: 'LAB-001', granted_at: '2026-11-22 09:00:00', note: null })).toEqual({ id: '1', itemCode: 'LAB-001', catalogItemId: '', grantedAt: '2026-11-22 09:00:00', note: '' });
+  });
+
+  it("lit les monnaies de l'établissement et présélectionne la principale", () => {
+    const list = [currencyFrom({ code: 'cdf', is_default: false }), currencyFrom({ code: 'usd', is_default: true })];
+    expect(list).toEqual([{ code: 'CDF', isDefault: false }, { code: 'USD', isDefault: true }]);
+    expect(defaultCurrency(list)).toBe('USD');
+    expect(defaultCurrency([{ code: 'CDF', isDefault: false }])).toBe('CDF');
+    expect(defaultCurrency([])).toBe('');
   });
 });

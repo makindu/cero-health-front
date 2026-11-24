@@ -50,5 +50,9 @@
     "reference": "Reference",
     "supplier": "Supplier",
     "location": "Location"
+  },
+  "tabs": {
+    "pharmacy": "Pharmacy stock",
+    "deposits": "Deposits"
   }
 }

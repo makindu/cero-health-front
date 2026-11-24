@@ -80,6 +80,8 @@ export interface HospitalService {
   name?: string;
   code?: string;
   unitType?: string;
+  /** Dépôt de stock du service (API) : d'où sont prélevés les produits consommés lors des visites. */
+  depositId?: string;
 }
 
 /** Types d'unité de soin acceptés par le serveur (health.care_unit_types). */
@@ -111,6 +113,7 @@ export const HOSPITAL_SERVICE_API: ApiMapping<HospitalService> = {
       name: text(r.name),
       code,
       unitType: text(r.unit_type),
+      depositId: r.deposit_id ? text(r.deposit_id) : undefined,
     };
   },
   toApi: (i) => {

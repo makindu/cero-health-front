@@ -22,6 +22,8 @@ export interface Rx {
   patientId: string;
   patientName: string;
   consultationId?: string;
+  /** Visite d'hospitalisation à l'origine de l'ordonnance (mode API). */
+  admissionVisitId?: string;
   prescriber: string;
   /** Identifiant du prescripteur (absent des ordonnances anciennes) : sert à lui adresser les notifications. */
   prescriberId?: string;

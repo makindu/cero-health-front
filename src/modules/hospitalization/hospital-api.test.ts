@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accountFrom, admissionFrom } from './hospital-api';
+import { accountFrom, admissionFrom, hospRequestFrom } from './hospital-api';
 
 describe('admissionFrom', () => {
   it('traduit une admission du serveur', () => {
@@ -13,6 +13,13 @@ describe('admissionFrom', () => {
     expect(a.ward).toBe('2');
     expect(a.status).toBe('dischargePending');
     expect(a.stays[0]?.to).toBeUndefined();
+  });
+
+  it("traduit une demande d'hospitalisation et qui peut la décider", () => {
+    const r = hospRequestFrom({ id: 4, patient_id: 3, patient: { full_name: 'Louise T.' }, care_unit_id: 2, reason: 'Césarienne', status: 'pending', requested_at: '2026-11-24T08:00:00Z', can_decide: true });
+    expect(r).toMatchObject({ id: '4', patientName: 'Louise T.', careUnitId: '2', status: 'pending', canDecide: true, admissionId: undefined });
+    expect(hospRequestFrom({ id: 5, patient_id: 3, status: 'approved', decision_note: 'Indiqué', admission_id: 9 })).toMatchObject({ status: 'approved', canDecide: false, decisionNote: 'Indiqué', admissionId: '9' });
+    expect(hospRequestFrom({ id: 6, patient_id: 3, status: 'inconnu' }).status).toBe('pending');
   });
 
   it('range une admission clôturée parmi les sorties', () => {

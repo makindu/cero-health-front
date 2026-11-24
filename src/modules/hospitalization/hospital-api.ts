@@ -1,4 +1,4 @@
-import { ApiError, healthClient } from '@/core/api';
+import { healthClient } from '@/core/api';
 import { ensureReference, findStaff, staffById, staffByUserId } from '../_shared/reference-data';
 import type { Admission, AdmissionStatus, DischargeOutcome, Bed, BedStatus, Room, RoomKind, Stay, WardKey } from './hospital-rules';
 import type { BedView } from './hospital-service';
@@ -9,6 +9,7 @@ import type { BedView } from './hospital-service';
  * Le « service » d'une chambre est l'unité de soin du serveur (identifiant) ; son nom s'affiche via `wardLabel`.
  */
 type Row = Record<string, unknown>;
+const CONSUMABLE_NATURES = ['medication', 'consumable', 'medical_device', 'procedure'];
 
 const str = (v: unknown): string => (v === null || v === undefined ? '' : String(v));
 const rows = (v: unknown): Row[] => (Array.isArray(v) ? (v as Row[]) : []);
@@ -38,10 +39,11 @@ export function admissionFrom(r: Row): Admission {
     patientName: str(patient.full_name) || `Patient n°${str(r.patient_id)}`,
     consultationId: r.consultation_id ? str(r.consultation_id) : undefined,
     ward: wardOf(r.care_unit_id),
+    wardName: r.care_unit_name ? str(r.care_unit_name) : undefined,
     status,
     admittedAt: str(r.admitted_at),
-    admittedBy: author(r.admitted_by_user_id),
-    attending: r.attending_staff_id ? staffById(str(r.attending_staff_id))?.name ?? `#${str(r.attending_staff_id)}` : '',
+    admittedBy: r.admitted_by_name ? str(r.admitted_by_name) : author(r.admitted_by_user_id),
+    attending: r.attending_staff_name ? str(r.attending_staff_name) : r.attending_staff_id ? staffById(str(r.attending_staff_id))?.name ?? `#${str(r.attending_staff_id)}` : '',
     reason: str(r.reason),
     expectedDischarge: r.expected_discharge ? str(r.expected_discharge) : undefined,
     stays: rows(r.stays).map(stayFrom),
@@ -73,6 +75,38 @@ export function accountFrom(r: Row): AccountApi {
 
 /** Demande d'hospitalisation : le médecin a choisi l'orientation, le service des admissions choisit le lit. */
 export interface AdmissionRequestRow { consultationId: string; patientId: string; patientName: string; practitioner: string; target: string; at: string }
+
+/** Visites (tour de salle) et consommations d'un séjour, tels que le serveur les tient. */
+export interface ApiVisit {
+  id: string; type: 'round' | 'care'; at: string; by: string;
+  clinical?: { complaints?: { none: boolean; text: unknown }; examination?: { evolution: string; text: unknown }; diagnosis?: string; plan?: { treatment?: string; labs: boolean; discharge: boolean; note: unknown } };
+}
+export type ApiRowStatus = 'pending' | 'billed' | 'reversed' | 'reversal';
+export interface ApiLedgerRow { id: string; visitId: string; kind: 'consumption' | 'reversal'; itemId: string; name: string; quantity: number; net: number; reason: string; at: string; by: string; status: ApiRowStatus; invoiceId?: string }
+export interface ApiVisitsView { visits: ApiVisit[]; rows: ApiLedgerRow[]; pending: number }
+export interface ConsumableHit { id: string; name: string; nature: string }
+
+/** Demande d'hospitalisation adressée par les admissions, à valider par un médecin du service d'accueil. */
+export interface HospRequestRow {
+  id: string; patientId: string; patientName: string; careUnitId: string; reason: string;
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'admitted';
+  requestedAt: string; decidedBy: string; decidedAt?: string; decisionNote: string; admissionId?: string;
+  /** Vrai si l'utilisateur est un médecin actif du service d'accueil et que la demande attend une décision. */
+  canDecide: boolean;
+}
+
+const REQ_STATUSES: readonly HospRequestRow['status'][] = ['pending', 'approved', 'rejected', 'cancelled', 'admitted'];
+export function hospRequestFrom(r: Row): HospRequestRow {
+  const patient = (r.patient ?? {}) as Row;
+  return {
+    id: str(r.id), patientId: str(r.patient_id), patientName: str(patient.full_name) || `Patient n°${str(r.patient_id)}`,
+    careUnitId: str(r.care_unit_id), reason: str(r.reason),
+    status: REQ_STATUSES.includes(r.status as HospRequestRow['status']) ? (r.status as HospRequestRow['status']) : 'pending',
+    requestedAt: str(r.requested_at), decidedBy: r.decided_by_staff_id ? staffById(str(r.decided_by_staff_id))?.name ?? `#${str(r.decided_by_staff_id)}` : '',
+    decidedAt: r.decided_at ? str(r.decided_at) : undefined, decisionNote: str(r.decision_note),
+    admissionId: r.admission_id ? str(r.admission_id) : undefined, canDecide: r.can_decide === true,
+  };
+}
 
 export interface ConfigBed { id: string; label: string; status: string; active: boolean }
 export interface ConfigRoom { id: string; careUnitId: string; code: string; kind: RoomKind; active: boolean; beds: ConfigBed[] }
@@ -121,15 +155,93 @@ const act = async (admissionId: string, action: string, body: Row = {}): Promise
 export const apiHospital = {
   board,
 
-  admit: async (input: { patientId: string; bedId: string; reason: string; attending: string; expectedDischarge?: string; consultationId?: string }): Promise<Admission> => {
+  admit: async (input: { patientId: string; bedId: string; reason: string; attending?: string; expectedDischarge?: string; consultationId?: string; requestId?: string }): Promise<Admission> => {
     await ensureReference();
-    const staff = findStaff(input.attending);
-    if (!staff) throw new ApiError('validation', 'Choisissez le médecin référent dans la liste.', { source: 'health', status: 422, code: 'attending_required' });
-    const consultation = Number(input.consultationId);
-    const body: Row = { patient_id: Number(input.patientId), bed_id: Number(input.bedId), attending_staff_id: Number(staff.id), reason: input.reason.trim() };
+    // Une admission part toujours d'une décision médicale : demande du médecin en consultation, ou demande validée par un médecin du service.
+    // Le médecin référent est déterminé par le serveur (celui qui a demandé ou validé) ; il n'est plus choisi ici.
+    const body: Row = { patient_id: Number(input.patientId), bed_id: Number(input.bedId), reason: input.reason.trim() };
+    const staff = input.attending ? findStaff(input.attending) : undefined;
+    if (staff) body.attending_staff_id = Number(staff.id);
     if (input.expectedDischarge) body.expected_discharge = input.expectedDischarge;
+    const consultation = Number(input.consultationId);
+    const request = Number(input.requestId);
     if (Number.isInteger(consultation) && consultation > 0) body.consultation_id = consultation;
+    if (Number.isInteger(request) && request > 0) body.hospitalization_request_id = request;
     return oneAdmission(await healthClient.post('/admissions', body));
+  },
+
+  /** Produits et prestations consommables d'un séjour (médicaments, consommables, dispositifs, actes) : recherche côté serveur, 15 résultats au plus. */
+  searchConsumables: async (q: string): Promise<ConsumableHit[]> => {
+    await ensureReference();
+    const res = await healthClient.get<Row[]>('/catalog-items', { params: { q, per_page: 15, is_active: true } });
+    return rows(res.data).filter((r) => CONSUMABLE_NATURES.includes(str(r.nature))).map((r) => ({ id: str(r.id), name: str(r.generic_name), nature: str(r.nature) }));
+  },
+  visitsLedger: async (admissionId: string): Promise<ApiVisitsView> => {
+    await ensureReference();
+    const [v, l] = await Promise.all([
+      healthClient.get<Row[]>(`/admissions/${admissionId}/visits`, { params: { per_page: 100 } }),
+      healthClient.get<Row[]>(`/admissions/${admissionId}/consumptions`),
+    ]);
+    const entries = rows(l.data);
+    // Les prestations (actes) n'ont pas toujours de nom de stock : on les relit dans le catalogue, en une requête.
+    const unnamed = [...new Set(entries.filter((e) => !e.name).map((e) => str(e.catalog_item_id)))];
+    const names = new Map<string, string>();
+    if (unnamed.length > 0) {
+      const cat = await healthClient.get<Row[]>('/catalog-items', { params: { ids: unnamed.join(','), per_page: 100 } });
+      for (const c of rows(cat.data)) names.set(str(c.id), str(c.generic_name));
+    }
+    const out: ApiLedgerRow[] = entries.map((e) => ({
+      id: str(e.id), visitId: str(e.visit_id), kind: e.entry_type === 'reversal' ? 'reversal' : 'consumption', itemId: str(e.catalog_item_id),
+      name: str(e.name) || names.get(str(e.catalog_item_id)) || `#${str(e.catalog_item_id)}`, quantity: Number(e.quantity ?? 0), net: Number(e.net_quantity ?? 0),
+      reason: str(e.reason), at: str(e.created_at), by: e.recorded_by_name ? str(e.recorded_by_name) : author(e.recorded_by_user_id),
+      status: (['pending', 'billed', 'reversed', 'reversal'].includes(str(e.status)) ? str(e.status) : 'pending') as ApiRowStatus,
+      invoiceId: e.billing_link_id ? str(e.billing_link_id) : undefined,
+    }));
+    const visits: ApiVisit[] = rows(v.data).map((r) => ({
+      id: str(r.id), type: r.visit_type === 'care' ? 'care' : 'round', at: str(r.visited_at), by: r.recorded_by_name ? str(r.recorded_by_name) : author(r.recorded_by_user_id),
+      clinical: (r.clinical ?? undefined) as ApiVisit['clinical'],
+    }));
+    return { visits, rows: out, pending: out.filter((x) => x.kind === 'consumption' && x.status === 'pending').length };
+  },
+  /** Enregistre une visite et ses consommations. Le prix n'est jamais envoyé : il vient du catalogue. */
+  recordVisit: async (input: { admissionId: string; type: 'round' | 'care'; lines: { catalogItemId: string; quantity: number }[]; clinical?: Row }): Promise<ApiVisit> => {
+    await ensureReference();
+    const body: Row = { visit_type: input.type };
+    if (input.lines.length > 0) body.lines = input.lines.map((l) => ({ catalog_item_id: Number(l.catalogItemId), quantity: l.quantity }));
+    if (input.clinical && Object.keys(input.clinical).length > 0) body.clinical = input.clinical;
+    const res = await healthClient.post(`/admissions/${input.admissionId}/visits`, body);
+    const r = res.data as Row;
+    return { id: str(r.id), type: r.visit_type === 'care' ? 'care' : 'round', at: str(r.visited_at), by: r.recorded_by_name ? str(r.recorded_by_name) : author(r.recorded_by_user_id) };
+  },
+  /** Contre-écriture motivée : la ligne d'origine reste visible. */
+  reverseConsumption: async (input: { admissionId: string; consumptionId: string; reason: string; quantity?: number }): Promise<void> => {
+    await ensureReference();
+    const body: Row = { reason: input.reason.trim() };
+    if (input.quantity && input.quantity > 0) body.quantity = input.quantity;
+    await healthClient.post(`/admissions/${input.admissionId}/consumptions/${input.consumptionId}/reverse`, body);
+  },
+
+  /** Demandes d'hospitalisation ouvertes (en attente de décision ou validées, pas encore suivies d'une admission). */
+  hospRequests: async (): Promise<HospRequestRow[]> => {
+    await ensureReference();
+    const res = await healthClient.get<Row[]>('/hospitalization-requests');
+    return rows(res.data).map(hospRequestFrom);
+  },
+  createRequest: async (input: { patientId: string; careUnitId: string; reason: string }): Promise<HospRequestRow> => {
+    await ensureReference();
+    const res = await healthClient.post('/hospitalization-requests', { patient_id: Number(input.patientId), care_unit_id: Number(input.careUnitId), reason: input.reason.trim() });
+    return hospRequestFrom(res.data as Row);
+  },
+  /** Un médecin du service d'accueil valide ou refuse, avec un motif. */
+  decideRequest: async (input: { id: string; approve: boolean; note: string }): Promise<HospRequestRow> => {
+    await ensureReference();
+    const res = await healthClient.post(`/hospitalization-requests/${input.id}/actions/${input.approve ? 'approve' : 'reject'}`, { note: input.note.trim() });
+    return hospRequestFrom(res.data as Row);
+  },
+  cancelRequest: async (input: { id: string; note: string }): Promise<HospRequestRow> => {
+    await ensureReference();
+    const res = await healthClient.post(`/hospitalization-requests/${input.id}/actions/cancel`, { note: input.note.trim() });
+    return hospRequestFrom(res.data as Row);
   },
 
   transfer: (input: { admissionId: string; bedId: string; reason: string }): Promise<Admission> => act(input.admissionId, 'transfer', { bed_id: Number(input.bedId), reason: input.reason }),

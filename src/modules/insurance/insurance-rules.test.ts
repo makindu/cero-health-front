@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allowedDecisions, authorizationCodeOk, coverageBody, decisionOk, type CoverageDraft, blankRule, bpToPercent, contractBody, minorToText, optionalMinor, percentToBp, ruleBody, subscriptionBody, type ContractDraft, type SubscriptionDraft } from './insurance-rules';
+import { allowedDecisions, authorizationCodeOk, coverageBody, decisionOk, draftsOfRules, ruleBodies, type CoverageDraft, blankRule, bpToPercent, contractBody, minorToText, optionalMinor, percentToBp, ruleBody, subscriptionBody, type ContractDraft, type SubscriptionDraft } from './insurance-rules';
 
 const contract: ContractDraft = {
   organizationId: '3', label: 'Contrat A', currency: 'USD', validFrom: '2026-01-01', validTo: '2026-12-31', status: 'active',
@@ -46,9 +46,31 @@ describe('règles de contrat', () => {
     expect(ruleBody({ ...blankRule(), itemCode: 'a b' }, 'USD')).toBeNull();
     expect(ruleBody({ ...blankRule(), negotiated: 'x' }, 'USD')).toBeNull();
   });
+  it("un acte choisi dans le catalogue prime sur le code : l'identifiant seul est envoyé", () => {
+    expect(ruleBody({ ...blankRule(), itemCode: 'CESAR', catalogItemIds: ['42'] }, 'USD')).toMatchObject({ item_code: null, catalog_item_id: 42 });
+    expect(ruleBody({ ...blankRule(), itemCode: 'CESAR' }, 'USD')).toMatchObject({ item_code: 'CESAR', catalog_item_id: null });
+    expect(ruleBody({ ...blankRule(), catalogItemIds: ['abc'] }, 'USD')).toBeNull();
+    expect(ruleBody({ ...blankRule(), catalogItemIds: ['0'] }, 'USD')).toBeNull();
+  });
+  it('plusieurs actes dans une règle : une règle serveur par acte, mêmes conditions, quota par acte', () => {
+    const d = { ...blankRule(), catalogItemIds: ['42', '43', '42'], rate: '90', quota: '3', auth: true };
+    const bodies = ruleBodies(d, 'USD')!;
+    expect(bodies.map((b) => b.catalog_item_id)).toEqual([42, 43]);
+    expect(bodies.every((b) => b.coverage_bp === 9000 && b.quota === 3 && b.requires_authorization && b.item_code === null)).toBe(true);
+    expect(ruleBody(d, 'USD')).toBeNull();
+    expect(ruleBodies({ ...blankRule(), catalogItemIds: ['42', 'x'] }, 'USD')).toBeNull();
+    expect(ruleBodies({ ...blankRule(), category: 'laboratory' }, 'USD')).toHaveLength(1);
+  });
+  it('le contrat envoie toutes les règles par acte et regroupe celles qui ont les mêmes conditions à la relecture', () => {
+    const b = contractBody(contract, [{ ...blankRule(), catalogItemIds: ['1', '2'] }, blankRule()], true, true)!;
+    expect((b.rules as unknown[]).length).toBe(3);
+    const mk = (id: string, bp: number) => ({ category: '', itemCode: '', catalogItemId: id, coverageBp: bp, excluded: false, negotiatedUnitMinor: null, ceilingPerLineMinor: null, quota: null, requiresAuthorization: false });
+    const back = draftsOfRules([mk('1', 8000), mk('2', 8000), mk('3', 5000), mk('', 8000)], 'USD');
+    expect(back.map((r) => r.catalogItemIds)).toEqual([['1', '2'], ['3'], []]);
+  });
   it('prépare une règle complète avec ses limites', () => {
-    expect(ruleBody({ category: 'laboratory', itemCode: '', rate: '75', negotiated: '5', ceilingLine: '20', quota: '4', excluded: false, auth: true }, 'USD'))
-      .toEqual({ category: 'laboratory', item_code: null, coverage_bp: 7500, excluded: false, negotiated_unit_minor: 500, ceiling_per_line_minor: 2000, quota: 4, requires_authorization: true });
+    expect(ruleBody({ category: 'laboratory', itemCode: '', catalogItemIds: [], rate: '75', negotiated: '5', ceilingLine: '20', quota: '4', excluded: false, auth: true }, 'USD'))
+      .toEqual({ category: 'laboratory', item_code: null, catalog_item_id: null, coverage_bp: 7500, excluded: false, negotiated_unit_minor: 500, ceiling_per_line_minor: 2000, quota: 4, requires_authorization: true });
   });
 });
 
