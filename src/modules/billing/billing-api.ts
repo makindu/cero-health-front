@@ -52,9 +52,25 @@ export function receiptFrom(r: Row): GroupReceipt {
   };
 }
 
+/** Réglages de facturation de l'établissement : pour l'instant le dépôt rattaché aux prestations sans stock propre. */
+export interface BillingSettings { defaultDepositId: string | null; currency: string }
+export function settingsFrom(r: unknown): BillingSettings {
+  const o = rec(r);
+  return { defaultDepositId: o.default_deposit_id === null || o.default_deposit_id === undefined ? null : text(o.default_deposit_id), currency: text(o.currency) };
+}
+/** « Automatique » (chaîne vide) = aucun dépôt imposé : le serveur prend celui des autres lignes, puis le premier de l'établissement. */
+export function depositPayload(depositId: string): { default_deposit_id: number | null } {
+  const n = Number(depositId);
+  return { default_deposit_id: depositId !== '' && Number.isInteger(n) && n > 0 ? n : null };
+}
+
 export interface LinkQuery { status?: string; sourceType?: string; patientId?: string; page: number }
 
 export const apiBilling = {
+  settings: async (): Promise<BillingSettings> => settingsFrom((await healthClient.get<Row>('/billing/settings')).data),
+
+  setDefaultDeposit: async (depositId: string): Promise<BillingSettings> => settingsFrom((await healthClient.put<Row>('/billing/settings', depositPayload(depositId))).data),
+
   list: async (q: LinkQuery): Promise<{ rows: BillingLink[]; total: number }> => {
     const params: Record<string, string | number> = { per_page: PAGE, page: q.page };
     if (q.status) params.status = q.status;

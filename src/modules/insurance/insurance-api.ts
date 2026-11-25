@@ -16,6 +16,9 @@ export const SETTLE_MODES = ['oldest', 'member', 'proportional'] as const;
 export type OrgKind = (typeof ORG_KINDS)[number];
 export type OrgStatus = (typeof ORG_STATUSES)[number];
 export type SettleMode = (typeof SETTLE_MODES)[number];
+/** Moyen de paiement reçu de l'organisme. */
+export const PAYMENT_METHODS = ['transfer', 'cash', 'mobile_money', 'card'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export interface ApiOrganization {
   id: string; code: string; name: string; kind: string; contactPerson: string; phone: string; email: string; status: string;
@@ -29,10 +32,29 @@ export interface Due {
   id: string; linkId: string; patientId: string; patientName: string; fileNumber: string; currency: string;
   amountMinor: number; settledMinor: number; rejectedMinor: number; outstandingMinor: number; status: string; createdAt: string;
 }
-export interface Settlement { id: string; currency: string; mode: string; patientId: string; amountMinor: number; reference: string; paidOn: string; note: string }
+export interface Settlement { id: string; currency: string; mode: string; paymentMethod: string; patientId: string; amountMinor: number; reference: string; paidOn: string; note: string }
 export interface CurrencyTotals { currency: string; billedMinor: number; settledMinor: number; rejectedMinor: number; outstandingMinor: number }
 export interface Statement { from: string; to: string; totals: CurrencyTotals[]; dues: Due[]; settlements: Settlement[] }
-export interface SettleInput { amountMinor: number; currency: string; mode: SettleMode; patientId?: string; reference: string; paidOn: string; note: string }
+export interface OutboxMail { id: string; toEmail: string; status: 'queued' | 'sent' | 'failed'; createdAt: string; by: string }
+
+export function outboxFrom(r: Row): OutboxMail {
+  const status = r.status === 'sent' || r.status === 'failed' ? r.status : 'queued';
+  return { id: text(r.id), toEmail: text(r.to_email), status, createdAt: text(r.created_at), by: text(r.by) };
+}
+
+/** Relevé synthétique (une ligne par créance) ou détaillé (par patient, avec ses consommations et sous-totaux). */
+export type StatementKind = 'synthetic' | 'detailed';
+
+export interface StatementMailInput { from: string; to: string; email: string; message: string; kind?: StatementKind }
+
+/** Adresse et message seulement s'ils sont saisis : le serveur reprend sinon l'adresse de l'organisme. */
+export function statementMailPayload(i: StatementMailInput): Record<string, unknown> {
+  const email = i.email.trim();
+  const message = i.message.trim();
+  return { from: i.from, to: i.to, ...(i.kind === 'detailed' ? { kind: 'detailed' } : {}), ...(email ? { email } : {}), ...(message ? { message } : {}) };
+}
+
+export interface SettleInput { amountMinor: number; currency: string; mode: SettleMode; paymentMethod: PaymentMethod; patientId?: string; reference: string; paidOn: string; note: string }
 export interface SettleResult { settlementId: string; allocations: { dueId: string; amountMinor: number }[] }
 
 export interface ApiRule {
@@ -111,7 +133,7 @@ export function dueFrom(r: Row): Due {
 }
 
 export function settlementFrom(r: Row): Settlement {
-  return { id: text(r.id), currency: text(r.currency), mode: text(r.mode), patientId: r.patient_id ? text(r.patient_id) : '', amountMinor: num(r.amount_minor), reference: text(r.reference), paidOn: text(r.paid_on), note: text(r.note) };
+  return { id: text(r.id), currency: text(r.currency), mode: text(r.mode), paymentMethod: text(r.payment_method), patientId: r.patient_id ? text(r.patient_id) : '', amountMinor: num(r.amount_minor), reference: text(r.reference), paidOn: text(r.paid_on), note: text(r.note) };
 }
 
 export function statementFrom(r: Row): Statement {
@@ -139,7 +161,7 @@ export function organizationPayload(v: OrganizationInput, creating: boolean): Re
 }
 
 export function settlePayload(i: SettleInput): Record<string, unknown> {
-  const body: Record<string, unknown> = { amount_minor: i.amountMinor, currency: i.currency, mode: i.mode, paid_on: i.paidOn };
+  const body: Record<string, unknown> = { amount_minor: i.amountMinor, currency: i.currency, mode: i.mode, payment_method: i.paymentMethod, paid_on: i.paidOn };
   if (i.mode === 'member') body.patient_id = Number(i.patientId);
   if (i.reference.trim()) body.reference = i.reference.trim();
   if (i.note.trim()) body.note = i.note.trim();
@@ -222,6 +244,19 @@ export const apiInsurance = {
 
   statement: async (orgId: string, from: string, to: string): Promise<Statement> =>
     statementFrom(rec((await healthClient.get<Row>(`/insurance/organizations/${orgId}/statement`, { params: { from, to } })).data)),
+
+  /** Relevé imprimé par le serveur (PDF A4). */
+  statementPdf: async (orgId: string, from: string, to: string, kind: StatementKind = 'synthetic'): Promise<Blob> =>
+    new Blob([(await healthClient.raw.get<Blob>(`/insurance/organizations/${orgId}/statement/pdf`, { params: { from, to, ...(kind === 'detailed' ? { kind } : {}) }, responseType: 'blob', headers: { Accept: 'application/pdf' } })).data], { type: 'application/pdf' }),
+
+  /** Derniers envois du relevé à l'organisme (l'envoi part en arrière-plan : on lit ici son état). */
+  statementMails: async (orgId: string): Promise<OutboxMail[]> => rows((await healthClient.get<Row[]>(`/insurance/organizations/${orgId}/statement/mails`)).data).map(outboxFrom),
+
+  /** Envoie le relevé en PDF par e-mail. Adresse vide : celle de l'organisme. La clé évite un double envoi sur double clic. */
+  sendStatement: async (orgId: string, i: StatementMailInput, key: string): Promise<{ email: string }> => {
+    const r = rec((await healthClient.post<Row>(`/insurance/organizations/${orgId}/statement/send`, statementMailPayload(i), { headers: { 'Idempotency-Key': key } })).data);
+    return { email: text(r.email) };
+  },
 
   /** La clé d'idempotence rend l'envoi sûr : un clic double ou un rejeu après coupure ne crée jamais deux règlements. */
   settle: async (orgId: string, i: SettleInput, key: string): Promise<SettleResult> =>

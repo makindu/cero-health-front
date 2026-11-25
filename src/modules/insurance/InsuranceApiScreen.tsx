@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Banknote, Ban, CircleCheck, Hourglass } from 'lucide-react';
+import { FileText, Mail, Printer } from 'lucide-react';
 import { Input, Select, Textarea } from '@/components/forms/controls';
 import { FormField } from '@/components/forms/form-field';
 import { useToast } from '@/components/feedback/toast';
@@ -10,7 +10,6 @@ import { DataTable, type Column } from '@/components/tables/data-table';
 import { StatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { StatCard, StatGrid } from '@/components/ui/stat-card';
 import { Tabs } from '@/components/ui/tabs';
 import { PersonName } from '@/components/ui/avatar';
 import { ApiError } from '@/core/api';
@@ -21,15 +20,21 @@ import { PERMISSIONS as P } from '@/core/permissions/permissions';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { ContractsApiTab, CoveragesApiTab, SubscriptionsApiTab } from './InsuranceApiTabs';
 import { ActionDialog } from '../finance/ActionDialog';
+import { ReceiptPrintDialog, type ReceiptContent } from '../_shared/receipt/ReceiptPrintDialog';
+import { settlementReceipt } from './settlement-receipt';
+import { openStatementPdf } from './statement-pdf';
 import { ServicesCatalogTab } from './ServicesCatalogTab';
 import { useMoney } from '../finance/use-finance';
 import { checkAmount, dayOf } from '../billing/billing-rules';
 import {
-  ORG_KINDS, ORG_STATUSES, SETTLE_MODES, apiInsurance, isOpenDue,
-  type ApiOrganization, type Due, type OrgKind, type OrgStatus, type SettleMode,
+  ORG_KINDS, ORG_STATUSES, PAYMENT_METHODS, SETTLE_MODES, apiInsurance, isOpenDue,
+  type ApiOrganization, type Due, type OrgKind, type OrgStatus, type PaymentMethod, type SettleMode,
 } from './insurance-api';
+import type { StatementKind } from './insurance-api';
 
 const SETTLE_CODE = 'health.insurance.settle';
+const METHOD_LABEL: Record<string, string> = { transfer: 'Virement', cash: 'Espèces', mobile_money: 'Mobile money', card: 'Carte' };
+const MAIL_LABEL: Record<string, string> = { queued: 'En cours d\'envoi', sent: 'Envoyé', failed: 'Échec : à renvoyer' };
 const KIND_LABEL: Record<string, string> = { insurer: 'Assureur', mutuelle: 'Mutuelle', company: 'Entreprise', institution: 'Institution', other: 'Autre' };
 const STATUS_LABEL: Record<string, string> = { active: 'Actif', suspended: 'Suspendu', inactive: 'Inactif' };
 const MODE_LABEL: Record<string, string> = { oldest: 'Les plus anciennes d\'abord', member: 'Un adhérent précis', proportional: 'Proportionnel' };
@@ -153,8 +158,19 @@ function Receivables() {
   const [from, setFrom] = useState(() => dayOf(new Date(Date.now() - 30 * 86_400_000)));
   const [settling, setSettling] = useState(false);
   const [rejecting, setRejecting] = useState<Due | null>(null);
+  const [mailing, setMailing] = useState(false);
+  const [kind, setKind] = useState<StatementKind>('synthetic');
+  const fail = useFail();
+  const [receipt, setReceipt] = useState<{ id: string; content: ReceiptContent; reprint: boolean } | null>(null);
+  const receiptFor = (s: { id: string; paidOn: string; mode: string; paymentMethod?: string; reference: string; amountMinor: number; currency: string }, remainingMinor?: number): ReceiptContent => settlementReceipt({
+    id: s.id, organizationName: orgName, amountText: money(s.amountMinor, s.currency),
+    methodText: t(`apiInsurance.methods.${s.paymentMethod ?? 'transfer'}`, { defaultValue: METHOD_LABEL[s.paymentMethod ?? 'transfer'] ?? '' }),
+    modeText: t(`apiInsurance.modes.${s.mode}`, { defaultValue: MODE_LABEL[s.mode] ?? s.mode }), reference: s.reference, paidOnText: s.paidOn, dateTimeText: f.dateTime(new Date()),
+    remainingText: remainingMinor === undefined ? undefined : money(remainingMinor, s.currency),
+  }, { title: t('apiInsurance.receiptTitle', { defaultValue: 'Reçu de règlement' }), organization: t('apiInsurance.organization', { defaultValue: 'Organisme' }), patient: t('columns.patient'), amount: t('apiInsurance.receiptAmount', { defaultValue: 'Montant reçu' }), method: t('apiInsurance.paymentMethod', { defaultValue: 'Mode de paiement' }), mode: t('apiInsurance.mode', { defaultValue: 'Répartition' }), reference: t('apiInsurance.reference', { defaultValue: 'Référence' }), paidOn: t('apiInsurance.paidOn', { defaultValue: 'Reçu le' }), remaining: t('apiInsurance.outstanding', { defaultValue: 'Reste dû' }), footer: t('apiInsurance.receiptFooter', { defaultValue: 'Merci.' }) });
   const canSettle = can(SETTLE_CODE);
   const selected = orgId || orgs.data?.[0]?.id || '';
+  const orgName = orgs.data?.find((o) => o.id === selected)?.name ?? '';
   const periodOk = from !== '' && to !== '' && from <= to;
 
   const statement = useQuery({
@@ -186,19 +202,35 @@ function Receivables() {
         </label>
         <label className="flex flex-col text-sm">{t('apiInsurance.from', { defaultValue: 'Du' })}<Input type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} className="mt-1" /></label>
         <label className="flex flex-col text-sm">{t('apiInsurance.to', { defaultValue: 'Au' })}<Input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} className="mt-1" /></label>
-        {canSettle && <Button className="ms-auto" disabled={openDues.length === 0} onClick={() => setSettling(true)}>{t('apiInsurance.settle', { defaultValue: 'Enregistrer un règlement' })}</Button>}
+        <div className="ms-auto flex flex-wrap gap-2">
+          <Select aria-label={t('apiInsurance.statementKind', { defaultValue: 'Type de relevé' })} value={kind} onChange={(e) => setKind(e.target.value === 'detailed' ? 'detailed' : 'synthetic')} className="w-44">
+            <option value="synthetic">{t('apiInsurance.kindSynthetic', { defaultValue: 'Relevé synthétique' })}</option>
+            <option value="detailed">{t('apiInsurance.kindDetailed', { defaultValue: 'Relevé détaillé' })}</option>
+          </Select>
+          <Button variant="outline" disabled={selected === '' || !periodOk} onClick={() => void openStatementPdf(selected, from, to, kind).catch(fail)}><FileText className="size-4" aria-hidden /> {t('apiInsurance.statementPdf', { defaultValue: 'Relevé PDF' })}</Button>
+          <Button variant="outline" disabled={selected === '' || !periodOk} onClick={() => setMailing(true)}><Mail className="size-4" aria-hidden /> {t('apiInsurance.statementMail', { defaultValue: 'Envoyer par e-mail…' })}</Button>
+        </div>
+        {canSettle && <Button disabled={openDues.length === 0} onClick={() => setSettling(true)}>{t('apiInsurance.settle', { defaultValue: 'Enregistrer un règlement' })}</Button>}
       </div>
       {!periodOk && <p role="alert" className="text-sm text-danger-ink">{t('apiInsurance.badPeriod', { defaultValue: 'La date de début doit précéder la date de fin.' })}</p>}
       {orgs.data?.length === 0 && <p className="text-sm text-muted-foreground">{t('apiInsurance.noOrg', { defaultValue: 'Aucun organisme : créez-en un dans l\'onglet Organismes.' })}</p>}
 
       {st?.totals.map((c) => (
         <section key={c.currency} aria-label={c.currency}>
-          <StatGrid>
-            <StatCard icon={Banknote} label={t('apiInsurance.billed', { defaultValue: 'Facturé' })} value={money(c.billedMinor, c.currency)} />
-            <StatCard icon={CircleCheck} tone="success" label={t('apiInsurance.settled', { defaultValue: 'Réglé' })} value={money(c.settledMinor, c.currency)} />
-            <StatCard icon={Ban} tone="danger" label={t('apiInsurance.rejected', { defaultValue: 'Rejeté' })} value={money(c.rejectedMinor, c.currency)} />
-            <StatCard icon={Hourglass} tone="warning" label={t('apiInsurance.outstanding', { defaultValue: 'Reste dû' })} value={money(c.outstandingMinor, c.currency)} hint={t('apiInsurance.outstandingHint', { defaultValue: 'À ce jour, toutes périodes' })} />
-          </StatGrid>
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border text-sm sm:grid-cols-4">
+            {([
+              ['apiInsurance.billed', 'Facturé', c.billedMinor, ''],
+              ['apiInsurance.settled', 'Réglé', c.settledMinor, 'text-success-ink'],
+              ['apiInsurance.rejected', 'Rejeté', c.rejectedMinor, 'text-danger-ink'],
+              ['apiInsurance.outstanding', 'Reste dû', c.outstandingMinor, 'text-warning-ink'],
+            ] as const).map(([key, label, value, tone]) => (
+              <div key={key} className="bg-surface px-3 py-1.5">
+                <dt className="text-xs text-muted-foreground">{t(key, { defaultValue: label })}</dt>
+                <dd className={`font-semibold tabular-nums ${tone}`}>{money(value, c.currency)}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-1 text-xs text-muted-foreground">{t('apiInsurance.outstandingHint', { defaultValue: 'À ce jour, toutes périodes' })}</p>
         </section>
       ))}
 
@@ -212,14 +244,17 @@ function Receivables() {
             {st.settlements.map((s) => (
               <li key={s.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span>{s.paidOn} · {t(`apiInsurance.modes.${s.mode}`, { defaultValue: MODE_LABEL[s.mode] ?? s.mode })}{s.reference ? ` · ${s.reference}` : ''}</span>
-                <span className="tabular-nums">{money(s.amountMinor, s.currency)}</span>
+                <span className="flex items-center gap-2"><span className="tabular-nums">{money(s.amountMinor, s.currency)}</span>
+                  <Button size="sm" variant="outline" aria-label={t('apiInsurance.receipt', { defaultValue: 'Reçu' })} onClick={() => setReceipt({ id: s.id, content: receiptFor(s), reprint: true })}><Printer className="size-4" aria-hidden /> {t('apiInsurance.receipt', { defaultValue: 'Reçu' })}</Button></span>
               </li>
             ))}
           </ul>
         </Card>
       )}
 
-      {settling && st && <SettleDialog orgId={selected} dues={openDues} totals={st.totals} onClose={() => setSettling(false)} />}
+      {settling && st && <SettleDialog orgId={selected} dues={openDues} totals={st.totals} onClose={() => setSettling(false)} onSettled={(s) => setReceipt({ id: s.id, content: receiptFor(s, Math.max(0, (st.totals.find((x) => x.currency === s.currency)?.outstandingMinor ?? 0) - s.amountMinor)), reprint: false })} />}
+      {receipt && <ReceiptPrintDialog kind="settlement" id={receipt.id} content={receipt.content} reprint={receipt.reprint} onClose={() => setReceipt(null)} />}
+      {mailing && <StatementMailDialog orgId={selected} orgName={orgName} kind={kind} defaultEmail={orgs.data?.find((o) => o.id === selected)?.email ?? ''} from={from} to={to} onClose={() => setMailing(false)} />}
       {rejecting && <RejectDialog due={rejecting} onClose={() => setRejecting(null)} />}
     </div>
   );
@@ -234,7 +269,9 @@ function useRefreshInsurance(): () => void {
   };
 }
 
-function SettleDialog({ orgId, dues, totals, onClose }: { orgId: string; dues: Due[]; totals: { currency: string; outstandingMinor: number }[]; onClose: () => void }) {
+type SettledInfo = { id: string; paidOn: string; mode: string; paymentMethod: string; reference: string; amountMinor: number; currency: string };
+
+function SettleDialog({ orgId, dues, totals, onClose, onSettled }: { orgId: string; dues: Due[]; totals: { currency: string; outstandingMinor: number }[]; onClose: () => void; onSettled: (s: SettledInfo) => void }) {
   const { t } = useTranslation('finance');
   const money = useMoney();
   const toast = useToast();
@@ -243,6 +280,7 @@ function SettleDialog({ orgId, dues, totals, onClose }: { orgId: string; dues: D
   const currencies = totals.filter((c) => c.outstandingMinor > 0);
   const [currency, setCurrency] = useState(currencies[0]?.currency ?? 'USD');
   const [mode, setMode] = useState<SettleMode>('oldest');
+  const [method, setMethod] = useState<PaymentMethod>('transfer');
   const [patientId, setPatientId] = useState('');
   const [amount, setAmount] = useState('');
   const [paidOn, setPaidOn] = useState(() => dayOf(new Date()));
@@ -263,15 +301,15 @@ function SettleDialog({ orgId, dues, totals, onClose }: { orgId: string; dues: D
   const ok = check.ok && dateOk && (mode !== 'member' || patient !== undefined);
 
   const settle = useMutation({
-    mutationFn: () => apiInsurance.settle(orgId, { amountMinor: check.ok ? check.minor : 0, currency, mode, patientId, reference, paidOn, note }, attempt),
-    onSuccess: (r) => { toast({ tone: 'success', title: t('apiInsurance.settleDone', { defaultValue: 'Règlement enregistré' }), description: t('apiInsurance.settleCount', { defaultValue: '{{count}} créance(s) mise(s) à jour', count: r.allocations.length }) }); setAttempt(globalThis.crypto.randomUUID()); refresh(); onClose(); },
+    mutationFn: () => apiInsurance.settle(orgId, { amountMinor: check.ok ? check.minor : 0, currency, mode, paymentMethod: method, patientId, reference, paidOn, note }, attempt),
+    onSuccess: (r) => { toast({ tone: 'success', title: t('apiInsurance.settleDone', { defaultValue: 'Règlement enregistré' }), description: t('apiInsurance.settleCount', { defaultValue: '{{count}} créance(s) mise(s) à jour', count: r.allocations.length }) }); setAttempt(globalThis.crypto.randomUUID()); refresh(); onClose(); if (check.ok) onSettled({ id: r.settlementId, paidOn, mode, paymentMethod: method, reference: reference.trim(), amountMinor: check.minor, currency }); },
     onError: fail,
   });
 
   return (
     <ActionDialog open onClose={onClose} title={t('apiInsurance.settle', { defaultValue: 'Enregistrer un règlement' })} submitLabel={t('common.save')} pending={settle.isPending} canSubmit={ok} onSubmit={() => settle.mutate()}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label={t('apiInsurance.currency', { defaultValue: 'Devise' })}>{(c) => <Select {...c} value={currency} onChange={(e) => { setCurrency(e.target.value); setPatientId(''); setAmount(''); }}>{currencies.map((x) => <option key={x.currency} value={x.currency}>{x.currency}</option>)}</Select>}</FormField>
+        <FormField label={t('apiInsurance.currency', { defaultValue: 'Devise' })}>{(c) => <Select {...c} value={currency} disabled={currencies.length <= 1} onChange={(e) => { setCurrency(e.target.value); setPatientId(''); setAmount(''); }}>{currencies.map((x) => <option key={x.currency} value={x.currency}>{x.currency}</option>)}</Select>}</FormField>
         <FormField label={t('apiInsurance.mode', { defaultValue: 'Répartition' })}>{(c) => <Select {...c} value={mode} onChange={(e) => setMode(e.target.value as SettleMode)}>{SETTLE_MODES.map((m) => <option key={m} value={m}>{t(`apiInsurance.modes.${m}`, { defaultValue: MODE_LABEL[m] })}</option>)}</Select>}</FormField>
       </div>
       {mode === 'member' && (
@@ -280,11 +318,70 @@ function SettleDialog({ orgId, dues, totals, onClose }: { orgId: string; dues: D
       <FormField label={t('form.amount', { currency })} required hint={t('apiInsurance.amountHint', { defaultValue: 'Au plus {{max}}', max: money(due, currency) })}>
         {(c) => <Input {...c} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />}
       </FormField>
+      <FormField label={t('apiInsurance.paymentMethod', { defaultValue: 'Mode de paiement' })} required>{(c) => <Select {...c} value={method} onChange={(e) => setMethod(e.target.value as PaymentMethod)}>{PAYMENT_METHODS.map((m) => <option key={m} value={m}>{t(`apiInsurance.methods.${m}`, { defaultValue: METHOD_LABEL[m] })}</option>)}</Select>}</FormField>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label={t('apiInsurance.paidOn', { defaultValue: 'Reçu le' })} required>{(c) => <Input {...c} type="date" value={paidOn} max={dayOf(new Date())} onChange={(e) => setPaidOn(e.target.value)} />}</FormField>
         <FormField label={t('apiInsurance.reference', { defaultValue: 'Référence' })}>{(c) => <Input {...c} value={reference} maxLength={60} onChange={(e) => setReference(e.target.value)} />}</FormField>
       </div>
       <FormField label={t('apiInsurance.note', { defaultValue: 'Note' })}>{(c) => <Input {...c} value={note} maxLength={255} onChange={(e) => setNote(e.target.value)} />}</FormField>
+    </ActionDialog>
+  );
+}
+
+function StatementMailDialog({ orgId, orgName, defaultEmail, from, to, kind: initialKind, onClose }: { orgId: string; orgName: string; defaultEmail: string; from: string; to: string; kind: StatementKind; onClose: () => void }) {
+  const { t } = useTranslation('finance');
+  const toast = useToast();
+  const fail = useFail();
+  const [email, setEmail] = useState(defaultEmail);
+  const [message, setMessage] = useState('');
+  const [kind, setKind] = useState<StatementKind>(initialKind);
+  const queryClient = useQueryClient();
+  const { activeFacilityId } = usePreferences();
+  const f = useFormatters();
+  const [attempt, setAttempt] = useState(() => globalThis.crypto.randomUUID());
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const send = useMutation({
+    mutationFn: () => apiInsurance.sendStatement(orgId, { from, to, email, message, kind }, attempt),
+    onSettled: () => setAttempt(globalThis.crypto.randomUUID()),
+    onSuccess: (r) => {
+      toast({ tone: 'success', title: t('apiInsurance.statementQueued', { defaultValue: 'Envoi en cours' }), description: t('apiInsurance.statementQueuedHint', { defaultValue: "Le relevé part en arrière-plan vers {{email}}. L'état s'affiche dans cette fenêtre.", email: r.email }) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'statement-mails', orgId) });
+    },
+    onError: fail,
+  });
+  const recent = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'insurance', 'statement-mails', orgId), queryFn: () => apiInsurance.statementMails(orgId) });
+
+  return (
+    <ActionDialog open onClose={onClose} title={t('apiInsurance.statementMailTitle', { defaultValue: 'Envoyer le relevé par e-mail' })}
+      description={t('apiInsurance.statementMailHint', { defaultValue: '{{org}} · du {{from}} au {{to}}. Le PDF est joint au message.', org: orgName, from, to })}
+      submitLabel={t('apiInsurance.send', { defaultValue: 'Envoyer' })} pending={send.isPending} canSubmit={ok && !send.isPending} onSubmit={() => send.mutate()}>
+      <FormField label={t('apiInsurance.recipient', { defaultValue: 'Destinataire' })} required hint={defaultEmail === '' ? t('apiInsurance.noOrgEmail', { defaultValue: "Cet organisme n'a pas d'adresse enregistrée : saisissez-la." }) : undefined}>
+        {(c) => <Input {...c} type="email" value={email} maxLength={190} onChange={(e) => setEmail(e.target.value)} />}
+      </FormField>
+      <FormField label={t('apiInsurance.statementKind', { defaultValue: 'Type de relevé' })}>
+        {(c) => (
+          <Select {...c} value={kind} onChange={(e) => setKind(e.target.value === 'detailed' ? 'detailed' : 'synthetic')}>
+            <option value="synthetic">{t('apiInsurance.kindSynthetic', { defaultValue: 'Relevé synthétique' })}</option>
+            <option value="detailed">{t('apiInsurance.kindDetailed', { defaultValue: 'Relevé détaillé' })}</option>
+          </Select>
+        )}
+      </FormField>
+      <FormField label={t('apiInsurance.message', { defaultValue: 'Message (facultatif)' })}>
+        {(c) => <Textarea {...c} value={message} maxLength={1000} onChange={(e) => setMessage(e.target.value)} />}
+      </FormField>
+      {(recent.data?.length ?? 0) > 0 && (
+        <section aria-label={t('apiInsurance.recentMails', { defaultValue: 'Derniers envois' })}>
+          <h3 className="mb-1 text-sm font-semibold">{t('apiInsurance.recentMails', { defaultValue: 'Derniers envois' })}</h3>
+          <ul className="divide-y divide-border text-sm">
+            {recent.data?.map((m) => (
+              <li key={m.id} className="flex flex-wrap items-center justify-between gap-2 py-1.5">
+                <span>{f.dateTime(m.createdAt)} · {m.toEmail}</span>
+                <StatusBadge tone={m.status === 'sent' ? 'success' : m.status === 'failed' ? 'danger' : 'info'}>{t(`apiInsurance.mailState.${m.status}`, { defaultValue: MAIL_LABEL[m.status] })}</StatusBadge>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </ActionDialog>
   );
 }

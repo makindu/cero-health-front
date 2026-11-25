@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { catalogHitFrom, currencyFrom, defaultCurrency, authorizationFrom, coverageFrom, contractFrom, subscriptionFrom, dueFrom, isOpenDue, organizationFrom, organizationPayload, settlePayload, settleResultFrom, statementFrom } from './insurance-api';
+import { currencyFrom, defaultCurrency, authorizationFrom, coverageFrom, contractFrom, subscriptionFrom, dueFrom, isOpenDue, organizationFrom, organizationPayload, settlePayload, settleResultFrom, statementFrom, statementMailPayload, outboxFrom } from './insurance-api';
 
 describe('assurance API', () => {
   it('traduit un organisme', () => {
@@ -36,7 +36,7 @@ describe('assurance API', () => {
       period: { from: '2026-10-23', to: '2026-11-22' },
       totals: [{ currency: 'USD', billed_minor: 5000, settled_minor: 2000, rejected_minor: 500, outstanding_minor: 2500 }],
       dues: [{ id: 1, patient_id: 2, currency: 'USD', amount_minor: 5000, status: 'partial' }],
-      settlements: [{ id: 8, currency: 'USD', mode: 'oldest', patient_id: null, amount_minor: 2000, reference: 'VIR-1', paid_on: '2026-11-20', note: null }],
+      settlements: [{ id: 8, currency: 'USD', mode: 'oldest', payment_method: 'transfer', patient_id: null, amount_minor: 2000, reference: 'VIR-1', paid_on: '2026-11-20', note: null }],
     });
     expect(s.totals).toEqual([{ currency: 'USD', billedMinor: 5000, settledMinor: 2000, rejectedMinor: 500, outstandingMinor: 2500 }]);
     expect(s.dues).toHaveLength(1);
@@ -45,10 +45,10 @@ describe('assurance API', () => {
   });
 
   it('prépare le règlement : patient seulement en mode « un adhérent », référence et note seulement si saisies', () => {
-    const base = { amountMinor: 1500, currency: 'USD', paidOn: '2026-11-22', reference: ' ', note: '' };
-    expect(settlePayload({ ...base, mode: 'oldest', patientId: '9' })).toEqual({ amount_minor: 1500, currency: 'USD', mode: 'oldest', paid_on: '2026-11-22' });
+    const base = { amountMinor: 1500, currency: 'USD', paymentMethod: 'transfer' as const, paidOn: '2026-11-22', reference: ' ', note: '' };
+    expect(settlePayload({ ...base, mode: 'oldest', patientId: '9' })).toEqual({ amount_minor: 1500, currency: 'USD', mode: 'oldest', payment_method: 'transfer', paid_on: '2026-11-22' });
     expect(settlePayload({ ...base, mode: 'member', patientId: '9', reference: ' VIR-2 ', note: 'ok' }))
-      .toEqual({ amount_minor: 1500, currency: 'USD', mode: 'member', paid_on: '2026-11-22', patient_id: 9, reference: 'VIR-2', note: 'ok' });
+      .toEqual({ amount_minor: 1500, currency: 'USD', mode: 'member', payment_method: 'transfer', paid_on: '2026-11-22', patient_id: 9, reference: 'VIR-2', note: 'ok' });
   });
 
   it('lit le résultat d\'un règlement', () => {
@@ -85,12 +85,6 @@ describe('assurance API', () => {
     expect(coverageFrom({}).patientName).toBe('');
   });
 
-  it("lit l'acte du catalogue d'une règle, d'un accord et d'un résultat de recherche", () => {
-    expect(authorizationFrom({ id: 2, item_code: 'CAT-42', catalog_item_id: 42, granted_at: 'x', note: null }).catalogItemId).toBe('42');
-    expect(contractFrom({ id: 1, rules: [{ catalog_item_id: 42, coverage_bp: 10000 }] }).rules[0]?.catalogItemId).toBe('42');
-    expect(catalogHitFrom({ id: 42, label: 'Césarienne', code: null, kind: 'service' })).toEqual({ id: '42', label: 'Césarienne', code: '', kind: 'service' });
-  });
-
   it('lit une autorisation préalable', () => {
     expect(authorizationFrom({ id: 1, coverage_id: 5, item_code: 'LAB-001', granted_at: '2026-11-22 09:00:00', note: null })).toEqual({ id: '1', itemCode: 'LAB-001', catalogItemId: '', grantedAt: '2026-11-22 09:00:00', note: '' });
   });
@@ -101,5 +95,17 @@ describe('assurance API', () => {
     expect(defaultCurrency(list)).toBe('USD');
     expect(defaultCurrency([{ code: 'CDF', isDefault: false }])).toBe('CDF');
     expect(defaultCurrency([])).toBe('');
+  });
+
+  it("prépare l'envoi du relevé : adresse et message seulement s'ils sont saisis", () => {
+    expect(statementMailPayload({ from: '2026-11-01', to: '2026-11-25', email: ' ', message: '' })).toEqual({ from: '2026-11-01', to: '2026-11-25' });
+    expect(statementMailPayload({ from: '2026-11-01', to: '2026-11-25', email: '', message: '', kind: 'synthetic' })).toEqual({ from: '2026-11-01', to: '2026-11-25' });
+    expect(statementMailPayload({ from: '2026-11-01', to: '2026-11-25', email: '', message: '', kind: 'detailed' })).toEqual({ from: '2026-11-01', to: '2026-11-25', kind: 'detailed' });
+    expect(statementMailPayload({ from: '2026-11-01', to: '2026-11-25', email: ' a@b.cd ', message: ' Bonjour ' })).toEqual({ from: '2026-11-01', to: '2026-11-25', email: 'a@b.cd', message: 'Bonjour' });
+  });
+
+  it("lit un envoi de la boîte d'envoi, un statut inconnu restant « en file »", () => {
+    expect(outboxFrom({ id: 3, to_email: 'a@b.cd', status: 'failed', created_at: '2026-11-25T12:00:00Z', by: 'Caissier' })).toEqual({ id: '3', toEmail: 'a@b.cd', status: 'failed', createdAt: '2026-11-25T12:00:00Z', by: 'Caissier' });
+    expect(outboxFrom({ id: 4, status: 'bizarre' }).status).toBe('queued');
   });
 });

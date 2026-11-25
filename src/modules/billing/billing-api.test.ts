@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { balanceFrom, linkFrom, receiptFrom, stateOf } from './billing-api';
+import { balanceFrom, depositPayload, linkFrom, receiptFrom, settingsFrom, stateOf } from './billing-api';
 
 describe('facturation API', () => {
   it('traduit une facture avec ses paiements', () => {
@@ -38,5 +38,15 @@ describe('facturation API', () => {
     expect(r).toMatchObject({ groupId: 'grp-1', totalMinor: 4000 });
     expect(r.shares).toEqual([{ linkId: '1', sourceType: 'consultation', amountMinor: 3000, remainingMinor: 0 }, { linkId: '2', sourceType: 'lab_order', amountMinor: 1000, remainingMinor: 500 }]);
     expect(receiptFrom({}).shares).toEqual([]);
+  });
+
+  it('lit les réglages de facturation et prépare le dépôt par défaut', () => {
+    expect(settingsFrom({ default_deposit_id: 12, currency: 'USD' })).toEqual({ defaultDepositId: '12', currency: 'USD' });
+    expect(settingsFrom({ default_deposit_id: null })).toEqual({ defaultDepositId: null, currency: '' });
+    expect(settingsFrom(null)).toEqual({ defaultDepositId: null, currency: '' });
+    expect(depositPayload('12')).toEqual({ default_deposit_id: 12 });
+    expect(depositPayload('')).toEqual({ default_deposit_id: null });
+    expect(depositPayload('abc')).toEqual({ default_deposit_id: null });
+    expect(depositPayload('0')).toEqual({ default_deposit_id: null });
   });
 });

@@ -15,6 +15,8 @@ import { ServiceDepositCell } from './ServiceDeposit';
 import { FacilityForm } from './FacilityForm';
 import { careUnitTypeOptions, createCareUnitType, useCareUnitTypes, useRefreshCareUnitTypes } from './care-unit-types';
 import { ReviewQueue } from '../review/ReviewQueue';
+import { Can } from '@/core/permissions/PermissionsProvider';
+import { BillingSettingsCard } from '../billing/BillingSettingsCard';
 import { PersonName } from '@/components/ui/avatar';
 import {
   CARE_UNIT_TYPES,
@@ -158,6 +160,7 @@ export default function AdministrationPage() {
           { id: 'facility', label: t('tabs.facility'), content: <FacilityForm /> },
           { id: 'users', label: t('tabs.users'), content: <UsersTab /> },
           { id: 'services', label: t('tabs.services'), content: <ServicesTab /> },
+          ...(referenceFromApi() ? [{ id: 'billing', label: t('tabs.billing', { defaultValue: 'Facturation' }), content: <Can permission={PERMISSIONS.billing.configure}><BillingSettingsCard /></Can> }] : []),
           ...(referenceFromApi() ? [{ id: 'review', label: t('tabs.review', { defaultValue: 'À valider' }), content: <ReviewQueue /> }] : []),
         ]}
       />

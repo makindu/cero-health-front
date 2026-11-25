@@ -34,11 +34,6 @@ export const ENTITY_QUERIES: Readonly<Record<string, readonly string[]>> = {
   // Médicament écrit par un confrère : les suggestions de saisie se mettent à jour.
   drug_names: ['prescriptions', 'review'],
   admissions: ['hospital', 'patientFlow', 'dashboard'],
-  // Demande d'hospitalisation créée, validée, refusée ou suivie d'une admission : l'onglet « À admettre » se met à jour.
-  hospitalization_requests: ['hospital'],
-  // Visites et consommations d'un séjour : le registre se relit pour tous les postes.
-  admission_visits: ['hospital'],
-  visit_consumptions: ['hospital'],
   beds: ['beds', 'hospital'],
   // Chambre créée, modifiée ou supprimée par le gestionnaire : le plan des lits et la configuration se mettent à jour.
   rooms: ['hospital'],
@@ -52,11 +47,14 @@ export const ENTITY_QUERIES: Readonly<Record<string, readonly string[]>> = {
   // Facturation : liste, fiche et paiements se relisent à chaque signal (un encaissement vient souvent d'un autre poste).
   billing_links: ['pharmacy', 'hospital', 'billing'],
   billing_payments: ['pharmacy', 'hospital', 'billing'],
+  billing_settings: ['billing'],
   // Assurance : organismes, créances et règlements se relisent ; une créance suit la facture du patient (écran de facturation).
   insurance_organizations: ['insurance'],
   insurance_dues: ['insurance', 'billing'],
   insurance_due_entries: ['insurance', 'billing'],
   insurance_settlements: ['insurance'],
+  // Boîte d'envoi des courriers de l'établissement : l'état d'un relevé envoyé en arrière-plan se met à jour tout seul.
+  mail_outbox: ['insurance'],
   insurance_contracts: ['insurance'],
   insurance_rules: ['insurance'],
   insurance_subscriptions: ['insurance'],

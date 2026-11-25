@@ -47,6 +47,7 @@ const MAP: Record<string, readonly string[]> = {
   'health.insurance.manage': ['health.insurance.manage'],
   'health.insurance.validate': ['health.insurance.validate'],
   'health.insurance.authorize': ['health.insurance.authorize'],
+  'health.insurance.settle': ['health.insurance.settle'],
   // Lire le personnel ou les unités de soins sert aux listes (médecin prescripteur, nom du service) : cela n'ouvre PAS le menu Administration.
   // Le menu Administration s'ouvre pour qui peut gérer le personnel, les unités de soins ou les paramètres.
   'health.staff.manage': ['health.users.manage', 'health.administration.view'],
