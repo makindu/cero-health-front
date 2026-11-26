@@ -1,5 +1,11 @@
+
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
+import {
+  createBrowserRouter,
+  Navigate,
+  type RouteObject,
+} from 'react-router';
+
 import { RouteError } from '@/components/feedback/route-error';
 import { Spinner } from '@/components/feedback/spinner';
 import { AppLayout } from '@/components/layout/app-layout';
@@ -9,20 +15,47 @@ import { PERMISSIONS } from '@/core/permissions/permissions';
 import { ModuleRoute } from '@/modules/_shared/ModuleRoute';
 import { MODULE_PAGES } from '@/modules/registry';
 
-const DesignSystemPage = lazy(() => import('@/pages/DesignSystemPage'));
-const ModulePlaceholderPage = lazy(() => import('@/pages/ModulePlaceholderPage'));
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
-const PatientDetailPage = lazy(() => import('@/modules/patients/PatientDetailPage'));
-const LocalDataPage = lazy(() => import('@/modules/localData/LocalDataPage'));
-const ConsultationWorkspace = lazy(() => import('@/modules/consultations/ConsultationWorkspace'));
-
-const lazyElement = (element: React.ReactNode) => (
-  <Suspense fallback={<Spinner className="p-6" />}>{element}</Suspense>
+const DesignSystemPage = lazy(
+  () => import('@/pages/DesignSystemPage'),
 );
 
-/** Page du module, protégée par sa permission (confort : l'API revérifie toujours). */
+const ModulePlaceholderPage = lazy(
+  () => import('@/pages/ModulePlaceholderPage'),
+);
+
+const NotFoundPage = lazy(
+  () => import('@/pages/NotFoundPage'),
+);
+
+const PatientDetailPage = lazy(
+  () => import('@/modules/patients/PatientDetailPage'),
+);
+
+const LocalDataPage = lazy(
+  () => import('@/modules/localData/LocalDataPage'),
+);
+
+const ConsultationWorkspace = lazy(
+  () => import('@/modules/consultations/ConsultationWorkspace'),
+);
+
+const HelpCenterPage = lazy(
+  () => import('@/pages/HelpCenterPage'),
+);
+
+const lazyElement = (element: React.ReactNode) => (
+  <Suspense fallback={<Spinner className="p-6" />}>
+    {element}
+  </Suspense>
+);
+
+/**
+ * Page d'un module protégée par sa permission.
+ * L'API revérifie toujours les autorisations.
+ */
 function moduleElement(item: NavItem) {
   const Page = MODULE_PAGES[item.id];
+
   return lazyElement(
     <ModuleRoute permission={item.permission}>
       {Page ? <Page /> : <ModulePlaceholderPage item={item} />}
@@ -30,25 +63,45 @@ function moduleElement(item: NavItem) {
   );
 }
 
-const dashboardItem = NAV_ITEMS.find((item) => item.path === '/');
+const dashboardItem = NAV_ITEMS.find(
+  (item) => item.path === '/',
+);
 
-const moduleRoutes: RouteObject[] = NAV_ITEMS.filter((item) => item.path !== '/').map((item) => ({
-  path: item.path.slice(1),
-  element: moduleElement(item),
-}));
+const moduleRoutes: RouteObject[] = NAV_ITEMS
+  .filter((item) => item.path !== '/')
+  .map((item) => ({
+    path: item.path.slice(1),
+    element: moduleElement(item),
+  }));
 
 export const routes: RouteObject[] = [
+  // Centre d'aide public : aucune authentification requise.
+  {
+    path: '/help',
+    element: lazyElement(<HelpCenterPage />),
+    errorElement: <RouteError />,
+  },
+
+  // Espace hospitalier : conservé dans son layout et sous AuthGate.
   {
     path: '/',
     element: <AppLayout />,
-    errorElement: <RouteError />, // erreur du cadre lui-même (rare) : page claire au lieu de l'écran d'erreur par défaut
+    errorElement: <RouteError />,
     children: [
       {
-        // Erreurs de page (fichier introuvable après redémarrage, plantage) : le menu reste affiché
         errorElement: <RouteError />,
         children: [
-          ...(dashboardItem ? [{ index: true, element: moduleElement(dashboardItem) }] : []),
+          ...(dashboardItem
+            ? [
+                {
+                  index: true,
+                  element: moduleElement(dashboardItem),
+                },
+              ]
+            : []),
+
           ...moduleRoutes,
+
           {
             path: 'patients/:id',
             element: lazyElement(
@@ -57,6 +110,7 @@ export const routes: RouteObject[] = [
               </ModuleRoute>,
             ),
           },
+
           {
             path: 'consultations/:id',
             element: lazyElement(
@@ -65,18 +119,38 @@ export const routes: RouteObject[] = [
               </ModuleRoute>,
             ),
           },
+
           ...(env.localMode
-            ? [{ path: 'local-data', element: lazyElement(<LocalDataPage />) }]
+            ? [
+                {
+                  path: 'local-data',
+                  element: lazyElement(<LocalDataPage />),
+                },
+              ]
             : []),
+
           ...(env.designSystemEnabled
-            ? [{ path: 'design-system', element: lazyElement(<DesignSystemPage />) }]
+            ? [
+                {
+                  path: 'design-system',
+                  element: lazyElement(<DesignSystemPage />),
+                },
+              ]
             : []),
-          { path: '*', element: lazyElement(<NotFoundPage />) },
+
+          {
+            path: '*',
+            element: lazyElement(<NotFoundPage />),
+          },
         ],
       },
     ],
   },
-  { path: '/index.html', element: <Navigate to="/" replace /> },
+
+  {
+    path: '/index.html',
+    element: <Navigate to="/" replace />,
+  },
 ];
 
 export const router = createBrowserRouter(routes);

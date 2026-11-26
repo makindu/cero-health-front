@@ -1,11 +1,105 @@
-node_modules
-dist
-coverage
-.vite
+
+# ==========================================
+# CERO CEPATEC - CERO HEALTH
+# React + Vite + TypeScript + Tauri 2 + Rust
+# ==========================================
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# React / Vite build
+dist/
+coverage/
+.vite/
 *.local
+
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
+!.env.*.example
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Operating systems
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# IDE and editors
+.idea/
+*.swp
+*.swo
+*~
+
+# ==========================================
+# TAURI / RUST
+# ==========================================
+
+# Rust build artifacts
+/src-tauri/target/
+/target/
+
+# Generated Tauri schemas
+/src-tauri/gen/schemas/
+
+# Local Tauri configuration overrides
+/src-tauri/tauri.local.conf.json
+
+# ==========================================
+# CRYPTOGRAPHIC KEYS AND SECRETS
+# ==========================================
+
+# Private signing keys
+*.key
+*.key.pub
+*.pem
+*.p12
+*.pfx
+*.jks
+
+# Updater signatures
+*.sig
+
+# Private environment files
+.env.production
+.env.development.local
+.env.production.local
+
+# ==========================================
+# DESKTOP INSTALLERS / RELEASE ARTIFACTS
+# ==========================================
+
+*.exe
+*.msi
+*.dmg
+*.app
+*.AppImage
+*.deb
+*.rpm
+
+# Release archives
+*.zip
+*.tar.gz
+*.7z
+
+# ==========================================
+# LOCAL DATABASES / TEMPORARY DATA
+# ==========================================
+
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old

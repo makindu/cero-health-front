@@ -1,0 +1,122 @@
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>CERO HEALTH — Démarrage</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #123b5d;
+        background:
+          radial-gradient(circle at 50% 30%, #ffffff 0%, transparent 55%),
+          linear-gradient(145deg, #f4f9fd, #eaf2f8);
+      }
+
+      .splash {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 36px 24px;
+      }
+
+      .logo {
+        width: 112px;
+        height: 112px;
+        object-fit: contain;
+        margin-bottom: 18px;
+        filter: drop-shadow(0 8px 18px rgba(18, 59, 93, 0.12));
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 750;
+        letter-spacing: 1.5px;
+      }
+
+      .subtitle {
+        margin: 9px 0 0;
+        color: #607b91;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .loader {
+        width: 27px;
+        height: 27px;
+        margin-top: 34px;
+        border: 3px solid #d8e6f0;
+        border-top-color: #1684bd;
+        border-radius: 50%;
+        animation: spin 0.85s linear infinite;
+      }
+
+      .status {
+        margin-top: 13px;
+        font-size: 12px;
+        color: #70899c;
+      }
+
+      footer {
+        position: absolute;
+        bottom: 20px;
+        font-size: 10px;
+        letter-spacing: 1.2px;
+        color: #91a5b5;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .loader {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="splash">
+      <img
+        class="logo"
+        src="/assets/cero-health-app.png"
+        alt="CERO HEALTH"
+      />
+
+      <h1>CERO HEALTH</h1>
+
+      <p class="subtitle">Hospital Management System</p>
+
+      <div class="loader" aria-label="Chargement"></div>
+
+      <p class="status">Initialisation de votre espace...</p>
+    </main>
+
+    <footer>CERO CEPATEC · SOLUTIONS NUMÉRIQUES</footer>
+  </body>
+</html>

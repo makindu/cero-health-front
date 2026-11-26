@@ -1,0 +1,64 @@
+{
+  "title": "Help Center",
+  "subtitle": "Find the information you need to use CERO HEALTH.",
+  "welcome": {
+    "title": "Welcome to CERO HEALTH",
+    "description": "Your integrated hospital management platform developed by CERO CEPATEC."
+  },
+  "sectionsTitle": "How can we help you?",
+  "sections": {
+    "userGuide": {
+      "title": "User Guide",
+      "description": "Discover the features and main hospital management modules.",
+      "items": [
+        "Navigating the different modules",
+        "Patient and appointment management",
+        "Consultations and medical records",
+        "Pharmacy, laboratory and hospitalization",
+        "Billing, cash management and reports"
+      ]
+    },
+    "desktop": {
+      "title": "Desktop Guide",
+      "description": "Learn how to use CERO HEALTH features on Windows.",
+      "items": [
+        "F1: open the Help Center",
+        "F11: enter or exit fullscreen mode",
+        "Escape: exit fullscreen mode",
+        "Ctrl + M: minimize the window",
+        "Ctrl + Shift + F: maximize or restore the window"
+      ]
+    },
+    "updates": {
+      "title": "Updates",
+      "description": "Information about new releases and maintenance of CERO HEALTH Desktop.",
+      "items": [
+        "Updates will be distributed through updates.cerouzisha.com",
+        "New versions will be downloadable and installable from the application",
+        "Digital signatures will help verify update authenticity"
+      ],
+      "status": "The automatic update system is being prepared."
+    },
+    "support": {
+      "title": "Technical Support",
+      "description": "If you experience difficulties, contact your administrator or CERO CEPATEC technical support.",
+      "items": [
+        "Describe the issue clearly",
+        "Specify the affected module",
+        "Provide the application version",
+        "Avoid sharing confidential medical information in support requests"
+      ]
+    }
+  },
+  "about": {
+    "title": "About CERO HEALTH",
+    "description": "A hospital management solution designed and developed by CERO CEPATEC.",
+    "publisher": "Publisher",
+    "publisherName": "CERO CEPATEC",
+    "application": "Application",
+    "applicationName": "CERO HEALTH Desktop",
+    "version": "Installed version",
+    "versionValue": "1.0.0"
+  },
+  "footer": "CERO HEALTH — A solution from the CERO ecosystem."
+}

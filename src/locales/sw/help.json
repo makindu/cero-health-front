@@ -1,0 +1,64 @@
+{
+  "title": "Kituo cha Msaada",
+  "subtitle": "Pata taarifa unazohitaji ili kutumia CERO HEALTH.",
+  "welcome": {
+    "title": "Karibu kwenye CERO HEALTH",
+    "description": "Jukwaa lako jumuishi la usimamizi wa hospitali lililotengenezwa na CERO CEPATEC."
+  },
+  "sectionsTitle": "Tunawezaje kukusaidia?",
+  "sections": {
+    "userGuide": {
+      "title": "Mwongozo wa Mtumiaji",
+      "description": "Jifunze kuhusu vipengele na moduli kuu za usimamizi wa hospitali.",
+      "items": [
+        "Kutumia moduli mbalimbali",
+        "Usimamizi wa wagonjwa na miadi",
+        "Ushauri wa kitabibu na mafaili ya wagonjwa",
+        "Duka la dawa, maabara na kulazwa hospitalini",
+        "Malipo, fedha na ripoti"
+      ]
+    },
+    "desktop": {
+      "title": "Mwongozo wa Kompyuta",
+      "description": "Jifunze kutumia vipengele vya CERO HEALTH kwenye Windows.",
+      "items": [
+        "F1: fungua Kituo cha Msaada",
+        "F11: ingia au toka kwenye skrini nzima",
+        "Escape: toka kwenye skrini nzima",
+        "Ctrl + M: punguza dirisha",
+        "Ctrl + Shift + F: panua au rudisha dirisha"
+      ]
+    },
+    "updates": {
+      "title": "Masasisho",
+      "description": "Taarifa kuhusu matoleo mapya na matengenezo ya CERO HEALTH Desktop.",
+      "items": [
+        "Masasisho yatasambazwa kupitia updates.cerouzisha.com",
+        "Matoleo mapya yataweza kupakuliwa na kusakinishwa kupitia programu",
+        "Saini za kidijitali zitasaidia kuthibitisha uhalisi wa masasisho"
+      ],
+      "status": "Mfumo wa masasisho ya kiotomatiki unaandaliwa."
+    },
+    "support": {
+      "title": "Msaada wa Kiufundi",
+      "description": "Ukipata tatizo, wasiliana na msimamizi wako au timu ya msaada ya CERO CEPATEC.",
+      "items": [
+        "Eleza tatizo kwa uwazi",
+        "Taja moduli inayohusika",
+        "Toa toleo la programu",
+        "Usitume taarifa za siri za kitabibu katika maombi ya msaada"
+      ]
+    }
+  },
+  "about": {
+    "title": "Kuhusu CERO HEALTH",
+    "description": "Suluhisho la usimamizi wa hospitali lililoundwa na kutengenezwa na CERO CEPATEC.",
+    "publisher": "Mchapishaji",
+    "publisherName": "CERO CEPATEC",
+    "application": "Programu",
+    "applicationName": "CERO HEALTH Desktop",
+    "version": "Toleo lililosakinishwa",
+    "versionValue": "1.0.0"
+  },
+  "footer": "CERO HEALTH — Suluhisho la mfumo wa CERO."
+}

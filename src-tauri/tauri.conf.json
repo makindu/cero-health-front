@@ -1,0 +1,76 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "CERO HEALTH",
+  "version": "1.0.1",
+  "identifier": "com.cerocepatec.health",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "CERO HEALTH",
+        "width": 1440,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "maximized": true,
+        "decorations": true,
+        "visible": false
+      },
+      {
+        "label": "splashscreen",
+        "title": "CERO HEALTH",
+        "url": "splashscreen.html",
+        "width": 460,
+        "height": 380,
+        "center": true,
+        "resizable": false,
+        "maximizable": false,
+        "minimizable": false,
+        "closable": false,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "plugins": {
+  "updater": {
+    "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgxNjhEMjMyMTYzM0E3NTgKUldSWXB6TVdNdEpvZ2NmVUllKzlFa3Z6SnNZRi9sNFRHVWRUSXpzR0ZSa2ZWcE1yMWoyQVFOeS8K",
+    "endpoints": [
+      "https://updates.cerouzisha.com/desktop/cero-health/stable/latest.json"
+    ]
+  }
+},
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "targets": [
+      "nsis",
+      "msi"
+    ],
+    "publisher": "CERO CEPATEC",
+    "category": "Medical",
+    "shortDescription": "Gestion hospitalière intégrée",
+    "longDescription": "CERO HEALTH est une plateforme de gestion hospitalière développée par CERO CEPATEC.",
+    "copyright": "© 2026 CERO CEPATEC",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  }
+}
