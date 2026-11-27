@@ -41,7 +41,7 @@ export function RxDetail({ prescription, onClose }: { prescription: Rx | undefin
           <ul className="divide-y divide-border text-sm">
             {p.items.map((i, k) => (
               <li key={k} className="py-2">
-                <div className="flex justify-between font-medium"><span>{i.label}</span><span className="tabular-nums">× {formatQty(i.quantity)}</span></div>
+                <div className="flex justify-between font-medium"><span>{i.label}</span><span className="tabular-nums">× {formatQty(i.quantity)}{i.unit ? ` ${i.unit}` : ''}</span></div>
                 <div className="text-xs text-muted-foreground">{[i.dosage, i.frequency, i.duration].filter(Boolean).join(' · ')}{i.instructions ? ` — ${i.instructions}` : ''}</div>
               </li>
             ))}

@@ -25,7 +25,7 @@ export const resultFrom = (r: Row): LabResultValue => ({
   comment: str(r.comment),
 });
 
-const stamp = (at: unknown, by: unknown): { at: string; by: string } | undefined => (at ? { at: str(at), by: author(by) } : undefined);
+const stamp = (at: unknown, by: unknown, name?: unknown): { at: string; by: string } | undefined => (at ? { at: str(at), by: str(name) || author(by) } : undefined);
 
 export function labOrderFrom(r: Row): LabOrderView {
   const tests = (Array.isArray(r.tests) ? (r.tests as Row[]) : []);
@@ -37,7 +37,7 @@ export function labOrderFrom(r: Row): LabOrderView {
     reason: str(a.reason),
     previous: (Array.isArray(a.previous) ? (a.previous as Row[]) : []).map(resultFrom),
   }));
-  const collected = stamp(r.collected_at, r.collected_by_user_id);
+  const collected = stamp(r.collected_at, r.collected_by_user_id, r.collected_by_name);
   const cancelledAt = r.cancelled_at ? str(r.cancelled_at) : undefined;
   const order: LabOrder = {
     id: str(r.id),
@@ -45,8 +45,7 @@ export function labOrderFrom(r: Row): LabOrderView {
     patientId: str(r.patient_id),
     patientName: str(patient.full_name) || `Patient n°${str(r.patient_id)}`,
     consultationId: r.consultation_id ? str(r.consultation_id) : undefined,
-    admissionVisitId: r.admission_visit_id ? str(r.admission_visit_id) : undefined,
-    requestedBy: author(r.requested_by_user_id),
+    requestedBy: str(r.requested_by_name) || author(r.requested_by_user_id),
     requestedAt: str(r.requested_at),
     priority: (r.priority === 'urgent' ? 'urgent' : 'routine') as LabPriority,
     clinicalNote: str(r.clinical_note),
@@ -54,10 +53,10 @@ export function labOrderFrom(r: Row): LabOrderView {
     tests: tests.map((t) => ({ code: str(t.code), label: str(t.label), catalogItemId: '' })),
     invoiceId: '',
     collected: collected ? { ...collected, sampleNote: str(r.sample_note) } : undefined,
-    started: stamp(r.started_at, r.started_by_user_id),
+    started: stamp(r.started_at, r.started_by_user_id, r.started_by_name),
     results: tests.filter((t) => str(t.value) !== '').map(resultFrom),
-    resultsEnteredBy: stamp(r.results_entered_at, r.results_entered_by_user_id),
-    validation: stamp(r.validated_at, r.validated_by_user_id),
+    resultsEnteredBy: stamp(r.results_entered_at, r.results_entered_by_user_id, r.results_entered_by_name),
+    validation: stamp(r.validated_at, r.validated_by_user_id, r.validated_by_name),
     amendments,
     cancellation: cancelledAt ? { at: cancelledAt, by: '', reason: str(r.cancel_reason), refundPending: false } : undefined,
   };
@@ -100,12 +99,11 @@ export const apiLab = {
     return { id: str(t.id), code: str(t.code), label: str(t.label) };
   },
 
-  order: async (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string; visitId?: string }): Promise<LabOrderView> => {
+  order: async (input: { patientId: string; testItemIds: string[]; priority: LabPriority; clinicalNote: string; consultationId?: string }): Promise<LabOrderView> => {
     await ensureReference();
     return one(await healthClient.post('/lab-orders', {
       patient_id: Number(input.patientId),
       consultation_id: input.consultationId ? Number(input.consultationId) : null,
-      ...(input.visitId ? { admission_visit_id: Number(input.visitId) } : {}),
       priority: input.priority,
       clinical_note: input.clinicalNote.trim() || null,
       test_ids: input.testItemIds.map(Number),

@@ -17,9 +17,12 @@ export type Method = (typeof METHODS)[number];
 export type LinkState = 'awaiting' | 'partial' | 'paid' | 'cancelled';
 
 export interface BillingPayment { id: string; amountMinor: number; method: string; paidAt: string; groupId: string | null }
+export interface InvoiceLine { description: string; quantity: number; unitMinor: number; totalMinor: number }
 export interface BillingLink {
   id: string; sourceType: string; sourceId: string; patientId: string; patientName: string; currency: string; status: string;
   totalMinor: number; paidMinor: number; remainingMinor: number; createdAt: string; cancelReason: string; payments: BillingPayment[];
+  /** Lignes de la facture (désignation, quantité, prix) : fournies par le détail d'une facture, absentes de la liste. */
+  lines: InvoiceLine[];
 }
 
 export function linkFrom(r: Row): BillingLink {
@@ -27,6 +30,7 @@ export function linkFrom(r: Row): BillingLink {
     id: text(r.id), sourceType: text(r.source_type), sourceId: text(r.source_id), patientId: text(r.patient_id),
     patientName: text(r.patient_name) || (r.patient_id ? `#${text(r.patient_id)}` : ''), currency: text(r.currency) || 'USD', status: text(r.status),
     totalMinor: num(r.total_minor), paidMinor: num(r.paid_minor), remainingMinor: num(r.remaining_minor), createdAt: text(r.created_at), cancelReason: text(r.cancel_reason),
+    lines: rows(r.lines).map((x) => ({ description: text(x.description), quantity: num(x.quantity), unitMinor: num(x.unit_minor), totalMinor: num(x.total_minor) })),
     payments: rows(r.payments).map((p) => ({ id: text(p.id), amountMinor: num(p.amount_minor), method: text(p.method), paidAt: text(p.paid_at), groupId: p.group_id ? text(p.group_id) : null })),
   };
 }
@@ -95,4 +99,19 @@ export const apiBilling = {
 
   cancel: async (id: string, reason: string): Promise<BillingLink> =>
     linkFrom(rec((await healthClient.post<Row>(`/billing/links/${id}/cancel`, { reason })).data)),
+};
+
+export interface DirectInvoiceBody {
+  lines: { catalog_item_id: number; quantity: number }[];
+  care_unit_id?: number;
+  episode?: string;
+  force_private?: boolean;
+  discount_bp?: number;
+  discount_reason?: string;
+}
+
+export const apiDirect = {
+  /** Facture directe (comptoir) : le serveur calcule prix, assurance et remise, et sort le stock (FEFO). La clé rend le rejeu sûr. */
+  create: async (patientId: string, body: DirectInvoiceBody, key: string): Promise<BillingLink> =>
+    linkFrom(rec((await healthClient.post<Row>(`/patients/${patientId}/direct-invoices`, body, { headers: { 'Idempotency-Key': key } })).data)),
 };

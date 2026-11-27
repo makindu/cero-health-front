@@ -1,3 +1,4 @@
+import logo from '@/assets/cero-health-app-128.png';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +46,8 @@ export function AppLayout() {
         ariaLabel={t('nav.main')}
       >
         <div className="flex h-full flex-col bg-nav text-nav-foreground">
-          <div className="flex h-[var(--header-h)] items-center border-b border-nav-border px-4 font-semibold">
+          <div className="flex h-[var(--header-h)] items-center gap-2.5 border-b border-nav-border px-4 font-semibold">
+            <img src={logo} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
             {t('app.name')}
           </div>
           <SidebarNav onNavigate={() => setMenuOpen(false)} />

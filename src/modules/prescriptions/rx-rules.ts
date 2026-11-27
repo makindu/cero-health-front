@@ -14,7 +14,12 @@ export interface RxItem {
   duration: string;
   quantity: number;
   instructions: string;
+  /** Unité de mesure facultative (comprimé, boîte, ml…). */
+  unit?: string;
 }
+
+/** Quantité avec son unité (« 21 comprimé »), ou la quantité seule si aucune unité n'est connue. */
+export const quantityWithUnit = (item: Pick<RxItem, 'quantity' | 'unit'>): string => `${item.quantity}${item.unit ? ` ${item.unit}` : ''}`;
 
 export interface Rx {
   id: string;

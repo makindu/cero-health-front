@@ -126,7 +126,9 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
   const author = t('clinical.you');
   const locked = isLocked(draft.status);
   const canEditClinical = can(PERMISSIONS.consultations.update) && can(PERMISSIONS.medicalRecords.view);
-  const readOnly = locked || !canEditClinical;
+  // Seul le praticien de la consultation la modifie : un autre médecin la lit (l'API refuse de toute façon l'écriture).
+  const notPractitioner = consultation.canWrite === false;
+  const readOnly = locked || !canEditClinical || notPractitioner;
   const { done, percent } = progress(draft);
   const issues = signatureIssues(draft);
 
@@ -235,8 +237,10 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
         clearDraft(localKey);
         toast({ tone: 'success', title: t('clinical.save.ok') });
       }
-    } catch {
-      toast({ tone: 'danger', title: t('clinical.save.failed'), description: t('clinical.save.failedBody') });
+    } catch (error) {
+      // Refus de règle (ex. « La diastolique doit être inférieure à la systolique. ») : on montre la raison du serveur, pas un message vague.
+      const reason = error instanceof ApiError && error.status !== undefined && error.status >= 400 && error.status < 500 && error.status !== 403 && error.status !== 429 ? error.message : null;
+      toast({ tone: 'danger', title: t('clinical.save.failed'), description: reason ?? t('clinical.save.failedBody') });
     } finally {
       setSaving(false);
     }
@@ -328,7 +332,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
             </ul>
           ) : <p className="text-sm text-success-ink">{t('clinical.validation.ready')}</p>}
           <div className="flex flex-wrap gap-2">
-            {nextStatuses(draft.status).map((to) => {
+            {nextStatuses(draft.status).filter(() => !notPractitioner).map((to) => {
               const permission = to === 'signed' ? PERMISSIONS.consultations.sign : to === 'closed' ? PERMISSIONS.consultations.close : PERMISSIONS.consultations.update;
               const blocked = to === 'toValidate' && issues.length > 0;
               return (
@@ -386,7 +390,7 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
         actions={
           <>
             <StatusBadge tone={STATUS_TONE[draft.status]} icon={locked ? Lock : FilePen}>{t(`status.${draft.status}`)}</StatusBadge>
-            {!locked && canEditClinical && (
+            {!locked && canEditClinical && !notPractitioner && (
               <Button leftIcon={<Save className="size-4" />} loading={saving} onClick={() => void saveDraft()}>{t('clinical.save.button')}</Button>
             )}
           </>
@@ -419,7 +423,8 @@ function Workspace({ consultation, isDemo, patient, initial, hasRecord, carriedF
         </nav>
         <div className="min-w-0 space-y-4">
           {locked && <p role="note" className="flex items-center gap-2 rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink"><Lock aria-hidden className="size-4" />{t('clinical.lockedNote')}</p>}
-          {!canEditClinical && !locked && <p role="note" className="rounded-md bg-surface-muted px-3 py-2 text-sm text-muted-foreground">{t('clinical.readOnlyNote')}</p>}
+          {notPractitioner && !locked && <p role="note" className="rounded-md bg-info-soft px-3 py-2 text-sm text-info-ink">{t('clinical.notPractitionerNote', { defaultValue: 'Consultation de {{name}} : vous pouvez la lire, mais seul son praticien peut la modifier ou la signer.', name: consultation.practitioner || t('clinical.otherPractitioner', { defaultValue: 'un autre médecin' }) })}</p>}
+          {!canEditClinical && !notPractitioner && !locked && <p role="note" className="rounded-md bg-surface-muted px-3 py-2 text-sm text-muted-foreground">{t('clinical.readOnlyNote')}</p>}
           {content[section]}
           <div className="flex justify-between gap-2">
             <Button variant="outline" disabled={index === 0} onClick={() => setSection(SECTIONS[index - 1] ?? section)}>{t('clinical.previous')}</Button>

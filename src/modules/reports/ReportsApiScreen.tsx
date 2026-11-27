@@ -19,6 +19,8 @@ import { buildDocumentPdf } from '../_shared/export/document-pdf';
 import { PDF_MIME, XLSX_MIME, downloadBytes, safeFilename } from '../_shared/export/download';
 import { buildXlsx } from '../_shared/export/xlsx';
 import { useMoney } from '../finance/use-finance';
+import { useCareUnits } from '../_shared/reference-data';
+import { apiScope } from './scope-api';
 import { API_REPORTS, defaultPeriod, fetchReport, periodError, reportBlocks, reportGrid, type ApiReportId, type ReportResult } from './reports-api';
 
 const ICONS: Record<ApiReportId, LucideIcon> = { activity: Activity, appointments: CalendarClock, laboratory: FlaskConical, hospitalization: BedDouble, finance: TrendingUp };
@@ -39,10 +41,16 @@ export function ReportsApiScreen() {
   const [period, setPeriod] = useState(defaultPeriod);
   const [selected, setSelected] = useState<ApiReportId | null>(null);
   const invalid = periodError(period.from, period.to);
+  const [units, setUnits] = useState<string[]>([]);
+  const careUnits = useCareUnits();
+  const mine = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'report-scopes', 'me'), queryFn: apiScope.me });
+  const offered = (careUnits.data ?? []).filter((u) => !mine.data?.restricted || mine.data.careUnitIds.includes(u.id));
+  const pickUnit = (id: string) => setUnits((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+  const unitFilter = selected === 'finance' ? units : [];
 
   const query = useQuery({
-    queryKey: queryKeys.scoped(activeFacilityId, 'reports', selected, period.from, period.to),
-    queryFn: () => fetchReport(selected as ApiReportId, period.from, period.to),
+    queryKey: queryKeys.scoped(activeFacilityId, 'reports', selected, period.from, period.to, unitFilter.join(',')),
+    queryFn: () => fetchReport(selected as ApiReportId, period.from, period.to, unitFilter),
     enabled: selected !== null && invalid === null,
     retry: false,
   });
@@ -57,6 +65,7 @@ export function ReportsApiScreen() {
       return String(v);
     }
     if (col === 'status' || col === 'method') return valueLabel(String(v));
+    if (col === 'unit') return String(v) === '' ? t('values.noUnit', { defaultValue: 'Sans service' }) : String(v);
     if (col.endsWith('_minor')) return money(Number(v), String(row.currency ?? 'USD'));
     if (col === 'count' && section === 'summary' && row.key === 'avgMinutes') return t('minutes', { count: Number(v) });
     return typeof v === 'number' ? f.number(v) : String(v ?? '');
@@ -103,6 +112,15 @@ export function ReportsApiScreen() {
           </label>
           {invalid && <p role="alert" className="text-sm text-danger-ink">{t(`period.${invalid}`)}</p>}
         </div>
+        {offered.length > 0 && (
+          <fieldset className="mt-3">
+            <legend className="text-sm font-medium">{t('unitFilter', { defaultValue: 'Services (rapport financier)' })}</legend>
+            <p className="text-xs text-muted-foreground">{mine.data?.restricted ? t('unitRestricted', { defaultValue: 'Vos rapports sont limités à vos services.' }) : t('unitAll', { defaultValue: 'Aucun service coché : tous les services.' })}</p>
+            <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+              {offered.map((u) => <li key={u.id}><label className="flex items-center gap-1.5 text-sm"><input type="checkbox" checked={units.includes(u.id)} onChange={() => pickUnit(u.id)} />{u.name}</label></li>)}
+            </ul>
+          </fieldset>
+        )}
       </Card>
 
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -170,13 +188,13 @@ export function ReportsApiScreen() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="text-start text-muted-foreground">
-                          {s.columns.map((c) => <th key={c} scope="col" className={`py-1 pe-4 font-medium ${c === 'key' || c === 'currency' || c === 'status' || c === 'method' ? 'text-start' : 'text-end'}`}>{t(`cols.${c}`, { defaultValue: c })}</th>)}
+                          {s.columns.map((c) => <th key={c} scope="col" className={`py-1 pe-4 font-medium ${c === 'key' || c === 'currency' || c === 'status' || c === 'method' || c === 'unit' ? 'text-start' : 'text-end'}`}>{t(`cols.${c}`, { defaultValue: c })}</th>)}
                         </tr>
                       </thead>
                       <tbody>
                         {s.rows.map((row, i) => (
                           <tr key={i} className="border-t border-border">
-                            {s.columns.map((c) => <td key={c} className={`py-1.5 pe-4 ${c === 'key' || c === 'currency' || c === 'status' || c === 'method' ? '' : 'text-end tabular-nums'}`}>{cell(s.key, c, row)}</td>)}
+                            {s.columns.map((c) => <td key={c} className={`py-1.5 pe-4 ${c === 'key' || c === 'currency' || c === 'status' || c === 'method' || c === 'unit' ? '' : 'text-end tabular-nums'}`}>{cell(s.key, c, row)}</td>)}
                           </tr>
                         ))}
                       </tbody>

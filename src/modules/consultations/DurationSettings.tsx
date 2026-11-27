@@ -2,13 +2,14 @@ import { Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { ActionFormDialog } from '../_shared/action-form-dialog';
 import { BusinessRuleError } from '../_shared/business-error';
 import { CONSULTATION_DURATION_KEY, DEFAULT_CONSULTATION_DAYS, useInvalidateSetting, useSetting, validDuration, writeSetting } from '../settings/app-settings';
 
-/** Réglage de la durée d'une consultation. N'affecte que les consultations ouvertes APRÈS la modification. */
+/** Réglage de la durée d'une consultation (écran Administration). N'affecte que les consultations ouvertes APRÈS la modification. */
 export function DurationSettings() {
   const { t } = useTranslation('consultations');
   const [open, setOpen] = useState(false);
@@ -17,7 +18,15 @@ export function DurationSettings() {
   const current = setting.data ?? String(DEFAULT_CONSULTATION_DAYS);
   return (
     <Can permission={PERMISSIONS.administration.manageSettings}>
-      <Button variant="outline" leftIcon={<Clock className="size-4" />} onClick={() => setOpen(true)}>{t('duration.button', { count: Number(current) })}</Button>
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <div>
+            <h2 className="text-sm font-semibold">{t('duration.title')}</h2>
+            <p className="text-sm text-muted-foreground">{t('duration.hint')}</p>
+          </div>
+          <Button variant="outline" leftIcon={<Clock className="size-4" />} onClick={() => setOpen(true)}>{t('duration.button', { count: Number(current) })}</Button>
+        </div>
+      </Card>
       {open && (
         <ActionFormDialog
           open

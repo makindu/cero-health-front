@@ -33,6 +33,8 @@ export interface Consultation {
   triageEntryId?: string;
   /** Médecin de l'annuaire du personnel (mode local) ou profil de personnel (API). */
   practitionerId?: string;
+  /** API réelle : l'utilisateur peut-il modifier cette consultation ? Seul son praticien le peut ; absent = non précisé. */
+  canWrite?: boolean;
   /** Durée prévue en jours, figée à l'ouverture : modifier le réglage plus tard ne change JAMAIS les consultations passées. */
   durationDays?: number;
   /** Fin de validité (ISO) = création + durée en jours, figée à la création comme la durée. */
@@ -83,6 +85,7 @@ export const CONSULTATION_API: ApiMapping<Consultation> = {
       patientName: patient?.full_name ?? `Patient n°${text(r.patient_id)}`,
       practitioner: staff?.name ?? '',
       practitionerId: r.practitioner_staff_id ? text(r.practitioner_staff_id) : undefined,
+      canWrite: typeof r.can_write === 'boolean' ? r.can_write : undefined,
       service: (SERVICE_KEYS as readonly string[]).includes(code) ? (code as ServiceKey) : 'generalMedicine',
       careUnitId: r.care_unit_id ? text(r.care_unit_id) : undefined,
       serviceLabel: unit?.name,

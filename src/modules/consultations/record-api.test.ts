@@ -50,8 +50,8 @@ describe('dossier clinique : correspondance avec l’API réelle', () => {
 
   it('refuse un champ trop long plutôt que de le tronquer', () => {
     const d = emptyDraft('4');
-    d.anamnesis.chiefComplaint = 'y'.repeat(256);
-    expect(() => contentPatch(d)).toThrow(/255/);
+    d.anamnesis.chiefComplaint = 'y'.repeat(2001);
+    expect(() => contentPatch(d)).toThrow(/2000/);
   });
 
   it('n’envoie que ce qui est nouveau ou modifié', async () => {

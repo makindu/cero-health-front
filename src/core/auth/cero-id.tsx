@@ -219,7 +219,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [loadMe],
   );
 
-  const logout = useCallback(async () => {
+  /** Ferme la session locale : jeton révoqué côté serveur, puis effacé ici. N'ouvre pas de redirection. */
+  const clearSession = useCallback(async () => {
     try {
       await coreFetch('/api/v1/auth/logout', { method: 'POST' }, false);
     } catch {
@@ -231,13 +232,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('anonymous');
   }, []);
 
-  // Une réponse 401 de l'API de HEALTH = jeton refusé par CERO CEPATEC : on retourne à l'écran de connexion.
+  /**
+   * Déconnexion demandée par l'utilisateur : en plus du jeton, on ferme la session du portail CERO ID (déconnexion unique),
+   * sinon un rafraîchissement relancerait la connexion et rouvrirait la session sans rien demander.
+   */
+  const logout = useCallback(async () => {
+    await clearSession();
+    const params = new URLSearchParams({ client_id: env.idCoreClientId ?? '', post_logout_redirect_uri: `${window.location.origin}/` });
+    window.location.assign(`${apiUrl()}/oauth/logout?${params.toString()}`);
+  }, [clearSession]);
+
+  // Une réponse 401 de l'API de HEALTH = jeton refusé par CERO CEPATEC : session locale effacée, la connexion reprend (sans fermer le portail).
   useEffect(
     () =>
       sessionEvents.subscribe((event) => {
-        if (event.type === 'unauthorized' && event.source === 'health') void logout();
+        if (event.type === 'unauthorized' && event.source === 'health') void clearSession();
       }),
-    [logout],
+    [clearSession],
   );
 
   const selectFacility = useCallback((id: number) => {

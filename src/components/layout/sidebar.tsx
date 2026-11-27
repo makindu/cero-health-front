@@ -5,6 +5,7 @@ import { NAV_GROUPS } from '@/core/navigation/nav-config';
 import { usePermissions } from '@/core/permissions/PermissionsProvider';
 import { preferencesStore } from '@/core/preferences/preferences-store';
 import { cn } from '@/utils/cn';
+import logo from '@/assets/cero-health-app-128.png';
 
 interface SidebarNavProps {
   /** Mode icônes seules (rail tablette ou menu réduit). */
@@ -25,7 +26,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
           <div key={group.id} className="mb-4">
             <h2
               className={cn(
-                'px-3 pb-1 text-xs font-medium uppercase tracking-wide text-nav-muted',
+                'truncate px-2.5 pb-1 text-xs font-medium uppercase tracking-wide text-nav-muted',
                 collapsed && 'sr-only',
               )}
             >
@@ -41,17 +42,17 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
                       to={item.path}
                       end={item.path === '/'}
                       onClick={onNavigate}
-                      title={collapsed ? label : undefined}
+                      title={label}
                       className={({ isActive }) =>
                         cn(
-                          'flex items-center gap-3 rounded-md px-3 py-2 text-sm text-nav-foreground transition-colors hover:bg-nav-active',
+                          'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-nav-foreground transition-colors hover:bg-nav-active',
                           isActive && 'bg-nav-active font-medium',
                           collapsed && 'justify-center',
                         )
                       }
                     >
                       <Icon aria-hidden className="size-5 shrink-0" />
-                      <span className={cn(collapsed && 'sr-only')}>{label}</span>
+                      <span className={cn('min-w-0 flex-1 truncate', collapsed && 'sr-only')}>{label}</span>
                     </NavLink>
                   </li>
                 );
@@ -76,14 +77,18 @@ export function Sidebar({ collapsed }: { collapsed: boolean }) {
         collapsed ? 'lg:w-[var(--sidebar-w-rail)]' : 'lg:w-[var(--sidebar-w)]',
       )}
     >
-      <div className="flex h-[var(--header-h)] items-center justify-center border-b border-nav-border px-3 font-semibold">
-        <span className="lg:hidden" aria-hidden>
-          CH
-        </span>
-        <span className="hidden lg:inline">
-          {collapsed ? <span aria-hidden>CH</span> : t('app.name')}
-          {collapsed && <span className="sr-only">{t('app.name')}</span>}
-        </span>
+      <div
+        className={cn(
+          'flex h-[var(--header-h)] items-center gap-2.5 border-b border-nav-border font-semibold',
+          collapsed ? 'justify-center px-2' : 'justify-center px-2 lg:justify-start lg:px-[1.125rem]',
+        )}
+      >
+        <img src={logo} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
+        {collapsed ? (
+          <span className="hidden lg:inline sr-only">{t('app.name')}</span>
+        ) : (
+          <span className="hidden truncate lg:inline">{t('app.name')}</span>
+        )}
       </div>
       {/* Rail (icônes) sur tablette, menu complet ou réduit sur ordinateur. */}
       <div className="flex min-h-0 flex-1 flex-col lg:hidden">

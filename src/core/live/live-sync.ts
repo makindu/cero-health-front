@@ -26,7 +26,7 @@ export const ENTITY_QUERIES: Readonly<Record<string, readonly string[]>> = {
   appointment_events: ['appointments'],
   triage_entries: FLOW,
   vital_signs: ['triage-vitals', 'triage'],
-  consultations: ['consultations', 'dashboard', 'hospital'],
+  consultations: ['consultations', 'appointments', 'dashboard', 'patientFlow', 'hospital'],
   consultation_addenda: ['consultations'],
   diagnoses: ['consultations'],
   prescriptions: ['prescriptions', 'pharmacy', 'dashboard'],
@@ -48,6 +48,8 @@ export const ENTITY_QUERIES: Readonly<Record<string, readonly string[]>> = {
   billing_links: ['pharmacy', 'hospital', 'billing'],
   billing_payments: ['pharmacy', 'hospital', 'billing'],
   billing_settings: ['billing'],
+  // Clôtures de caisse : la carte « à clôturer » du tableau de bord et l'historique se relisent.
+  cash_closures: ['billing', 'dashboard'],
   // Assurance : organismes, créances et règlements se relisent ; une créance suit la facture du patient (écran de facturation).
   insurance_organizations: ['insurance'],
   insurance_dues: ['insurance', 'billing'],

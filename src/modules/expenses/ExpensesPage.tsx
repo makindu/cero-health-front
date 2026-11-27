@@ -1,7 +1,8 @@
 import { Ban, CircleCheck, Hourglass, Plus, Wallet } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Autocomplete } from '@/components/forms/autocomplete';
 import { Input, Select, Textarea } from '@/components/forms/controls';
 import { FormField } from '@/components/forms/form-field';
 import { useToast } from '@/components/feedback/toast';
@@ -118,36 +119,39 @@ function ExpensesScreen() {
             </StatGrid>
           </section>
         ))}
-        {periodOk && summary.data && currencies.length === 0 && <p className="text-sm text-muted-foreground">{t('totals.none')}</p>}
         <Card>
-          <div className="flex flex-wrap items-end gap-3 border-b border-border p-4">
-            <label className="text-sm">{t('filters.from')}
-              <Input type="date" value={from} max={to || undefined} onChange={(e) => { setFrom(e.target.value); reset(); }} className="mt-1 w-40" />
-            </label>
-            <label className="text-sm">{t('filters.to')}
-              <Input type="date" value={to} min={from || undefined} onChange={(e) => { setTo(e.target.value); reset(); }} className="mt-1 w-40" />
-            </label>
-            <label className="text-sm">{t('columns.status')}
-              <Select value={state} onChange={(e) => { setState(e.target.value as ExpenseState | ''); reset(); }} className="mt-1 w-44">
+          <div className="grid gap-x-4 gap-y-3 border-b border-border p-4 sm:grid-cols-2 lg:grid-cols-4">
+            <FilterField label={t('filters.from')}>
+              <Input type="date" value={from} max={to || undefined} onChange={(e) => { setFrom(e.target.value); reset(); }} className="w-full" />
+            </FilterField>
+            <FilterField label={t('filters.to')}>
+              <Input type="date" value={to} min={from || undefined} onChange={(e) => { setTo(e.target.value); reset(); }} className="w-full" />
+            </FilterField>
+            <FilterField label={t('columns.status')}>
+              <Select value={state} onChange={(e) => { setState(e.target.value as ExpenseState | ''); reset(); }} className="w-full">
                 <option value="">{t('filters.allStatuses')}</option>
                 {EXPENSE_STATES.map((s) => <option key={s} value={s}>{t(`state.${s}`, { defaultValue: STATE_STYLE[s].label })}</option>)}
               </Select>
-            </label>
-            <label className="text-sm">{t('columns.account')}
-              <Select value={accountId} onChange={(e) => { setAccountId(e.target.value); reset(); }} className="mt-1 w-52">
+            </FilterField>
+            <FilterField label={t('columns.account')}>
+              <Select value={accountId} onChange={(e) => { setAccountId(e.target.value); reset(); }} className="w-full">
                 <option value="">{t('filters.allAccounts')}</option>
                 {(accounts.data ?? []).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
               </Select>
-            </label>
-            <label className="text-sm">{t('columns.unit')}
-              <Select value={careUnitId} onChange={(e) => { setCareUnitId(e.target.value); reset(); }} className="mt-1 w-52">
+            </FilterField>
+            <FilterField label={t('columns.unit')}>
+              <Select value={careUnitId} onChange={(e) => { setCareUnitId(e.target.value); reset(); }} className="w-full">
                 <option value="">{t('filters.allUnits')}</option>
                 {(units.data ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
               </Select>
-            </label>
-            <label className="text-sm">{t('filters.search')}
-              <Input type="search" value={q} maxLength={60} onChange={(e) => { setQ(e.target.value); reset(); }} className="mt-1 w-48" />
-            </label>
+            </FilterField>
+            <FilterField label={t('filters.search')} className="sm:col-span-2">
+              <Input type="search" value={q} maxLength={60} onChange={(e) => { setQ(e.target.value); reset(); }} className="w-full" />
+            </FilterField>
+            <div className="flex items-end">
+              <Button variant="outline" className="w-full" disabled={state === '' && accountId === '' && careUnitId === '' && q === ''}
+                onClick={() => { setState(''); setAccountId(''); setCareUnitId(''); setQ(''); reset(); }}>{t('filters.reset', { defaultValue: 'Réinitialiser' })}</Button>
+            </div>
           </div>
           {!periodOk && <p role="alert" className="p-4 text-sm text-danger-ink">{t('filters.periodInvalid')}</p>}
           <DataTable caption={t('title')} columns={columns} rows={periodOk ? list.data?.rows ?? [] : []} getRowId={(e) => e.id}
@@ -160,6 +164,16 @@ function ExpensesScreen() {
       {toValidate && <ValidateDialog expense={toValidate} onClose={() => setToValidate(null)} />}
       {toCancel && <CancelDialog expense={toCancel} onClose={() => setToCancel(null)} />}
     </>
+  );
+}
+
+/** Un filtre : libellé au-dessus du champ, qui occupe toute la largeur de sa colonne. */
+function FilterField({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
+  return (
+    <label className={`flex flex-col gap-1.5 text-sm font-medium text-foreground ${className ?? ''}`}>
+      <span>{label}</span>
+      {children}
+    </label>
   );
 }
 
@@ -188,6 +202,23 @@ function NewExpenseDialog({ accounts, accountsLoading, onClose }: { accounts: { 
   const [accountId, setAccountId] = useState('');
   const [careUnitId, setCareUnitId] = useState('');
   const { activeFacilityId } = usePreferences();
+  const qc = useQueryClient();
+  const { can } = usePermissions();
+  const canCreateAccount = can(PERMISSIONS.expenses.create);
+  // Catégories créées depuis ce formulaire : choisies tout de suite, sans attendre la relecture de la liste.
+  const [made, setMade] = useState<{ id: string; name: string }[]>([]);
+  const allAccounts = [...accounts, ...made.filter((m) => !accounts.some((a) => a.id === m.id))];
+  const addAccount = async (name: string): Promise<void> => {
+    try {
+      const a = await apiExpenses.createAccount(name);
+      setMade((m) => [...m, a]);
+      setAccountId(a.id);
+      void qc.invalidateQueries({ queryKey: queryKeys.scoped(activeFacilityId, 'expenses', 'accounts') });
+    } catch (error) {
+      fail(error);
+      throw error;
+    }
+  };
   const currencies = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'expenses', 'currencies'), queryFn: apiExpenses.currencies, staleTime: 60_000 });
   const [picked, setPicked] = useState('');
   const currency = picked || defaultCurrency(currencies.data ?? []);
@@ -215,10 +246,9 @@ function NewExpenseDialog({ accounts, accountsLoading, onClose }: { accounts: { 
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submit(); }}>
         <FormField label={t('columns.account')} required error={err('account')} hint={!accountsLoading && accounts.length === 0 ? t('new.noAccount') : undefined}>
           {(c) => (
-            <Select {...c} value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-              <option value="">{t('new.chooseAccount')}</option>
-              {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-            </Select>
+            <Autocomplete<{ id: string; name: string }> {...c} items={allAccounts} value={accountId} onChange={setAccountId}
+              getKey={(a) => a.id} getLabel={(a) => a.name} getSearch={(a) => a.name} emptyText={t('new.noAccount')} placeholder={t('new.chooseAccount')}
+              onCreate={canCreateAccount ? addAccount : undefined} createLabel={(text) => t('new.addAccount', { defaultValue: 'Ajouter la catégorie « {{name}} »', name: text })} />
           )}
         </FormField>
         <FormField label={t('columns.unit')} hint={t('new.unitHint')}>

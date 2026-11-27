@@ -11,7 +11,7 @@ export interface Practitioner { id: string; name: string; specialty?: string; re
 
 /**
  * Praticiens actifs pour les listes de praticiens.
- * API réelle : les médecins ET sages-femmes actifs du personnel de l'établissement (le serveur accepte les deux comme référent).
+ * API réelle : les médecins, infirmiers ET sages-femmes actifs du personnel de l'établissement (le serveur les accepte comme praticien).
  * Local : annuaire persistant ; sinon : médecins fictifs de démonstration.
  */
 export function useDoctors() {
@@ -20,8 +20,8 @@ export function useDoctors() {
     queryKey: queryKeys.scoped(activeFacilityId, 'staff', 'doctors', referenceFromApi() ? 'api' : 'local'),
     queryFn: async () => {
       if (referenceFromApi()) {
-        const [doctors, midwives] = await Promise.all([fetchStaff('doctor'), fetchStaff('midwife')]);
-        return [...doctors, ...midwives].map((s) => ({ id: s.id, name: s.name, specialty: s.specialty, registrationNumber: s.registrationNumber }));
+        const [doctors, nurses, midwives] = await Promise.all([fetchStaff('doctor'), fetchStaff('nurse'), fetchStaff('midwife')]);
+        return [...doctors, ...nurses, ...midwives].sort((a, b) => a.name.localeCompare(b.name)).map((s) => ({ id: s.id, name: s.name, specialty: s.specialty, registrationNumber: s.registrationNumber }));
       }
       return env.localMode ? listDoctors() : activeDoctors(DEMO_USERS);
     },

@@ -107,6 +107,9 @@ export const apiExpenses = {
     summaryFrom((await healthClient.get<Row>('/expenses/summary', { params: paramsOf(q) })).data),
 
   /** La clé d'idempotence rend l'envoi sûr : un double clic ou un rejeu après coupure ne crée jamais une seconde dépense. */
+  /** Crée une catégorie de dépense (un compte de l'établissement dans UZISHA) ; le serveur refuse un nom déjà pris. */
+  createAccount: async (name: string): Promise<ExpenseAccount> => accountFrom(rec((await healthClient.post<Row>('/expense-accounts', { name })).data)),
+
   create: async (n: NewExpense, key: string): Promise<Expense> => {
     const body: Record<string, unknown> = { account_id: Number(n.accountId), currency: n.currency, amount_minor: n.amountMinor, motif: n.motif.trim(), done_on: n.doneOn };
     if (n.careUnitId) body.care_unit_id = Number(n.careUnitId);

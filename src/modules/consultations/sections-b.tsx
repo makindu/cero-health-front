@@ -12,6 +12,7 @@ import { LabStatusBadge } from '../laboratory/LabStatusBadge';
 import { LAB_AVAILABLE, useLabOrders } from '../laboratory/use-lab';
 import { NewRxDialog } from '../prescriptions/NewRxDialog';
 import { RxStatusBadge } from '../prescriptions/RxStatusBadge';
+import { quantityWithUnit } from '../prescriptions/rx-rules';
 import { RX_AVAILABLE, useRxList } from '../prescriptions/use-rx';
 import { SuggestInput } from '@/components/forms/suggest-input';
 import { FormField } from '@/components/forms/form-field';
@@ -224,7 +225,14 @@ function LinkedOrders({ consultationId }: { consultationId?: string }) {
                   <p className="text-muted-foreground">{v.order.tests.map((x) => x.label).join(', ')}</p>
                   {v.order.status === 'validated' && (
                     <Can permission={PERMISSIONS.laboratory.view}>
-                      <p className="mt-1 text-xs font-medium text-success-ink">{t('clinical.plan.linked.resultReady')}{v.order.validation ? ` · ${t('clinical.plan.linked.validatedBy', { by: v.order.validation.by, at: f.dateTime(v.order.validation.at) })}` : ''}</p>
+                      <p className="mt-1 text-xs font-medium text-success-ink">{t('clinical.plan.linked.resultReady')}</p>
+                      {v.order.validation && (
+                        <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                          <span>{t('clinical.plan.linked.validatedByLabel', { defaultValue: 'Validé par' })}</span>
+                          <strong className="rounded-md bg-success-soft px-2 py-0.5 text-sm font-semibold text-success-ink">{v.order.validation.by}</strong>
+                          <span>{f.dateTime(v.order.validation.at)}</span>
+                        </p>
+                      )}
                       <table className="mt-1 w-full text-sm">
                         <thead><tr className="text-xs text-muted-foreground"><th className="py-1 text-start">{t('clinical.plan.linked.test')}</th><th className="text-start">{t('clinical.plan.linked.value')}</th><th className="text-start">{t('clinical.plan.linked.range')}</th><th className="text-start">{t('clinical.plan.linked.flag')}</th></tr></thead>
                         <tbody>
@@ -252,7 +260,20 @@ function LinkedOrders({ consultationId }: { consultationId?: string }) {
               {myRx.map((r) => (
                 <li key={r.id} className="rounded-md border border-border p-2 text-sm">
                   <p className="flex flex-wrap items-center gap-2"><code className="text-xs">{r.number}</code><RxStatusBadge status={r.status} /><span className="text-xs text-muted-foreground">{f.dateTime(r.prescribedAt)}</span></p>
-                  <p className="text-muted-foreground">{r.items.map((x) => `${x.label} (${x.quantity})`).join(', ')}</p>
+                  <ul className="mt-1 space-y-1.5">
+                    {r.items.map((x, k) => (
+                      <li key={k} className="rounded-md bg-muted/40 px-2 py-1.5">
+                        <p className="flex flex-wrap items-baseline justify-between gap-x-3 font-medium"><span>{x.label}</span><span className="tabular-nums">{t('clinical.plan.linked.quantity', { defaultValue: 'Quantité' })} : {quantityWithUnit(x)}</span></p>
+                        <dl className="mt-0.5 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-muted-foreground">
+                          <dt>{t('clinical.plan.linked.dosage', { defaultValue: 'Posologie' })}</dt><dd className="text-foreground">{x.dosage || '—'}</dd>
+                          <dt>{t('clinical.plan.linked.frequency', { defaultValue: 'Fréquence' })}</dt><dd className="text-foreground">{x.frequency || '—'}</dd>
+                          {x.duration && <><dt>{t('clinical.plan.linked.duration', { defaultValue: 'Durée' })}</dt><dd className="text-foreground">{x.duration}</dd></>}
+                          {x.instructions && <><dt>{t('clinical.plan.linked.instructions', { defaultValue: 'Instructions' })}</dt><dd className="text-foreground">{x.instructions}</dd></>}
+                        </dl>
+                      </li>
+                    ))}
+                  </ul>
+                  {r.note && <p className="mt-1 text-xs text-muted-foreground">{r.note}</p>}
                 </li>
               ))}
             </ul>

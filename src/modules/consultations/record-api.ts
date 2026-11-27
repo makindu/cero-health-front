@@ -57,7 +57,7 @@ const synced = new Map<string, Synced>();
 export function contentPatch(draft: ConsultationDraft): Row {
   const short = (value: string, name: string): string => {
     const v = value.trim();
-    if (v.length > 255) invalid(`${name} : 255 caractères au maximum.`);
+    if (v.length > 2000) invalid(`${name} : 2000 caractères au maximum.`);
     return v;
   };
   const date = (value: string): string => (/^\d{4}-\d{2}-\d{2}/.test(value) ? value.slice(0, 10) : '');

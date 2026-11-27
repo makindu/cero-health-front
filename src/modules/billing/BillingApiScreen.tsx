@@ -1,10 +1,11 @@
 import { Ban, CircleCheck, FileClock, Hourglass, Printer } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Select, Input, Textarea } from '@/components/forms/controls';
 import { FormField } from '@/components/forms/form-field';
 import { useToast } from '@/components/feedback/toast';
+import { NewInvoiceApiDialog } from './NewInvoiceApiDialog';
 import { PageHeader } from '@/components/layout/page-header';
 import { DataTable, type Column } from '@/components/tables/data-table';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ import { queryKeys } from '@/core/api/query-client';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { decimalsOf } from '@/core/money/money';
 import { usePermissions } from '@/core/permissions/PermissionsProvider';
+import { PERMISSIONS as P } from '@/core/permissions/permissions';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { useMoney } from '../finance/use-finance';
 import { ReceiptPrintDialog, type ReceiptContent } from '../_shared/receipt/ReceiptPrintDialog';
@@ -30,7 +32,7 @@ const STATE_STYLE: Record<LinkState, { tone: StatusTone; icon: typeof Ban; label
   paid: { tone: 'success', icon: CircleCheck, label: 'Payée' },
   cancelled: { tone: 'neutral', icon: Ban, label: 'Annulée' },
 };
-export const SOURCES: Record<string, string> = { consultation: 'Consultation', lab_order: 'Examen', dispensation: 'Pharmacie' };
+export const SOURCES: Record<string, string> = { consultation: 'Consultation', lab_order: 'Examen', dispensation: 'Pharmacie', direct: 'Vente directe' };
 const METHOD_LABEL: Record<string, string> = { cash: 'Espèces', mobile_money: 'Mobile money', card: 'Carte', transfer: 'Virement' };
 
 export function StateBadge({ link }: { link: BillingLink }) {
@@ -49,6 +51,7 @@ export function BillingApiScreen() {
   const [source, setSource] = useState('');
   const [page, setPage] = useState(1);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
   const list = useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'billing', 'list', status, source, page),
     queryFn: () => apiBilling.list({ status: status || undefined, sourceType: source || undefined, page }),
@@ -67,7 +70,9 @@ export function BillingApiScreen() {
 
   return (
     <>
-      <PageHeader title={t('billing.title')} description={t('apiBilling.subtitle', { defaultValue: 'Factures des consultations, examens et médicaments, et leurs paiements' })} />
+      <PageHeader title={t('billing.title')} description={t('apiBilling.subtitle', { defaultValue: 'Factures des consultations, examens et médicaments, et leurs paiements' })}
+        actions={<Button onClick={() => setCreating(true)}>{t('new.button')}</Button>} />
+      {creating && <NewInvoiceApiDialog onClose={() => setCreating(false)} onCreated={(id) => { setCreating(false); if (id) setOpenId(id); }} />}
       <Card>
         <div className="flex flex-wrap gap-3 border-b border-border p-4">
           <Select aria-label={t('columns.status')} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="w-56">
@@ -95,13 +100,16 @@ function GroupPay({ patientId, balance, onDone, onPaid }: { patientId: string; b
   const { t } = useTranslation('finance');
   const money = useMoney();
   const toast = useToast();
-  const [amount, setAmount] = useState('');
+  // Le total dû est déjà saisi ; le caissier peut le réduire pour un règlement partiel.
+  const dueText = balance.outstandingMinor > 0 ? (balance.outstandingMinor / 10 ** decimalsOf(balance.currency)).toFixed(decimalsOf(balance.currency)) : '';
+  const [amount, setAmount] = useState(dueText);
   const [method, setMethod] = useState<Method>('cash');
   const [attempt, setAttempt] = useState(() => globalThis.crypto.randomUUID());
+  useEffect(() => { setAmount(dueText); }, [dueText]);
   const check = checkAmount(amount, balance.currency, balance.outstandingMinor);
   const pay = useMutation({
     mutationFn: (minor: number) => apiBilling.payGroup(patientId, minor, method, balance.currency, attempt),
-    onSuccess: (r) => { toast({ tone: 'success', title: t('apiBilling.groupPaid', { defaultValue: 'Règlement enregistré' }), description: money(r.totalMinor, r.currency) }); setAmount(''); setAttempt(globalThis.crypto.randomUUID()); onDone(); onPaid(r); },
+    onSuccess: (r) => { toast({ tone: 'success', title: t('apiBilling.groupPaid', { defaultValue: 'Règlement enregistré' }), description: money(r.totalMinor, r.currency) }); setAttempt(globalThis.crypto.randomUUID()); onDone(); onPaid(r); },
     onError: (error) => toast({ tone: 'danger', title: error instanceof ApiError ? error.message : t('module.saveFailed'), description: error instanceof ApiError ? undefined : t('module.saveFailedHint') }),
   });
   return (
@@ -134,6 +142,7 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
   const [method, setMethod] = useState<Method>('cash');
   const [reason, setReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
+  const [showGroup, setShowGroup] = useState(false);
   const [receipt, setReceipt] = useState<{ id: string; content: ReceiptContent; reprint: boolean } | null>(null);
   // Une clé par tentative : tant qu'elle ne réussit pas, un nouvel envoi la rejoue sans doublon.
   const [attempt, setAttempt] = useState(() => globalThis.crypto.randomUUID());
@@ -145,11 +154,14 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
     title: t('apiBilling.receiptTitle', { defaultValue: 'Reçu de paiement' }), patient: t('columns.patient'), act: t('apiBilling.source', { defaultValue: 'Acte' }),
     method: t('columns.method'), amount: t('apiBilling.receiptAmount', { defaultValue: 'Montant payé' }), remaining: t('apiBilling.remaining', { defaultValue: 'Reste à payer' }),
     invoices: t('apiBilling.receiptInvoices', { defaultValue: 'Factures réglées' }), footer: t('apiBilling.receiptFooter', { defaultValue: 'Merci.' }),
+    total: t('detail.total'), paid: t('apiBilling.paidSoFar', { defaultValue: 'Déjà payé' }),
   };
   const receiptFor = (k: BillingLink, p: BillingPayment, remainingMinor?: number): ReceiptContent => paymentReceipt({
     id: p.id, patientName: k.patientName, actText: t(`apiBilling.sources.${k.sourceType}`, { defaultValue: SOURCES[k.sourceType] ?? k.sourceType }),
     methodText: methodText(p.method), amountText: money(p.amountMinor, k.currency), dateTimeText: f.dateTime(p.paidAt),
     remainingText: remainingMinor === undefined ? undefined : money(remainingMinor, k.currency),
+    items: (l?.lines ?? []).map((x) => ({ text: `${x.description} × ${x.quantity}`, amountText: money(x.totalMinor, k.currency) })),
+    totalText: (l?.lines.length ?? 0) > 0 ? money(k.totalMinor, k.currency) : undefined,
   }, labels);
   /** Règlement groupé : le reçu porte le total ; il s'accroche au premier paiement du groupe. */
   const printGroup = async (r: GroupReceipt): Promise<void> => {
@@ -166,7 +178,7 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
   const pay = useMutation({
     mutationFn: (minor: number) => apiBilling.pay(id, minor, method, attempt),
     onSuccess: (r) => {
-      toast({ tone: 'success', title: t('apiBilling.paid', { defaultValue: 'Paiement enregistré' }) }); setAmount(''); setAttempt(globalThis.crypto.randomUUID()); refresh();
+      toast({ tone: 'success', title: t('apiBilling.paid', { defaultValue: 'Paiement enregistré' }) }); setAmount(r.remainingMinor > 0 ? (r.remainingMinor / 10 ** decimalsOf(r.currency)).toFixed(decimalsOf(r.currency)) : ''); setAttempt(globalThis.crypto.randomUUID()); refresh();
       const last = [...r.payments].sort((a, b) => Number(b.id) - Number(a.id))[0];
       if (last) setReceipt({ id: last.id, reprint: false, content: receiptFor(r, last, r.remainingMinor) });
     },
@@ -181,15 +193,18 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
   const check = l ? checkAmount(amount, l.currency, l.remainingMinor) : null;
   const valid = check?.ok === true;
   const minor = check?.ok ? check.minor : 0;
-  const canPay = l?.status === 'active' && l.remainingMinor > 0 && can('health.billing.invoice');
+  // Le montant dû est déjà saisi : le caissier n'a qu'à choisir le mode, ou à réduire le montant pour un acompte.
+  const remainingText = l && l.remainingMinor > 0 ? (l.remainingMinor / 10 ** decimalsOf(l.currency)).toFixed(decimalsOf(l.currency)) : '';
+  useEffect(() => { setAmount(remainingText); }, [remainingText]);
+  const canPay = l?.status === 'active' && l.remainingMinor > 0 && can(P.billing.pay);
   const balance = useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'billing', 'balance', l?.patientId ?? ''),
     queryFn: () => apiBilling.balance(l?.patientId ?? ''),
-    enabled: Boolean(l?.patientId) && can('health.billing.invoice'),
+    enabled: Boolean(l?.patientId) && can(P.billing.pay),
   });
   // Utile seulement s'il reste plus à régler que cette facture seule.
   const groupBalance = balance.data?.find((b) => b.currency === l?.currency && b.outstandingMinor > (l?.remainingMinor ?? 0));
-  const canCancel = l?.status === 'active' && can('health.billing.exception');
+  const canCancel = l?.status === 'active' && (can(P.billing.credit) || can('health.billing.exception'));
 
   return (
     <Dialog open onClose={onClose} variant="detail" title={l ? `${l.patientName}` : t('billing.title')}
@@ -237,7 +252,9 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
             </form>
           )}
 
-          {l.status === 'active' && groupBalance && can('health.billing.invoice') && <GroupPay patientId={l.patientId} balance={groupBalance} onDone={refresh} onPaid={(r) => void printGroup(r)} />}
+          {l.status === 'active' && groupBalance && can(P.billing.pay) && (showGroup
+            ? <GroupPay patientId={l.patientId} balance={groupBalance} onDone={refresh} onPaid={(r) => void printGroup(r)} />
+            : <Button variant="ghost" size="sm" onClick={() => setShowGroup(true)}>{t('apiBilling.groupOpen', { defaultValue: 'Régler tout le solde du patient…' })}</Button>)}
 
           {canCancel && (cancelling ? (
             <form className="space-y-3 rounded-md border border-border p-3" onSubmit={(e) => { e.preventDefault(); if (reason.trim() && !cancel.isPending) cancel.mutate(); }}>

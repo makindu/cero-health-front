@@ -33,6 +33,7 @@ export function rxFromApi(r: Record<string, unknown>): Rx {
         duration: text(i.duration),
         quantity: Number(i.quantity) || 0,
         instructions: text(i.instructions),
+        unit: text(i.unit),
       }),
     ),
     note: text(r.note),
@@ -56,6 +57,7 @@ export function rxToApi(input: { patientId: string; items: RxItem[]; note: strin
       duration: i.duration.trim(),
       quantity: i.quantity,
       instructions: i.instructions.trim(),
+      ...((i.unit ?? '').trim() ? { unit: (i.unit ?? '').trim().slice(0, 40) } : {}),
     })),
   };
   if (input.note.trim()) body.note = input.note.trim().slice(0, 255);

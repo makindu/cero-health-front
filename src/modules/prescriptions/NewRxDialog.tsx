@@ -21,15 +21,18 @@ import { isQuantity, parseNumberText } from '@/utils/numbers';
 import { DraftNotice } from '@/components/feedback/draft-notice';
 import { usePersistentState } from '@/core/drafts/use-persistent-state';
 
+/** Unités proposées à la saisie ; l'unité reste libre. */
+const RX_UNITS = ['comprimé', 'gélule', 'ampoule', 'flacon', 'boîte', 'sachet', 'tube', 'suppositoire', 'ml', 'mg', 'g', 'goutte', 'dose'] as const;
+
 interface Row extends Omit<RxItem, 'quantity'> { key: number; quantity: string }
-const empty = (key: number): Row => ({ key, label: '', dosage: '', frequency: '', duration: '', quantity: '1', instructions: '' });
+const empty = (key: number): Row => ({ key, label: '', dosage: '', frequency: '', duration: '', quantity: '1', unit: '', instructions: '' });
 
 /**
  * Désignation d'un médicament. API réelle : même recherche que les examens, avec les médicaments de la pharmacie et ceux déjà
  * prescrits ; un nom absent s'ajoute depuis la barre (« + Ajouter … ») et reste proposé aux confrères.
  * Mode local : saisie libre avec suggestions du catalogue.
  */
-function DrugField({ local, value, onChange, ...rest }: Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'type'> & { local: readonly Suggestion[]; value: string; onChange: (v: string) => void }) {
+function DrugField({ local, value, onChange, ...rest }: Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'type'> & { local: readonly Suggestion[]; value: string; onChange: (v: string, unitHint?: string) => void }) {
   const { t } = useTranslation('prescriptions');
   const toast = useToast();
   const api = referenceFromApi();
@@ -42,8 +45,8 @@ function DrugField({ local, value, onChange, ...rest }: Omit<ComponentProps<'inp
   }, [remote.data, value]);
   if (!api) return <SuggestInput {...rest} suggestions={local} value={value} onChange={onChange} placeholder={t('create.drugPlaceholder')} />;
   return (
-    <Autocomplete<DrugSuggestion> {...rest} items={items} value={value} onChange={(key) => onChange(key)} getKey={(d) => d.name} getLabel={(d) => d.name} getSearch={(d) => d.name}
-      renderOption={(d) => <span>{d.name}<span className="ms-2 text-xs text-muted-foreground">{t(`drugSource.${d.source}`)}</span></span>}
+    <Autocomplete<DrugSuggestion> {...rest} items={items} value={value} onChange={(key, item) => onChange(key, item?.hint?.trim() || undefined)} getKey={(d) => d.name} getLabel={(d) => d.name} getSearch={(d) => d.name}
+      renderOption={(d) => <span>{d.name}<span className="ms-2 text-xs text-muted-foreground">{d.hint ? `${d.hint} · ` : ''}{t(`drugSource.${d.source}`)}</span></span>}
       emptyText={t('create.drugNoMatch')} placeholder={t('create.drugPlaceholder')} onQueryChange={setQuery}
       createLabel={(text) => t('create.addDrug', { label: text })}
       onCreate={async (text) => {
@@ -94,9 +97,10 @@ export function NewRxDialog({ onClose, onCreated, initialPatientId, consultation
         {rows.map((r, index) => (
           <fieldset key={r.key} className="space-y-2 rounded-md border border-border p-3">
             <legend className="px-1 text-sm font-medium">{t('create.line', { n: index + 1 })}</legend>
-            <div className="grid gap-2 sm:grid-cols-[1fr_6rem]">
-              <FormField label={t('fields.product')} required>{(c) => <DrugField {...c} local={drugs} value={r.label} onChange={(v) => set(r.key, { label: v })} />}</FormField>
+            <div className="grid gap-2 sm:grid-cols-[1fr_6rem_9rem]">
+              <FormField label={t('fields.product')} required>{(c) => <DrugField {...c} local={drugs} value={r.label} onChange={(v, unitHint) => set(r.key, { label: v, ...(unitHint && !(r.unit ?? '').trim() ? { unit: unitHint.slice(0, 40) } : {}) })} />}</FormField>
               <FormField label={t('fields.quantity')} required>{(c) => <NumberInput {...c} decimal value={r.quantity} onValueChange={(v) => set(r.key, { quantity: v })} />}</FormField>
+              <FormField label={t('fields.unit', { defaultValue: 'Unité (facultatif)' })}>{(c) => (<><Input {...c} list="rx-units" value={r.unit ?? ''} maxLength={40} placeholder={t('fields.unitPlaceholder', { defaultValue: 'comprimé, boîte, ml…' })} onChange={(e) => set(r.key, { unit: e.target.value })} /><datalist id="rx-units">{RX_UNITS.map((u) => <option key={u} value={u} />)}</datalist></>)}</FormField>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
               <FormField label={t('fields.dosage')} required>{(c) => <Input {...c} value={r.dosage} onChange={(e) => set(r.key, { dosage: e.target.value })} />}</FormField>

@@ -37,9 +37,9 @@ export function periodError(from: string, to: string): 'missing' | 'order' | 'to
   return days > 366 ? 'tooLong' : null;
 }
 
-export async function fetchReport(report: ApiReportId, from: string, to: string): Promise<ReportResult> {
+export async function fetchReport(report: ApiReportId, from: string, to: string, careUnitIds: string[] = []): Promise<ReportResult> {
   const res = await healthClient.get<{ report: string; from: string; to: string; sections: ReportSection[] }>(`/reports/${report}`, {
-    params: { from, to, tz: tzOffsetMinutes() },
+    params: { from, to, tz: tzOffsetMinutes(), ...(careUnitIds.length > 0 ? { care_unit_ids: careUnitIds.map(Number) } : {}) },
   });
   const data = res.data;
   return { report: data.report, from: data.from, to: data.to, sections: cashflowFirst(Array.isArray(data.sections) ? data.sections : []) };
@@ -75,7 +75,7 @@ export function reportGrid(result: ReportResult, labels: GridLabels): Cell[][] {
 /** Document (PDF) : titre, période, puis un tableau par section non vide. Les colonnes de texte sont à gauche, les chiffres à droite. */
 export function reportBlocks(result: ReportResult, labels: GridLabels): DocBlock[] {
   const blocks: DocBlock[] = [{ kind: 'title', text: labels.title }, { kind: 'meta', text: `${result.from} – ${result.to}` }];
-  const textual = new Set(['key', 'currency', 'status', 'method']);
+  const textual = new Set(['key', 'currency', 'status', 'method', 'unit']);
   for (const section of result.sections) {
     if (section.rows.length === 0) continue;
     blocks.push({ kind: 'heading', text: labels.section(section.key) });

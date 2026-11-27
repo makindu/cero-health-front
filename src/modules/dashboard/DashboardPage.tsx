@@ -30,6 +30,7 @@ import { useResourceList } from '../_shared/use-resource';
 import { dashboardService, type DashboardSummary } from './data';
 import { DoctorQueue } from './DoctorQueue';
 import { NurseQueue } from './NurseQueue';
+import { CashClosureCard } from '../billing/CashClosureCard';
 import { referenceFromApi } from '../_shared/reference-data';
 import { PersonName } from '@/components/ui/avatar';
 
@@ -140,6 +141,7 @@ export default function DashboardPage() {
   return (
     <>
       <PageHeader title={t('title')} description={t('subtitle')} />
+      {referenceFromApi() && can(PERMISSIONS.billing.pay) && <CashClosureCard />}
       {doctorDesk && <DoctorQueue />}
       {nurseDesk && <NurseQueue />}
       {query.data?.isDemo && <DemoNotice endpoint="/health/reports/dashboard" />}

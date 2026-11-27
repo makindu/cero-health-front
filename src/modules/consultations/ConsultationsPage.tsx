@@ -12,7 +12,6 @@ import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { ResourcePage } from '../_shared/ResourcePage';
 import { consultationService, type Consultation, type ConsultationStatus } from './data';
 import { PersonName } from '@/components/ui/avatar';
-import { DurationSettings } from './DurationSettings';
 
 const STATUS: Record<ConsultationStatus, { tone: StatusTone; icon: typeof Lock }> = {
   draft: { tone: 'neutral', icon: FilePen },
@@ -55,7 +54,6 @@ export default function ConsultationsPage() {
       title={t('title')}
       description={t('subtitle')}
       searchLabel={t('search')}
-      actions={<DurationSettings />}
       columns={columns}
       defaultSort={{ columnId: 'date', direction: 'desc' }}
       filters={[

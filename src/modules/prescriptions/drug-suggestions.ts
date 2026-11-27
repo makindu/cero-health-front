@@ -9,6 +9,8 @@ export interface DrugSuggestion {
   name: string;
   /** « catalog » : pharmacie de l'établissement ; « prescribed » : déjà prescrit par un confrère (hors pharmacie possible). */
   source: 'catalog' | 'prescribed';
+  /** Forme du produit au catalogue (comprimé, sirop…), proposée comme unité de la ligne d'ordonnance. */
+  hint?: string | null;
 }
 
 /** Ajout rapide : mémorise en silence un médicament absent des listes (sans prix ni stock, à valider par les gestionnaires). */

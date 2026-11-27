@@ -94,6 +94,8 @@ export const PERMISSIONS = {
     configure: 'health.billing.configure',
     /** Accorder une réduction sur la facture des consommations (motif obligatoire, plafonnée). */
     discount: 'health.billing.discount',
+    /** Voir les opérations de tous les caissiers (sans ce droit : seulement les siennes). */
+    viewAll: 'health.billing.viewAll',
   },
   insurance: {
     view: 'health.insurance.view',
@@ -114,7 +116,7 @@ export const PERMISSIONS = {
   },
   /** Dépenses de l'établissement (écrites dans la comptabilité UZISHA) : saisir, valider par un responsable, annuler tant que non validée. */
   expenses: { view: 'health.expenses.view', create: 'health.expenses.create', validate: 'health.expenses.validate', cancel: 'health.expenses.cancel' },
-  reports: { view: 'health.reports.view' },
+  reports: { view: 'health.reports.view', scope: 'health.reports.scope' },
   administration: {
     view: 'health.administration.view',
     manageUsers: 'health.users.manage',

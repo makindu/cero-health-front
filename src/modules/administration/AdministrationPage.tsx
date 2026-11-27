@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/layout/page-header';
 import { StatusBadge } from '@/components/ui/badge';
 import { useAuth } from '@/core/auth/cero-id';
 import { Tabs } from '@/components/ui/tabs';
+import { ReportScopeCard } from './ReportScopeCard';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { DescriptionList, DetailSection } from '../_shared/detail-view';
 import { SERVICE_KEYS } from '../_shared/demo-people';
@@ -17,6 +18,7 @@ import { careUnitTypeOptions, createCareUnitType, useCareUnitTypes, useRefreshCa
 import { ReviewQueue } from '../review/ReviewQueue';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { BillingSettingsCard } from '../billing/BillingSettingsCard';
+import { DurationSettings } from '../consultations/DurationSettings';
 import { PersonName } from '@/components/ui/avatar';
 import {
   CARE_UNIT_TYPES,
@@ -160,7 +162,9 @@ export default function AdministrationPage() {
           { id: 'facility', label: t('tabs.facility'), content: <FacilityForm /> },
           { id: 'users', label: t('tabs.users'), content: <UsersTab /> },
           { id: 'services', label: t('tabs.services'), content: <ServicesTab /> },
+          { id: 'consultations', label: t('tabs.consultations', { defaultValue: 'Consultations' }), content: <DurationSettings /> },
           ...(referenceFromApi() ? [{ id: 'billing', label: t('tabs.billing', { defaultValue: 'Facturation' }), content: <Can permission={PERMISSIONS.billing.configure}><BillingSettingsCard /></Can> }] : []),
+          ...(referenceFromApi() ? [{ id: 'reportScope', label: t('tabs.reportScope', { defaultValue: 'Rapports par service' }), content: <Can permission={PERMISSIONS.reports.scope}><ReportScopeCard /></Can> }] : []),
           ...(referenceFromApi() ? [{ id: 'review', label: t('tabs.review', { defaultValue: 'À valider' }), content: <ReviewQueue /> }] : []),
         ]}
       />

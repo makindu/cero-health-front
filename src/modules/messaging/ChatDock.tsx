@@ -18,6 +18,25 @@ import { MESSAGING_AVAILABLE, useChatMe, useContacts, useConversations, useHeart
 
 type Mode = 'closed' | 'open' | 'min';
 const KEY = 'cero-health.chat-dock';
+const POS_KEY = 'cero-health.chat-dock-pos';
+const WIN_KEY = 'cero-health.chat-dock-win';
+const BTN = 48;
+const MARGIN = 8;
+interface Pos { right: number; bottom: number }
+const DEFAULT_POS: Pos = { right: 16, bottom: 16 };
+
+/** Position du bouton : mémorisée sur cet appareil, ramenée dans l'écran si la fenêtre a changé de taille. */
+function loadPos(): Pos {
+  try {
+    const raw = JSON.parse(globalThis.localStorage?.getItem(POS_KEY) ?? 'null') as Partial<Pos> | null;
+    if (raw && Number.isFinite(raw.right) && Number.isFinite(raw.bottom)) return { right: Number(raw.right), bottom: Number(raw.bottom) };
+  } catch { /* stockage indisponible : position par défaut */ }
+  return DEFAULT_POS;
+}
+const clampPos = (p: Pos): Pos => ({
+  right: Math.max(MARGIN, Math.min(p.right, (globalThis.innerWidth || 1024) - BTN - MARGIN)),
+  bottom: Math.max(MARGIN, Math.min(p.bottom, (globalThis.innerHeight || 768) - BTN - MARGIN)),
+});
 
 function load(): { mode: Mode; selected: string | null } {
   try {
@@ -53,6 +72,24 @@ function Dock() {
   const canManage = referenceFromApi() && can('health.messaging.manage');
   const [grouping, setGrouping] = useState(false);
   const [membersOpen, setMembersOpen] = useState(false);
+  const [pos, setPos] = useState<Pos>(() => clampPos(loadPos()));
+  const drag = useRef<{ x: number; y: number; right: number; bottom: number; moved: boolean } | null>(null);
+  const justDragged = useRef(false);
+  const [win, setWin] = useState<Pos | null>(() => { try { const r = JSON.parse(globalThis.localStorage?.getItem(WIN_KEY) ?? 'null') as Partial<Pos> | null; return r && Number.isFinite(r.right) && Number.isFinite(r.bottom) ? { right: Number(r.right), bottom: Number(r.bottom) } : null; } catch { return null; } });
+  const winDrag = useRef<{ x: number; y: number; right: number; bottom: number } | null>(null);
+  const winEl = useRef<HTMLElement | null>(null);
+  const clampWin = (p: Pos): Pos => {
+    const w = winEl.current?.offsetWidth ?? 352;
+    const h = winEl.current?.offsetHeight ?? 480;
+    return { right: Math.max(0, Math.min(p.right, (globalThis.innerWidth || 1024) - w)), bottom: Math.max(0, Math.min(p.bottom, (globalThis.innerHeight || 768) - h)) };
+  };
+  const saveWin = (p: Pos): void => { try { globalThis.localStorage?.setItem(WIN_KEY, JSON.stringify(p)); } catch { /* position valable pour cette session seulement */ } };
+  const savePos = (p: Pos): void => { try { globalThis.localStorage?.setItem(POS_KEY, JSON.stringify(p)); } catch { /* sans stockage : position valable pour cette session seulement */ } };
+  useEffect(() => {
+    const onResize = (): void => setPos((p) => clampPos(p));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
   /** Historique : messages plus anciens déjà chargés, par conversation (mode API). */
   const [olderBy, setOlderBy] = useState<Record<string, { items: Message[]; done: boolean }>>({});
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -218,8 +255,40 @@ function Dock() {
 
   if (mode === 'closed') {
     return (
-      <button type="button" onClick={() => set({ mode: 'open' })} aria-label={unread > 0 ? `${t('open')} — ${t('unread', { count: unread })}` : t('open')}
-        className="no-print fixed bottom-4 end-4 z-30 inline-flex size-12 items-center justify-center rounded-full border-2 border-background bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/40 transition-transform hover:scale-105 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+      <button type="button"
+        style={{ right: pos.right, bottom: pos.bottom, touchAction: 'none' }}
+        onPointerDown={(e) => { justDragged.current = false; drag.current = { x: e.clientX, y: e.clientY, right: pos.right, bottom: pos.bottom, moved: false }; e.currentTarget.setPointerCapture(e.pointerId); }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (!d) return;
+          const dx = e.clientX - d.x;
+          const dy = e.clientY - d.y;
+          if (!d.moved && Math.hypot(dx, dy) < 5) return; // sous 5 px : c'est un simple clic
+          d.moved = true;
+          justDragged.current = true;
+          setPos(clampPos({ right: d.right - dx, bottom: d.bottom - dy }));
+        }}
+        onPointerUp={(e) => {
+          const d = drag.current;
+          drag.current = null;
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+          if (d?.moved) savePos(pos);
+        }}
+        onKeyDown={(e) => {
+          // Au clavier : Alt + flèches déplacent le bouton de 24 px.
+          if (!e.altKey) return;
+          const step = 24;
+          const d = { ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
+          if (!d) return;
+          e.preventDefault();
+          const next = clampPos({ right: pos.right + d[0], bottom: pos.bottom + d[1] });
+          setPos(next);
+          savePos(next);
+        }}
+        onClick={() => { if (justDragged.current) { justDragged.current = false; return; } set({ mode: 'open' }); }}
+        title={t('moveHint', { defaultValue: 'Glissez pour déplacer' })}
+        aria-label={unread > 0 ? `${t('open')} — ${t('unread', { count: unread })}` : t('open')}
+        className="no-print fixed z-30 inline-flex size-12 cursor-grab items-center justify-center rounded-full active:cursor-grabbing border-2 border-background bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/40 transition-transform hover:scale-105 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
         <MessageSquare aria-hidden className="size-5" />
         {unread > 0 && <span aria-hidden className="absolute -end-1.5 -top-1.5 h-5 min-w-5 rounded-full bg-danger px-1 text-center text-[11px] font-bold leading-5 text-danger-foreground ring-2 ring-background">{unread > 99 ? '99+' : unread}</span>}
       </button>
@@ -230,8 +299,29 @@ function Dock() {
   const { online, text: statusText } = selected && current ? status(current) : { online: false, text: '' };
   return (
     <section role="region" aria-label={t('dock')} onKeyDown={(e) => { if (e.key === 'Escape') set({ mode: 'min' }); }}
-      className={cn('no-print fixed bottom-0 end-4 z-30 flex w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-t-lg border border-b-0 border-t-2 border-border border-t-primary bg-surface text-foreground shadow-xl', mode === 'open' && 'h-[30rem] max-h-[75dvh]')}>
-      <header className="flex items-center gap-1 border-b border-border bg-surface px-2 py-1.5 text-foreground">
+      ref={winEl}
+      style={win ? { right: win.right, bottom: win.bottom } : { right: Math.max(MARGIN, Math.min(pos.right, (globalThis.innerWidth || 1024) - 352 - MARGIN)), bottom: 0 }}
+      className={cn('no-print fixed z-30 flex w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-t-lg border border-b-0 border-t-2 border-border border-t-primary bg-surface text-foreground shadow-xl', mode === 'open' && 'h-[30rem] max-h-[75dvh]')}>
+      <header className="flex cursor-grab touch-none items-center gap-1 border-b border-border bg-surface px-2 py-1.5 text-foreground active:cursor-grabbing"
+        title={t('moveHint', { defaultValue: 'Glissez pour déplacer' })}
+        onPointerDown={(e) => {
+          if ((e.target as HTMLElement).closest('button, a, input, textarea')) return; // les boutons de l'en-tête gardent leur rôle
+          const r = winEl.current?.getBoundingClientRect();
+          if (!r) return;
+          winDrag.current = { x: e.clientX, y: e.clientY, right: (globalThis.innerWidth || 1024) - r.right, bottom: (globalThis.innerHeight || 768) - r.bottom };
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          const d = winDrag.current;
+          if (!d) return;
+          setWin(clampWin({ right: d.right - (e.clientX - d.x), bottom: d.bottom - (e.clientY - d.y) }));
+        }}
+        onPointerUp={(e) => {
+          if (!winDrag.current) return;
+          winDrag.current = null;
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+          if (win) saveWin(win);
+        }}>
         {mode === 'open' && selected && (
           <Button size="icon" variant="ghost" className="size-7" aria-label={t('back')} onClick={() => set({ selected: null })}><ChevronLeft aria-hidden className="size-4" /></Button>
         )}

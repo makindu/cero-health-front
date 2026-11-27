@@ -41,6 +41,7 @@ const MAP: Record<string, readonly string[]> = {
   'health.billing.read': ['health.billing.view', 'health.cash.view'],
   'health.billing.invoice': ['health.billing.create', 'health.billing.pay', 'health.cash.record'],
   'health.billing.discount': ['health.billing.exempt'],
+  'health.billing.read-all': ['health.billing.viewAll'],
   'health.billing.exception': ['health.billing.credit', 'health.laboratory.exception', 'health.discharges.exception'],
   'health.billing.manage': ['health.billing.refund', 'health.billing.cancel', 'health.billing.reverse', 'health.billing.settle', 'health.billing.configure', 'health.cash.close'],
   'health.insurance.view': ['health.insurance.view'],
@@ -57,6 +58,8 @@ const MAP: Record<string, readonly string[]> = {
   'health.deposits.manage': ['health.stock.view', 'health.deposits.read'],
   'health.stock.move': ['health.stock.view', 'health.deposits.read'],
   'health.audit.read': ['health.audit.view', 'health.reports.view'],
+  // Choisir, par utilisateur, les services dont il voit les rapports financiers.
+  'health.reports.scope.manage': ['health.reports.scope', 'health.administration.view'],
   'health.patients.categories': ['health.settings.manage', 'health.administration.view'],
   'health.visits.read': ['health.visits.view'],
   'health.lab.catalog': ['health.laboratory.catalog'],
