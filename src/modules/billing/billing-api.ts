@@ -16,7 +16,13 @@ export const METHODS = ['cash', 'mobile_money', 'card', 'transfer'] as const;
 export type Method = (typeof METHODS)[number];
 export type LinkState = 'awaiting' | 'partial' | 'paid' | 'cancelled';
 
-export interface BillingPayment { id: string; amountMinor: number; method: string; paidAt: string; groupId: string | null }
+export interface BillingPayment {
+  id: string; amountMinor: number; method: string; paidAt: string; groupId: string | null;
+  /** Devise réellement remise (si différente de la facture), montant remis et taux (1 devise de la facture = N devise remise). */
+  tenderCurrency?: string | null; tenderMinor?: number | null; fxRate?: string | null;
+  /** Monnaie rendue au patient (paiement mixte), portée par le dernier paiement du groupe. */
+  changeCurrency?: string | null; changeMinor?: number | null;
+}
 export interface InvoiceLine { description: string; quantity: number; unitMinor: number; totalMinor: number }
 export interface BillingLink {
   id: string; sourceType: string; sourceId: string; patientId: string; patientName: string; currency: string; status: string;
@@ -31,7 +37,9 @@ export function linkFrom(r: Row): BillingLink {
     patientName: text(r.patient_name) || (r.patient_id ? `#${text(r.patient_id)}` : ''), currency: text(r.currency) || 'USD', status: text(r.status),
     totalMinor: num(r.total_minor), paidMinor: num(r.paid_minor), remainingMinor: num(r.remaining_minor), createdAt: text(r.created_at), cancelReason: text(r.cancel_reason),
     lines: rows(r.lines).map((x) => ({ description: text(x.description), quantity: num(x.quantity), unitMinor: num(x.unit_minor), totalMinor: num(x.total_minor) })),
-    payments: rows(r.payments).map((p) => ({ id: text(p.id), amountMinor: num(p.amount_minor), method: text(p.method), paidAt: text(p.paid_at), groupId: p.group_id ? text(p.group_id) : null })),
+    payments: rows(r.payments).map((p) => ({ id: text(p.id), amountMinor: num(p.amount_minor), method: text(p.method), paidAt: text(p.paid_at), groupId: p.group_id ? text(p.group_id) : null,
+      tenderCurrency: p.tender_currency ? text(p.tender_currency) : null, tenderMinor: p.tender_minor === null || p.tender_minor === undefined ? null : num(p.tender_minor), fxRate: p.fx_rate ? text(p.fx_rate) : null,
+      changeCurrency: p.change_currency ? text(p.change_currency) : null, changeMinor: p.change_minor === null || p.change_minor === undefined ? null : num(p.change_minor) })),
   };
 }
 
@@ -57,10 +65,11 @@ export function receiptFrom(r: Row): GroupReceipt {
 }
 
 /** Réglages de facturation de l'établissement : pour l'instant le dépôt rattaché aux prestations sans stock propre. */
-export interface BillingSettings { defaultDepositId: string | null; currency: string }
+export interface BillingSettings { defaultDepositId: string | null; currency: string; /** Durée de validité d'une consultation, en jours (1 par défaut), enregistrée en base. */ consultationValidityDays: number }
 export function settingsFrom(r: unknown): BillingSettings {
   const o = rec(r);
-  return { defaultDepositId: o.default_deposit_id === null || o.default_deposit_id === undefined ? null : text(o.default_deposit_id), currency: text(o.currency) };
+  const days = Number(o.consultation_validity_days);
+  return { defaultDepositId: o.default_deposit_id === null || o.default_deposit_id === undefined ? null : text(o.default_deposit_id), currency: text(o.currency), consultationValidityDays: Number.isInteger(days) && days >= 1 ? days : 1 };
 }
 /** « Automatique » (chaîne vide) = aucun dépôt imposé : le serveur prend celui des autres lignes, puis le premier de l'établissement. */
 export function depositPayload(depositId: string): { default_deposit_id: number | null } {
@@ -72,6 +81,8 @@ export interface LinkQuery { status?: string; sourceType?: string; patientId?: s
 
 export const apiBilling = {
   settings: async (): Promise<BillingSettings> => settingsFrom((await healthClient.get<Row>('/billing/settings')).data),
+
+  setConsultationValidity: async (days: number): Promise<BillingSettings> => settingsFrom((await healthClient.put<Row>('/billing/settings', { consultation_validity_days: days })).data),
 
   setDefaultDeposit: async (depositId: string): Promise<BillingSettings> => settingsFrom((await healthClient.put<Row>('/billing/settings', depositPayload(depositId))).data),
 
@@ -90,6 +101,17 @@ export const apiBilling = {
   /** La clé d'idempotence rend l'envoi sûr : un clic double ou un rejeu après coupure ne crée jamais un second paiement. */
   pay: async (id: string, amountMinor: number, method: Method, key: string): Promise<BillingLink> =>
     linkFrom(rec((await healthClient.post<Row>(`/billing/links/${id}/payments`, { amount_minor: amountMinor, method }, { headers: { 'Idempotency-Key': key } })).data)),
+
+  /** Paiement remis dans une AUTRE devise (ex. facture en USD payée en CDF) : le serveur convertit au taux du jour et garde le taux. */
+  payTender: async (id: string, tenderCurrency: string, tenderMinor: number, method: Method, key: string): Promise<BillingLink> =>
+    linkFrom(rec((await healthClient.post<Row>(`/billing/links/${id}/payments`, { tender_currency: tenderCurrency, tender_minor: tenderMinor, method }, { headers: { 'Idempotency-Key': key } })).data)),
+
+  /** Paiement MIXTE : plusieurs remises (devise, montant, mode) en une seule opération ; tout ou rien, rejouable avec la même clé. */
+  payMixed: async (id: string, lines: { currency: string; minor: number; method: Method }[], changeCurrency: string | undefined, key: string): Promise<BillingLink> =>
+    linkFrom(rec((await healthClient.post<Row>(`/billing/links/${id}/mixed-payments`, {
+      lines: lines.map((x) => ({ currency: x.currency, amount_minor: x.minor, method: x.method })),
+      ...(changeCurrency ? { change_currency: changeCurrency } : {}),
+    }, { headers: { 'Idempotency-Key': key } })).data)),
 
   balance: async (patientId: string): Promise<PatientBalance[]> => balanceFrom(rec((await healthClient.get<Row>(`/patients/${patientId}/balance`)).data)),
 

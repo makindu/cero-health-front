@@ -45,6 +45,8 @@ export const PERMISSIONS = {
     collect: 'health.laboratory.collect',
     resultsEnter: 'health.laboratory.results.enter',
     resultsValidate: 'health.laboratory.results.validate',
+    /** Valider ses propres résultats même quand l'établissement exige un valideur différent. */
+    resultsValidateOwn: 'health.laboratory.results.validate-own',
     /** Prélèvement sans paiement préalable (exception motivée, tracée). */
     exception: 'health.laboratory.exception',
     /** Gérer le catalogue des examens et leurs prix. */
@@ -117,6 +119,10 @@ export const PERMISSIONS = {
   /** Dépenses de l'établissement (écrites dans la comptabilité UZISHA) : saisir, valider par un responsable, annuler tant que non validée. */
   expenses: { view: 'health.expenses.view', create: 'health.expenses.create', validate: 'health.expenses.validate', cancel: 'health.expenses.cancel' },
   reports: { view: 'health.reports.view', scope: 'health.reports.scope' },
+  /** Financière : reçoit les versements des caissiers, clôture la caisse de l'établissement, voit toutes les caisses. */
+  treasury: { manage: 'health.treasury.manage' },
+  cashAssign: { manage: 'health.cash.assign' },
+  exchange: { manage: 'health.exchange-rates.manage' },
   administration: {
     view: 'health.administration.view',
     manageUsers: 'health.users.manage',

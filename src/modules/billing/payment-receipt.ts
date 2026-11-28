@@ -1,6 +1,6 @@
 import type { ReceiptContent } from '../_shared/receipt/ReceiptPrintDialog';
 
-export interface PaymentReceiptLabels { title: string; patient: string; act: string; method: string; amount: string; remaining: string; invoices: string; footer: string; total?: string; paid?: string }
+export interface PaymentReceiptLabels { title: string; patient: string; act: string; method: string; amount: string; remaining: string; invoices: string; footer: string; total?: string; paid?: string; change?: string }
 
 export interface PaymentReceiptInput {
   id: string;
@@ -17,6 +17,10 @@ export interface PaymentReceiptInput {
   items?: { text: string; amountText: string }[];
   totalText?: string;
   paidText?: string;
+  /** Paiement mixte : une ligne par remise (« Espèces · USD » → « 10,00 USD »). */
+  tenders?: { label: string; value: string }[];
+  /** Monnaie rendue au patient. */
+  changeText?: string;
 }
 
 /** Contenu du reçu d'un paiement patient. Les montants sont déjà ceux du serveur, rien n'est recalculé ici. */
@@ -28,8 +32,9 @@ export function paymentReceipt(i: PaymentReceiptInput, L: PaymentReceiptLabels):
     ...(i.totalText ? [{ label: L.total ?? 'Total', value: i.totalText, strong: true }] : []),
     ...(i.paidText ? [{ label: L.paid ?? 'Déjà payé', value: i.paidText }] : []),
     ...(i.invoiceCount && i.invoiceCount > 1 ? [{ label: L.invoices, value: String(i.invoiceCount) }] : []),
-    { label: L.method, value: i.methodText },
+    ...(i.tenders && i.tenders.length > 0 ? i.tenders : [{ label: L.method, value: i.methodText }]),
     { label: L.amount, value: i.amountText, strong: true },
+    ...(i.changeText ? [{ label: L.change ?? 'Monnaie rendue', value: i.changeText }] : []),
     ...(i.remainingText ? [{ label: L.remaining, value: i.remainingText }] : []),
   ];
 

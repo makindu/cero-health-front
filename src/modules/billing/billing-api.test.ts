@@ -9,7 +9,19 @@ describe('facturation API', () => {
       payments: [{ id: 1, amount_minor: 2000, method: 'cash', paid_at: '2026-11-22T09:05:00Z', group_id: null }],
     });
     expect(l).toMatchObject({ id: '7', sourceType: 'consultation', patientName: 'Alpha Test', totalMinor: 5000, remainingMinor: 3000 });
-    expect(l.payments).toEqual([{ id: '1', amountMinor: 2000, method: 'cash', paidAt: '2026-11-22T09:05:00Z', groupId: null }]);
+    expect(l.payments).toEqual([{ id: '1', amountMinor: 2000, method: 'cash', paidAt: '2026-11-22T09:05:00Z', groupId: null, tenderCurrency: null, tenderMinor: null, fxRate: null, changeCurrency: null, changeMinor: null }]);
+  });
+
+  it('lit la devise remise, le taux et la monnaie rendue d\'un paiement mixte', () => {
+    const l = linkFrom({
+      id: 7, status: 'active', currency: 'USD', total_minor: 5000, paid_minor: 5000, remaining_minor: 0,
+      payments: [
+        { id: 1, amount_minor: 1000, method: 'cash', paid_at: '2026-11-28T09:00:00Z', group_id: 'mix-1', tender_currency: 'USD', tender_minor: 2000, fx_rate: '1', change_currency: 'CDF', change_minor: 2800000 },
+        { id: 2, amount_minor: 4000, method: 'mobile_money', paid_at: '2026-11-28T09:00:00Z', group_id: 'mix-1', tender_currency: 'CDF', tender_minor: 11200000, fx_rate: '2800' },
+      ],
+    });
+    expect(l.payments[1]).toMatchObject({ tenderCurrency: 'CDF', tenderMinor: 11200000, fxRate: '2800', changeMinor: null });
+    expect(l.payments[0]).toMatchObject({ groupId: 'mix-1', changeCurrency: 'CDF', changeMinor: 2800000 });
   });
 
   it('donne un nom de repli sans nom de patient et accepte l\'absence de paiements', () => {
@@ -41,9 +53,10 @@ describe('facturation API', () => {
   });
 
   it('lit les réglages de facturation et prépare le dépôt par défaut', () => {
-    expect(settingsFrom({ default_deposit_id: 12, currency: 'USD' })).toEqual({ defaultDepositId: '12', currency: 'USD' });
-    expect(settingsFrom({ default_deposit_id: null })).toEqual({ defaultDepositId: null, currency: '' });
-    expect(settingsFrom(null)).toEqual({ defaultDepositId: null, currency: '' });
+    expect(settingsFrom({ default_deposit_id: 12, currency: 'USD' })).toEqual({ defaultDepositId: '12', currency: 'USD', consultationValidityDays: 1 });
+    expect(settingsFrom({ default_deposit_id: null })).toEqual({ defaultDepositId: null, currency: '', consultationValidityDays: 1 });
+    expect(settingsFrom(null)).toEqual({ defaultDepositId: null, currency: '', consultationValidityDays: 1 });
+    expect(settingsFrom({ consultation_validity_days: 7 }).consultationValidityDays).toBe(7);
     expect(depositPayload('12')).toEqual({ default_deposit_id: 12 });
     expect(depositPayload('')).toEqual({ default_deposit_id: null });
     expect(depositPayload('abc')).toEqual({ default_deposit_id: null });

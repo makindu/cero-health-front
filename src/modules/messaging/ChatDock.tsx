@@ -79,14 +79,17 @@ function Dock() {
   const winDrag = useRef<{ x: number; y: number; right: number; bottom: number } | null>(null);
   const winEl = useRef<HTMLElement | null>(null);
   const clampWin = (p: Pos): Pos => {
-    const w = winEl.current?.offsetWidth ?? 352;
-    const h = winEl.current?.offsetHeight ?? 480;
+    const vw = globalThis.innerWidth || 1024;
+    const vh = globalThis.innerHeight || 768;
+    const w = winEl.current?.offsetWidth ?? Math.min(352, vw - 32);
+    const h = winEl.current?.offsetHeight ?? Math.min(480, vh * 0.75);
     return { right: Math.max(0, Math.min(p.right, (globalThis.innerWidth || 1024) - w)), bottom: Math.max(0, Math.min(p.bottom, (globalThis.innerHeight || 768) - h)) };
   };
   const saveWin = (p: Pos): void => { try { globalThis.localStorage?.setItem(WIN_KEY, JSON.stringify(p)); } catch { /* position valable pour cette session seulement */ } };
   const savePos = (p: Pos): void => { try { globalThis.localStorage?.setItem(POS_KEY, JSON.stringify(p)); } catch { /* sans stockage : position valable pour cette session seulement */ } };
   useEffect(() => {
-    const onResize = (): void => setPos((p) => clampPos(p));
+    const onResize = (): void => { setPos((p) => clampPos(p)); setWin((w) => (w ? clampWin(w) : w)); };
+    onResize(); // position mémorisée sur un grand écran : ramenée dans le petit écran dès l'ouverture
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -300,7 +303,7 @@ function Dock() {
   return (
     <section role="region" aria-label={t('dock')} onKeyDown={(e) => { if (e.key === 'Escape') set({ mode: 'min' }); }}
       ref={winEl}
-      style={win ? { right: win.right, bottom: win.bottom } : { right: Math.max(MARGIN, Math.min(pos.right, (globalThis.innerWidth || 1024) - 352 - MARGIN)), bottom: 0 }}
+      style={win ? { right: clampWin(win).right, bottom: clampWin(win).bottom } : { right: Math.max(MARGIN, Math.min(pos.right, (globalThis.innerWidth || 1024) - 352 - MARGIN)), bottom: 0 }}
       className={cn('no-print fixed z-30 flex w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-t-lg border border-b-0 border-t-2 border-border border-t-primary bg-surface text-foreground shadow-xl', mode === 'open' && 'h-[30rem] max-h-[75dvh]')}>
       <header className="flex cursor-grab touch-none items-center gap-1 border-b border-border bg-surface px-2 py-1.5 text-foreground active:cursor-grabbing"
         title={t('moveHint', { defaultValue: 'Glissez pour déplacer' })}

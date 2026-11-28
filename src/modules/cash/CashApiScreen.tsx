@@ -11,6 +11,13 @@ import { StatCard, StatGrid } from '@/components/ui/stat-card';
 import { PersonName } from '@/components/ui/avatar';
 import { queryKeys } from '@/core/api/query-client';
 import { useFormatters } from '@/core/i18n/useFormatters';
+import { Tabs } from '@/components/ui/tabs';
+import { usePermissions } from '@/core/permissions/PermissionsProvider';
+import { PERMISSIONS } from '@/core/permissions/permissions';
+import { CashBookTab } from '../treasury/CashBookTab';
+import { ExchangeRatesCard } from '../exchange/ExchangeRatesCard';
+import { ClosuresTab, UnclosedTab } from '../treasury/CashTabs';
+import { CloseTab, FundsTab, HandoversTab } from '../treasury/TreasuryDialog';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { dayOf } from '../billing/billing-rules';
 import { CashFlow } from '../expenses/CashFlow';
@@ -21,6 +28,46 @@ const METHOD_LABEL: Record<string, string> = { cash: 'Espèces', mobile_money: '
 
 /** Caisse en mode API : les encaissements d'un jour, par mode de paiement et par caissier. */
 export function CashApiScreen() {
+  const { t } = useTranslation('finance');
+  const { can } = usePermissions();
+  if (!can(PERMISSIONS.treasury.manage)) {
+    if (!can(PERMISSIONS.billing.pay)) return <CashPayments />;
+
+    return (
+      <>
+        <PageHeader title={t('cash.title')} description={t('cash.subtitle')} />
+        <Tabs
+          ariaLabel={t('cash.title')}
+          tabs={[
+            { id: 'payments', label: t('treasury.tabPayments', { defaultValue: 'Encaissements' }), content: <CashPayments noHeader /> },
+            { id: 'myBook', label: t('treasury.tabMyBook', { defaultValue: 'Mon livre de caisse' }), content: <CashBookTab mine /> },
+          ]}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageHeader title={t('cash.title')} description={t('cash.subtitle')} />
+      <Tabs
+        ariaLabel={t('cash.title')}
+        tabs={[
+          { id: 'payments', label: t('treasury.tabPayments', { defaultValue: 'Encaissements' }), content: <CashPayments noHeader /> },
+          { id: 'handovers', label: t('treasury.tabHandovers', { defaultValue: 'Versements' }), content: <HandoversTab /> },
+          { id: 'unclosed', label: t('treasury.tabUnclosed', { defaultValue: 'Non clôturées' }), content: <UnclosedTab /> },
+          { id: 'close', label: t('treasury.tabClose', { defaultValue: 'Clôture du jour' }), content: <CloseTab /> },
+          { id: 'closures', label: t('treasury.tabClosures', { defaultValue: 'Clôtures' }), content: <ClosuresTab /> },
+          { id: 'book', label: t('treasury.tabBook', { defaultValue: 'Livre de caisse' }), content: <CashBookTab /> },
+          { id: 'fx', label: t('fx.tab', { defaultValue: 'Taux de change' }), content: <ExchangeRatesCard /> },
+          { id: 'funds', label: t('treasury.tabFunds', { defaultValue: 'Caisses' }), content: <FundsTab /> },
+        ]}
+      />
+    </>
+  );
+}
+
+function CashPayments({ noHeader = false }: { noHeader?: boolean }) {
   const { t } = useTranslation('finance');
   const f = useFormatters();
   const money = useMoney();
@@ -54,7 +101,7 @@ export function CashApiScreen() {
 
   return (
     <>
-      <PageHeader title={t('cash.title')} description={t('cash.subtitle')} />
+      {!noHeader && <PageHeader title={t('cash.title')} description={t('cash.subtitle')} />}
       <div className="space-y-4">
         {currencies.map((c) => (
           <section key={c.currency} aria-label={c.currency}>

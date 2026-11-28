@@ -17,12 +17,15 @@ import { ApiError } from '@/core/api';
 import { queryKeys } from '@/core/api/query-client';
 import { useFormatters } from '@/core/i18n/useFormatters';
 import { decimalsOf } from '@/core/money/money';
+import { apiFx } from '../exchange/fx-api';
+import { exactTenderText, rateMap, tenderCheck } from '../exchange/fx-math';
 import { usePermissions } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS as P } from '@/core/permissions/permissions';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { useMoney } from '../finance/use-finance';
 import { ReceiptPrintDialog, type ReceiptContent } from '../_shared/receipt/ReceiptPrintDialog';
 import { METHODS, PAGE, apiBilling, stateOf, type BillingLink, type BillingPayment, type GroupReceipt, type PatientBalance, type LinkState, type Method } from './billing-api';
+import { MixedPayForm } from './MixedPayForm';
 import { paymentReceipt } from './payment-receipt';
 import { checkAmount } from './billing-rules';
 
@@ -140,9 +143,12 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
   const l = link.data;
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState<Method>('cash');
+  const [tender, setTender] = useState('');
+  const [tenderText, setTenderText] = useState('');
   const [reason, setReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
+  const [showMixed, setShowMixed] = useState(false);
   const [receipt, setReceipt] = useState<{ id: string; content: ReceiptContent; reprint: boolean } | null>(null);
   // Une clé par tentative : tant qu'elle ne réussit pas, un nouvel envoi la rejoue sans doublon.
   const [attempt, setAttempt] = useState(() => globalThis.crypto.randomUUID());
@@ -154,7 +160,7 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
     title: t('apiBilling.receiptTitle', { defaultValue: 'Reçu de paiement' }), patient: t('columns.patient'), act: t('apiBilling.source', { defaultValue: 'Acte' }),
     method: t('columns.method'), amount: t('apiBilling.receiptAmount', { defaultValue: 'Montant payé' }), remaining: t('apiBilling.remaining', { defaultValue: 'Reste à payer' }),
     invoices: t('apiBilling.receiptInvoices', { defaultValue: 'Factures réglées' }), footer: t('apiBilling.receiptFooter', { defaultValue: 'Merci.' }),
-    total: t('detail.total'), paid: t('apiBilling.paidSoFar', { defaultValue: 'Déjà payé' }),
+    total: t('detail.total'), paid: t('apiBilling.paidSoFar', { defaultValue: 'Déjà payé' }), change: t('apiBilling.mixed.change', { defaultValue: 'Monnaie rendue' }),
   };
   const receiptFor = (k: BillingLink, p: BillingPayment, remainingMinor?: number): ReceiptContent => paymentReceipt({
     id: p.id, patientName: k.patientName, actText: t(`apiBilling.sources.${k.sourceType}`, { defaultValue: SOURCES[k.sourceType] ?? k.sourceType }),
@@ -175,8 +181,35 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
       setReceipt({ id: anchor.id, reprint: false, content: paymentReceipt({ id: anchor.id, patientName: l.patientName, methodText: methodText(anchor.method), amountText: money(r.totalMinor, r.currency), remainingText: money(remaining, r.currency), invoiceCount: r.shares.length, dateTimeText: f.dateTime(anchor.paidAt) }, labels) });
     } catch { /* le règlement est déjà enregistré ; le reçu reste imprimable depuis la liste des paiements */ }
   };
+  /** Paiement mixte : UN reçu pour toutes les remises du groupe (devise, taux, monnaie rendue). */
+  const mixedReceiptFor = (k: BillingLink, all: BillingPayment[], groupId: string, remainingMinor?: number): { id: string; content: ReceiptContent } | null => {
+    const group = all.filter((x) => x.groupId === groupId).sort((a, b) => Number(a.id) - Number(b.id));
+    const first = group[0];
+    if (!first) return null;
+    const given = group.find((x) => (x.changeMinor ?? 0) > 0);
+    return { id: first.id, content: paymentReceipt({
+      id: first.id, patientName: k.patientName, actText: t(`apiBilling.sources.${k.sourceType}`, { defaultValue: SOURCES[k.sourceType] ?? k.sourceType }),
+      methodText: '', dateTimeText: f.dateTime(first.paidAt), amountText: money(group.reduce((s, x) => s + x.amountMinor, 0), k.currency),
+      remainingText: remainingMinor === undefined ? undefined : money(remainingMinor, k.currency),
+      tenders: group.map((x) => {
+        const cur = x.tenderCurrency ?? k.currency;
+        const rate = x.tenderCurrency && x.tenderCurrency !== k.currency && x.fxRate ? ` (1 ${k.currency} = ${x.fxRate} ${x.tenderCurrency})` : '';
+        return { label: `${methodText(x.method)} · ${cur}${rate}`, value: money(x.tenderMinor ?? x.amountMinor, cur) };
+      }),
+      changeText: given && given.changeCurrency ? money(given.changeMinor ?? 0, given.changeCurrency) : undefined,
+      items: (l?.lines ?? []).map((x) => ({ text: `${x.description} × ${x.quantity}`, amountText: money(x.totalMinor, k.currency) })),
+      totalText: (l?.lines.length ?? 0) > 0 ? money(k.totalMinor, k.currency) : undefined,
+    }, labels) };
+  };
+  const onMixedPaid = (r: BillingLink): void => {
+    refresh();
+    const last = [...r.payments].sort((a, b) => Number(b.id) - Number(a.id))[0];
+    const rc = last?.groupId ? mixedReceiptFor(r, r.payments, last.groupId, r.remainingMinor) : null;
+    if (rc) setReceipt({ id: rc.id, reprint: false, content: rc.content });
+  };
+  const payWith = (minor: number): Promise<BillingLink> => (foreign ? apiBilling.payTender(id, tender, tenderMinorNow, method, attempt) : apiBilling.pay(id, minor, method, attempt));
   const pay = useMutation({
-    mutationFn: (minor: number) => apiBilling.pay(id, minor, method, attempt),
+    mutationFn: payWith,
     onSuccess: (r) => {
       toast({ tone: 'success', title: t('apiBilling.paid', { defaultValue: 'Paiement enregistré' }) }); setAmount(r.remainingMinor > 0 ? (r.remainingMinor / 10 ** decimalsOf(r.currency)).toFixed(decimalsOf(r.currency)) : ''); setAttempt(globalThis.crypto.randomUUID()); refresh();
       const last = [...r.payments].sort((a, b) => Number(b.id) - Number(a.id))[0];
@@ -190,9 +223,16 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
     onError: fail,
   });
 
+  const fx = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'exchange-rates'), queryFn: () => apiFx.overview(), enabled: can(P.billing.pay), staleTime: 60_000 });
+  const rates = rateMap(fx.data);
+  const currencies = Object.keys(rates);
+  const foreign = Boolean(l && tender !== '' && tender !== l.currency && rates[tender] && rates[l.currency]);
+  const tCheck = l && foreign ? tenderCheck(tenderText, tender, l.currency, l.remainingMinor, rates) : null;
+  const tenderMinorNow = tCheck?.ok ? tCheck.tenderMinor : 0;
   const check = l ? checkAmount(amount, l.currency, l.remainingMinor) : null;
-  const valid = check?.ok === true;
+  const valid = foreign ? tCheck?.ok === true : check?.ok === true;
   const minor = check?.ok ? check.minor : 0;
+  const chooseTender = (code: string): void => { setTender(code); if (l && code !== '' && code !== l.currency) setTenderText(exactTenderText(l.remainingMinor, l.currency, code, rates)); };
   // Le montant dû est déjà saisi : le caissier n'a qu'à choisir le mode, ou à réduire le montant pour un acompte.
   const remainingText = l && l.remainingMinor > 0 ? (l.remainingMinor / 10 ** decimalsOf(l.currency)).toFixed(decimalsOf(l.currency)) : '';
   useEffect(() => { setAmount(remainingText); }, [remainingText]);
@@ -230,8 +270,8 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
                 {l.payments.map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-3 py-2">
                     <span>{f.dateTime(p.paidAt)} · {t(`apiBilling.methods.${p.method}`, { defaultValue: METHOD_LABEL[p.method] ?? p.method })}</span>
-                    <span className="flex items-center gap-2"><span className="tabular-nums">{money(p.amountMinor, l.currency)}</span>
-                      <Button size="sm" variant="outline" aria-label={t('apiBilling.receipt', { defaultValue: 'Reçu' })} onClick={() => setReceipt({ id: p.id, reprint: true, content: receiptFor(l, p) })}><Printer className="size-4" aria-hidden /> {t('apiBilling.receipt', { defaultValue: 'Reçu' })}</Button></span>
+                    <span className="flex items-center gap-2"><span className="tabular-nums">{p.tenderCurrency && p.tenderCurrency !== l.currency && p.tenderMinor != null ? `${money(p.tenderMinor, p.tenderCurrency)} → ${money(p.amountMinor, l.currency)}` : money(p.amountMinor, l.currency)}</span>
+                      <Button size="sm" variant="outline" aria-label={t('apiBilling.receipt', { defaultValue: 'Reçu' })} onClick={() => { const rc = p.groupId?.startsWith('mix-') ? mixedReceiptFor(l, l.payments, p.groupId) : null; setReceipt(rc ? { id: rc.id, reprint: true, content: rc.content } : { id: p.id, reprint: true, content: receiptFor(l, p) }); }}><Printer className="size-4" aria-hidden /> {t('apiBilling.receipt', { defaultValue: 'Reçu' })}</Button></span>
                   </li>
                 ))}
               </ul>
@@ -241,16 +281,34 @@ export function LinkDetail({ id, onClose }: { id: string; onClose: () => void })
           {canPay && (
             <form className="space-y-3 rounded-md border border-border p-3" onSubmit={(e) => { e.preventDefault(); if (valid && !pay.isPending) pay.mutate(minor); }}>
               <h3 className="text-sm font-semibold">{t('apiBilling.newPayment', { defaultValue: 'Encaisser' })}</h3>
-              <FormField label={t('form.amount', { currency: l.currency })} required
-                hint={t('apiBilling.amountHint', { defaultValue: 'Au plus {{max}}', max: (l.remainingMinor / 10 ** decimalsOf(l.currency)).toFixed(decimalsOf(l.currency)) })}>
-                {(c) => <Input {...c} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />}
-              </FormField>
+              {currencies.length > 1 && (
+                <FormField label={t('apiBilling.tenderCurrency', { defaultValue: 'Devise remise par le patient' })}>
+                  {(c) => <Select {...c} value={foreign ? tender : l.currency} onChange={(e) => chooseTender(e.target.value)}>{currencies.map((code) => <option key={code} value={code}>{code}</option>)}</Select>}
+                </FormField>
+              )}
+              {foreign ? (
+                <FormField label={t('apiBilling.tenderAmount', { defaultValue: 'Montant remis en {{currency}}', currency: tender })} required
+                  hint={tCheck?.ok
+                    ? t('apiBilling.tenderApplied', { defaultValue: '= {{applied}} sur la facture · taux 1 {{base}} = {{rate}} {{tender}}', applied: money(tCheck.appliedMinor, l.currency), base: l.currency, rate: (rates[tender] / rates[l.currency]).toFixed(rates[tender] / rates[l.currency] < 1 ? 6 : 2), tender })
+                    : t('apiBilling.tenderExact', { defaultValue: 'Pour solder la facture : {{amount}} {{tender}}', amount: exactTenderText(l.remainingMinor, l.currency, tender, rates), tender })}>
+                  {(c) => <Input {...c} inputMode="decimal" value={tenderText} onChange={(e) => setTenderText(e.target.value)} />}
+                </FormField>
+              ) : (
+                <FormField label={t('form.amount', { currency: l.currency })} required
+                  hint={t('apiBilling.amountHint', { defaultValue: 'Au plus {{max}}', max: (l.remainingMinor / 10 ** decimalsOf(l.currency)).toFixed(decimalsOf(l.currency)) })}>
+                  {(c) => <Input {...c} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />}
+                </FormField>
+              )}
               <FormField label={t('columns.method')} required>
                 {(c) => <Select {...c} value={method} onChange={(e) => setMethod(e.target.value as Method)}>{METHODS.map((m) => <option key={m} value={m}>{t(`apiBilling.methods.${m}`, { defaultValue: METHOD_LABEL[m] })}</option>)}</Select>}
               </FormField>
               <Button type="submit" loading={pay.isPending} disabled={!valid}>{t('apiBilling.pay', { defaultValue: 'Enregistrer le paiement' })}</Button>
             </form>
           )}
+
+          {canPay && currencies.length > 1 && (showMixed
+            ? <MixedPayForm link={l} rates={rates} onPaid={onMixedPaid} />
+            : <Button variant="ghost" size="sm" onClick={() => setShowMixed(true)}>{t('apiBilling.mixed.open', { defaultValue: 'Paiement mixte (plusieurs devises ou modes)…' })}</Button>)}
 
           {l.status === 'active' && groupBalance && can(P.billing.pay) && (showGroup
             ? <GroupPay patientId={l.patientId} balance={groupBalance} onDone={refresh} onPaid={(r) => void printGroup(r)} />

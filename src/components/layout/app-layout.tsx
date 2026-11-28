@@ -10,6 +10,7 @@ import { useLiveSync } from '@/core/live/useLiveSync';
 import { UnsavedChangesGuard } from '@/core/unsaved/UnsavedChangesGuard';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import { StatusBadge } from '@/components/ui/badge';
+import { ConverterButton } from '@/modules/exchange/ConverterDock';
 import { ChatDock } from '@/modules/messaging/ChatDock';
 import { ConnectionBanner } from './connection-banner';
 import { LiveIndicator } from './live-indicator';
@@ -75,6 +76,7 @@ export function AppLayout() {
           )}
           <div className="ms-auto flex items-center gap-0.5">
             <LiveIndicator />
+            <ConverterButton />
             <NotificationCenter />
             <LanguageSwitcher />
             <ThemeSwitcher />

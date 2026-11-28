@@ -12,9 +12,15 @@ vi.mock('@/components/feedback/toast', () => ({ useToast: () => h.toast }));
 vi.mock('../finance/use-finance', () => ({ useMoney: () => (minor: number, currency = 'USD') => `${(minor / 100).toFixed(2)} ${currency}` }));
 vi.mock('./billing-api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./billing-api')>()),
-  apiBilling: { list: vi.fn(), show: vi.fn(), pay: vi.fn(), cancel: vi.fn() },
+  apiBilling: { list: vi.fn(), show: vi.fn(), pay: vi.fn(), payTender: vi.fn(), payMixed: vi.fn(), cancel: vi.fn() },
 }));
 
+vi.mock('../exchange/fx-api', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../exchange/fx-api')>()),
+  apiFx: { overview: vi.fn() },
+}));
+
+import { apiFx } from '../exchange/fx-api';
 import { BillingApiScreen } from './BillingApiScreen';
 import { apiBilling } from './billing-api';
 
@@ -24,7 +30,8 @@ const link = (over: Partial<BillingLink> = {}): BillingLink => ({
 });
 const paid = link({ id: '2', patientName: 'Beta Test', paidMinor: 5000, remainingMinor: 0 });
 
-const mocked = apiBilling as unknown as Record<'list' | 'show' | 'pay' | 'cancel', ReturnType<typeof vi.fn>>;
+const mocked = apiBilling as unknown as Record<'list' | 'show' | 'pay' | 'payTender' | 'payMixed' | 'cancel', ReturnType<typeof vi.fn>>;
+const fxMock = apiFx as unknown as { overview: ReturnType<typeof vi.fn> };
 
 function renderScreen(ui: ReactNode = <BillingApiScreen />) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -48,6 +55,8 @@ beforeEach(() => {
   Object.values(mocked).forEach((m) => m.mockReset());
   mocked.list.mockResolvedValue({ rows: [link(), paid], total: 2 });
   mocked.show.mockResolvedValue(link());
+  fxMock.overview.mockReset();
+  fxMock.overview.mockResolvedValue({ base: 'USD', rates: [], history: [] });
 });
 
 describe('écran de facturation (API)', () => {
@@ -88,6 +97,28 @@ describe('écran de facturation (API)', () => {
     await waitFor(() => expect(mocked.pay).toHaveBeenCalledTimes(1));
     expect(mocked.pay).toHaveBeenCalledWith('1', 2000, 'cash', expect.stringMatching(/.{8,}/));
     await waitFor(() => expect(h.toast).toHaveBeenCalledWith(expect.objectContaining({ tone: 'success' })));
+  });
+
+  it('encaisse dans une autre devise : propose le montant exact, convertit et envoie la devise remise', async () => {
+    h.granted.add('health.billing.pay');
+    fxMock.overview.mockResolvedValue({ base: 'USD', rates: [{ id: '1', baseCurrency: 'USD', currency: 'CDF', rate: '2800', date: '2026-11-28', setByName: '' }], history: [] });
+    mocked.payTender.mockResolvedValue(link({ paidMinor: 5000, remainingMinor: 0 }));
+    renderScreen();
+    await openFirst();
+    const select = await screen.findByLabelText('Devise remise par le patient');
+    await userEvent.selectOptions(select, 'CDF');
+    const input = document.querySelector('input[inputmode="decimal"]') as HTMLInputElement;
+    expect(input.value).toBe('140000.00');            // 50,00 USD à 2800 = 140 000,00 CDF
+    expect(screen.getByRole('button', { name: 'Enregistrer le paiement' })).toBeEnabled();
+    await userEvent.clear(input);
+    await userEvent.type(input, '150000');
+    expect(screen.getByRole('button', { name: 'Enregistrer le paiement' })).toBeDisabled();   // dépasse le solde converti
+    await userEvent.clear(input);
+    await userEvent.type(input, '28000');
+    await userEvent.click(screen.getByRole('button', { name: 'Enregistrer le paiement' }));
+    await waitFor(() => expect(mocked.payTender).toHaveBeenCalledTimes(1));
+    expect(mocked.payTender).toHaveBeenCalledWith('1', 'CDF', 2800000, 'cash', expect.stringMatching(/.{8,}/));
+    expect(mocked.pay).not.toHaveBeenCalled();
   });
 
   it('rejoue la MÊME clé après un échec, puis en change après un succès (aucun paiement en double)', async () => {
@@ -138,4 +169,39 @@ describe('écran de facturation (API)', () => {
     await userEvent.click(screen.getByRole('button', { name: /Réessayer|Try again/ }));
     expect((await screen.findAllByText('Alpha Test')).length).toBeGreaterThan(0);
   });
+  it('paiement mixte : 10 USD + CDF en une opération, avec aperçu du reste et envoi de toutes les remises', async () => {
+    h.granted.add('health.billing.pay');
+    fxMock.overview.mockResolvedValue({ base: 'USD', rates: [{ id: '1', baseCurrency: 'USD', currency: 'CDF', rate: '2800', date: '2026-11-28', setByName: '' }], history: [] });
+    mocked.payMixed.mockResolvedValue(link({ paidMinor: 5000, remainingMinor: 0, payments: [
+      { id: '7', amountMinor: 1000, method: 'cash', paidAt: '2026-11-28T10:00:00Z', groupId: 'mix-1' },
+      { id: '8', amountMinor: 4000, method: 'mobile_money', paidAt: '2026-11-28T10:00:00Z', groupId: 'mix-1', tenderCurrency: 'CDF', tenderMinor: 11200000, fxRate: '2800' },
+    ] }));
+    renderScreen();
+    await openFirst();
+    await userEvent.click(await screen.findByRole('button', { name: /Paiement mixte/ }));
+    const form = screen.getByRole('form', { name: 'Paiement mixte' });
+    const inputs = within(form).getAllByRole('textbox');
+    await userEvent.type(inputs[0], '10');
+    await userEvent.type(inputs[1], '112000');          // 112 000 CDF = 40 USD
+    expect(within(form).getByText('0.00 USD')).toBeInTheDocument();   // reste après paiement
+    await userEvent.click(within(form).getByRole('button', { name: 'Enregistrer le paiement mixte' }));
+    await waitFor(() => expect(mocked.payMixed).toHaveBeenCalledTimes(1));
+    expect(mocked.payMixed).toHaveBeenCalledWith('1', [
+      { currency: 'USD', minor: 1000, method: 'cash' }, { currency: 'CDF', minor: 11200000, method: 'cash' },
+    ], 'USD', expect.stringMatching(/.{8,}/));
+  });
+
+  it('paiement mixte : une remise hors espèces ne peut pas dépasser le solde', async () => {
+    h.granted.add('health.billing.pay');
+    fxMock.overview.mockResolvedValue({ base: 'USD', rates: [{ id: '1', baseCurrency: 'USD', currency: 'CDF', rate: '2800', date: '2026-11-28', setByName: '' }], history: [] });
+    renderScreen();
+    await openFirst();
+    await userEvent.click(await screen.findByRole('button', { name: /Paiement mixte/ }));
+    const form = screen.getByRole('form', { name: 'Paiement mixte' });
+    await userEvent.selectOptions(within(form).getAllByRole('combobox')[1], 'card');
+    await userEvent.type(within(form).getAllByRole('textbox')[0], '60');
+    expect(within(form).getByRole('button', { name: 'Enregistrer le paiement mixte' })).toBeDisabled();
+    expect(within(form).getByRole('alert')).toHaveTextContent('espèces');
+  });
+
 });

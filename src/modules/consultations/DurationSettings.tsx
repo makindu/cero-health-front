@@ -1,10 +1,15 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { queryKeys } from '@/core/api/query-client';
 import { Can } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
+import { usePreferences } from '@/core/preferences/preferences-store';
+import { referenceFromApi } from '../_shared/reference-data';
+import { apiBilling } from '../billing/billing-api';
 import { ActionFormDialog } from '../_shared/action-form-dialog';
 import { BusinessRuleError } from '../_shared/business-error';
 import { CONSULTATION_DURATION_KEY, DEFAULT_CONSULTATION_DAYS, useInvalidateSetting, useSetting, validDuration, writeSetting } from '../settings/app-settings';
@@ -15,7 +20,13 @@ export function DurationSettings() {
   const [open, setOpen] = useState(false);
   const setting = useSetting(CONSULTATION_DURATION_KEY, String(DEFAULT_CONSULTATION_DAYS));
   const refresh = useInvalidateSetting(CONSULTATION_DURATION_KEY);
-  const current = setting.data ?? String(DEFAULT_CONSULTATION_DAYS);
+  // API réelle : la durée est un réglage de l'établissement ENREGISTRÉ EN BASE (partagé par tous les postes). Mode local : appareil.
+  const api = referenceFromApi();
+  const { activeFacilityId } = usePreferences();
+  const queryClient = useQueryClient();
+  const serverKey = queryKeys.scoped(activeFacilityId, 'billing', 'settings');
+  const server = useQuery({ queryKey: serverKey, queryFn: apiBilling.settings, enabled: api });
+  const current = api ? String(server.data?.consultationValidityDays ?? DEFAULT_CONSULTATION_DAYS) : (setting.data ?? String(DEFAULT_CONSULTATION_DAYS));
   return (
     <Can permission={PERMISSIONS.administration.manageSettings}>
       <Card>
@@ -40,8 +51,13 @@ export function DurationSettings() {
           execute={async (v) => {
             const days = validDuration(v.days);
             if (days === null) throw new BusinessRuleError('consultationDurationInvalid');
-            await writeSetting(CONSULTATION_DURATION_KEY, String(days));
-            await refresh();
+            if (api) {
+              await apiBilling.setConsultationValidity(days);
+              await queryClient.invalidateQueries({ queryKey: serverKey });
+            } else {
+              await writeSetting(CONSULTATION_DURATION_KEY, String(days));
+              await refresh();
+            }
             return { isDemo: false };
           }}
         />

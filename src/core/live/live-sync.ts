@@ -50,6 +50,8 @@ export const ENTITY_QUERIES: Readonly<Record<string, readonly string[]>> = {
   billing_settings: ['billing'],
   // Clôtures de caisse : la carte « à clôturer » du tableau de bord et l'historique se relisent.
   cash_closures: ['billing', 'dashboard'],
+  cash_handovers: ['treasury', 'billing', 'dashboard'],
+  treasury_closures: ['treasury', 'billing', 'dashboard'],
   // Assurance : organismes, créances et règlements se relisent ; une créance suit la facture du patient (écran de facturation).
   insurance_organizations: ['insurance'],
   insurance_dues: ['insurance', 'billing'],

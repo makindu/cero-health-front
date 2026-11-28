@@ -1,4 +1,4 @@
-import { Activity, BedDouble, CalendarClock, FileSpreadsheet, FileText, FlaskConical, ScrollText, TrendingUp, Wallet, type LucideIcon } from 'lucide-react';
+import { Activity, BedDouble, CalendarClock, ClipboardList, FileSpreadsheet, FileText, FlaskConical, ScrollText, TrendingUp, Wallet, type LucideIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/forms/controls';
 import { queryKeys } from '@/core/api/query-client';
 import { useFormatters } from '@/core/i18n/useFormatters';
-import { Can } from '@/core/permissions/PermissionsProvider';
+import { Can, usePermissions } from '@/core/permissions/PermissionsProvider';
 import { PERMISSIONS } from '@/core/permissions/permissions';
 import { useAuth } from '@/core/auth/cero-id';
 import { usePreferences } from '@/core/preferences/preferences-store';
@@ -20,6 +20,7 @@ import { PDF_MIME, XLSX_MIME, downloadBytes, safeFilename } from '../_shared/exp
 import { buildXlsx } from '../_shared/export/xlsx';
 import { useMoney } from '../finance/use-finance';
 import { useCareUnits } from '../_shared/reference-data';
+import { DailyReportPanel } from './DailyReportPanel';
 import { apiScope } from './scope-api';
 import { API_REPORTS, defaultPeriod, fetchReport, periodError, reportBlocks, reportGrid, type ApiReportId, type ReportResult } from './reports-api';
 
@@ -39,19 +40,21 @@ export function ReportsApiScreen() {
   const { activeFacilityId } = usePreferences();
   const { activeFacility } = useAuth();
   const [period, setPeriod] = useState(defaultPeriod);
-  const [selected, setSelected] = useState<ApiReportId | null>(null);
+  const [selected, setSelected] = useState<ApiReportId | 'daily' | null>(null);
+  const { canAny } = usePermissions();
+  const canDaily = canAny([PERMISSIONS.billing.viewAll, PERMISSIONS.treasury.manage]);
   const invalid = periodError(period.from, period.to);
   const [units, setUnits] = useState<string[]>([]);
   const careUnits = useCareUnits();
   const mine = useQuery({ queryKey: queryKeys.scoped(activeFacilityId, 'report-scopes', 'me'), queryFn: apiScope.me });
   const offered = (careUnits.data ?? []).filter((u) => !mine.data?.restricted || mine.data.careUnitIds.includes(u.id));
   const pickUnit = (id: string) => setUnits((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-  const unitFilter = selected === 'finance' ? units : [];
+  const unitFilter = selected === 'finance' || selected === 'daily' ? units : [];
 
   const query = useQuery({
     queryKey: queryKeys.scoped(activeFacilityId, 'reports', selected, period.from, period.to, unitFilter.join(',')),
     queryFn: () => fetchReport(selected as ApiReportId, period.from, period.to, unitFilter),
-    enabled: selected !== null && invalid === null,
+    enabled: selected !== null && selected !== 'daily' && invalid === null,
     retry: false,
   });
 
@@ -147,6 +150,22 @@ export function ReportsApiScreen() {
             </li>
           );
         })}
+        {canDaily && (
+          <li>
+            <Card className="h-full">
+              <div className="flex h-full flex-col gap-3">
+                <div className="flex items-start gap-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary-ink"><ClipboardList aria-hidden className="size-5" /></span>
+                  <div>
+                    <h2 className="font-semibold">{t('daily.title', { defaultValue: 'Rapport journalier' })}</h2>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{t('daily.description', { defaultValue: 'Recettes par nature d\'acte, sorties et solde de chaque jour, dans la devise par défaut. Export Excel et PDF.' })}</p>
+                  </div>
+                </div>
+                <div className="mt-auto"><Button variant={selected === 'daily' ? 'primary' : 'outline'} size="sm" onClick={() => setSelected('daily')}>{t('generate')}</Button></div>
+              </div>
+            </Card>
+          </li>
+        )}
         {OTHER_SCREENS.map(({ id, icon: Icon, path }) => (
           <li key={id}>
             <Card className="h-full">
@@ -165,7 +184,9 @@ export function ReportsApiScreen() {
         ))}
       </ul>
 
-      {selected && (
+      {selected === 'daily' && canDaily && <DailyReportPanel from={period.from} to={period.to} units={units} />}
+
+      {selected && selected !== 'daily' && (
         <section className="mt-6" aria-live="polite" aria-busy={query.isPending && query.fetchStatus !== 'idle'}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-lg font-semibold">{t(`items.${selected}.title`)}</h2>

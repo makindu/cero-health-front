@@ -95,6 +95,7 @@ export const CONSULTATION_API: ApiMapping<Consultation> = {
       appointmentId: r.appointment_id ? text(r.appointment_id) : undefined,
       origin: r.origin === 'appointment' || r.origin === 'walkIn' ? r.origin : undefined,
       triageEntryId: r.triage_entry_id ? text(r.triage_entry_id) : undefined,
+      ...(r.expires_at ? { expiresAt: text(r.expires_at), durationDays: Math.max(1, Math.round((Date.parse(text(r.expires_at)) - Date.parse(text(r.started_at))) / 86_400_000)) } : {}),
     };
   },
   toApi: (i) => {

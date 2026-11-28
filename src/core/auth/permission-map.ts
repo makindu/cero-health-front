@@ -30,6 +30,7 @@ const MAP: Record<string, readonly string[]> = {
   'health.lab.collect': ['health.laboratory.collect'],
   'health.lab.result': ['health.laboratory.results.enter'],
   'health.lab.validate': ['health.laboratory.results.validate'],
+  'health.lab.validate-own': ['health.laboratory.results.validate-own'],
   'health.pharmacy.read': ['health.pharmacy.view', 'health.stock.view'],
   'health.pharmacy.dispense': ['health.pharmacy.dispense', 'health.prescriptions.dispense'],
   'health.pharmacy.exception': ['health.pharmacy.exception'],
@@ -60,6 +61,9 @@ const MAP: Record<string, readonly string[]> = {
   'health.audit.read': ['health.audit.view', 'health.reports.view'],
   // Choisir, par utilisateur, les services dont il voit les rapports financiers.
   'health.reports.scope.manage': ['health.reports.scope', 'health.administration.view'],
+  'health.treasury.manage': ['health.treasury.manage'],
+  'health.cash.assign': ['health.cash.assign'],
+  'health.exchange-rates.manage': ['health.exchange-rates.manage'],
   'health.patients.categories': ['health.settings.manage', 'health.administration.view'],
   'health.visits.read': ['health.visits.view'],
   'health.lab.catalog': ['health.laboratory.catalog'],
